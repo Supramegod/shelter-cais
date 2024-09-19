@@ -513,8 +513,8 @@ html:not([dir=rtl]) .form-floating.form-floating-select2 label {
   margin-right: -0.875rem;
   margin-left: 0;
 }
-.light-style .is-valid .select2-container--default .select2-selection,
-.light-style .is-valid.select2-container--default .select2-selection {
+.light-style .  .select2-container--default .select2-selection,
+.light-style . .select2-container--default .select2-selection {
   border-width: 2px;
   border-color: #72e128 !important;
 }
@@ -729,8 +729,8 @@ html:not([dir=rtl]) .form-floating.form-floating-select2 label {
   margin-left: 0;
   margin-right: -0.875rem;
 }
-.dark-style .is-valid .select2-container--default .select2-selection,
-.dark-style .is-valid.select2-container--default .select2-selection {
+.dark-style .  .select2-container--default .select2-selection,
+.dark-style . .select2-container--default .select2-selection {
   border-width: 2px;
   border-color: #72e128 !important;
 }

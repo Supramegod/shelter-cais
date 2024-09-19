@@ -737,9 +737,9 @@ html:not([dir=rtl]) .flatpickr-weekwrapper .flatpickr-weeks .flatpickr-weeks {
   fill: #d2d2e8;
   stroke: #d2d2e8;
 }
-.dark-style .flatpickr-input:not(.is-invalid):not(.is-valid) ~ .form-control:disabled,
-.dark-style .flatpickr-input:not(.is-invalid):not(.is-valid)[readonly],
-.dark-style .flatpickr-input:not(.is-invalid):not(.is-valid) ~ .form-control[readonly] {
+.dark-style .flatpickr-input:not(.is-invalid):not(. ) ~ .form-control:disabled,
+.dark-style .flatpickr-input:not(.is-invalid):not(. )[readonly],
+.dark-style .flatpickr-input:not(.is-invalid):not(. ) ~ .form-control[readonly] {
   background-color: #30334e;
 }
 .dark-style .flatpickr-days {

@@ -23,7 +23,7 @@
             <div class="col-sm-4">
               <input type="hidden" id="leads_id" name="leads_id" value="{{old('leads_id')}}" class="form-control">
               <div class="input-group">
-                <input type="text" id="leads" name="leads" value="{{old('leads')}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else is-valid @endif @endif" readonly>
+                <input type="text" id="leads" name="leads" value="{{old('leads')}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else   @endif @endif" readonly>
                 <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
                 @if($errors->has('leads'))
                   <div class="invalid-feedback">{{$errors->first('leads')}}</div>
@@ -32,7 +32,7 @@
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Tanggal Activity <span class="text-danger">*</span></label>
             <div class="col-sm-4">
-              <input type="date" id="tgl_activity" name="tgl_activity" value="@if(old('tgl_activity')==null){{$nowd}}@else{{old('tgl_activity')}}@endif" class="form-control @if ($errors->any()) @if($errors->has('tgl_activity')) is-invalid @else is-valid @endif @endif">
+              <input type="date" id="tgl_activity" name="tgl_activity" value="@if(old('tgl_activity')==null){{$nowd}}@else{{old('tgl_activity')}}@endif" class="form-control @if ($errors->any()) @if($errors->has('tgl_activity')) is-invalid @else   @endif @endif">
                 @if($errors->has('tgl_activity'))
                   <div class="invalid-feedback">{{$errors->first('tgl_activity')}}</div>
                 @endif
@@ -72,7 +72,7 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Status Leads <span class="text-danger">*</span></label>
             <div class="col-sm-10">
-              <select id="status_leads_id" name="status_leads_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('status_leads_id')) is-invalid @else is-valid @endif @endif" data-allow-clear="true" tabindex="-1">
+              <select id="status_leads_id" name="status_leads_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('status_leads_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                 <option value="">- Pilih data -</option>  
                 @foreach($statusLeads as $value)
                 <option value="{{$value->id}}" @if(old('status_leads_id') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -189,7 +189,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end @if(in_array(Auth::user()->role_id,[31])) d-none @endif">Tim Sales <span class="text-danger">*</span></label>
                   <div class="col-sm-4 @if(in_array(Auth::user()->role_id,[31])) d-none @endif">
                     <div class="position-relative">
-                      <select id="tim_sales_id" name="tim_sales_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('tim_sales_id')) is-invalid @else is-valid @endif @endif" data-allow-clear="true" tabindex="-1">
+                      <select id="tim_sales_id" name="tim_sales_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('tim_sales_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>  
                         @foreach($timSales as $value)
                         <option value="{{$value->id}}" @if(old('tim_sales_id') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -203,7 +203,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end">Sales <span class="text-danger">*</span></label>
                   <div class="@if(in_array(Auth::user()->role_id,[31])) col-sm-10 @else col-sm-4 @endif">
                     <input type="hidden" name="sales_d" id="sales_d">
-                    <select id="tim_sales_d_id" name="tim_sales_d_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('tim_sales_d_id')) is-invalid @else is-valid @endif @endif" data-allow-clear="true" tabindex="-1">
+                    <select id="tim_sales_d_id" name="tim_sales_d_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('tim_sales_d_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>  
                     </select>
                     @if($errors->has('tim_sales_d_id'))
@@ -216,7 +216,7 @@
                 <div class="row">
                   <label class="col-sm-2 col-form-label text-sm-end">RO</label>
                   <div class="col-sm-10">
-                    <select id="ro" name="ro" class="select2 form-select select2-hidden-accessible @if ($errors->any()) is-valid @endif" data-allow-clear="true" tabindex="-1">
+                    <select id="ro" name="ro" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($roList as $value)
                       <option value="{{$value->id}}" @if(old('ro') == $value->id) selected @endif>{{$value->full_name}}</option>
@@ -230,7 +230,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end">CRM </label>
                   <div class="col-sm-10">
                     <div class="position-relative">
-                      <select id="crm" name="crm" class="select2 form-select select2-hidden-accessible @if ($errors->any()) is-valid @endif" data-allow-clear="true" tabindex="-1">
+                      <select id="crm" name="crm" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>  
                         @foreach($crmList as $value)
                         <option value="{{$value->id}}" @if(old('crm') == $value->id) selected @endif>{{$value->full_name}}</option>
@@ -244,7 +244,7 @@
                 <div class="row">
                   <label class="col-sm-2 col-form-label text-sm-end">Tanggal <span class="text-danger">*</span></label>
                   <div class="col-sm-10">
-                    <input type="date" id="tgl_realisasi_telepon" name="tgl_realisasi_telepon" value="{{old('tgl_realisasi_telepon')}}" class="form-control @if ($errors->any()) @if($errors->has('tgl_realisasi_telepon')) is-invalid @else is-valid @endif @endif">
+                    <input type="date" id="tgl_realisasi_telepon" name="tgl_realisasi_telepon" value="{{old('tgl_realisasi_telepon')}}" class="form-control @if ($errors->any()) @if($errors->has('tgl_realisasi_telepon')) is-invalid @else   @endif @endif">
                     @if($errors->has('tgl_realisasi_telepon'))
                       <div class="invalid-feedback">{{$errors->first('tgl_realisasi_telepon')}}</div>
                     @endif
@@ -253,14 +253,14 @@
                 <div class="row mt-3">
                   <label class="col-sm-2 col-form-label text-sm-end">Start <span class="text-danger">*</span></label>
                   <div class="col-sm-4">
-                    <input type="time" id="start" name="start" onchange="hitungDurasi();" value="{{old('start')}}" class="form-control @if ($errors->any()) @if($errors->has('start')) is-invalid @else is-valid @endif @endif">
+                    <input type="time" id="start" name="start" onchange="hitungDurasi();" value="{{old('start')}}" class="form-control @if ($errors->any()) @if($errors->has('start')) is-invalid @else   @endif @endif">
                     @if($errors->has('start'))
                       <div class="invalid-feedback">{{$errors->first('start')}}</div>
                     @endif
                   </div>
                   <label class="col-sm-2 col-form-label text-sm-end">End <span class="text-danger">*</span></label>
                   <div class="col-sm-4">
-                  <input type="time" id="end" name="end" onchange="hitungDurasi();" value="{{old('end')}}" class="form-control @if ($errors->any()) @if($errors->has('end')) is-invalid @else is-valid @endif @endif">
+                  <input type="time" id="end" name="end" onchange="hitungDurasi();" value="{{old('end')}}" class="form-control @if ($errors->any()) @if($errors->has('end')) is-invalid @else   @endif @endif">
                     @if($errors->has('end'))
                       <div class="invalid-feedback">{{$errors->first('end')}}</div>
                     @endif
@@ -269,7 +269,7 @@
                 <div class="row mt-3">
                   <label class="col-sm-2 col-form-label text-sm-end">Durasi</label>
                   <div class="col-sm-4">
-                    <input type="text" id="durasi" name="durasi" value="{{old('durasi')}}" class="form-control @if ($errors->any()) @if($errors->has('durasi')) is-invalid @else is-valid @endif @endif" readonly>
+                    <input type="text" id="durasi" name="durasi" value="{{old('durasi')}}" class="form-control @if ($errors->any()) @if($errors->has('durasi')) is-invalid @else   @endif @endif" readonly>
                       @if($errors->has('durasi'))
                         <div class="invalid-feedback">{{$errors->first('durasi')}}</div>
                       @endif
@@ -281,7 +281,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end">Jenis Visit <span class="text-danger">*</span></label>
                   <div class="col-sm-10">
                     <div class="position-relative">
-                      <select id="jenis_visit" name="jenis_visit" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else is-valid @endif @endif" data-allow-clear="true" tabindex="-1">
+                      <select id="jenis_visit" name="jenis_visit" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>  
                         <option value="Client Visit" @if(old('jenis_visit') == 'Client Visit') selected @endif>Client Visit</option>
                         <option value="Offline Meeting" @if(old('jenis_visit') == 'Offline Meeting') selected @endif>Offline Meeting</option>  
@@ -295,14 +295,14 @@
                 <div class="row">
                   <label class="col-sm-2 col-form-label text-sm-end">Tanggal <span class="text-danger">*</span></label>
                   <div class="col-sm-4">
-                    <input type="date" id="tgl_realisasi" name="tgl_realisasi" value="{{old('tgl_realisasi')}}" class="form-control @if ($errors->any()) @if($errors->has('tgl_realisasi')) is-invalid @else is-valid @endif @endif">
+                    <input type="date" id="tgl_realisasi" name="tgl_realisasi" value="{{old('tgl_realisasi')}}" class="form-control @if ($errors->any()) @if($errors->has('tgl_realisasi')) is-invalid @else   @endif @endif">
                     @if($errors->has('tgl_realisasi'))
                       <div class="invalid-feedback">{{$errors->first('tgl_realisasi')}}</div>
                     @endif
                   </div>
                   <label class="col-sm-2 col-form-label text-sm-end d-visit l-jam-realisasi">Jam <span class="text-danger">*</span></label>
                   <div class="col-sm-4 d-visit l-jam-realisasi">
-                    <input type="time" id="jam_realisasi"  name="jam_realisasi" value="{{old('jam_realisasi')}}" class="form-control @if ($errors->any()) @if($errors->has('jam_realisasi')) is-invalid @else is-valid @endif @endif">
+                    <input type="time" id="jam_realisasi"  name="jam_realisasi" value="{{old('jam_realisasi')}}" class="form-control @if ($errors->any()) @if($errors->has('jam_realisasi')) is-invalid @else   @endif @endif">
                     @if($errors->has('jam_realisasi'))
                       <div class="invalid-feedback">{{$errors->first('jam_realisasi')}}</div>
                     @endif
@@ -312,7 +312,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end">Notulen / Berita Acara <span class="text-danger">*</span></label>
                   <div class="col-sm-10">
                     <div class="form-floating form-floating-outline">
-                      <textarea class="form-control h-px-100 @if ($errors->any()) @if($errors->has('notulen')) is-invalid @else is-valid @endif @endif" name="notulen" id="notulen" placeholder="">{{old('notulen')}}</textarea>
+                      <textarea class="form-control h-px-100 @if ($errors->any()) @if($errors->has('notulen')) is-invalid @else   @endif @endif" name="notulen" id="notulen" placeholder="">{{old('notulen')}}</textarea>
                       @if($errors->has('notulen'))
                         <div class="invalid-feedback">{{$errors->first('notulen')}}</div>
                       @endif
@@ -322,7 +322,7 @@
                 <div class="row mt-3 l-email">
                   <label class="col-sm-2 col-form-label text-sm-end">Email Penerima<span class="text-danger">*</span></label>
                   <div class="col-sm-10">
-                    <input type="text" id="email" name="email" value="{{old('email')}}" class="form-control @if ($errors->any()) @if($errors->has('email')) is-invalid @else is-valid @endif @endif">
+                    <input type="text" id="email" name="email" value="{{old('email')}}" class="form-control @if ($errors->any()) @if($errors->has('email')) is-invalid @else   @endif @endif">
                       @if($errors->has('email'))
                         <div class="invalid-feedback">{{$errors->first('email')}}</div>
                       @endif
@@ -331,7 +331,7 @@
                 <div class="row mt-3 l-penerima">
                   <label class="col-sm-2 col-form-label text-sm-end">Penerima Berkas <span class="text-danger">*</span></label>
                   <div class="col-sm-10">
-                    <input type="text" id="penerima" name="penerima" value="{{old('penerima')}}" class="form-control @if ($errors->any()) @if($errors->has('penerima')) is-invalid @else is-valid @endif @endif">
+                    <input type="text" id="penerima" name="penerima" value="{{old('penerima')}}" class="form-control @if ($errors->any()) @if($errors->has('penerima')) is-invalid @else   @endif @endif">
                       @if($errors->has('penerima'))
                         <div class="invalid-feedback">{{$errors->first('penerima')}}</div>
                       @endif
@@ -342,7 +342,7 @@
                 <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
                 <div class="col-sm-10">
                   <div class="form-floating form-floating-outline mb-4">
-                    <textarea class="form-control h-px-100 @if ($errors->any()) is-valid @endif" name="notes_tipe" id="notes_tipe" placeholder="">{{old('notes_tipe')}}</textarea>
+                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="notes_tipe" id="notes_tipe" placeholder="">{{old('notes_tipe')}}</textarea>
                   </div>
                 </div>
               </div>

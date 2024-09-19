@@ -26,7 +26,7 @@
               <div class="col-sm-10">
                 <input type="hidden" id="leads_id" name="leads_id" value="{{old('leads_id')}}" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="leads" name="leads" value="{{old('leads')}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else is-valid @endif @endif" readonly>
+                  <input type="text" id="leads" name="leads" value="{{old('leads')}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else   @endif @endif" readonly>
                   <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
                   @if($errors->has('leads'))
                     <div class="invalid-feedback">{{$errors->first('leads')}}</div>

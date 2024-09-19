@@ -21,7 +21,7 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan <span class="text-danger">*</span></label>
             <div class="col-sm-4">
-              <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{old('nama_perusahaan')}}" class="form-control @if ($errors->any()) @if($errors->has('nama_perusahaan')) is-invalid @else is-valid @endif @endif">
+              <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{old('nama_perusahaan')}}" class="form-control @if ($errors->any()) @if($errors->has('nama_perusahaan')) is-invalid @else   @endif @endif">
               @if($errors->has('nama_perusahaan'))
                   <div class="invalid-feedback">{{$errors->first('nama_perusahaan')}}</div>
               @endif
@@ -29,7 +29,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Jenis Perusahaan</label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="jenis_perusahaan" name="jenis_perusahaan" class="select2 form-select select2-hidden-accessible @if ($errors->any()) is-valid @endif" data-allow-clear="true" tabindex="-1">
+                <select id="jenis_perusahaan" name="jenis_perusahaan" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($jenisPerusahaan as $value)
                   <option value="{{$value->id}}" @if(old('jenis_perusahaan') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -42,7 +42,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Wilayah <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="branch" name="branch" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('branch')) is-invalid @else is-valid @endif @endif" data-allow-clear="true" tabindex="-1">
+                <select id="branch" name="branch" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($branch as $value)
                   <option value="{{$value->id}}" @if(old('branch') == $value->id) selected @endif>{{$value->name}}</option>
@@ -55,12 +55,12 @@
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Telepon Perusahaan</label>
             <div class="col-sm-4">
-              <input type="number" id="telp_perusahaan" name="telp_perusahaan" value="{{old('telp_perusahaan')}}" class="form-control @if ($errors->any()) is-valid @endif">
+              <input type="number" id="telp_perusahaan" name="telp_perusahaan" value="{{old('telp_perusahaan')}}" class="form-control @if ($errors->any())   @endif">
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Alamat Perusahaan</label>
             <div class="col-sm-10">
               <div class="form-floating form-floating-outline mb-2">
-                <textarea class="form-control mt-3 h-px-100 @if ($errors->any()) is-valid @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{old('alamat_perusahaan')}}</textarea>
+                <textarea class="form-control mt-3 h-px-100 @if ($errors->any())   @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{old('alamat_perusahaan')}}</textarea>
               </div>
             </div>
           </div>          
@@ -70,7 +70,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Sumber Leads</label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="platform" name="platform" class="select2 form-select select2-hidden-accessible @if ($errors->any()) is-valid @endif" data-allow-clear="true" tabindex="-1">
+                <select id="platform" name="platform" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($platform as $value)
                   <option value="{{$value->id}}" @if(old('platform') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -81,7 +81,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="kebutuhan" name="kebutuhan" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('kebutuhan')) is-invalid @else is-valid @endif @endif" data-allow-clear="true" tabindex="-1">
+                <select id="kebutuhan" name="kebutuhan" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('kebutuhan')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($kebutuhan as $value)
                   <option value="{{$value->id}}" @if(old('kebutuhan') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -98,7 +98,7 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">PIC <span class="text-danger">*</span></label>
             <div class="col-sm-4">
-              <input type="text" id="pic" name="pic" value="{{old('pic')}}" class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else is-valid @endif @endif">
+              <input type="text" id="pic" name="pic" value="{{old('pic')}}" class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
               @if($errors->has('pic'))
                   <div class="invalid-feedback">{{$errors->first('pic')}}</div>
               @endif
@@ -106,7 +106,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="jabatan_pic" name="jabatan_pic" class="select2 form-select select2-hidden-accessible @if ($errors->any()) is-valid @endif" data-allow-clear="true" tabindex="-1">
+                <select id="jabatan_pic" name="jabatan_pic" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($jabatanPic as $value)
                   <option value="{{$value->id}}" @if(old('jabatan_pic') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -118,11 +118,11 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Nomor Telepon</label>
             <div class="col-sm-4">
-              <input type="number" id="no_telp" name="no_telp" value="{{old('no_telp')}}" class="form-control @if ($errors->any()) is-valid @endif">
+              <input type="number" id="no_telp" name="no_telp" value="{{old('no_telp')}}" class="form-control @if ($errors->any())   @endif">
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Email</label>
             <div class="col-sm-4">
-              <input type="text" id="email" name="email" value="{{old('email')}}" class="form-control @if ($errors->any()) is-valid @endif">
+              <input type="text" id="email" name="email" value="{{old('email')}}" class="form-control @if ($errors->any())   @endif">
             </div>
           </div>
           <hr class="my-4 mx-4">
@@ -130,7 +130,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Detail Leads</label>
             <div class="col-sm-10">
               <div class="form-floating form-floating-outline mb-4">
-                <textarea class="form-control h-px-100 @if ($errors->any()) is-valid @endif" name="detail_leads" id="detail_leads" placeholder="">{{old('detail_leads')}}</textarea>
+                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="detail_leads" id="detail_leads" placeholder="">{{old('detail_leads')}}</textarea>
               </div>
             </div>
           </div>

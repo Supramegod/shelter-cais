@@ -26,7 +26,7 @@
             <form enctype="multipart/form-data" id="upload-form" style="opacity:1 !important" action="{{route('leads.inquiry-import')}}" method="POST">
                 @csrf
                 <div class="input-group">
-                    <input type="file" name="file" id="file" class="form-control @if ($errors->any()) @if($errors->has('file')) is-invalid @else is-valid @endif @endif" >
+                    <input type="file" name="file" id="file" class="form-control @if ($errors->any()) @if($errors->has('file')) is-invalid @else   @endif @endif" >
                     <label class="input-group-text" for="file">Pilih file</label>
                     @if($errors->has('file'))
                       <div class="invalid-feedback">{{$errors->first('file')}}</div>

@@ -209,9 +209,9 @@
   right: calc(var(--bs-gutter-x, 1.5rem) / 2);
 }
 
-.fv-plugins-bootstrap5 .form-select.fv-plugins-icon-input.is-valid,
+.fv-plugins-bootstrap5 .form-select.fv-plugins-icon-input. ,
 .fv-plugins-bootstrap5 .form-select.fv-plugins-icon-input.is-invalid,
-.fv-plugins-bootstrap5 .form-control.fv-plugins-icon-input.is-valid,
+.fv-plugins-bootstrap5 .form-control.fv-plugins-icon-input. ,
 .fv-plugins-bootstrap5 .form-control.fv-plugins-icon-input.is-invalid {
   background-image: none;
 }

@@ -687,7 +687,7 @@ if (typeof $ !== 'undefined') {
 }
 
 $('.form-control').keyup(function(){
-  $(this).removeClass('is-valid');
+  $(this).removeClass(' ');
   $(this).removeClass('is-invalid');
   $(this).remove('invalid-feedback');
   $('#'+$(this).data('container')).removeClass('is-invalid');

@@ -57,7 +57,7 @@ select.selectpicker {
 .has-error .bootstrap-select .dropdown-toggle, .error .bootstrap-select .dropdown-toggle, .bootstrap-select.is-invalid .dropdown-toggle, .was-validated .bootstrap-select select:invalid + .dropdown-toggle {
   border-color: rgb(185, 74, 72);
 }
-.bootstrap-select.is-valid .dropdown-toggle, .was-validated .bootstrap-select select:valid + .dropdown-toggle {
+.bootstrap-select.  .dropdown-toggle, .was-validated .bootstrap-select select:valid + .dropdown-toggle {
   border-color: #28a745;
 }
 .bootstrap-select.fit-width {

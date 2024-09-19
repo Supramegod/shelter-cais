@@ -27,7 +27,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Leads / customer</label>
             <div class="col-sm-4">
               <div class="input-group">
-                <input type="text" id="leads" name="leads" value="{{$leads->nama_perusahaan}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else is-valid @endif @endif" readonly>
+                <input type="text" id="leads" name="leads" value="{{$leads->nama_perusahaan}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else   @endif @endif" readonly>
               </div>
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Tanggal Activity</label>

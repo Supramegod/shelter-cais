@@ -20,7 +20,7 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
             <div class="col-sm-9">
-              <input type="text" id="nama" name="nama" value="{{old('nama')}}" class="form-control @if ($errors->any()) @if($errors->has('nama')) is-invalid @else is-valid @endif @endif">
+              <input type="text" id="nama" name="nama" value="{{old('nama')}}" class="form-control @if ($errors->any()) @if($errors->has('nama')) is-invalid @else   @endif @endif">
               @if($errors->has('nama'))
                   <div class="invalid-feedback">{{$errors->first('nama')}}</div>
               @endif

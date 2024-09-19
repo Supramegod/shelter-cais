@@ -416,7 +416,7 @@ $(function () {
       trigger: new FormValidation.plugins.Trigger(),
       bootstrap5: new FormValidation.plugins.Bootstrap5({
         // Use this for enabling/changing valid/invalid class
-        eleValidClass: 'is-valid',
+        eleValidClass: ' ',
         rowSelector: function (field, ele) {
           // field is the field name & ele is the field element
           return '.mb-4';

@@ -84,7 +84,7 @@
                 <div class="form-floating form-floating-outline mb-3">
                   <input
                     type="text"
-                    class="form-control @if ($errors->any()) @if($errors->has('username')) is-invalid @else is-valid @endif @endif"
+                    class="form-control @if ($errors->any()) @if($errors->has('username')) is-invalid @else @endif @endif"
                     id="username"
                     name="username"
                     placeholder="Masukkan Username"
@@ -99,7 +99,7 @@
                     <div class="input-group input-group-merge is-invalid" id="ct-password">
                       <div class="form-floating form-floating-outline">
                         <input type="password" id="password" 
-                        class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else is-valid @endif @endif" 
+                        class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else   @endif @endif" 
                         data-container="ct-password" name="password" placeholder="············">
                         <label for="password">Password</label>
                       </div>
