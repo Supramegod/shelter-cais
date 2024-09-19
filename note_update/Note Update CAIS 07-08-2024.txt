@@ -1,0 +1,25 @@
+Note Update CAIS 06-08-2024
+-------------------------------
+>> Menu Leads
+1. Typo Export harusnya import
+2. Perbaikan error pada Export dan Import
+3. Perbaikan Hasil PDF Export kepotong
+4. Perbaikan validasi nomor telepon (telp perusahaan, nomor PIC) dibuat inputan angka saja
+5. Perbaikan kolom alamat perusahaan dijadikan opsional, wilayah atau branch wajib isi.
+6. Perbaikan kebutuhan wajib diisi, kalaupun gk spesifik atau diluar yg dimaksud dibuat ada opsi "lain-lain".
+7. Done Form Untuk pendaftaran Leads , Url : https://dev-cais.shelterapp2.co.id/contact?platform=Instagram
+8. Done Open API Form Leads ( untuk digunakan pada Website https://shelterindonesia.id ) dokumentasi terlampir
+
+TAMBAHAN UPDATE
+>> Menu Leads
+9. perbaikan urutan nomor yang kembali ( dari AAAAQ ke AAAAM lagi ).
+10. CAIS sekarang bisa koneksi ke HRIS ( login maupun data )
+11. penambahan role baru pada HRIS ( role : marcomm )
+
+TAMBAHAN UPDATE
+>> Menu Leads
+12. Penambahan Filter Halaman Leads.
+
+TAMBAHAN UPDATE
+>> Menu Master
+13. Penambahan Master Platform.

@@ -1,0 +1,6 @@
+Note Update CAIS 26-08-2024
+-------------------------------
+>> Menu Leads
+1. Otomasi/integrasi Website https://shelterindonesia.id pada form Kontak dengan CAIS.
+2. Form kontak yang mengisi kebutuhan selain Security , Labour , Cleaning Service , dan logistik akan tetap masuk menjadi leads untuk di filter sendiri oleh marcomm
+  

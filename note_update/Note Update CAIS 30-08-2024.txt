@@ -1,0 +1,7 @@
+Note Update CAIS 30-08-2024
+-------------------------------
+1. ketika membuat activity baru " create activity " di view leads data data leads yang ada otomatis terisi tetapi masih bisa diedit
+2. ketika email tambahkan form email tujuan
+3. status leads tidak berubah saat update / create activity
+4. Rubah Nama Platform menjadi Sumber Leads
+5. Ketika leads sudah ada sales maka otomatis langsung terisi

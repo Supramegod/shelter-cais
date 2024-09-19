@@ -1,0 +1,7 @@
+Note Update CAIS 26-08-2024
+-------------------------------
+>> Menu Leads
+1. Perbaikan view pada customer activity
+2. penambahan tipe customer activity baru ( secara tampilan atau tipe ) yaitu : Visit dan Kirim Berkas ( disesuaikan dengan figma )
+3. penambahan view history customer activity pada menu view leads dan view customer activity
+4. perbaikan minor bug

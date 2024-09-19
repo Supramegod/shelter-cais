@@ -1,0 +1,133 @@
+-----------------------------
+MEETING IT SHELTER 01-07-2024
+-----------------------------
+### CAIS
+1. Monitoring kontrak
+	* list , dengan search Kolomnya ( ID , site , SPK , PKS , awal , akhir , action )
+	 	- apabila >= maka warnanya hijau atau biru muda untuk melihat itu site baru atau lama
+	 	- apabila kontraknya <= 90 hari akan berakhir maka berwarna kuning ( action : send email / nonaktif apabila sudah send email ke PIC , tambah sales/activity call / visit , tombol masuk ke quotation agar bisa masuk ke quotation lanjutan  )
+	 	- apabila kontraknya <= 60 hari akan berakhir maka berwarna merah ( action : send email / nonaktif apabila sudah send email ke PIC , tambah activity call / visit , tombol quotation lanjutan )
+	 	- apabila kontraknya sudah lewat dari akhir maka warna mati ( action : terminate ( untuk memutus kontrak <sudah tidak bisa penagihan , payroll , pkwt nonaktif> 6 bulan setelah terminate balik lagi jadi leads ) ,  
+	
+	- untuk custom saat HPP bisa checklist untuk perhitungan MF
+	* API SPK CAIS
+	* history global ( activity , kegiatan dari quotation ) dari leads 
+	* form complain dan rekapan komplain
+	* Re Kontrak bisa ganti entitas 
+	* Perbandingan Quotation Sebelumnya dan Setelah dirubah
+
+### HRIS
+1. flyer otomatis dari requirement pada quotation lowongan
+
+======================================================================================================================================
+MEETING IT SHELTER 15-07-2024
+------------------------------------
+
+### CAIS
+1. Untuk Harga dibulatkan ke 35
+2. ID customer , status , catatan pada Leads untuk mencegah apabila blacklist , seperti contoh pada Hartono , shelter sudah di blacklist karena kasus tertentu
+3. untuk nama leads . perusahaan di ketatkan penamaannya dak boleh double
+4. sales activity
+	- manager / telemarketing bisa mengganti nama tim dan nama sales
+	- kalau sebagai sales maka hanya dapat membuat keterangan
+	- untuk import leads pastikan secara data sudah bisa masuk dan tidak ada kendala
+	- nama perusahaan , telpon , perusahaan , pic , no pic , email pic, status , keterangan , platform ( Ketika dia dari api website maka langsung otomatis "Website")
+	- bisa update data leads di sales activity
+	- tambahkan button complain untuk jump ke form complain
+	- tambahkan create quotation
+	- bisa update status dari leads tersebut
+	- dapatkan geolocation ( lat long ) dari leads tersebut
+	
+5. QUOTATION
+	- tidak bisa ada edit data perusahaan
+	- ada master salary role
+		* 21 20 gajian tgl 1 , 25 26 gajian tgl 5
+		* kolom : periode gajian , cut off.
+		- Ketika penggajian muncul 2 yaitu slip gaji ke karyawan , invoice ke customer
+	- Jenis perusahaan menentukan kategori resiko berdasarkan BPJS
+	- kalau dibawah 4 program BPJS maka butuh approval
+	- setelah klik generate maka muncul tab tab
+	- klik generate berdasarkan harga saat itu
+	- kategori resiko masuk nanti ke HPP BPJS kecelakaan kerja
+	- jika 2 program bpjs maka : JKK , JKM , kalau 3 maka : JKK , JKM , JHT , kalau 4 maka : JKK JKM JHT JP
+	- di HPP bisa menambahkan baris baru 
+	- persentase bpjs di HPP bisa diedit kecuali JKK
+	- managemnt fee : total biaya , total gaji , custom ( checklist komponent , MF )
+	- ketika quotation pertama diisi bisa di save , kalau sudah manajemen approve tidak bisa dirubah bisa nya bikin baru
+	- penulisan kode Customer Activity , quotation, SPK , PKS , ADENDUM ,LANJUTAN : QUO[nama form]/SIG[Entitas]/SG[security /Nama Kebutuhan]/072024[bulan tahun]-00001 [nomor transaksi]=> SG = Security Guard / Cleaning Service = CS / Labour = LS / Logistik = LG
+
+6. SPK
+	- SPK tergenerate ketika Quotation Aktif
+	- sudah kedua belah pihak tapi belum ditandatangani
+
+7. PKS
+	- sistem nya upload
+
+8. Komplain
+	- dapat open API dari issueQ
+
+9. Monitoring Kontrak
+	- sesuai figma
+	- ada tombol quotation lanjutan
+
+10. Terminate Kontrak
+	- HOLD
+
+11. Report
+	- customer closing leads
+	- leads in by source
+	
+	
+
+ALUR ==> MARCOM - CREATE LEADS -> SALES ACTIVITY -> CREATE QUOTATION -> WON / TIDAK -> PKS
+
+
+
+MEETING CAIS 16-07-2024
+---------------------------------------------------
+
+1. Quotation
+	- PKHL langsung custom untuk UMP
+	- custom harian , 1 bulan berapa hari kerja
+	- PKHL kontrak tidak boleh > 3 bulan
+	- PR : BORONGAN DAN GARDA
+		** Quotation multisite multi lokasi
+2. Leads 
+	- Otomasi Leads dari semua platform ( instagram (chatbot), whatsapp (chatbot), facebook (chatbot), website ( shelterindonesia.id ) )
+	- untuk yang sama sekali belum ada activity maka diwarnai hijau
+	- untuk master informasi bisa generate QRIS
+	- 
+
+
+
+
+
+- Wilayah - belum ada, perlu mockup?
+- Platform - belum ada, kolom : id, device cukup?
+- Jenis Perusahaan - belum ada, id, jenis cukup?
+- Kebutuhan / service - belum ada, perlu mockup?
+- Jabatan -sudah ada, m_position
+- Tim Sales - belum ada, perlu mockup?
+- Karyawan Sales - sudah ada, m_employee -> site_id = 2 AND status_approval = 3 AND position_id = id sales 
+- Status Sales Call  - belum ada, perlu mockup?
+- Provinsi - sudah ada, m_province
+- Kabupaten / Kota - sudah ada, m_city
+- Kecamatan - belum ada, id, nama cukup ?
+- Status Prospect - belum ada, id, status cukup?
+- Entitas - sudah ada, m_company
+- Rule Salary - belum ada, perlu mockup?
+- Management Fee - belum ada, perlu mockup?
+- UMK / UMP - belum ada, perlu mockup?
+
+
+CAIS SHELTER 29-07-2024
+-----------------------------------------
+1. button aksi ditaruh kanan XXX
+2. view di full kan XXX
+3. tombol actionya dikecilkan XXX
+4. hilangkan search per kolom XXX
+5. tambahkan filter form
+6. ganti sales activity menjadi customer activity XXX
+7. filter diusahakan mirip dengan accurate ( ada centangan filter )
+8. pindahkan server ke development
+9. pastikan data yang di export sesuai dengan data yang di filter

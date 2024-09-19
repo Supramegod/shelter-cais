@@ -1,0 +1,614 @@
+<?php
+
+namespace App\Http\Controllers\Sales;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use DB;
+use App\Http\Controllers\SystemController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use \stdClass;
+use App\Exports\LeadsTemplateExport;
+use App\Exports\LeadsExport;
+
+
+class LeadsController extends Controller
+{
+
+    public function index (Request $request){
+        $tglDari = $request->tgl_dari;
+        $tglSampai = $request->tgl_sampai;
+
+        if($tglDari==null){
+            $tglDari = carbon::now()->startOfMonth()->subMonths(3)->toDateString();
+        }
+        if($tglSampai==null){
+            $tglSampai = carbon::now()->toDateString();
+        }
+
+        $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
+        $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
+        
+
+        $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+        $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
+        $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+
+        $error =null;
+        $success = null;
+        if($ctglDari->gt($ctglSampai)){
+            $tglDari = carbon::now()->startOfMonth()->subMonths(3)->toDateString();
+            $error = 'Tanggal dari tidak boleh melebihi tanggal sampai';
+        };
+        if($ctglSampai->lt($ctglDari)){
+            $tglSampai = carbon::now()->toDateString();
+            $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
+        }
+        return view('sales.leads.list',compact('branch','platform','status','tglDari','tglSampai','request','error','success'));
+    }
+
+    public function add (Request $request){
+        try {
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+            $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+            $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+
+            return view('sales.leads.add',compact('branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now'));
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function view (Request $request,$id){
+        try {
+            $data = DB::table('sl_leads')->where('id',$id)->first();
+
+            $data->stgl_leads = Carbon::createFromFormat('Y-m-d',$data->tgl_leads)->isoFormat('D MMMM Y');
+            $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
+
+            $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+            $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+            $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+
+            $activity = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id',$id)->orderBy('created_at','desc')->limit(5)->get();
+            foreach ($activity as $key => $value) {
+                $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
+                $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+            }
+
+            return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform'));
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+        
+    }
+
+    public function list (Request $request){
+        try {
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+            $data = DB::table('sl_leads')
+                        ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
+                        ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
+                        ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
+                        ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                        ->select('sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
+                        ->whereNull('sl_leads.deleted_at');
+            
+            if(!empty($request->tgl_dari)){
+                $data = $data->where('sl_leads.tgl_leads','>=',$request->tgl_dari);
+            }else{
+                $data = $data->where('sl_leads.tgl_leads','==',carbon::now()->toDateString());
+            }
+            if(!empty($request->tgl_sampai)){
+                $data = $data->where('sl_leads.tgl_leads','<=',$request->tgl_sampai);
+            }else{
+                $data = $data->where('sl_leads.tgl_leads','==',carbon::now()->toDateString());
+            }
+            if(!empty($request->branch)){
+                $data = $data->where('sl_leads.branch_id',$request->branch);
+            }
+            if(!empty($request->platform)){
+                $data = $data->where('sl_leads.platform_id',$request->platform);
+            }
+            if(!empty($request->status)){
+                $data = $data->where('sl_leads.status_leads_id',$request->status);
+            }
+
+            //divisi sales
+            if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
+                // sales
+                if(Auth::user()->role_id==29){
+                    $data = $data->where('m_tim_sales_d.user_id',Auth::user()->id);
+                }else if(Auth::user()->role_id==30){
+                }
+                // spv sales
+                else if(Auth::user()->role_id==31){
+                    $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+                    $memberSales = [];
+                    $sales = DB::table('m_tim_sales_d')->whereNull('deleted_at')->where('tim_sales_id',$tim->tim_sales_id)->get();
+                    foreach ($sales as $key => $value) {
+                        array_push($memberSales,$value->user_id);
+                    }
+                    $data = $data->whereIn('m_tim_sales_d.user_id',$memberSales);
+                }
+                // Asisten Manager Sales , Manager Sales
+                else if(Auth::user()->role_id==32 || Auth::user()->role_id==33){
+
+                }
+            }
+            //divisi RO
+            else if(in_array(Auth::user()->role_id,[4,5,6,8])){
+                if(in_array(Auth::user()->role_id,[4,5])){
+                    $data = $data->where('sl_leads.ro_id',Auth::user()->id);
+                }else if(in_array(Auth::user()->role_id,[6,8])){
+
+                }
+            }
+            //divisi crm
+            else if(in_array(Auth::user()->role_id,[54,55,56])){
+                if(in_array(Auth::user()->role_id,[54])){
+                    $data = $data->where('sl_leads.crm_id',Auth::user()->id);
+                }else if(in_array(Auth::user()->role_id,[55,56])){
+
+                }
+            };
+            
+            $data = $data->get();
+                        
+
+            foreach ($data as $key => $value) {
+                $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
+            }
+
+            return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+                return '<div class="justify-content-center d-flex">
+                                    <a href="'.route('leads.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                        </div>';
+            })
+            // ->editColumn('nama_perusahaan', function ($data) {
+            //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';
+            // })
+            ->rawColumns(['aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function save(Request $request) {
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'nama_perusahaan' => 'required|max:100|min:3',
+                'pic' => 'required',
+                'branch' => 'required',
+                'kebutuhan' => 'required'
+            ], [
+                'min' => 'Masukkan :attribute minimal :min',
+                'max' => 'Masukkan :attribute maksimal :max',
+                'required' => ':attribute harus di isi',
+            ]);
+    
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
+            }else{
+                $current_date_time = Carbon::now()->toDateTimeString();
+
+                $msgSave = '';
+                if(!empty($request->id)){
+                    DB::table('sl_leads')->where('id',$request->id)->update([
+                        'nama_perusahaan' => $request->nama_perusahaan,
+                        'telp_perusahaan' => $request->telp_perusahaan,
+                        'jenis_perusahaan_id' => $request->jenis_perusahaan,
+                        'branch_id' => $request->branch,
+                        'platform_id' => $request->platform,
+                        'kebutuhan_id' => $request->kebutuhan,
+                        'alamat' => $request->alamat_perusahaan,
+                        'pic' => $request->pic,
+                        'jabatan' => $request->jabatan_pic,
+                        'no_telp' => $request->no_telp,
+                        'email' => $request->email,
+                        'notes' => $request->detail_leads,
+                        'updated_at' => $current_date_time,
+                        'updated_by' => Auth::user()->name
+                    ]);
+                    $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
+                }else{
+                    $nomor = $this->generateNomor();
+                    DB::table('sl_leads')->insert([
+                        'nomor' =>  $nomor,
+                        'tgl_leads' => $current_date_time,
+                        'nama_perusahaan' => $request->nama_perusahaan,
+                        'telp_perusahaan' => $request->telp_perusahaan,
+                        'jenis_perusahaan_id' => $request->jenis_perusahaan,
+                        'branch_id' => $request->branch,
+                        'platform_id' => $request->platform,
+                        'kebutuhan_id' => $request->kebutuhan,
+                        'alamat' => $request->alamat_perusahaan,
+                        'pic' => $request->pic,
+                        'jabatan' => $request->jabatan_pic,
+                        'no_telp' => $request->no_telp,
+                        'email' => $request->email,
+                        'status_leads_id' => 1,
+                        'notes' => $request->detail_leads,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+                    $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan dengan nomor : '.$nomor.' !';
+                }
+            }
+            DB::commit();
+            return redirect()->back()->with('success', $msgSave);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function delete (Request $request){
+        try {
+            DB::beginTransaction();
+
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_leads')->where('id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->name
+            ]);
+
+            $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil dihapus.';
+            
+            DB::commit();
+            return redirect()->route('leads')->with('success', $msgSave);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function generateNomor (){
+        //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
+
+        //dapatkan dulu last leads 
+        $nomor = "AAAAA";
+
+        $lastLeads = DB::table('sl_leads')->orderBy('id', 'DESC')->first();
+        if($lastLeads!=null){
+            $nomor = $lastLeads->nomor;
+            $chars = str_split($nomor);
+            for ($i=count($chars)-1; $i >= 0; $i--) { 
+                //dapatkan ascii dari character
+                $ascii = ord($chars[$i]);
+
+                if(($ascii >= 48 && $ascii < 57) || ($ascii >= 65 && $ascii < 90)){
+                    $ascii += 1;
+                }else if ($ascii == 90 ) {
+                    $ascii = 48;
+                }else{
+                    continue;
+                }
+
+                $ascchar = chr($ascii);
+                $nomor = substr_replace($nomor,$ascchar,$i);
+                break;
+            }
+            if(strlen($nomor)<5){
+                $jumlah = 5-strlen($nomor);
+                for ($i=0; $i < $jumlah; $i++) { 
+                    $nomor = $nomor."A";
+                }
+            }
+        }
+
+        return $nomor;
+    }
+
+    public function generateNomorLanjutan ($nomor){
+        //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
+
+        //dapatkan dulu last leads 
+        // $nomor = "AAAAA";
+
+        $chars = str_split($nomor);
+        for ($i=count($chars)-1; $i >= 0; $i--) { 
+            //dapatkan ascii dari character
+            $ascii = ord($chars[$i]);
+
+            if(($ascii >= 48 && $ascii < 57) || ($ascii >= 65 && $ascii < 90)){
+                $ascii += 1;
+            }else if ($ascii == 90 ) {
+                $ascii = 48;
+            }else{
+                continue;
+            }
+
+            $ascchar = chr($ascii);
+            $nomor = substr_replace($nomor,$ascchar,$i);
+            break;
+        }
+        if(strlen($nomor)<5){
+            $jumlah = 5-strlen($nomor);
+            for ($i=0; $i < $jumlah; $i++) { 
+                $nomor = $nomor."A";
+            }
+        }
+
+        return $nomor;
+    }
+
+    public function import (Request $request){
+        $now = Carbon::now()->isoFormat('DD MMMM Y');
+
+        return view('sales.leads.import',compact('now'));
+    }
+
+    public function inquiryImport(Request $request){
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'file' => 'required|mimes:csv,xls,xlsx',
+            ], [
+                'min' => 'Masukkan :attribute minimal :min',
+                'max' => 'Masukkan :attribute maksimal :max',
+                'required' => ':attribute harus di isi',
+                'mimes' => 'tipe file harus csv,xls atau xlsx',
+            ]);
+    
+            $array = null;
+            $datas = [];
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
+            }else{
+                $file = $request->file('file');
+
+                // Get the csv rows as an array
+                $array = Excel::toArray(new stdClass(), $file);
+                $jumlahError = 0;
+                $jumlahWarning = 0;
+                $jumlahSuccess = 0;
+                $data = [];
+                foreach ($array as $key => $v) {
+                    foreach ($v as $keyd => $value) {
+                        if($keyd==0){
+                            continue;
+                        };
+                        if($value[0]==null&&$value[2]==null&&$value[3]==null&&$value[4]==null&&$value[5]==null&&$value[6]==null&&$value[7]==null){
+                            continue;
+                        }
+
+                        $value[12] = "";
+                        $value[13] = 1; // status : 1 success,2 warning , 3 error
+                        //convert date
+                        $UNIX_DATE = Carbon::now()->toDateString();
+                        try {
+                            $UNIX_DATE = ($value[1] - 25569) * 86400;
+                            $UNIX_DATE = gmdate("Y-m-d", $UNIX_DATE);
+                        } catch (\Throwable $th) {
+                        }
+                        $value[1] = $UNIX_DATE;
+
+                        //Cek Data Master
+                        $lbranch = DB::connection('mysqlhris')->table('m_branch')->where('name',$value[8])->first();
+                        $lplatform = DB::table('m_platform')->where('nama',$value[9])->first();
+                        $lkebutuhan = DB::table('m_kebutuhan')->where('nama',$value[7])->first();
+
+                        if($lbranch==null){
+                            $value[8] ="";
+                            if($value[12]!=""){
+                                $value[12] .= " , ";
+                                $value[13] = 2;
+                            }
+                            $value[12] .= "Wilayah Tidak ditemukan";
+                        }
+
+                        if($lplatform==null){
+                            $value[9] ="";
+                            if($value[12]!=""){
+                                $value[12] .= " , ";
+                                $value[13] = 2;
+                            }
+                            $value[12] .= "Sumber Leads Tidak ditemukan";
+                        }
+
+                        if($lkebutuhan==null){
+                            $value[7] ="";
+                            if($value[12]!=""){
+                                $value[12] .= " , ";
+                                $value[13] = 2;
+                            }
+                            $value[12] .= "Kebutuhan Tidak ditemukan";
+                        }
+
+                        if($value[12]==""){
+                            $jumlahSuccess++;
+                        }else{
+                            $jumlahWarning++;
+                        }
+
+                        array_push($data,$value);
+                    }
+                }
+                array_push($datas,$data);
+            }
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            return view('sales.leads.inquiry',compact('datas','now','jumlahError','jumlahSuccess','jumlahWarning'));
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveImport(Request $request){
+        DB::beginTransaction();
+
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $datas = $request->value;
+
+            $msgSave = '';
+
+            $nomor = "";
+
+            foreach ($datas as $key => $value) {
+                if($key==0){
+                    $nomor = $this->generateNomor();
+                }else{
+                    $nomor = $this->generateNomorLanjutan($nomor);
+                }
+
+                $data = explode("||",$value);
+
+                $dtgl = $data[1];
+                $dperusahaan = $data[2];
+                $dnama = $data[3];
+                $djabatan = $data[4];
+                $dtelp = $data[5];
+                $demail = $data[6];
+                $dkebutuhan = $data[7];
+                $dbranch = $data[8];
+                $dplatform = $data[9];
+                $dketerangan = $data[10];
+
+                $lbranch = DB::connection('mysqlhris')->table('m_branch')->where('name',$dbranch)->first();
+                $lplatform = DB::table('m_platform')->where('nama',$dplatform)->first();
+                $lkebutuhan = DB::table('m_kebutuhan')->where('nama',$dkebutuhan)->first();
+
+                $branch = null;
+                if($lbranch!=null){
+                    $branch = $lbranch->id;
+                }
+
+                $platform = null;
+                if($lplatform!=null){
+                    $platform = $lplatform->id;
+                }
+
+                $kebutuhan = null;
+                if($lkebutuhan!=null){
+                    $kebutuhan = $lkebutuhan->id;
+                }
+
+
+                DB::table('sl_leads')->insert([
+                    'nomor' =>  $nomor,
+                    'tgl_leads' => $dtgl,
+                    'nama_perusahaan' => $dperusahaan,
+                    'branch_id' => $branch,
+                    'platform_id' => 99,
+                    'kebutuhan_id' =>  $kebutuhan,
+                    'pic' =>  $dnama,
+                    'jabatan' =>  $djabatan,
+                    'no_telp' => $dtelp,
+                    'email' => $demail,
+                    'status_leads_id' => 1,
+                    'notes' => $dketerangan,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);    
+            }
+            
+            $msgSave = 'Import Leads berhasil Dilakukan !';
+
+            DB::commit();
+            return redirect()->route('leads')->with('success', $msgSave);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function templateImport(Request $request) {
+        $dt = Carbon::now()->toDateTimeString();
+
+        return Excel::download(new LeadsTemplateExport(), 'Template Import Leads-'.$dt.'.xlsx');
+    }
+
+    public function exportExcel(Request $request){
+        $dt = Carbon::now()->toDateTimeString();
+
+        return Excel::download(new LeadsExport(), 'Leads-'.$dt.'.xlsx');
+    }
+
+    public function availableLeads (Request $request){
+        try {
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+            $data = DB::table('sl_leads')
+                        ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
+                        ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
+                        ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
+                        ->leftJoin('m_kebutuhan','sl_leads.kebutuhan_id','=','m_kebutuhan.id')
+                        ->leftJoin('m_tim_sales','sl_leads.tim_sales_id','=','m_tim_sales.id')
+                        ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                        ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
+                        ->whereNull('sl_leads.deleted_at');
+            
+            //divisi sales
+            if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
+                // sales
+                if(Auth::user()->role_id==29){
+                    $data = $data->where('m_tim_sales_d.user_id',Auth::user()->id);
+                }else if(Auth::user()->role_id==30){
+                }
+                // spv sales
+                else if(Auth::user()->role_id==31){
+                    $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+                    $memberSales = [];
+                    $sales = DB::table('m_tim_sales_d')->whereNull('deleted_at')->where('tim_sales_id',$tim->tim_sales_id)->get();
+                    foreach ($sales as $key => $value) {
+                        array_push($memberSales,$value->user_id);
+                    }
+                    $data = $data->whereIn('m_tim_sales_d.user_id',$memberSales);
+                }
+                // Asisten Manager Sales , Manager Sales
+                else if(Auth::user()->role_id==32 || Auth::user()->role_id==33){
+
+                }
+            }
+            //divisi RO
+            else if(in_array(Auth::user()->role_id,[4,5,6,8])){
+                if(in_array(Auth::user()->role_id,[4,5])){
+                    $data = $data->where('sl_leads.ro_id',Auth::user()->id);
+                }else if(in_array(Auth::user()->role_id,[6,8])){
+
+                }
+            }
+            //divisi crm
+            else if(in_array(Auth::user()->role_id,[54,55,56])){
+                if(in_array(Auth::user()->role_id,[54])){
+                    $data = $data->where('sl_leads.crm_id',Auth::user()->id);
+                }else if(in_array(Auth::user()->role_id,[55,56])){
+
+                }
+            };
+            
+            $data = $data->get();
+                        
+
+            foreach ($data as $key => $value) {
+                $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
+            }
+            return DataTables::of($data)
+            ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+}

@@ -1,0 +1,195 @@
+shelter3
+stntstntb412ra
+
+120.188.78.242
+development
+shelter3_dev_cais
+shelter3_dev_cais
+!,qgOLk(5}1^
+
+
+
+production
+shelter3_cais
+shelter3_cais
+KDu.*N.xZ(ba
+
+SITE KEY CAPTCHA = 6Lf-yCAqAAAAACD0QTRflbB4lo8Lvpn-FScg-eNp
+SECRET KEY CAPTCHA = 6Lf-yCAqAAAAAF1WPcv-X5-AZcHU9xkmxad93fM7
+
+KEY OPEN API LEADS = 4jYE6RC6LZz06mbSboyHl0PBTgKMNmvY8TkIV5WHiTi6AQha8Ji8rXqws4sVmh7s
+
+-----------------------------
+MEETING IT SHELTER 01-07-2024
+-----------------------------
+### CAIS
+1. Monitoring kontrak
+	* list , dengan search Kolomnya ( ID , site , SPK , PKS , awal , akhir , action )
+	 	- apabila >= maka warnanya hijau atau biru muda untuk melihat itu site baru atau lama
+	 	- apabila kontraknya <= 90 hari akan berakhir maka berwarna kuning ( action : send email / nonaktif apabila sudah send email ke PIC , tambah sales/activity call / visit , tombol masuk ke quotation agar bisa masuk ke quotation lanjutan  )
+	 	- apabila kontraknya <= 60 hari akan berakhir maka berwarna merah ( action : send email / nonaktif apabila sudah send email ke PIC , tambah activity call / visit , tombol quotation lanjutan )
+	 	- apabila kontraknya sudah lewat dari akhir maka warna mati ( action : terminate ( untuk memutus kontrak <sudah tidak bisa penagihan , payroll , pkwt nonaktif> 6 bulan setelah terminate balik lagi jadi leads ) ,  
+	
+	- untuk custom saat HPP bisa checklist untuk perhitungan MF
+	* API SPK CAIS
+	* history global ( activity , kegiatan dari quotation ) dari leads 
+	* form complain dan rekapan komplain
+	* Re Kontrak bisa ganti entitas 
+	* Perbandingan Quotation Sebelumnya dan Setelah dirubah
+
+======================================================================================================================================
+MEETING IT SHELTER 15-07-2024
+------------------------------------
+
+### CAIS
+XXX 1. Untuk Harga dibulatkan ke 35
+2. ID customer , status , catatan pada Leads untuk mencegah apabila blacklist , seperti contoh pada Hartono , shelter sudah di blacklist karena kasus tertentu
+3. untuk nama leads . perusahaan di ketatkan penamaannya dak boleh double
+4. sales activity
+	- manager / telemarketing bisa mengganti nama tim dan nama sales
+	- kalau sebagai sales maka hanya dapat membuat keterangan
+	- untuk import leads pastikan secara data sudah bisa masuk dan tidak ada kendala
+	- nama perusahaan , telpon , perusahaan , pic , no pic , email pic, status , keterangan , platform ( Ketika dia dari api website maka langsung otomatis "Website")
+	- bisa update data leads di sales activity
+	- tambahkan button complain untuk jump ke form complain
+	- tambahkan create quotation
+	- bisa update status dari leads tersebut
+	- dapatkan geolocation ( lat long ) dari leads tersebut
+	
+5. QUOTATION
+	- tidak bisa ada edit data perusahaan
+	- ada master salary role
+		* 21 20 gajian tgl 1 , 25 26 gajian tgl 5
+		* kolom : periode gajian , cut off.
+		- Ketika penggajian muncul 2 yaitu slip gaji ke karyawan , invoice ke customer
+	- Jenis perusahaan menentukan kategori resiko berdasarkan BPJS
+	- kalau dibawah 4 program BPJS maka butuh approval
+	- setelah klik generate maka muncul tab tab
+	- klik generate berdasarkan harga saat itu
+	- kategori resiko masuk nanti ke HPP BPJS kecelakaan kerja
+	- jika 2 program bpjs maka : JKK , JKM , kalau 3 maka : JKK , JKM , JHT , kalau 4 maka : JKK JKM JHT JP
+	- di HPP bisa menambahkan baris baru 
+	- persentase bpjs di HPP bisa diedit kecuali JKK
+	- managemnt fee : total biaya , total gaji , custom ( checklist komponent , MF )
+	- ketika quotation pertama diisi bisa di save , kalau sudah manajemen approve tidak bisa dirubah bisa nya bikin baru
+	- penulisan kode Customer Activity , quotation, SPK , PKS , ADENDUM ,LANJUTAN : QUO[nama form]/SIG[Entitas]/SG[security /Nama Kebutuhan]/072024[bulan tahun]-00001 [nomor transaksi]=> SG = Security Guard / Cleaning Service = CS / Labour = LS / Logistik = LG
+
+6. SPK
+	- SPK tergenerate ketika Quotation Aktif
+	- sudah kedua belah pihak tapi belum ditandatangani
+
+7. PKS
+	- sistem nya upload
+
+8. Komplain
+	- dapat open API dari issueQ
+
+9. Monitoring Kontrak
+	- sesuai figma
+	- ada tombol quotation lanjutan
+
+10. Terminate Kontrak
+	- HOLD
+
+11. Report
+	- customer closing leads
+	- leads in by source
+	
+	
+
+ALUR ==> MARCOM - CREATE LEADS -> SALES ACTIVITY -> CREATE QUOTATION -> WON / TIDAK -> PKS
+
+
+MEETING CAIS 16-07-2024
+---------------------------------------------------
+
+1. Quotation
+	- PKHL langsung custom untuk UMP
+	- custom harian , 1 bulan berapa hari kerja
+	- PKHL kontrak tidak boleh > 3 bulan
+	- PR : BORONGAN DAN GARDA
+		** Quotation multisite multi lokasi
+2. Leads 	
+	- Otomasi Leads dari semua platform ( instagram (chatbot), whatsapp (chatbot), facebook (chatbot), website ( shelterindonesia.id ) )
+XXX	- untuk yang sama sekali belum ada activity maka diwarnai hijau
+	- untuk master informasi bisa generate QRIS
+	- 
+
+
+- Wilayah - belum ada, perlu mockup?
+- Platform - belum ada, kolom : id, device cukup?
+- Jenis Perusahaan - belum ada, id, jenis cukup?
+- Kebutuhan / service - belum ada, perlu mockup?
+- Jabatan -sudah ada, m_position
+- Tim Sales - belum ada, perlu mockup?
+- Karyawan Sales - sudah ada, m_employee -> site_id = 2 AND status_approval = 3 AND position_id = id sales 
+- Status Sales Call  - belum ada, perlu mockup?
+- Provinsi - sudah ada, m_province
+- Kabupaten / Kota - sudah ada, m_city
+- Kecamatan - belum ada, id, nama cukup ?
+- Status Prospect - belum ada, id, status cukup?
+- Entitas - sudah ada, m_company
+- Rule Salary - belum ada, perlu mockup?
+- Management Fee - belum ada, perlu mockup?
+- UMK / UMP - belum ada, perlu mockup?
+
+
+CAIS SHELTER 29-07-2024
+-----------------------------------------
+XXX	1. button aksi ditaruh kanan XXX
+XXX	2. view di full kan XXX
+XXX	3. tombol actionya dikecilkan XXX
+XXX	4. hilangkan search per kolom XXX
+XXX 5. tambahkan filter form
+XXX	6. ganti sales activity menjadi customer activity XXX
+XXX 7. filter diusahakan mirip dengan accurate ( ada centangan filter )
+8. pindahkan server ke development
+XXX 9. pastikan data yang di export sesuai dengan data yang di filter
+XXX	10. Nomor Leads Disesuaikan dengan format AAAAA,AAAAB,...,AAAAZ,AAAA0 XXXX
+
+
+NOTE CAIS 01-08-2024
+XXX 1. validasi nomor telepon (telp perusahaan, nomor PIC) dibuat inputan angka saja
+XXX 2. inputan wilayah (branch) dibuat wajib?
+XXX 3. jabatan dibuat opsional karena banyak yang gk diisi jabatannya
+XXX 4. kebutuhan wajib diisi, kalaupun gk spesifik atau diluar yg dimaksud dibuat ada opsi "lain-lain".
+1. kolom detail kebutuhan terutama untuk yang labour supply
+XXX 3. kolom alamat perusahaan dijadikan opsional, wilayah atau branch wajib isi.
+XXX 4. sisanya soal filter tanggal dan platform informasi
+
+NOTE CAIS 06-08-2024
+XXX 1. Typo Export harusnya import
+XXX 2. Export dan Import error
+XXX 3. Hasil PDF Export kepotong
+
+NOTE MEETING 14-08-2024
+XXX 1. dalam tabel klik row
+2. form penawaran dimasukkan ke cais juga
+
+NOTE MEETING 22-08-2024
+XXX 1. tidak bisa view detail customer activity (blank putih)
+XXX 2. input tanggal customer activity bisa maju dari tanggal sekarang, dan jika diinput muncul sukses tapi data tidak muncul di customer activity
+XXX 3. tanggal customer activity bisa lebih mundur dari tangal activity dibuat. dan jika disubmit tetap berhasil (?)
+XXX 1. Customer Activities > Telpon > isi start dan end durasi tidak menghitung otomatis
+XXX 2. Ketika leads yang sudah masuk customer activities dan sudah ditentukan salesnya, harusnya di daftar leads bukan biru lagi dan harus nya status nya sudah berubah sesuai dengan inputan customer activities
+XXX 3. Ketika sudah di tentukan siapa salesnya, harusnya sales lain tidak bisa lagi mengakses leads tersebut
+XXX 4. Ketika leads yang sudah ditentukan tim sales dan salesnya, harus nya Ketika baru dan di panggil leadsnya, tim sales dan sales nya yang sudah di tentukan sebelumnya harus nya ikut
+XXX 5. Perbaiki urutan penomoran
+
+NOTE MAS BAGAS 27-08-2024
+XXX 1. ketika membuat activity baru " create activity " di view leads data data leads yang ada otomatis terisi tetapi masih bisa diedit
+XXX 2. ketika email tambahkan form email tujuan
+XXX 3. status leads tidak berubah saat update / create activity
+XXX 4. data leads yang menjadi cust activity tidak muncul di list customer activity , activity baru muncul ketika membuat langsung di menu customer activity
+XXX 5. Rubah Nama Platform menjadi Sumber Leads
+
+Meeting 10-09-2024
+PENDING - masalah hak akses dijadikan menu
+XXX 	RO , CRM dan sales dijadikan informasi leads
+- dalam 2X 24 Jam kalau leads tersebut tidak ada aktifitas selain dari tele maka otomatis balik ke tele
+INFO	- penggajian dijadikan 2 tanggal
+XXX		- leads aktifitas jadikan 5 aktifitas terbaru
+XXX		- urutan aktifitas terbaru diatas
+- hijau is valid dihilangkan
+PENDING	- sales ada grouping berdasarkan layanan , wilayah
+INFO	- MENU BARU : insentif sales dll

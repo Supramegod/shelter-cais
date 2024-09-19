@@ -1,0 +1,272 @@
+@extends('layouts.master')
+@section('title','Quotation')
+@section('content')
+<!--/ Content -->
+<div class="container-fluid flex-grow-1 container-p-y">
+  <!-- <h4 class="py-3 mb-4"><span class="text-muted fw-light">Sales /</span> Quotation Baru</h4> -->
+  <!-- Default -->
+  <div class="row">
+    <!-- Vertical Wizard -->
+    <div class="col-12 mb-4">
+      <div class="bs-stepper wizard-vertical vertical mt-2">
+      <div class="bs-stepper-header gap-lg-2">
+          <div class="step crossed" data-target="#account-details-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">01</span>
+                <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">Site & Jenis Kontrak</span>
+                  <span class="bs-stepper-subtitle">Pilih Site Dan Jenis Kontrak</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step crossed" data-target="#personal-info-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">02</span>
+                <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">Detail Kontrak</span>
+                  <span class="bs-stepper-subtitle">Informasi detail kontrak</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step active" data-target="#social-links-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">03</span>
+                <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">Headcount</span>
+                  <span class="bs-stepper-subtitle">Informasi Headcount & Posisi</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step" data-target="#social-links-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">04</span>
+                <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">Upah dan MF</span>
+                  <span class="bs-stepper-subtitle">Upah dan Management Fee</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step" data-target="#social-links-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">05</span>
+                <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">BPJS</span>
+                  <span class="bs-stepper-subtitle">Informasi Detail Program BPJS</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step" data-target="#social-links-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">06</span>
+                <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">Perjanjian</span>
+                  <span class="bs-stepper-subtitle">Informasi Perjanjian</span>
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+        <div class="bs-stepper-content">
+          <form onSubmit="return false">
+            <!-- Account Details -->
+            <div id="account-details-1" class="content active">
+              <div class="content-header mb-5 text-center">
+                <h1 class="mb-0">HEADCOUNT</h1>
+                <h4>Informasi Jumlah Headcount beserta posisinya</h4>
+                <h4>Leads/Customer : PT. Setia Hati Sejahtera Tbk.</h4>
+              </div>
+              <div class="row mb-3">
+                <div class="col-xl-12">
+                  <div class="nav-align-top">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-home" aria-controls="navs-justified-home" aria-selected="true">
+                          <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i> Direct Labour
+                        </button>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false" tabindex="-1">
+                          <i class="tf-icons mdi mdi-security me-1"></i> Security
+                        </button>
+                      </li>
+                    <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
+                  </div>
+                  <div class="tab-content p-0">
+                    <div class="tab-pane fade active show" id="navs-justified-home" role="tabpanel">
+                      <div class="row mb-3 mt-3">
+                        <div class="col-sm-6">
+                          <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
+                          <div class="input-group">
+                            <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                              <option value="">- Pilih data -</option>
+                              <option value="">Security</option>  
+                              <option value="">Chief Security</option>  
+                              <option value="">Security Non Shift</option>  
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <label class="form-label" for="basic-default-password42">Jumlah Headcount</label>
+                          <div class="input-group">
+                            <input type="number" class="form-control" id="basic-default-password42">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                          <button class="btn btn-info btn-back w-20">
+                            <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
+                            <i class="mdi mdi-plus"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="row mt-5">
+                        <div class="table-responsive text-nowrap">
+                          <table class="table">
+                            <thead class="table-light">
+                              <tr>
+                                <th class="text-center">Kebutuhan</th>
+                                <th class="text-center">Nama Posisi/Jabatan</th>
+                                <th class="text-center">Jumlah Headcount</th>
+                                <th class="text-center">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                              <tr>
+                                <td>Direct Labour</td>
+                                <td>Direct Labour</td>
+                                <td class="text-center">9</td>
+                                <td>
+                                  <div class="col-12 d-flex justify-content-center">
+                                    <button class="btn btn-danger btn-back w-20">
+                                      <i class="mdi mdi-trash-can-outline"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tab-pane fade" id="navs-justified-profile" role="tabpanel">
+                      <div class="row mb-3 mt-3">
+                        <div class="col-sm-6">
+                          <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
+                          <div class="input-group">
+                            <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                              <option value="">- Pilih data -</option>
+                              <option value="">Security</option>  
+                              <option value="">Chief Security</option>  
+                              <option value="">Security Non Shift</option>  
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <label class="form-label" for="basic-default-password42">Jumlah Headcount</label>
+                          <div class="input-group">
+                            <input type="number" class="form-control" id="basic-default-password42">
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 d-flex justify-content-center mt-4">
+                            <button class="btn btn-info btn-back w-20">
+                              <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
+                              <i class="mdi mdi-plus"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mt-5">
+                        <div class="table-responsive text-nowrap">
+                          <table class="table">
+                            <thead class="table-light">
+                              <tr>
+                                <th class="text-center">Kebutuhan</th>
+                                <th class="text-center">Nama Posisi/Jabatan</th>
+                                <th class="text-center">Jumlah Headcount</th>
+                                <th class="text-center">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                              <tr>
+                                <td>Security</td>
+                                <td>Chief Security</td>
+                                <td class="text-center">2</td>
+                                <td>
+                                  <div class="col-12 d-flex justify-content-center">
+                                    <button class="btn btn-danger btn-back w-20">
+                                      <i class="mdi mdi-trash-can-outline"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Security</td>
+                                <td>Security</td>
+                                <td class="text-center">15</td>
+                                <td>
+                                  <div class="col-12 d-flex justify-content-center">
+                                    <button class="btn btn-danger btn-back w-20">
+                                      <i class="mdi mdi-trash-can-outline"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-5">
+                <div class="col-12 d-flex justify-content-between">
+                <a href="{{route('quotation.edit-2',1)}}" class="btn btn-primary btn-back w-20">
+                    <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
+                    <i class="mdi mdi-arrow-left"></i>
+                  </a>
+                  <a href="{{route('quotation.edit-4',1)}}" class="btn btn-primary btn-next w-20">
+                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
+                    <i class="mdi mdi-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="container-m-nx mb-5" />
+</div>
+
+<!--/ Content -->
+@endsection
+
+@section('pageScript')
+
+@endsection
