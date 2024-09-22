@@ -9,15 +9,15 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        <div class="bs-stepper-header gap-lg-2">
-          <div class="step crossed" data-target="#account-details-1">
+      <div class="bs-stepper-header gap-lg-3 pt-5"  style="border-right:1px solid rgba(0, 0, 0, 0.1);">
+          <div class="mt-5 step crossed" data-target="#account-details-1">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
               <span class="bs-stepper-label">
                 <span class="bs-stepper-number">01</span>
                 <span class="d-flex flex-column gap-1 ms-2">
                   <span class="bs-stepper-title">Site & Jenis Kontrak</span>
-                  <span class="bs-stepper-subtitle">Pilih Site Dan Jenis Kontrak</span>
+                  <span class="bs-stepper-subtitle">Informasi Site & Kontrak</span>
                 </span>
               </span>
             </button>
@@ -43,7 +43,7 @@
                 <span class="bs-stepper-number">03</span>
                 <span class="d-flex flex-column gap-1 ms-2">
                   <span class="bs-stepper-title">Headcount</span>
-                  <span class="bs-stepper-subtitle">Informasi Headcount & Posisi</span>
+                  <span class="bs-stepper-subtitle">Informasi Headcount </span>
                 </span>
               </span>
             </button>
@@ -56,7 +56,7 @@
                 <span class="bs-stepper-number">04</span>
                 <span class="d-flex flex-column gap-1 ms-2">
                   <span class="bs-stepper-title">Upah dan MF</span>
-                  <span class="bs-stepper-subtitle">Upah dan Management Fee</span>
+                  <span class="bs-stepper-subtitle">Informasi Upah dan MF</span>
                 </span>
               </span>
             </button>
@@ -69,7 +69,7 @@
                 <span class="bs-stepper-number">05</span>
                 <span class="d-flex flex-column gap-1 ms-2">
                   <span class="bs-stepper-title">BPJS</span>
-                  <span class="bs-stepper-subtitle">Informasi Detail Program BPJS</span>
+                  <span class="bs-stepper-subtitle">Informasi Program BPJS</span>
                 </span>
               </span>
             </button>
@@ -92,10 +92,10 @@
           <form onSubmit="return false">
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
-              <div class="content-header mb-5 text-center">
-                <h1 class="mb-0">PERJANJIAN</h1>
-                <h4>Informasi Perjanjian</h4>
-                <h4>Leads/Customer : PT. Setia Hati Sejahtera Tbk.</h4>
+            <div class="content-header mb-5 text-center">
+                <h6 class="mb-3">PERJANJIAN</h6>
+                <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
+                <h6>Leads/Customer : PT. Setia Hati Sejahtera Tbk.</h6>
               </div>
               <div class="row mb-3">
                 <div class="table-responsive text-nowrap">

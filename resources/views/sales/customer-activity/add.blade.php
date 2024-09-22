@@ -136,7 +136,7 @@
                 </label>
               </div>
               @endif
-              @if(in_array(Auth::user()->role_id,[29]))
+              @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
               <!-- <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="ubah-status" value="Ubah Status">
                 <label class="form-check-label" for="ubah-status">

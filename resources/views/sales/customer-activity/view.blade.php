@@ -66,6 +66,12 @@
             </div>
           </div>
           <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Status</label>
+            <div class="col-sm-10">
+              <input type="text" id="status-leads" name="status-leads" value="{{$data->status_leads}}" class="form-control" readonly>
+            </div>
+          </div>
+          <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Notes</label>
             <div class="col-sm-10">
               <div class="form-floating form-floating-outline mb-4">

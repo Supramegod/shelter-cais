@@ -18,7 +18,7 @@
         <form class="card-body overflow-hidden" action="{{route('customer-activity.save')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
-              <h1 class="mb-0">LEADS</h1>
+              <h4 class="mb-0">LEADS</h4>
               <h4>Pilih Leads Untuk Quotation</h4>
             </div>
             <div class="row mb-3">
