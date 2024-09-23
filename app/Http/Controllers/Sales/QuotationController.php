@@ -75,7 +75,9 @@ class QuotationController extends Controller
     public function edit2 (Request $request){
         try {
             $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
-            return view('sales.quotation.edit-2',compact('quotation'));
+            $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
+            $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
+            return view('sales.quotation.edit-2',compact('quotation','company','salaryRule'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -167,6 +169,95 @@ class QuotationController extends Controller
             abort(500);
         }
     }
+
+    public function saveEdit1 (Request $request){
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'jumlah_site' => 'required',
+                'jenis_kontrak' => 'required'
+            ], [
+                'min' => 'Masukkan :attribute minimal :min',
+                'max' => 'Masukkan :attribute maksimal :max',
+                'required' => ':attribute harus di isi',
+            ]);
+    
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
+            }else{
+                $current_date_time = Carbon::now()->toDateTimeString();
+                $current_date = Carbon::now()->toDateString();
+                DB::table('sl_quotation')->where('id',$request->id)->update([
+                    'jumlah_site' =>  $request->jumlah_site,
+                    'jenis_kontrak' => $request->jenis_kontrak,
+                    'step' => 2,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+
+                DB::commit();
+                return redirect()->route('quotation.edit-2',$request->id);
+            }
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit2 (Request $request){
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'kebutuhan' => 'required',
+                'entitas' => 'required',
+                'mulai_kontrak' => 'required',
+                'kontrak_selesai' => 'required',
+                'tgl_penempatan' => 'required',
+                'salary_rule' => 'required'
+            ], [
+                'min' => 'Masukkan :attribute minimal :min',
+                'max' => 'Masukkan :attribute maksimal :max',
+                'required' => ':attribute harus di isi',
+            ]);
+    
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
+            }else{
+                if($request->tgl_penempatan<$request->mulai_kontrak){
+                    return back()->withErrors(['tgl_penempatan_kurang' => 'Tanggal Penempatan tidak boleh kurang dari Kontrak Awal']);
+                };
+                if($request->tgl_penempatan>$request->kontrak_selesai){
+                    return back()->withErrors(['tgl_penempatan_kurang' => 'Tanggal Penempatan tidak boleh lebih dari Kontrak Selesai']);
+                };
+
+                $current_date_time = Carbon::now()->toDateTimeString();
+                $current_date = Carbon::now()->toDateString();
+                DB::table('sl_quotation')->where('id',$request->id)->update([
+                    'kebutuhan_id' =>  $request->kebutuhan,
+                    'company_id' => $request->entitas,
+                    'mulai_kontrak' => $request->mulai_kontrak,
+                    'kontrak_selesai' => $request->kontrak_selesai,
+                    'tgl_penempatan' => $request->tgl_penempatan,
+                    'salary_rule_id' => $request->salary_rule,
+                    'step' => 3,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+
+                DB::commit();
+                return redirect()->route('quotation.edit-3',$request->id);
+            }
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
 
     public function delete (Request $request){
         return null;

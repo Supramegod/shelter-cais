@@ -81,6 +81,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/view/{id}', 'view')->name('quotation.view');
 
         Route::post('/sales/quotation/save', 'save')->name('quotation.save');
+        Route::post('/sales/quotation/saveEdit1', 'saveEdit1')->name('quotation.save-edit-1');
+        Route::post('/sales/quotation/saveEdit2', 'saveEdit2')->name('quotation.save-edit-2');
+        Route::post('/sales/quotation/saveEdit3', 'saveEdit3')->name('quotation.save-edit-3');
+        Route::post('/sales/quotation/saveEdit4', 'saveEdit4')->name('quotation.save-edit-4');
+        Route::post('/sales/quotation/saveEdit5', 'saveEdit5')->name('quotation.save-edit-5');
+        Route::post('/sales/quotation/saveEdit6', 'saveEdit6')->name('quotation.save-edit-6');
+
         Route::post('/sales/quotation/delete', 'delete')->name('quotation.delete');
 
         Route::get('/sales/quotation/list', 'list')->name('quotation.list'); // ajax

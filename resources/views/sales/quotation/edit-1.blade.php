@@ -89,7 +89,9 @@
           </div>
         </div>
         <div class="bs-stepper-content">
-          <form onSubmit="return false">
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-1')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
+          @csrf
+          <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
@@ -123,6 +125,9 @@
                     </label>
                   </div>
                 </div>
+                @if($errors->has('jumlah_site'))
+                  <span class="text-danger">{{$errors->first('jumlah_site')}}</span>
+                @endif
               </div>
               <hr style="margin-top: 1rem;
   margin-bottom: 1rem;
@@ -165,13 +170,16 @@
                     </label>
                   </div>
                 </div>
+                @if($errors->has('jenis_kontrak'))
+                  <span class="text-danger">{{$errors->first('jenis_kontrak')}}</span>
+                @endif
               </div>
               <div class="row mt-5">
                 <div class="col-12 d-flex flex-row-reverse">
-                  <a href="{{route('quotation.edit-2',1)}}" class="btn btn-primary btn-next w-20">
+                  <button class="btn btn-primary btn-next w-20">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
                     <i class="mdi mdi-arrow-right"></i>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>

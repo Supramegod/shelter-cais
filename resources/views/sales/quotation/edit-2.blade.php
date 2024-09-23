@@ -88,7 +88,8 @@
           </div>
         </div>
         <div class="bs-stepper-content">
-          <form onSubmit="return false">
+            <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-2')}}" method="POST" enctype="multipart/form-data">        
+            @csrf
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
@@ -97,72 +98,109 @@
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mb-2">
-                <h6 class="text-center">Jumlah Site</h6>
+                <h4 class="text-center">Kebutuhan</h4>
               </div>
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon checked">
-                    <label class="form-check-label custom-option-content" for="customRadioIcon1">
+                  <div class="form-check custom-option custom-option-icon">
+                    <label class="form-check-label custom-option-content" for="direct_labour">
                       <span class="custom-option-body">
-                        <i class="mdi mdi-map-marker-outline"></i>
-                        <span class="custom-option-title">Single Site</span>
+                        <i class="mdi mdi-account-hard-hat-outline"></i>
+                        <span class="custom-option-title">Direct Labour</span>
                       </span>
-                      <input name="site" class="form-check-input" type="radio" value="" id="customRadioIcon1" checked="">
+                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="1" id="direct_labour">
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
                   <div class="form-check custom-option custom-option-icon">
-                    <label class="form-check-label custom-option-content" for="customRadioIcon2">
+                    <label class="form-check-label custom-option-content" for="security">
                       <span class="custom-option-body">
-                        <i class="mdi mdi-map-marker-multiple-outline"></i>
-                        <span class="custom-option-title">Multi Site</span>
+                        <i class="mdi mdi-security"></i>
+                        <span class="custom-option-title">Security</span>
                       </span>
-                      <input name="site" class="form-check-input" type="radio" value="" id="customRadioIcon2">
+                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="2" id="security">
                     </label>
                   </div>
                 </div>
-              </div>
-              <hr style="margin-top: 1rem;
-  margin-bottom: 1rem;
-  border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);"/>
-              <div class="row mb-2 mt-5">
-                <h6 class="text-center">Jenis Kontrak</h6>
+                <div class="col-md mb-md-0 mb-2">
+                  <div class="form-check custom-option custom-option-icon">
+                    <label class="form-check-label custom-option-content" for="cleaning_service">
+                      <span class="custom-option-body">
+                        <i class="mdi mdi-spray-bottle"></i>
+                        <span class="custom-option-title">Cleaning Service</span>
+                      </span>
+                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="3" id="cleaning_service">
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md mb-md-0 mb-2">
+                  <div class="form-check custom-option custom-option-icon">
+                    <label class="form-check-label custom-option-content" for="logistik">
+                      <span class="custom-option-body">
+                        <i class="mdi mdi-truck-fast-outline"></i>
+                        <span class="custom-option-title">Logistik</span>
+                      </span>
+                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="4" id="logistik">
+                    </label>
+                  </div>
+                </div>
+                @if($errors->has('kebutuhan'))
+                  <span class="text-danger">{{$errors->first('kebutuhan')}}</span>
+                @endif
               </div>
               <div class="row mb-3">
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon checked">
-                    <label class="form-check-label custom-option-content" for="pkwt">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-file-sign"></i>
-                        <span class="custom-option-title">PKWT</span>
-                      </span>
-                      <input name="jenis_kontrak" class="form-check-input" type="radio" value="" id="pkwt" checked="">
-                    </label>
-                  </div>
+                <div class="col-sm-12">
+                  <label class="form-label" for="basic-default-password42">Entitas</label>
+                  <select id="entitas" name="entitas" class="select2 form-select select2-hidden-accessible @if($errors->has('entitas')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($company as $value)
+                      <option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>  
+                      @endforeach
+                    </select>
+                    @if($errors->has('entitas'))
+                      <span class="text-danger">{{$errors->first('entitas')}}</span>
+                    @endif
                 </div>
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
-                    <label class="form-check-label custom-option-content" for="pkhl">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-account-outline"></i>
-                        <span class="custom-option-title"> PKHL </span>
-                      </span>
-                      <input name="jenis_kontrak" class="form-check-input" type="radio" value="" id="pkhl">
-                    </label>
-                  </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label" for="mulai-kontrak">Mulai Kontrak</label>
+                  <input type="date" name="mulai_kontrak" class="form-control @if($errors->has('mulai_kontrak')) is-invalid @endif" id="mulai-kontrak">
+                    @if($errors->has('mulai_kontrak'))
+                      <span class="text-danger">{{$errors->first('mulai_kontrak')}}</span>
+                    @endif
                 </div>
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
-                    <label class="form-check-label custom-option-content" for="borongan">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-account-group-outline"></i>
-                        <span class="custom-option-title"> Borongan </span>
-                      </span>
-                      <input name="jenis_kontrak" class="form-check-input" type="radio" value="" id="borongan">
-                    </label>
-                  </div>
+                <div class="col-sm-6">
+                  <label class="form-label" for="kontrak-selesai">Kontrak Selesai</label>
+                  <input type="date" name="kontrak_selesai" class="form-control @if($errors->has('kontrak_selesai')) is-invalid @endif" id="kontrak-selesai">
+                    @if($errors->has('kontrak_selesai'))
+                      <span class="text-danger">{{$errors->first('kontrak_selesai')}}</span>
+                    @endif
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label" for="tgl_penempatan">Tanggal Penempatan</label>
+                  <input type="date" name="tgl_penempatan" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl_penempatan">
+                  @if($errors->has('tgl_penempatan'))
+                    <span class="text-danger">{{$errors->first('tgl_penempatan')}}</span>
+                  @endif
+                  @if($errors->has('tgl_penempatan_kurang'))
+                    <span class="text-danger">{{$errors->first('tgl_penempatan_kurang')}}</span>
+                  @endif
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label" for="salary_rule">Salary Rule</label>
+                  <select id="salary_rule" name="salary_rule" class="select2 form-select select2-hidden-accessible @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($salaryRule as $value)
+                      <option value="{{$value->id}}">{{$value->nama_salary_rule}}</option>  
+                      @endforeach
+                    </select>
+                    @if($errors->has('salary_rule'))
+                      <span class="text-danger">{{$errors->first('salary_rule')}}</span>
+                    @endif
                 </div>
               </div>
               <div class="row mt-5">
@@ -171,10 +209,10 @@
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
                     <i class="mdi mdi-arrow-left"></i>
                   </a>
-                  <a href="{{route('quotation.edit-3',1)}}" class="btn btn-primary btn-next w-20">
+                  <button type="submit" class="btn btn-primary btn-next w-20">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
                     <i class="mdi mdi-arrow-right"></i>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
