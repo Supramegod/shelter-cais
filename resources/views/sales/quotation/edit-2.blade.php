@@ -90,6 +90,7 @@
         <div class="bs-stepper-content">
             <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-2')}}" method="POST" enctype="multipart/form-data">        
             @csrf
+            <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
@@ -108,7 +109,7 @@
                         <i class="mdi mdi-account-hard-hat-outline"></i>
                         <span class="custom-option-title">Direct Labour</span>
                       </span>
-                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="1" id="direct_labour">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="1" id="direct_labour">
                     </label>
                   </div>
                 </div>
@@ -119,7 +120,7 @@
                         <i class="mdi mdi-security"></i>
                         <span class="custom-option-title">Security</span>
                       </span>
-                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="2" id="security">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="2" id="security">
                     </label>
                   </div>
                 </div>
@@ -130,7 +131,7 @@
                         <i class="mdi mdi-spray-bottle"></i>
                         <span class="custom-option-title">Cleaning Service</span>
                       </span>
-                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="3" id="cleaning_service">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="3" id="cleaning_service">
                     </label>
                   </div>
                 </div>
@@ -141,7 +142,7 @@
                         <i class="mdi mdi-truck-fast-outline"></i>
                         <span class="custom-option-title">Logistik</span>
                       </span>
-                      <input name="kebutuhan" class="form-check-input" type="checkbox" value="4" id="logistik">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="4" id="logistik">
                     </label>
                   </div>
                 </div>

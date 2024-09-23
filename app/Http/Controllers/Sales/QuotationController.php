@@ -236,8 +236,10 @@ class QuotationController extends Controller
 
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $current_date = Carbon::now()->toDateString();
+                $quotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+
                 DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'kebutuhan_id' =>  $request->kebutuhan,
+                    'kebutuhan_id' =>  implode(",",$request->kebutuhan),
                     'company_id' => $request->entitas,
                     'mulai_kontrak' => $request->mulai_kontrak,
                     'kontrak_selesai' => $request->kontrak_selesai,
@@ -246,6 +248,38 @@ class QuotationController extends Controller
                     'step' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
+                ]);
+
+                foreach ($request->kebutuhan as $key => $value) {
+                    $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')
+                                            ->whereNull('deleted_at')
+                                            ->where('quotation_id',$request->id)
+                                            ->where('kebutuhan_id',$value)->first();
+                    $kebutuhan = DB::table('m_kebutuhan')->where('id',$value)->first();
+                    if($quotationKebutuhan == null){
+                        DB::table('sl_quotation_kebutuhan')->insert([
+                            'quotation_id' => $request->id,
+                            'leads_id' => $quotation->leads_id,
+                            'kebutuhan_id' => $value,
+                            'kebutuhan' => $kebutuhan->nama,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }else{
+                        DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->where('kebutuhan_id',$value)->update([
+                            'quotation_id' => $request->id,
+                            'leads_id' => $quotation->leads_id,
+                            'kebutuhan_id' => $value,
+                            'kebutuhan' => $kebutuhan->nama,
+                            'updated_at' => $current_date_time,
+                            'updated_by' => Auth::user()->full_name
+                        ]);
+                    }
+                };
+
+                DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNotIn('kebutuhan_id', $request->kebutuhan)->update([
+                    'deleted_at' => $current_date_time,
+                    'deleted_by' => Auth::user()->full_name
                 ]);
 
                 DB::commit();
