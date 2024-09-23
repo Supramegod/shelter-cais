@@ -89,7 +89,9 @@
           </div>
         </div>
         <div class="bs-stepper-content">
-          <form onSubmit="return false">
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-6')}}" method="POST" enctype="multipart/form-data">        
+            @csrf
+            <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
@@ -165,10 +167,10 @@
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
                     <i class="mdi mdi-arrow-left"></i>
                   </a>
-                  <a href="{{route('quotation.view',1)}}" class="btn btn-primary btn-next w-20">
-                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Summary</span>
+                  <button type="submit" class="btn btn-primary btn-next w-20">
+                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Selesai</span>
                     <i class="mdi mdi-arrow-right"></i>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>

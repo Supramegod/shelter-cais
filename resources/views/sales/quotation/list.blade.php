@@ -97,11 +97,9 @@
                                     <th class="text-center">No.</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
-                                    <th class="text-center">Tipe</th>
                                     <th class="text-center">Kebutuhan</th>
-                                    <th class="text-center">Wilayah</th>
-                                    <th class="text-center">Sales</th>
-                                    <th class="text-center">Keterangan</th>
+                                    <th class="text-center">Entitas</th>
+                                    <th class="text-center">Created By</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -148,92 +146,10 @@
 
             // Formatting function for row details - modify as you need
             function format(d) {
-                // `d` is the original data object for the row
-                let start = "";
-                let end = "";
-                let durasi = "";
-                let tipeNotes = "";
-                let tglRealisasi = "";
-                let jamRealisasi = "";
-                let penerima = "";
-                let linkBuktiFoto = "";
-                let jenisVisit = "";
-                let notulen = "";
-                let email = "";
-
-                if(d.start != null ){
-                    start = '<dt>Start :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' +d.start+
-                    '</dd>';
-                };
-                if(d.end != null ){
-                    end = '<dt>End :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' +d.end+
-                    '</dd>';
-                };
-                if(d.durasi != null){
-                    durasi = '<dt>Durasi :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + d.durasi+
-                    '</dd>' ;
-                }
-                if(d.jam_realisasi != null){
-                    jamRealisasi = '<dt>Jam Realisasi :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + d.jam_realisasi+
-                    '</dd>' ;
-                }
-                if(d.penerima != null){
-                    penerima = '<dt>Penerima :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + d.penerima+
-                    '</dd>' ;
-                }
-                if(d.jenis_visit != null){
-                    jenisVisit = '<dt>Jenis Visit :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + d.jenis_visit+
-                    '</dd>' ;
-                }
-                if(d.notulen != null){
-                    notulen = '<dt>Notulen :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + d.notulen+
-                    '</dd>' ;
-                }
-                if(d.email != null){
-                    email = '<dt>Email :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + d.email+
-                    '</dd>' ;
-                }
-                if(d.link_bukti_foto != null){
-                    linkBuktiFoto = '<dt>Lihat Bukti :</dt>' +
-                    '<dd><a href="'+d.link_bukti_foto+'" target="_blank" class="mt-2 btn rounded-pill btn-info waves-effect"><span class="tf-icons mdi mdi-magnify me-1"></span> &nbsp; Lihat Bukti</a>'+
-                    '</dd>' ;
-                }
-                if(d.notes_tipe !=null){
-                    tipeNotes = d.notes_tipe; 
-                }
-
-                if(d.tgl_r !=null){
-                    tglRealisasi = '<dt>Tanggal Realisasi :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + d.tgl_r+
-                    '</dd>' ;
-                }
-
                 return (
                     '<dl>' +
                     '<dt>Status Leads Saat Ini :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' +d.status_leads+
-                    '</dd>' +
-                    start+
-                    end +
-                    durasi +
-                    tglRealisasi +
-                    jamRealisasi +
-                    penerima+
-                    jenisVisit+
-                    notulen+
-                    email+
-                    linkBuktiFoto+
-                    '<dt>Keterangan :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">' + tipeNotes +
-                    '</dd>' +
+                    '<dd style="font-weight:bold;color:#000056">trial</dd>' +
                     '</dl>'
                 );
             }
@@ -278,28 +194,20 @@
                     name : 'tgl',
                     className:'text-center'
                 },{
-                    data : 'nama',
-                    name : 'nama',
-                    className:'text-center'
-                },{
-                    data : 'tipe',
-                    name : 'tipe',
+                    data : 'nama_perusahaan',
+                    name : 'nama_perusahaan',
                     className:'text-center'
                 },{
                     data : 'kebutuhan',
                     name : 'kebutuhan',
                     className:'text-center'
                 },{
-                    data : 'branch',
-                    name : 'branch',
+                    data : 'company',
+                    name : 'company',
                     className:'text-center'
                 },{
-                    data : 'sales',
-                    name : 'sales',
-                    className:'text-center'
-                },{
-                    data : 'keterangan',
-                    name : 'keterangan',
+                    data : 'created_by',
+                    name : 'created_by',
                     className:'text-center'
                 },{
                     data : 'aksi',

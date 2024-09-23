@@ -62,9 +62,9 @@ class QuotationController extends Controller
         }
     }
     
-    public function edit1 (Request $request){
+    public function edit1 (Request $request,$id){
         try {
-            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             return view('sales.quotation.edit-1',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -72,9 +72,9 @@ class QuotationController extends Controller
         }
     }
 
-    public function edit2 (Request $request){
+    public function edit2 (Request $request,$id){
         try {
-            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             return view('sales.quotation.edit-2',compact('quotation','company','salaryRule'));
@@ -84,9 +84,9 @@ class QuotationController extends Controller
         }
     }
 
-    public function edit3 (Request $request){
+    public function edit3 (Request $request,$id){
         try {
-            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             $quotationKebutuhan = DB::table("sl_quotation_kebutuhan")->whereNull('deleted_at')->where('quotation_id',$request->id)->get();
             return view('sales.quotation.edit-3',compact('quotation','quotationKebutuhan'));
         } catch (\Exception $e) {
@@ -95,9 +95,9 @@ class QuotationController extends Controller
         }
     }
 
-    public function edit4 (Request $request){
+    public function edit4 (Request $request,$id){
         try {
-            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             return view('sales.quotation.edit-4',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -105,9 +105,9 @@ class QuotationController extends Controller
         }
     }
     
-    public function edit5 (Request $request){
+    public function edit5 (Request $request,$id){
         try {
-            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             return view('sales.quotation.edit-5',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -115,9 +115,10 @@ class QuotationController extends Controller
         }
     }
 
-    public function edit6 (Request $request){
+    public function edit6 (Request $request,$id){
         try {
-            return view('sales.quotation.edit-6');
+            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
+            return view('sales.quotation.edit-6',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -152,7 +153,6 @@ class QuotationController extends Controller
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $current_date = Carbon::now()->toDateString();
                 $newId = DB::table('sl_quotation')->insertGetId([
-                    'nomor' =>  null,
                     'tgl_quotation' => $current_date,
                     'leads_id' => $request->leads_id,
                     'nama_perusahaan' => $request->leads,
@@ -210,8 +210,6 @@ class QuotationController extends Controller
 
     public function saveEdit2 (Request $request){
         try {
-            DB::beginTransaction();
-
             $validator = Validator::make($request->all(), [
                 'kebutuhan' => 'required',
                 'entitas' => 'required',
@@ -252,6 +250,7 @@ class QuotationController extends Controller
                 ]);
 
                 foreach ($request->kebutuhan as $key => $value) {
+                    $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
                     $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')
                                             ->whereNull('deleted_at')
                                             ->where('quotation_id',$request->id)
@@ -259,10 +258,13 @@ class QuotationController extends Controller
                     $kebutuhan = DB::table('m_kebutuhan')->where('id',$value)->first();
                     if($quotationKebutuhan == null){
                         DB::table('sl_quotation_kebutuhan')->insert([
+                            'nomor' => $this->generateNomor($quotation->leads_id,$request->entitas),
                             'quotation_id' => $request->id,
                             'leads_id' => $quotation->leads_id,
                             'kebutuhan_id' => $value,
                             'kebutuhan' => $kebutuhan->nama,
+                            'company_id' => $request->entitas,
+                            'company' => $company->name,
                             'created_at' => $current_date_time,
                             'created_by' => Auth::user()->full_name
                         ]);
@@ -272,6 +274,8 @@ class QuotationController extends Controller
                             'leads_id' => $quotation->leads_id,
                             'kebutuhan_id' => $value,
                             'kebutuhan' => $kebutuhan->nama,
+                            'company_id' => $request->entitas,
+                            'company' => $company->name,
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
                         ]);
@@ -282,8 +286,6 @@ class QuotationController extends Controller
                     'deleted_at' => $current_date_time,
                     'deleted_by' => Auth::user()->full_name
                 ]);
-
-                DB::commit();
                 return redirect()->route('quotation.edit-3',$request->id);
             }
         } catch (\Exception $e) {
@@ -293,6 +295,45 @@ class QuotationController extends Controller
         }
     }
 
+    public function saveEdit3 (Request $request){
+        try {
+            return redirect()->route('quotation.edit-4',$request->id);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit4 (Request $request){
+        try {
+            return redirect()->route('quotation.edit-5',$request->id);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit5 (Request $request){
+        try {
+            return redirect()->route('quotation.edit-6',$request->id);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit6 (Request $request){
+        try {
+            return redirect()->route('quotation');
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
 
     public function delete (Request $request){
         return null;
@@ -300,31 +341,29 @@ class QuotationController extends Controller
 
     public function list (Request $request){
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
-            $data = DB::table('sl_customer_activity')
-                        ->join('sl_leads','sl_leads.id','sl_customer_activity.leads_id')
-                        ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
-                        ->leftJoin('m_kebutuhan','m_kebutuhan.id','=','sl_leads.kebutuhan_id')
-                        ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                        ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
-                        ->select('sl_customer_activity.email','sl_customer_activity.notulen','sl_customer_activity.jenis_visit','sl_customer_activity.link_bukti_foto','sl_customer_activity.penerima','sl_customer_activity.jam_realisasi','sl_customer_activity.tgl_realisasi','sl_customer_activity.notes_tipe','sl_customer_activity.start','sl_customer_activity.end','sl_customer_activity.durasi','m_status_leads.nama as status_leads','sl_customer_activity.leads_id','sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_leads.nama_perusahaan as nama', $db2.'.m_branch.name as branch', 'm_kebutuhan.nama as kebutuhan','m_tim_sales_d.nama as sales','sl_customer_activity.notes as keterangan')
-                        ->whereNull('sl_customer_activity.deleted_at');
-            
+        $data = DB::table('sl_quotation_kebutuhan')
+                    ->join('sl_quotation','sl_quotation.id','sl_quotation_kebutuhan.quotation_id')
+                    ->join('sl_leads','sl_leads.id','sl_quotation.leads_id')
+                    ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                    ->select('sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation_kebutuhan.deleted_at');
+
             if(!empty($request->tgl_dari)){
-                $data = $data->where('sl_customer_activity.tgl_activity','>=',$request->tgl_dari);
+                $data = $data->where('sl_quotation.tgl_quotation','>=',$request->tgl_dari);
             }else{
-                $data = $data->where('sl_customer_activity.tgl_activity','==',carbon::now()->toDateString());
+                $data = $data->where('sl_quotation.tgl_quotation','==',carbon::now()->toDateString());
             }
             if(!empty($request->tgl_sampai)){
-                $data = $data->where('sl_customer_activity.tgl_activity','<=',$request->tgl_sampai);
+                $data = $data->where('sl_quotation.tgl_quotation','<=',$request->tgl_sampai);
             }else{
-                $data = $data->where('sl_customer_activity.tgl_activity','==',carbon::now()->toDateString());
+                $data = $data->where('sl_quotation.tgl_quotation','==',carbon::now()->toDateString());
             }
             if(!empty($request->branch)){
                 $data = $data->where('sl_leads.branch_id',$request->branch);
             }
-            // if(!empty($request->company)){
-            //     $data = $data->where('sl_leads.company_id',$request->company);
-            // }
+            if(!empty($request->company)){
+                $data = $data->where('sl_quotation.company_id',$request->company);
+            }
 
             //divisi sales
             if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
@@ -345,7 +384,6 @@ class QuotationController extends Controller
                 }
                 // Asisten Manager Sales , Manager Sales
                 else if(Auth::user()->role_id==32 || Auth::user()->role_id==33){
-
                 }
             }
             //divisi RO
@@ -366,56 +404,39 @@ class QuotationController extends Controller
             };
 
             if(!empty($request->kebutuhan)){
-                $data = $data->where('m_kebutuhan.id',$request->kebutuhan);
+                $data = $data->where('sl_quotation.kebutuhan','like','%'.$request->kebutuhan.'%');
             }
-
-            $data->where('sl_customer_activity.id',"0");
             $data = $data->get();
                         
-
             foreach ($data as $key => $value) {
-                $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
-                $value->tgl_r = null;
-                if($value->tgl_realisasi != null){
-                    $value->tgl_r = Carbon::createFromFormat('Y-m-d',$value->tgl_realisasi)->isoFormat('D MMMM Y');
-                }
+                $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
             }
 
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
                 return '<div class="justify-content-center d-flex">
-                                    <a href="'.route('customer-activity.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                                    <a href="'.route('quotation.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
                         </div>';
             })
             ->editColumn('nomor', function ($data) {
-                return '<a href="'.route('customer-activity.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+                return '<a href="'.route('quotation.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
             })
-            ->editColumn('nama', function ($data) {
-                return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama.'</a>';
+            ->editColumn('nama_perusahaan', function ($data) {
+                return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
             })
-            ->rawColumns(['aksi','nomor','nama'])
+            ->rawColumns(['aksi','nomor','nama_perusahaan'])
             ->make(true);
     }
 
-    public function generateNomor ($leadsId){
+    public function generateNomor ($leadsId,$companyId){
         // generate nomor QUOT/SIG/AAABB-092024-00001
-        //generate nomor CAT/SG/ABCD1-072024-00001;
         $now = Carbon::now();
 
         $nomor = "QUOT/";
-
         $dataLeads = DB::table('sl_leads')->where('id',$leadsId)->first();
-        if($dataLeads != null){
-            if($dataLeads->kebutuhan_id==1){
-                $nomor = $nomor."LS/";
-            } else if($dataLeads->kebutuhan_id==2){
-                $nomor = $nomor."SG/";
-            } else if($dataLeads->kebutuhan_id==3){
-                $nomor = $nomor."CS/";
-            } else if($dataLeads->kebutuhan_id==4){
-                $nomor = $nomor."LL/";
-            }
-
+        $company = DB::connection('mysqlhris')->table('m_company')->where('id',$companyId)->first();
+        if($company != null){
+            $nomor = $nomor.$company->code."/";
             $nomor = $nomor.$dataLeads->nomor."-";
         }else{
             $nomor = $nomor."NN/NNNNN-";
@@ -428,7 +449,7 @@ class QuotationController extends Controller
 
         $urutan = "00001";
 
-        $jumlahData = DB::select("select * from sl_quotation where nomor like '".$nomor.$month.$now->year."-"."%'");
+        $jumlahData = DB::select("select * from sl_quotation_kebutuhan where nomor like '".$nomor.$month.$now->year."-"."%'");
         $urutan = sprintf("%05d", count($jumlahData)+1);
         $nomor = $nomor.$month.$now->year."-".$urutan;
 
