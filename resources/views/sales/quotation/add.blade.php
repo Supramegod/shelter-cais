@@ -15,7 +15,8 @@
             <span class="text-center"><button class="btn btn-secondary waves-effect @if(old('leads_id')==null) d-none @endif" type="button" id="btn-lihat-leads"><span class="tf-icons mdi mdi-arrow-right-circle-outline me-1"></span>&nbsp; Lihat Leads</button>&nbsp;&nbsp;&nbsp;&nbsp; <span>{{$now}}</span></span>
           </div>
         </h5>
-        <form class="card-body overflow-hidden" action="{{route('customer-activity.save')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
+        <form class="card-body overflow-hidden" action="{{route('quotation.save')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
+          @csrf
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
               <h4 class="mb-0">LEADS</h4>
@@ -66,10 +67,10 @@
             </div>
             <div class="row">
               <div class="col-12 d-flex flex-row-reverse">
-                <a href="{{route('quotation.edit-1',1)}}" class="btn btn-primary btn-next w-20" style="color:white">
+                <button type="submit" class="btn btn-primary btn-next w-20" style="color:white">
                   <span class="align-middle d-sm-inline-block d-none me-sm-1">Buat Quotation</span>
                   <i class="mdi mdi-arrow-right"></i>
-                </a>
+                </button>
               </div>
             </div>
           </div>

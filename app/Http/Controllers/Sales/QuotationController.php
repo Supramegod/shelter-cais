@@ -64,7 +64,8 @@ class QuotationController extends Controller
     
     public function edit1 (Request $request){
         try {
-            return view('sales.quotation.edit-1');
+            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            return view('sales.quotation.edit-1',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -73,7 +74,8 @@ class QuotationController extends Controller
 
     public function edit2 (Request $request){
         try {
-            return view('sales.quotation.edit-2');
+            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            return view('sales.quotation.edit-2',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -82,7 +84,8 @@ class QuotationController extends Controller
 
     public function edit3 (Request $request){
         try {
-            return view('sales.quotation.edit-3');
+            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            return view('sales.quotation.edit-3',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -91,7 +94,8 @@ class QuotationController extends Controller
 
     public function edit4 (Request $request){
         try {
-            return view('sales.quotation.edit-4');
+            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            return view('sales.quotation.edit-4',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -100,7 +104,8 @@ class QuotationController extends Controller
     
     public function edit5 (Request $request){
         try {
-            return view('sales.quotation.edit-5');
+            $quotation = DB::table("sl_quotation")->where('id',$request->id)->first();
+            return view('sales.quotation.edit-5',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -127,7 +132,40 @@ class QuotationController extends Controller
     }
 
     public function save (Request $request){
-        return null;
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'leads' => 'required'
+            ], [
+                'min' => 'Masukkan :attribute minimal :min',
+                'max' => 'Masukkan :attribute maksimal :max',
+                'required' => ':attribute harus di isi',
+            ]);
+    
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
+            }else{
+                $current_date_time = Carbon::now()->toDateTimeString();
+                $current_date = Carbon::now()->toDateString();
+                $newId = DB::table('sl_quotation')->insertGetId([
+                    'nomor' =>  null,
+                    'tgl_quotation' => $current_date,
+                    'leads_id' => $request->leads_id,
+                    'nama_perusahaan' => $request->leads,
+                    'step' => 1,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+
+                DB::commit();
+                return redirect()->route('quotation.edit-1',$newId);
+            }
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
     }
 
     public function delete (Request $request){
@@ -231,6 +269,44 @@ class QuotationController extends Controller
             })
             ->rawColumns(['aksi','nomor','nama'])
             ->make(true);
+    }
+
+    public function generateNomor ($leadsId){
+        // generate nomor QUOT/SIG/AAABB-092024-00001
+        //generate nomor CAT/SG/ABCD1-072024-00001;
+        $now = Carbon::now();
+
+        $nomor = "QUOT/";
+
+        $dataLeads = DB::table('sl_leads')->where('id',$leadsId)->first();
+        if($dataLeads != null){
+            if($dataLeads->kebutuhan_id==1){
+                $nomor = $nomor."LS/";
+            } else if($dataLeads->kebutuhan_id==2){
+                $nomor = $nomor."SG/";
+            } else if($dataLeads->kebutuhan_id==3){
+                $nomor = $nomor."CS/";
+            } else if($dataLeads->kebutuhan_id==4){
+                $nomor = $nomor."LL/";
+            }
+
+            $nomor = $nomor.$dataLeads->nomor."-";
+        }else{
+            $nomor = $nomor."NN/NNNNN-";
+        }
+
+        $month = $now->month;
+        if($month<10){
+            $month = "0".$month;
+        }
+
+        $urutan = "00001";
+
+        $jumlahData = DB::select("select * from sl_quotation where nomor like '".$nomor.$month.$now->year."-"."%'");
+        $urutan = sprintf("%05d", count($jumlahData)+1);
+        $nomor = $nomor.$month.$now->year."-".$urutan;
+
+        return $nomor;
     }
 
 }

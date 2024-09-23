@@ -95,31 +95,31 @@
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">SITE & JENIS KONTRAK</h6>
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
-                <h6>Leads/Customer : PT. Setia Hati Sejahtera Tbk.</h6>
+                <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mb-2">
                 <h6 class="text-center">Jumlah Site</h6>
               </div>
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon checked">
-                    <label class="form-check-label custom-option-content" for="customRadioIcon1">
+                  <div class="form-check custom-option custom-option-icon">
+                    <label class="form-check-label custom-option-content" for="single_site">
                       <span class="custom-option-body">
                         <i class="mdi mdi-map-marker-outline"></i>
                         <span class="custom-option-title">Single Site</span>
                       </span>
-                      <input name="site" class="form-check-input" type="radio" value="" id="customRadioIcon1" checked="">
+                      <input name="jumlah_site" class="form-check-input" type="radio" value="Single Site" id="single_site">
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
                   <div class="form-check custom-option custom-option-icon">
-                    <label class="form-check-label custom-option-content" for="customRadioIcon2">
+                    <label class="form-check-label custom-option-content" for="multi_site">
                       <span class="custom-option-body">
                         <i class="mdi mdi-map-marker-multiple-outline"></i>
                         <span class="custom-option-title">Multi Site</span>
                       </span>
-                      <input name="site" class="form-check-input" type="radio" value="" id="customRadioIcon2">
+                      <input name="jumlah_site" class="form-check-input" type="radio" value="Multi Site" id="multi_site">
                     </label>
                   </div>
                 </div>
@@ -133,13 +133,13 @@
               </div>
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon checked">
+                  <div class="form-check custom-option custom-option-icon">
                     <label class="form-check-label custom-option-content" for="pkwt">
                       <span class="custom-option-body">
                         <i class="mdi mdi-file-sign"></i>
                         <span class="custom-option-title">PKWT</span>
                       </span>
-                      <input name="jenis_kontrak" class="form-check-input" type="radio" value="" id="pkwt" checked="">
+                      <input name="jenis_kontrak" class="form-check-input" value="PKWT" type="radio" value="" id="pkwt">
                     </label>
                   </div>
                 </div>
@@ -150,7 +150,7 @@
                         <i class="mdi mdi-account-outline"></i>
                         <span class="custom-option-title"> PKHL </span>
                       </span>
-                      <input name="jenis_kontrak" class="form-check-input" type="radio" value="" id="pkhl">
+                      <input name="jenis_kontrak" class="form-check-input" value="PKHL" type="radio" value="" id="pkhl">
                     </label>
                   </div>
                 </div>
@@ -161,7 +161,7 @@
                         <i class="mdi mdi-account-group-outline"></i>
                         <span class="custom-option-title"> Borongan </span>
                       </span>
-                      <input name="jenis_kontrak" class="form-check-input" type="radio" value="" id="borongan">
+                      <input name="jenis_kontrak" class="form-check-input" value="Borongan" type="radio" value="" id="borongan">
                     </label>
                   </div>
                 </div>

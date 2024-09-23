@@ -94,7 +94,7 @@
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">DETAIL KONTRAK</h6>
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
-                <h6>Leads/Customer : PT. Setia Hati Sejahtera Tbk.</h6>
+                <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mb-2">
                 <h6 class="text-center">Jumlah Site</h6>
