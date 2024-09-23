@@ -100,21 +100,26 @@
               <div class="row mb-3">
                 <div class="col-xl-12">
                   <div class="nav-align-top">
-                    <ul class="nav nav-tabs nav-fill" role="tablist">
-                      <li class="nav-item" role="presentation">
-                        <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-home" aria-controls="navs-justified-home" aria-selected="true">
-                          <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i> Direct Labour
-                        </button>
-                      </li>
-                      <li class="nav-item" role="presentation">
+                    <ul class="nav nav-fill nav-tabs" role="tablist" >
+                      @foreach($quotationKebutuhan as $value)
+                        <li class="nav-item" role="presentation">
+                          <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-{{$value->id}}" aria-controls="navs-justified-{{$value->id}}" aria-selected="true">
+                            <!-- <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i>  -->
+                            {{$value->kebutuhan}}
+                          </button>
+                        </li>
+                      @endforeach
+                      
+                      <!-- <li class="nav-item" role="presentation">
                         <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false" tabindex="-1">
                           <i class="tf-icons mdi mdi-security me-1"></i> Security
                         </button>
-                      </li>
+                      </li> -->
                     <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
                   </div>
                   <div class="tab-content p-0">
-                    <div class="tab-pane fade active show" id="navs-justified-home" role="tabpanel">
+                    @foreach($quotationKebutuhan as $value)
+                    <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-justified-{{$value->id}}" role="tabpanel">
                       <div class="row mb-3 mt-3">
                         <div class="col-sm-6">
                           <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
@@ -171,75 +176,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="tab-pane fade" id="navs-justified-profile" role="tabpanel">
-                      <div class="row mb-3 mt-3">
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
-                          <div class="input-group">
-                            <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Security</option>  
-                              <option value="">Chief Security</option>  
-                              <option value="">Security Non Shift</option>  
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Jumlah Headcount</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control" id="basic-default-password42">
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-12 d-flex justify-content-center mt-4">
-                            <button class="btn btn-info btn-back w-20">
-                              <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
-                              <i class="mdi mdi-plus"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row mt-5">
-                        <div class="table-responsive text-nowrap">
-                          <table class="table">
-                            <thead class="table-light">
-                              <tr>
-                                <th class="text-center">Kebutuhan</th>
-                                <th class="text-center">Nama Posisi/Jabatan</th>
-                                <th class="text-center">Jumlah Headcount</th>
-                                <th class="text-center">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                              <tr>
-                                <td>Security</td>
-                                <td>Chief Security</td>
-                                <td class="text-center">2</td>
-                                <td>
-                                  <div class="col-12 d-flex justify-content-center">
-                                    <button class="btn btn-danger btn-back w-20">
-                                      <i class="mdi mdi-trash-can-outline"></i>
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Security</td>
-                                <td>Security</td>
-                                <td class="text-center">15</td>
-                                <td>
-                                  <div class="col-12 d-flex justify-content-center">
-                                    <button class="btn btn-danger btn-back w-20">
-                                      <i class="mdi mdi-trash-can-outline"></i>
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
+                    @endforeach
                   </div>
                 </div>
               </div>
