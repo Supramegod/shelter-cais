@@ -101,6 +101,7 @@
                                     <th class="text-center">Kebutuhan</th>
                                     <th class="text-center">Wilayah</th>
                                     <th class="text-center">Sales</th>
+                                    <th class="text-center">Created By</th>
                                     <th class="text-center">Keterangan</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
@@ -296,6 +297,10 @@
                 },{
                     data : 'sales',
                     name : 'sales',
+                    className:'text-center'
+                },{
+                    data : 'created_by',
+                    name : 'created_by',
                     className:'text-center'
                 },{
                     data : 'keterangan',

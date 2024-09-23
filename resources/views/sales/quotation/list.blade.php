@@ -98,6 +98,7 @@
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
                                     <th class="text-center">Kebutuhan</th>
+                                    <th class="text-center">Jenis Kontrak</th>
                                     <th class="text-center">Entitas</th>
                                     <th class="text-center">Created By</th>
                                     <th class="text-center">Aksi</th>
@@ -200,6 +201,10 @@
                 },{
                     data : 'kebutuhan',
                     name : 'kebutuhan',
+                    className:'text-center'
+                },{
+                    data : 'jenis_kontrak',
+                    name : 'jenis_kontrak',
                     className:'text-center'
                 },{
                     data : 'company',

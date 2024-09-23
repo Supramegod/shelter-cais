@@ -103,6 +103,7 @@
                                     <th class="text-center">Email PIC</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Sumber Leads</th>
+                                    <th class="text-center">Created By</th>
                                     <th class="text-center">Keterangan</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
@@ -217,6 +218,10 @@
             },{
                 data : 'platform',
                 name : 'platform',
+                className:'text-center'
+            },{
+                data : 'created_by',
+                name : 'created_by',
                 className:'text-center'
             },{
                 data : 'notes',
