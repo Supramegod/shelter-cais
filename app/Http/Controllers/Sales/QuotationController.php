@@ -141,7 +141,23 @@ class QuotationController extends Controller
     public function edit5 (Request $request,$id){
         try {
             $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            return view('sales.quotation.edit-5',compact('quotation'));
+            $quotationKebutuhan = 
+            DB::table("sl_quotation_kebutuhan")
+            ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
+            ->whereNull('sl_quotation_kebutuhan.deleted_at')
+            ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
+            ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
+            ->select('sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->get();
+
+            foreach ($quotationKebutuhan as $key => $value) {
+                $value->detail = DB::table('m_kebutuhan_detail')->where('kebutuhan_id',$value->kebutuhan_id)->whereNull('deleted_at')->get();
+                $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
+            }
+
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+
+            return view('sales.quotation.edit-5',compact('quotation','quotationKebutuhan','jenisPerusahaan'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -394,6 +410,31 @@ class QuotationController extends Controller
 
     public function saveEdit5 (Request $request){
         try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            foreach ($quotationKebutuhan as $key => $value) {
+                $jenisPerusahaanId = $request['jenis-perusahaan-'.$value->id];
+                $resiko = $request['resiko-'.$value->id];
+                $programBpjs = $request['program-bpjs-'.$value->id];
+
+                $jenisPerusahaan = null;
+                if($jenisPerusahaanId != null){
+                    $jenisPerusahaanList = DB::table('m_jenis_perusahaan')->where('id',$jenisPerusahaanId)->first();
+                    if($jenisPerusahaanList != null){
+                        $jenisPerusahaan = $jenisPerusahaanList->nama;
+                    }
+                }
+
+                DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
+                    'jenis_perusahaan_id' => $jenisPerusahaanId,
+                    'jenis_perusahaan' => $jenisPerusahaan,
+                    'resiko' => $resiko,
+                    'program_bpjs' => $programBpjs,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }
+
             return redirect()->route('quotation.edit-6',$request->id);
         } catch (\Exception $e) {
             dd($e);

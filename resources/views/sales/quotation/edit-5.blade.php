@@ -101,87 +101,56 @@
               </div>
               <div class="row mb-3">
                 <div class="col-xl-12">
-                  <div class="nav-align-top">
-                    <ul class="nav nav-tabs nav-fill" role="tablist">
-                      <li class="nav-item" role="presentation">
-                        <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-home" aria-controls="navs-justified-home" aria-selected="true">
-                          <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i> Direct Labour
-                        </button>
-                      </li>
-                      <li class="nav-item" role="presentation">
-                        <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false" tabindex="-1">
-                          <i class="tf-icons mdi mdi-security me-1"></i> Security
-                        </button>
-                      </li>
-                    <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
+                <div class="nav-align-top">
+                    <ul class="nav nav-fill nav-tabs" role="tablist" >
+                      @foreach($quotationKebutuhan as $value)
+                        <li class="nav-item" role="presentation">
+                          <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-{{$value->id}}" aria-controls="navs-justified-{{$value->id}}" aria-selected="true">
+                            <i class="tf-icons {{$value->icon}} me-1"></i> 
+                            {{$value->kebutuhan}}
+                          </button>
+                        </li>
+                      @endforeach
+                      <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span>
+                    </ul>
                   </div>
                   <div class="tab-content p-0">
-                    <div class="tab-pane fade active show" id="navs-justified-home" role="tabpanel">
+                  @foreach($quotationKebutuhan as $value)
+                    <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-justified-{{$value->id}}" role="tabpanel">
                       <div class="row mb-3 mt-3">
                         <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Jenis Perusahaan</label>
+                          <label class="form-label" for="jenis-perusahaan-{{$value->id}}">Jenis Perusahaan</label>
                           <div class="input-group">
-                            <select id="provinsi" name="provinsi" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                            <select id="jenis-perusahaan-{{$value->id}}" name="jenis-perusahaan-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
                               <option value="">- Pilih data -</option>
-                              <option value="">Manufaktur</option>  
-                              <option value="">Jasa</option>
+                              @foreach($jenisPerusahaan as $data)
+                              <option value="{{$data->id}}" data-resiko="{{$data->resiko}}" @if($value->jenis_perusahaan_id == $data->id) selected @endif>{{$data->nama}}</option>  
+                              @endforeach
                             </select>
                           </div>
                         </div>
                         <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Resiko</label>
+                          <label class="form-label" for="resiko-{{$value->id}}">Resiko</label>
                           <div class="input-group">
-                            <input type="text" class="form-control" id="basic-default-password42" readonly>
+                            <input type="text" class="form-control" name="resiko-{{$value->id}}" id="resiko-{{$value->id}}" value="{{$value->resiko}}" readonly>
                           </div>
                         </div>
                       </div>
                       <div class="row mb-3">
                         <div class="col-sm-12">
-                          <label class="form-label" for="basic-default-password42">Program BPJS</label>
+                          <label class="form-label" for="program-bpjs-{{$value->id}}">Program BPJS</label>
                           <div class="input-group">
-                            <select id="program_bpjs" name="program_bpjs" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                            <select id="program-bpjs-{{$value->id}}" name="program-bpjs-{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
                               <option value="">- Pilih data -</option>
-                              <option value="">2 BPJS</option>  
-                              <option value="">3 BPJS</option>
-                              <option value="">4 BPJS</option>    
+                              <option value="2 BPJS" @if($value->program_bpjs == '2 BPJS') selected @endif>2 BPJS</option>  
+                              <option value="3 BPJS" @if($value->program_bpjs == '3 BPJS') selected @endif>3 BPJS</option>
+                              <option value="4 BPJS" @if($value->program_bpjs == '4 BPJS') selected @endif>4 BPJS</option>
                             </select>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="tab-pane fade" id="navs-justified-profile" role="tabpanel">
-                    <div class="row mb-3 mt-3">
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Jenis Perusahaan</label>
-                          <div class="input-group">
-                            <select id="provinsi" name="provinsi" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Manufaktur</option>  
-                              <option value="">Jasa</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Resiko</label>
-                          <div class="input-group">
-                            <input type="text" class="form-control" id="basic-default-password42" readonly>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row mb-3">
-                        <div class="col-sm-12">
-                          <label class="form-label" for="basic-default-password42">Program BPJS</label>
-                          <div class="input-group">
-                            <select id="program_bpjs" name="program_bpjs" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">2 BPJS</option>  
-                              <option value="">3 BPJS</option>
-                              <option value="">4 BPJS</option>    
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  @endforeach
                   </div>
                 </div>
               </div>
@@ -211,36 +180,14 @@
 
 @section('pageScript')
 <script>
-  $('#custom-1').click(function() {
-    if($('#custom-1').is(':checked')) { 
-      $('#d-custom-upah-1').removeClass('d-none');
-    }
-  });
-  $('#ump-1').click(function() {
-    if($('#ump-1').is(':checked')) {
-      $('#d-custom-upah-1').addClass('d-none');
-    }
-  });
-  $('#umk-1').click(function() {
-    if($('#umk-1').is(':checked')) {
-      $('#d-custom-upah-1').addClass('d-none');
-    }
-  });
-
-  $('#custom-2').click(function() {
-    if($('#custom-2').is(':checked')) { 
-      $('#d-custom-upah-2').removeClass('d-none');
-    }
-  });
-  $('#ump-2').click(function() {
-    if($('#ump-2').is(':checked')) {
-      $('#d-custom-upah-2').addClass('d-none');
-    }
-  });
-  $('#umk-2').click(function() {
-    if($('#umk-2').is(':checked')) {
-      $('#d-custom-upah-2').addClass('d-none');
-    }
+  $(document).ready(function(){
+    @foreach($quotationKebutuhan as $value)
+    $('#jenis-perusahaan-{{$value->id}}').on('change', function() {
+      let id = '#resiko-{{$value->id}}';
+      
+      $(id).val($(this).find(':selected').data('resiko'));
+    });
+  @endforeach
   });
   
 </script>

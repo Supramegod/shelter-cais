@@ -102,7 +102,7 @@
               <div class="row mb-3">
                 <div class="col-xl-12">
                   <div class="nav-align-top">
-                  <ul class="nav nav-fill nav-tabs" role="tablist" >
+                    <ul class="nav nav-fill nav-tabs" role="tablist" >
                       @foreach($quotationKebutuhan as $value)
                         <li class="nav-item" role="presentation">
                           <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-{{$value->id}}" aria-controls="navs-justified-{{$value->id}}" aria-selected="true">
