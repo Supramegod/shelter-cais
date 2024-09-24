@@ -112,8 +112,27 @@ class QuotationController extends Controller
     public function edit4 (Request $request,$id){
         try {
             $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            return view('sales.quotation.edit-4',compact('quotation'));
+            $quotationKebutuhan = 
+            DB::table("sl_quotation_kebutuhan")
+            ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
+            ->whereNull('sl_quotation_kebutuhan.deleted_at')
+            ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
+            ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
+            ->select('sl_quotation_kebutuhan.custom_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->get();
+
+            foreach ($quotationKebutuhan as $key => $value) {
+                $value->detail = DB::table('m_kebutuhan_detail')->where('kebutuhan_id',$value->kebutuhan_id)->whereNull('deleted_at')->get();
+                $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
+            }
+
+            $province = DB::connection('mysqlhris')->table('m_province')->get();
+            $kota = DB::connection('mysqlhris')->table('m_city')->get();
+            $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
+
+            return view('sales.quotation.edit-4',compact('quotation','quotationKebutuhan','province','manfee','kota'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -321,6 +340,50 @@ class QuotationController extends Controller
 
     public function saveEdit4 (Request $request){
         try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            foreach ($quotationKebutuhan as $key => $value) {
+                $provinsiId = $request['provinsi-'.$value->id];
+                $kotaId = $request['kota-'.$value->id];
+                $upah = $request['upah-'.$value->id];
+                $manfee = $request['manajemen_fee_'.$value->id];
+                $presentase = $request['persentase_'.$value->id];
+
+                $provinsi = null;
+                if($provinsiId != null){
+                    $provinceList = DB::connection('mysqlhris')->table('m_province')->where('id',$provinsiId)->first();
+                    if($provinceList != null){
+                        $provinsi = $provinceList->name;
+                    }
+                }
+
+                $kota = null;
+                if($kotaId != null){
+                    $kotaList = DB::connection('mysqlhris')->table('m_city')->where('id',$kotaId)->first();
+                    if($kotaList != null){
+                        $kota = $kotaList->name;
+                    }
+                }
+
+                $customUpah = 0;
+                if($upah == "Custom"){
+                    $customUpah = $request['custom-upah-'.$value->id];
+                }
+
+                DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
+                    'provinsi_id' => $provinsiId,
+                    'provinsi' => $provinsi,
+                    'kota_id' => $kotaId,
+                    'kota' => $kota,
+                    'upah' => $upah,
+                    'custom_upah' => $customUpah,
+                    'management_fee_id' => $manfee,
+                    'persentase' => $presentase,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }
+
             return redirect()->route('quotation.edit-5',$request->id);
         } catch (\Exception $e) {
             dd($e);
@@ -492,6 +555,11 @@ class QuotationController extends Controller
         ->make(true);
     }
     
+    public function changeKota (Request $request){
+        $data = DB::connection('mysqlhris')->table('m_city')->where('province_id',$request->province_id)->get();
+        return $data;
+    }
+
     public function generateNomor ($leadsId,$companyId){
         // generate nomor QUOT/SIG/AAABB-092024-00001
         $now = Carbon::now();

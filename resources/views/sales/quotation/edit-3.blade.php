@@ -111,7 +111,8 @@
                           </button>
                         </li>
                       @endforeach
-                    <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
+                      <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span>
+                    </ul>
                   </div>
                   <div class="tab-content p-0">
                     @foreach($quotationKebutuhan as $value)

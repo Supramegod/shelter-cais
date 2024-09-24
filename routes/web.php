@@ -94,6 +94,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/add-detail-hc', 'addDetailHC')->name('quotation.add-detail-hc');
         Route::get('/sales/quotation/list-detail-hc', 'listDetailHC')->name('quotation.list-detail-hc'); // ajax
         Route::post('/sales/quotation/delete-detail-hc', 'deleteDetailHC')->name('quotation.delete-detail-hc');
+        Route::get('/sales/quotation/change-kota', 'changeKota')->name('quotation.change-kota'); // ajax
+
     });
 
 

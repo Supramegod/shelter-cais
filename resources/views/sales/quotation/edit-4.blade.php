@@ -102,200 +102,107 @@
               <div class="row mb-3">
                 <div class="col-xl-12">
                   <div class="nav-align-top">
-                    <ul class="nav nav-tabs nav-fill" role="tablist">
-                      <li class="nav-item" role="presentation">
-                        <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-home" aria-controls="navs-justified-home" aria-selected="true">
-                          <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i> Direct Labour
-                        </button>
-                      </li>
-                      <li class="nav-item" role="presentation">
-                        <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false" tabindex="-1">
-                          <i class="tf-icons mdi mdi-security me-1"></i> Security
-                        </button>
-                      </li>
-                    <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
+                  <ul class="nav nav-fill nav-tabs" role="tablist" >
+                      @foreach($quotationKebutuhan as $value)
+                        <li class="nav-item" role="presentation">
+                          <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-{{$value->id}}" aria-controls="navs-justified-{{$value->id}}" aria-selected="true">
+                            <i class="tf-icons {{$value->icon}} me-1"></i> 
+                            {{$value->kebutuhan}}
+                          </button>
+                        </li>
+                      @endforeach
+                      <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span>
+                    </ul>
                   </div>
                   <div class="tab-content p-0">
-                    <div class="tab-pane fade active show" id="navs-justified-home" role="tabpanel">
-                      <div class="row mb-3 mt-3">
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Provinsi</label>
-                          <div class="input-group">
-                            <select id="provinsi" name="provinsi" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Aceh</option>  
-                              <option value="">Jawa Timur</option>
-                              <option value="">Jawa Barat</option>  
-                              <option value="">Jawa Tengah</option>  
-                            </select>
+                    @foreach($quotationKebutuhan as $value)
+                      <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-justified-{{$value->id}}" role="tabpanel">
+                        <div class="row mb-3 mt-3">
+                          <div class="col-sm-6">
+                            <label class="form-label" for="provinsi-{{$value->id}}">Provinsi</label>
+                            <div class="input-group">
+                              <select id="provinsi-{{$value->id}}" name="provinsi-{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                                <option value="">- Pilih data -</option>
+                                @foreach($province as $data)
+                                  <option value="{{$data->id}}" @if($value->provinsi_id == $data->id) selected @endif>{{$data->name}}</option>  
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <label class="form-label" for="kota-{{$value->id}}">Kabupaten / Kota</label>
+                            <div class="input-group">
+                              <select id="kota-{{$value->id}}" name="kota-{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                              </select>
+                            </div>
                           </div>
                         </div>
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Kabupaten / Kota</label>
-                          <div class="input-group">
-                            <select id="kota" name="kota" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Surabaya</option>  
-                              <option value="">Sidoarjo</option>
-                              <option value="">Jombang</option>  
-                              <option value="">Gresik</option>  
-                            </select>
+                        <div class="row mb-2">
+                          <h4 class="text-center">Upah</h4>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md mb-md-0 mb-2">
+                            <div class="form-check custom-option custom-option-icon hide-custom-{{$value->id}} @if($value->upah == 'UMK') checked @endif">
+                              <label class="form-check-label custom-option-content" for="umk">
+                                <span class="custom-option-body">
+                                  <span class="custom-option-title">UMK</span>
+                                </span>
+                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMK" id="umk-{{$value->id}}" @if($value->upah == 'UMK') checked @endif>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md mb-md-0 mb-2">
+                            <div class="form-check custom-option custom-option-icon hide-custom-{{$value->id}} @if($value->upah == 'UMP') checked @endif">
+                              <label class="form-check-label custom-option-content" for="ump">
+                                <span class="custom-option-body">
+                                  <span class="custom-option-title">UMP</span>
+                                </span>
+                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMP" id="ump-{{$value->id}}" @if($value->upah == 'UMP') checked @endif>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md mb-md-0 mb-2">
+                            <div class="form-check custom-option custom-option-icon show-custom-{{$value->id}} @if($value->upah == 'Custom') checked @endif">
+                              <label class="form-check-label custom-option-content" for="custom">
+                                <span class="custom-option-body">
+                                  <span class="custom-option-title">Custom</span>
+                                </span>
+                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="Custom" id="custom-{{$value->id}}" @if($value->upah == 'Custom') checked @endif>
+                              </label>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="row mb-2">
-                        <h4 class="text-center">Upah</h4>
-                      </div>
-                      <div class="row mb-3">
-                        <div class="col-md mb-md-0 mb-2">
-                          <div class="form-check custom-option custom-option-icon checked">
-                            <label class="form-check-label custom-option-content" for="umk">
-                              <span class="custom-option-body">
-                                <span class="custom-option-title">UMK</span>
-                              </span>
-                              <input name="upah" class="form-check-input" type="radio" value="" id="umk-1" checked="">
-                            </label>
+                        <div class="row mb-3 d-none" id="d-custom-upah-{{$value->id}}">
+                          <div class="col-sm-12">
+                            <label class="form-label" for="custom-upah-{{$value->id}}">Masukkan Upah</label>
+                            <div class="input-group">
+                              <input type="number" class="form-control" value="{{$value->custom_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
+                            </div>
                           </div>
+                          <span>*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
                         </div>
-                        <div class="col-md mb-md-0 mb-2">
-                          <div class="form-check custom-option custom-option-icon">
-                            <label class="form-check-label custom-option-content" for="ump">
-                              <span class="custom-option-body">
-                                <span class="custom-option-title">UMP</span>
-                              </span>
-                              <input name="upah" class="form-check-input" type="radio" value="" id="ump-1">
-                            </label>
+                        <div class="row mb-3">
+                          <div class="col-sm-6">
+                            <label class="form-label" for="manajemen_fee_{{$value->id}}">Manajemen Fee</label>
+                            <div class="input-group">
+                              <select id="manajemen_fee_{{$value->id}}" name="manajemen_fee_{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                                <option value="">- Pilih data -</option>
+                                @foreach($manfee as $data)
+                                  <option value="{{$data->id}}" @if($value->management_fee_id == $data->id) selected @endif>{{$data->nama}}</option>  
+                                @endforeach
+                              </select>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col-md mb-md-0 mb-2">
-                          <div class="form-check custom-option custom-option-icon">
-                            <label class="form-check-label custom-option-content" for="custom">
-                              <span class="custom-option-body">
-                                <span class="custom-option-title">Custom</span>
-                              </span>
-                              <input name="upah" class="form-check-input" type="radio" value="" id="custom-1">
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row mb-3 d-none" id="d-custom-upah-1">
-                        <div class="col-sm-12">
-                          <label class="form-label" for="basic-default-password42">Masukkan Upah</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control" id="basic-default-password42">
-                          </div>
-                        </div>
-                        <span>*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
-                      </div>
-                      <div class="row mb-3">
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Manajemen Fee</label>
-                          <div class="input-group">
-                            <select id="manajemen_fee" name="manajemen_fee" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Total Upah</option>  
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Persentase</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control" placeholder="">
-                            <span class="input-group-text">%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="tab-pane fade" id="navs-justified-profile" role="tabpanel">
-                    <div class="row mb-3 mt-3">
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Provinsi</label>
-                          <div class="input-group">
-                            <select id="provinsi" name="provinsi" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Aceh</option>  
-                              <option value="">Jawa Timur</option>
-                              <option value="">Jawa Barat</option>  
-                              <option value="">Jawa Tengah</option>  
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Kabupaten / Kota</label>
-                          <div class="input-group">
-                            <select id="kota" name="kota" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Surabaya</option>  
-                              <option value="">Sidoarjo</option>
-                              <option value="">Jombang</option>  
-                              <option value="">Gresik</option>  
-                            </select>
+                          <div class="col-sm-6">
+                            <label class="form-label" for="persentase_{{$value->id}}">Persentase</label>
+                            <div class="input-group">
+                              <input type="number" class="form-control" name="persentase_{{$value->id}}" value="{{$value->persentase}}">
+                              <span class="input-group-text">%</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div class="row mb-2">
-                        <h4 class="text-center">Upah</h4>
-                      </div>
-                      <div class="row mb-3">
-                        <div class="col-md mb-md-0 mb-2">
-                          <div class="form-check custom-option custom-option-icon checked">
-                            <label class="form-check-label custom-option-content" for="umk">
-                              <span class="custom-option-body">
-                                <span class="custom-option-title">UMK</span>
-                              </span>
-                              <input name="upah" class="form-check-input" type="radio" value="" id="umk-2" checked="">
-                            </label>
-                          </div>
-                        </div>
-                        <div class="col-md mb-md-0 mb-2">
-                          <div class="form-check custom-option custom-option-icon">
-                            <label class="form-check-label custom-option-content" for="ump">
-                              <span class="custom-option-body">
-                                <span class="custom-option-title">UMP</span>
-                              </span>
-                              <input name="upah" class="form-check-input" type="radio" value="" id="ump-2">
-                            </label>
-                          </div>
-                        </div>
-                        <div class="col-md mb-md-0 mb-2">
-                          <div class="form-check custom-option custom-option-icon">
-                            <label class="form-check-label custom-option-content" for="custom">
-                              <span class="custom-option-body">
-                                <span class="custom-option-title">Custom</span>
-                              </span>
-                              <input name="upah" class="form-check-input" type="radio" value="" id="custom-2">
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row mb-3 d-none" id="d-custom-upah-2">
-                        <div class="col-sm-12">
-                          <label class="form-label" for="basic-default-password42">Masukkan Upah</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control" id="basic-default-password42">
-                          </div>
-                        </div>
-                        <span>*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
-                      </div>
-                      <div class="row mb-3">
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Manajemen Fee</label>
-                          <div class="input-group">
-                            <select id="manajemen_fee" name="manajemen_fee" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              <option value="">Total Upah</option>  
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Persentase</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control" placeholder="">
-                            <span class="input-group-text">%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    @endforeach
                   </div>
                 </div>
               </div>
@@ -325,37 +232,56 @@
 
 @section('pageScript')
 <script>
-  $('#custom-1').click(function() {
-    if($('#custom-1').is(':checked')) { 
-      $('#d-custom-upah-1').removeClass('d-none');
-    }
+@foreach($quotationKebutuhan as $value)
+  $('.show-custom-{{$value->id}}').on('click',function(){
+    $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
   });
-  $('#ump-1').click(function() {
-    if($('#ump-1').is(':checked')) {
-      $('#d-custom-upah-1').addClass('d-none');
-    }
+  $('.hide-custom-{{$value->id}}').on('click',function(){
+    $('#d-custom-upah-{{$value->id}}').addClass('d-none');
   });
-  $('#umk-1').click(function() {
-    if($('#umk-1').is(':checked')) {
-      $('#d-custom-upah-1').addClass('d-none');
+
+  $('#provinsi-{{$value->id}}').on('change', function() {
+    $('#kota-{{$value->id}}').find('option').remove();
+    $('#kota-{{$value->id}}').append('<option value="">- Pilih data -</option>');
+
+    if(this.value!=""){
+      var param = "province_id="+this.value;
+      $.ajax({
+        url: "{{route('quotation.change-kota')}}",
+        type: 'GET',
+        data: param,
+        success: function(res) {
+          res.forEach(element => {
+            let selected = "";
+            $('#kota-{{$value->id}}').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+          });
+        }
+      });
     }
   });
 
-  $('#custom-2').click(function() {
-    if($('#custom-2').is(':checked')) { 
-      $('#d-custom-upah-2').removeClass('d-none');
-    }
-  });
-  $('#ump-2').click(function() {
-    if($('#ump-2').is(':checked')) {
-      $('#d-custom-upah-2').addClass('d-none');
-    }
-  });
-  $('#umk-2').click(function() {
-    if($('#umk-2').is(':checked')) {
-      $('#d-custom-upah-2').addClass('d-none');
-    }
-  });
-  
+  @if($value->provinsi_id != null)
+    var param = "province_id="+{{$value->provinsi_id}};
+      $.ajax({
+        url: "{{route('quotation.change-kota')}}",
+        type: 'GET',
+        data: param,
+        success: function(res) {
+          res.forEach(element => {
+            let selected = "";
+            if(element.id == {{$value->kota_id}}){
+              selected = "selected";
+            };
+
+            $('#kota-{{$value->id}}').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+          });
+        }
+      });
+  @endif
+
+  @if($value->upah=="Custom")
+    $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
+  @endif
+@endforeach
 </script>
 @endsection
