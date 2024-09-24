@@ -87,9 +87,22 @@ class QuotationController extends Controller
     public function edit3 (Request $request,$id){
         try {
             $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            $quotationKebutuhan = DB::table("sl_quotation_kebutuhan")->whereNull('deleted_at')->where('quotation_id',$request->id)->get();
+            $quotationKebutuhan = 
+            DB::table("sl_quotation_kebutuhan")
+            ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
+            ->whereNull('sl_quotation_kebutuhan.deleted_at')
+            ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
+            ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
+            ->get();
+
+            foreach ($quotationKebutuhan as $key => $value) {
+                $value->detail = DB::table('m_kebutuhan_detail')->where('kebutuhan_id',$value->kebutuhan_id)->whereNull('deleted_at')->get();
+                $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
+            }
+
             return view('sales.quotation.edit-3',compact('quotation','quotationKebutuhan'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

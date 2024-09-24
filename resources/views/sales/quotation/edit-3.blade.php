@@ -106,17 +106,11 @@
                       @foreach($quotationKebutuhan as $value)
                         <li class="nav-item" role="presentation">
                           <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-{{$value->id}}" aria-controls="navs-justified-{{$value->id}}" aria-selected="true">
-                            <!-- <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i>  -->
+                            <i class="tf-icons {{$value->icon}} me-1"></i> 
                             {{$value->kebutuhan}}
                           </button>
                         </li>
                       @endforeach
-                      
-                      <!-- <li class="nav-item" role="presentation">
-                        <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false" tabindex="-1">
-                          <i class="tf-icons mdi mdi-security me-1"></i> Security
-                        </button>
-                      </li> -->
                     <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
                   </div>
                   <div class="tab-content p-0">
@@ -124,26 +118,26 @@
                     <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-justified-{{$value->id}}" role="tabpanel">
                       <div class="row mb-3 mt-3">
                         <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
+                          <label class="form-label" for="jabatan_detail_{{$value->id}}">Nama Posisi/Jabatan</label>
                           <div class="input-group">
-                            <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                            <select id="jabatan_detail_{{$value->id}}" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
                               <option value="">- Pilih data -</option>
-                              <option value="">Security</option>  
-                              <option value="">Chief Security</option>  
-                              <option value="">Security Non Shift</option>  
+                              @foreach($value->detail as $detail)
+                                <option value="{{$detail->id}}">{{$detail->nama}}</option>  
+                              @endforeach  
                             </select>
                           </div>
                         </div>
                         <div class="col-sm-6">
-                          <label class="form-label" for="basic-default-password42">Jumlah Headcount</label>
+                          <label class="form-label" for="jumlah_hc_{{$value->id}}">Jumlah Headcount</label>
                           <div class="input-group">
-                            <input type="number" class="form-control" id="basic-default-password42">
+                            <input type="number" class="form-control" id="jumlah_hc_{{$value->id}}">
                           </div>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-12 d-flex justify-content-center">
-                          <button class="btn btn-info btn-back w-20">
+                          <button type="button" data-qbutuhid="{{$value->id}}" id="btn-tambah-detail-{{$value->id}}" class="btn btn-info btn-back w-20">
                             <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
                             <i class="mdi mdi-plus"></i>
                           </button>
@@ -161,18 +155,20 @@
                               </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
+                              @foreach($value->kebutuhan_detail as $detail)
                               <tr>
-                                <td>Direct Labour</td>
-                                <td>Direct Labour</td>
-                                <td class="text-center">9</td>
+                                <td>{{$detail->kebutuhan}}</td>
+                                <td>{{$detail->jabatan_kebutuhan}}</td>
+                                <td class="text-center">{{$detail->jumlah_hc}}</td>
                                 <td>
                                   <div class="col-12 d-flex justify-content-center">
-                                    <button class="btn btn-danger btn-back w-20">
+                                    <button type="button" class="btn btn-danger btn-back w-20">
                                       <i class="mdi mdi-trash-can-outline"></i>
                                     </button>
                                   </div>
                                 </td>
                               </tr>
+                              @endforeach
                             </tbody>
                           </table>
                         </div>
@@ -184,7 +180,7 @@
               </div>
               <div class="row mt-5">
                 <div class="col-12 d-flex justify-content-between">
-                <a href="{{route('quotation.edit-2',1)}}" class="btn btn-primary btn-back w-20">
+                <a href="{{route('quotation.edit-2',$quotation->id)}}" class="btn btn-primary btn-back w-20">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
                     <i class="mdi mdi-arrow-left"></i>
                   </a>
@@ -207,5 +203,39 @@
 @endsection
 
 @section('pageScript')
+<script>
+  @foreach($quotationKebutuhan as $value)
+    $('#btn-tambah-detail-{{$value->id}}').on('click',function () {
+      let jabatanDetailId = $('#jabatan_detail_{{$value->id}}').val();
+      let jumlahHc = $('#jumlah_hc_{{$value->id}}').val();
 
+      let msg="";
+      if(jabatanDetailId ==""){
+        msg += "Nama Posisi / Jabatan Belum Diisi <br />";
+      }
+      if(jumlahHc ==""){
+        msg += "Jumlah HC Belum Diisi";
+      }
+
+      if(msg!=""){
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: msg,
+          icon: "warning",
+        });
+      }else{
+        // $.ajax({
+        //   type: "POST",
+        //   url: url,
+        //   dataType:"jsonp"
+        //   success: function(response){
+        //       //if request if made successfully then the response represent the data
+
+        //       $( "#result" ).empty().append( response );
+        //   }
+        // });
+      }
+    });
+  @endforeach
+</script>
 @endsection

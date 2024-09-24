@@ -104,24 +104,24 @@
               </div>
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if($quotation->jumlah_site=='Single Site') checked @endif">
                     <label class="form-check-label custom-option-content" for="single_site">
                       <span class="custom-option-body">
                         <i class="mdi mdi-map-marker-outline"></i>
                         <span class="custom-option-title">Single Site</span>
                       </span>
-                      <input name="jumlah_site" class="form-check-input" type="radio" value="Single Site" id="single_site">
+                      <input name="jumlah_site" class="form-check-input" type="radio" value="Single Site" id="single_site" @if($quotation->jumlah_site=='Single Site') checked @endif>
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if($quotation->jumlah_site=='Multi Site') checked @endif">
                     <label class="form-check-label custom-option-content" for="multi_site">
                       <span class="custom-option-body">
                         <i class="mdi mdi-map-marker-multiple-outline"></i>
                         <span class="custom-option-title">Multi Site</span>
                       </span>
-                      <input name="jumlah_site" class="form-check-input" type="radio" value="Multi Site" id="multi_site">
+                      <input name="jumlah_site" class="form-check-input" type="radio" value="Multi Site" id="multi_site" @if($quotation->jumlah_site=='Multi Site') checked @endif>
                     </label>
                   </div>
                 </div>
@@ -138,35 +138,35 @@
               </div>
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if($quotation->jenis_kontrak=='PKWT') checked @endif">
                     <label class="form-check-label custom-option-content" for="pkwt">
                       <span class="custom-option-body">
                         <i class="mdi mdi-file-sign"></i>
                         <span class="custom-option-title">PKWT</span>
                       </span>
-                      <input name="jenis_kontrak" class="form-check-input" value="PKWT" type="radio" value="" id="pkwt">
+                      <input name="jenis_kontrak" class="form-check-input" value="PKWT" type="radio" value="" id="pkwt" @if($quotation->jenis_kontrak=='PKWT') checked @endif>
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if($quotation->jenis_kontrak=='PKHL') checked @endif">
                     <label class="form-check-label custom-option-content" for="pkhl">
                       <span class="custom-option-body">
                         <i class="mdi mdi-account-outline"></i>
                         <span class="custom-option-title"> PKHL </span>
                       </span>
-                      <input name="jenis_kontrak" class="form-check-input" value="PKHL" type="radio" value="" id="pkhl">
+                      <input name="jenis_kontrak" class="form-check-input" value="PKHL" type="radio" value="" id="pkhl" @if($quotation->jenis_kontrak=='PKHL') checked @endif>
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if($quotation->jenis_kontrak=='Borongan') checked @endif">
                     <label class="form-check-label custom-option-content" for="borongan">
                       <span class="custom-option-body">
                         <i class="mdi mdi-account-group-outline"></i>
                         <span class="custom-option-title"> Borongan </span>
                       </span>
-                      <input name="jenis_kontrak" class="form-check-input" value="Borongan" type="radio" value="" id="borongan">
+                      <input name="jenis_kontrak" class="form-check-input" value="Borongan" type="radio" value="" id="borongan" @if($quotation->jenis_kontrak=='Borongan') checked @endif>
                     </label>
                   </div>
                 </div>

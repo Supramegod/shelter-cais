@@ -301,7 +301,7 @@
               </div>
               <div class="row mt-5">
                 <div class="col-12 d-flex justify-content-between">
-                  <a href="{{route('quotation.edit-3',1)}}" class="btn btn-primary btn-back w-20">
+                  <a href="{{route('quotation.edit-3',$quotation->id)}}" class="btn btn-primary btn-back w-20">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
                     <i class="mdi mdi-arrow-left"></i>
                   </a>

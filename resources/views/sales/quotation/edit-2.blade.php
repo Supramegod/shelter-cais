@@ -103,46 +103,46 @@
               </div>
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if(str_contains($quotation->kebutuhan_id, '1')) checked @endif">
                     <label class="form-check-label custom-option-content" for="direct_labour">
                       <span class="custom-option-body">
                         <i class="mdi mdi-account-hard-hat-outline"></i>
                         <span class="custom-option-title">Direct Labour</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="1" id="direct_labour">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="1" id="direct_labour" @if(str_contains($quotation->kebutuhan_id, '1')) checked @endif>
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif">
                     <label class="form-check-label custom-option-content" for="security">
                       <span class="custom-option-body">
                         <i class="mdi mdi-security"></i>
                         <span class="custom-option-title">Security</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="2" id="security">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="2" id="security" @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif>
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if(str_contains($quotation->kebutuhan_id, '3')) checked @endif">
                     <label class="form-check-label custom-option-content" for="cleaning_service">
                       <span class="custom-option-body">
                         <i class="mdi mdi-spray-bottle"></i>
                         <span class="custom-option-title">Cleaning Service</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="3" id="cleaning_service">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="3" id="cleaning_service" @if(str_contains($quotation->kebutuhan_id, '3')) checked @endif>
                     </label>
                   </div>
                 </div>
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
+                  <div class="form-check custom-option custom-option-icon @if(str_contains($quotation->kebutuhan_id, '4')) checked @endif">
                     <label class="form-check-label custom-option-content" for="logistik">
                       <span class="custom-option-body">
                         <i class="mdi mdi-truck-fast-outline"></i>
                         <span class="custom-option-title">Logistik</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="4" id="logistik">
+                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="4" id="logistik" @if(str_contains($quotation->kebutuhan_id, '4')) checked @endif>
                     </label>
                   </div>
                 </div>
@@ -156,7 +156,7 @@
                   <select id="entitas" name="entitas" class="select2 form-select select2-hidden-accessible @if($errors->has('entitas')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($company as $value)
-                      <option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>  
+                      <option value="{{$value->id}}" @if($quotation->company_id==$value->id) selected @endif>{{$value->code}} | {{$value->name}}</option>  
                       @endforeach
                     </select>
                     @if($errors->has('entitas'))
@@ -167,14 +167,14 @@
               <div class="row mb-3">
                 <div class="col-sm-6">
                   <label class="form-label" for="mulai-kontrak">Mulai Kontrak</label>
-                  <input type="date" name="mulai_kontrak" class="form-control @if($errors->has('mulai_kontrak')) is-invalid @endif" id="mulai-kontrak">
+                  <input type="date" name="mulai_kontrak" value="{{$quotation->mulai_kontrak}}" class="form-control @if($errors->has('mulai_kontrak')) is-invalid @endif" id="mulai-kontrak">
                     @if($errors->has('mulai_kontrak'))
                       <span class="text-danger">{{$errors->first('mulai_kontrak')}}</span>
                     @endif
                 </div>
                 <div class="col-sm-6">
                   <label class="form-label" for="kontrak-selesai">Kontrak Selesai</label>
-                  <input type="date" name="kontrak_selesai" class="form-control @if($errors->has('kontrak_selesai')) is-invalid @endif" id="kontrak-selesai">
+                  <input type="date" name="kontrak_selesai" value="{{$quotation->kontrak_selesai}}" class="form-control @if($errors->has('kontrak_selesai')) is-invalid @endif" id="kontrak-selesai">
                     @if($errors->has('kontrak_selesai'))
                       <span class="text-danger">{{$errors->first('kontrak_selesai')}}</span>
                     @endif
@@ -183,7 +183,7 @@
               <div class="row mb-3">
                 <div class="col-sm-6">
                   <label class="form-label" for="tgl_penempatan">Tanggal Penempatan</label>
-                  <input type="date" name="tgl_penempatan" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl_penempatan">
+                  <input type="date" name="tgl_penempatan" value="{{$quotation->tgl_penempatan}}" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl_penempatan">
                   @if($errors->has('tgl_penempatan'))
                     <span class="text-danger">{{$errors->first('tgl_penempatan')}}</span>
                   @endif
@@ -196,7 +196,7 @@
                   <select id="salary_rule" name="salary_rule" class="select2 form-select select2-hidden-accessible @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($salaryRule as $value)
-                      <option value="{{$value->id}}">{{$value->nama_salary_rule}}</option>  
+                      <option value="{{$value->id}}"  @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}}</option>  
                       @endforeach
                     </select>
                     @if($errors->has('salary_rule'))
@@ -206,7 +206,7 @@
               </div>
               <div class="row mt-5">
                 <div class="col-12 d-flex justify-content-between">
-                <a href="{{route('quotation.edit-1',1)}}" class="btn btn-primary btn-back w-20">
+                <a href="{{route('quotation.edit-1',$quotation->id)}}" class="btn btn-primary btn-back w-20">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
                     <i class="mdi mdi-arrow-left"></i>
                   </a>
