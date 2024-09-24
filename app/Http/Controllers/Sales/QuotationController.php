@@ -93,6 +93,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
+            ->select('sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -441,8 +442,54 @@ class QuotationController extends Controller
             ->make(true);
     }
 
+    
     public function addDetailHC(Request $request){
-        
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$request->quotation_kebutuhan_id)->first();
+            $kebutuhan = DB::table('m_kebutuhan')->where('id',$quotationKebutuhan->kebutuhan_id)->first();
+            $kebutuhanD = DB::table('m_kebutuhan_detail')->where('id',$request->jabatan_detail_id)->first();
+            DB::table('sl_quotation_kebutuhan_detail')->insert([
+                'quotation_id' => $quotationKebutuhan->quotation_id,
+                'quotation_kebutuhan_id' => $quotationKebutuhan->id,
+                'kebutuhan_detail_id' => $request->jabatan_detail_id,
+                'kebutuhan' => $kebutuhan->nama,
+                'jabatan_kebutuhan' => $kebutuhanD->nama,
+                'jumlah_hc' => $request->jumlah_hc,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+            return "sukses";
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+            return "gagal";
+        }
+    }
+
+    public function deleteDetailHC(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kebutuhan_detail')->where('id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function listDetailHC (Request $request){
+        $data = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->whereNull('deleted_at')->get();
+        return DataTables::of($data)
+        ->addColumn('aksi', function ($data) {
+            return '<div class="justify-content-center d-flex">
+                        <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'" data-kebutuhan="'.$data->quotation_kebutuhan_id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+                    </div>';
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
     }
     
     public function generateNomor ($leadsId,$companyId){

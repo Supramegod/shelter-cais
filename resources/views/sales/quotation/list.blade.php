@@ -159,10 +159,10 @@
                 scrollX: true,
                 "iDisplayLength": 25,
                 'processing': true,
-        'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...'
-        },
+                'language': {
+                    'loadingRecords': '&nbsp;',
+                    'processing': 'Loading...'
+                },
                 ajax: {
                     url: "{{ route('quotation.list') }}",
                     data: function (d) {

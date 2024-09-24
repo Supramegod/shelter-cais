@@ -621,12 +621,16 @@
       $('#leads').val("{{$leads->nama_perusahaan}}");
       $('#leads_id').val("{{$leads->id}}");
       $('#kebutuhan').val("{{$leads->kebutuhan}}");
+    $('#tim_sales_name').val("{{$leads->timSalesName}}");
+      $('#sales_name').val("{{$leads->salesName}}");
+
       $('#sales_d').val("");
 
-      if(rdata.tim_sales_id !=null){
-        $('#tim_sales_id').val(rdata.tim_sales_id).change();
-        if(rdata.tim_sales_d_id != null){
-          $('#sales_d').val(rdata.tim_sales_d_id);
+      if({{$leads->tim_sales_id}} !=null){
+          console.log("disini");
+        $('#tim_sales_id').val({{$leads->tim_sales_id}}).change();
+        if({{$leads->tim_sales_d_id}} != null){
+          $('#sales_d').val({{$leads->tim_sales_d_id}});
         }
       }
 

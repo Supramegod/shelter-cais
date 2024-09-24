@@ -56,7 +56,7 @@ class AuthController extends Controller
         ]);
 
         try {
-            $user = User::where('username',($credentials['username']))->where('password',(md5($credentials['password'])))->first();
+            $user = User::where('username',($credentials['username']))->where('password',(md5('SHELTER-'.$credentials['password'].'-SHELTER')))->first();
             if ($user) {
                 Auth::login($user);
                 $request->session()->regenerate();
@@ -74,12 +74,12 @@ class AuthController extends Controller
                     'header_data'   => json_encode($request->header())
                 ]);
 
-                $arrRole = [2,48,98,99];
-                if(!in_array($dataUser->role_id,$arrRole)){
-                    return back()->withErrors([
-                        'username' => "User dengan Role anda belum bisa masuk ke Aplikasi CAIS , silahkan hubungi IT",
-                    ])->onlyInput('username');
-                }
+                // $arrRole = [2,48,98,99];
+                // if(!in_array($dataUser->role_id,$arrRole)){
+                //     return back()->withErrors([
+                //         'username' => "User dengan Role anda belum bisa masuk ke Aplikasi CAIS , silahkan hubungi IT",
+                //     ])->onlyInput('username');
+                // }
 
                 return redirect()->route('dashboard')
                     ->withSuccess('Berhasil Login !');

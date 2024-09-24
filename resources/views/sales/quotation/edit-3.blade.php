@@ -144,32 +144,20 @@
                         </div>
                       </div>
                       <div class="row mt-5">
-                        <div class="table-responsive text-nowrap">
-                          <table class="table">
-                            <thead class="table-light">
-                              <tr>
-                                <th class="text-center">Kebutuhan</th>
-                                <th class="text-center">Nama Posisi/Jabatan</th>
-                                <th class="text-center">Jumlah Headcount</th>
-                                <th class="text-center">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                              @foreach($value->kebutuhan_detail as $detail)
-                              <tr>
-                                <td>{{$detail->kebutuhan}}</td>
-                                <td>{{$detail->jabatan_kebutuhan}}</td>
-                                <td class="text-center">{{$detail->jumlah_hc}}</td>
-                                <td>
-                                  <div class="col-12 d-flex justify-content-center">
-                                    <button type="button" class="btn btn-danger btn-back w-20">
-                                      <i class="mdi mdi-trash-can-outline"></i>
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                              @endforeach
-                            </tbody>
+                        <div class="table-responsive overflow-hidden table-data-{{$value->id}}">
+                          <table id="table-data-{{$value->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                              <thead>
+                                  <tr>
+                                      <th class="text-center">ID</th>
+                                      <th class="text-center">Kebutuhan</th>
+                                      <th class="text-center">Nama Posisi/Jabatan</th>
+                                      <th class="text-center">Jumlah Headcount</th>
+                                      <th class="text-center">Aksi</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {{-- data table ajax --}}
+                              </tbody>
                           </table>
                         </div>
                       </div>
@@ -205,6 +193,53 @@
 @section('pageScript')
 <script>
   @foreach($quotationKebutuhan as $value)
+    $('#table-data-{{$value->id}}').DataTable({
+      scrollX: true,
+      "bPaginate": false,
+    "bLengthChange": false,
+    "bFilter": false,
+    "bInfo": false,
+      'processing': true,
+      'language': {
+          'loadingRecords': '&nbsp;',
+          'processing': 'Loading...'
+      },
+      ajax: {
+          url: "{{ route('quotation.list-detail-hc') }}",
+          data: function (d) {
+              d.quotation_kebutuhan_id = {{$value->id}};
+          },
+      },   
+      "order":[
+          [0,'asc']
+      ],
+      columns:[{
+          data : 'id',
+          name : 'id',
+          visible: false,
+          searchable: false
+      },{
+          data : 'kebutuhan',
+          name : 'kebutuhan',
+          className:'text-center'
+      },{
+          data : 'jabatan_kebutuhan',
+          name : 'jabatan_kebutuhan',
+          className:'text-center'
+      },{
+          data : 'jumlah_hc',
+          name : 'jumlah_hc',
+          className:'text-center'
+      },{
+          data : 'aksi',
+          name : 'aksi',
+          width: "10%",
+          orderable: false,
+          searchable: false,
+      }],
+      "language": datatableLang,
+    });
+
     $('#btn-tambah-detail-{{$value->id}}').on('click',function () {
       let jabatanDetailId = $('#jabatan_detail_{{$value->id}}').val();
       let jumlahHc = $('#jumlah_hc_{{$value->id}}').val();
@@ -224,18 +259,46 @@
           icon: "warning",
         });
       }else{
-        // $.ajax({
-        //   type: "POST",
-        //   url: url,
-        //   dataType:"jsonp"
-        //   success: function(response){
-        //       //if request if made successfully then the response represent the data
+        let formData = {
+          "jabatan_detail_id":jabatanDetailId,
+          "jumlah_hc":jumlahHc,
+          "quotation_kebutuhan_id":{{$value->id}},
+          "_token": "{{ csrf_token() }}"
+        };
 
-        //       $( "#result" ).empty().append( response );
-        //   }
-        // });
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.add-detail-hc')}}",
+          data:formData,
+          success: function(response){
+              $('#table-data-{{$value->id}}').DataTable().ajax.reload();
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
       }
     });
   @endforeach
+
+  $('body').on('click', '.btn-delete', function() {
+    let formData = {
+      "id":$(this).data('id'),
+      "_token": "{{ csrf_token() }}"
+    };
+
+    let table ='#table-data-'+$(this).data('kebutuhan');
+    $.ajax({
+      type: "POST",
+      url: "{{route('quotation.delete-detail-hc')}}",
+      data:formData,
+      success: function(response){
+        $(table).DataTable().ajax.reload();
+      },
+      error:function(error){
+        console.log(error);
+      }
+    });
+  });
 </script>
 @endsection
