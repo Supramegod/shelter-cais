@@ -441,6 +441,10 @@ class QuotationController extends Controller
             ->make(true);
     }
 
+    public function addDetailHC(Request $request){
+        
+    }
+    
     public function generateNomor ($leadsId,$companyId){
         // generate nomor QUOT/SIG/AAABB-092024-00001
         $now = Carbon::now();
