@@ -2,6 +2,9 @@
 @section('title','Quotation')
 @section('content')
 <!--/ Content -->
+<style>
+  
+</style>
 <div class="container-fluid flex-grow-1 container-p-y">
   <!-- <h4 class="py-3 mb-4"><span class="text-muted fw-light">Sales /</span> Quotation Baru</h4> -->
   <!-- Default -->
@@ -99,63 +102,26 @@
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
-              <div class="row mb-3">
-                <div class="table-responsive text-nowrap">
-                  <table class="table">
-                    <thead class="table-light">
-                      <tr>
-                        <th class="text-center">No</th>
-                        <th class="text-center">Perjanjian</th>
-                        <th class="text-center">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                      <tr>
-                        <td>1</td>
-                        <td>...</td>
-                        <td>
-                          
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>...</td>
-                        <td>
-                          
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td>...</td>
-                        <td>
-                          
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td>...</td>
-                        <td>
-                          
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>5</td>
-                        <td>...</td>
-                        <td>
-                          <div class="col-12 d-flex justify-content-center">
-                            <button class="btn btn-danger btn-back w-20">
-                              <i class="mdi mdi-trash-can-outline"></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
+              <div class="row mt-5">
+                <div class="table-responsive overflow-hidden table-data">
+                  <table id="table-data" class="dt-column-search table table-hover">
+                      <thead>
+                          <tr>
+                              <th class="text-center">ID</th>
+                              <th class="text-center">Nomor</th>
+                              <th class="text-center">Perjanjian</th>
+                              <th class="text-center">Aksi</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {{-- data table ajax --}}
+                      </tbody>
                   </table>
                 </div>
               </div>
               <div class="row">
                 <div class="col-12 d-flex justify-content-center">
-                  <button class="btn btn-info btn-back w-50">
+                  <button type="button" class="btn btn-info btn-back w-50" id="btn-tambah-kerjasama">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Perjanjian</span>
                     <i class="mdi mdi-plus"></i>
                   </button>
@@ -187,37 +153,104 @@
 
 @section('pageScript')
 <script>
-  $('#custom-1').click(function() {
-    if($('#custom-1').is(':checked')) { 
-      $('#d-custom-upah-1').removeClass('d-none');
-    }
-  });
-  $('#ump-1').click(function() {
-    if($('#ump-1').is(':checked')) {
-      $('#d-custom-upah-1').addClass('d-none');
-    }
-  });
-  $('#umk-1').click(function() {
-    if($('#umk-1').is(':checked')) {
-      $('#d-custom-upah-1').addClass('d-none');
-    }
-  });
+  $(document).ready(function(){
+    $('#table-data').DataTable({
+      scrollX: true,
+      "bPaginate": false,
+      "bFilter": false,
+      "bInfo": false,
+        'processing': true,
+        'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': 'Loading...'
+        },
+        ajax: {
+            url: "{{ route('quotation.list-quotation-kerjasama') }}",
+            data: function (d) {
+                d.quotation_id = {{$quotation->id}};
+            },
+        },   
+        "order":[
+            [0,'asc']
+        ],
+        columns:[{
+            data : 'id',
+            name : 'id',
+            visible: false,
+            searchable: false
+        },{
+            data : 'nomor',
+            name : 'nomor',
+            width: "10%",
+        },{
+            data : 'perjanjian',
+            name : 'perjanjian',
+            width: "70%",
+        },{
+            data : 'aksi',
+            name : 'aksi',
+            width: "10%",
+            orderable: false,
+            searchable: false,
+        }],
+        "language": datatableLang,
+      });
 
-  $('#custom-2').click(function() {
-    if($('#custom-2').is(':checked')) { 
-      $('#d-custom-upah-2').removeClass('d-none');
-    }
+      $('body').on('click', '.btn-delete', function() {
+        let formData = {
+          "id":$(this).data('id'),
+          "_token": "{{ csrf_token() }}"
+        };
+
+        let table ='#table-data';
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.delete-quotation-kerjasama')}}",
+          data:formData,
+          success: function(response){
+            $(table).DataTable().ajax.reload();
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      });
+      
+      $('#btn-tambah-kerjasama').on('click',function () {
+     
+        Swal.fire({
+          title: "Masukkan Perjanjian",
+          input: "textarea",
+          inputAttributes: {
+            autocapitalize: "off"
+          },
+          showCancelButton: true,
+          confirmButtonText: "Simpan",
+          showLoaderOnConfirm: true,
+          preConfirm: async (value) => {
+            let formData = {
+              "quotation_id":{{$quotation->id}},
+              "perjanjian":value,
+              "_token": "{{ csrf_token() }}"
+            };
+
+            $.ajax({
+              type: "POST",
+              url: "{{route('quotation.add-quotation-kerjasama')}}",
+              data:formData,
+              success: function(response){
+                  $('#table-data').DataTable().ajax.reload();
+              },
+              error:function(error){
+                console.log(error);
+              }
+            });
+          },
+        }).then((result) => {
+          $(table).DataTable().ajax.reload();
+        });
+    });
+
   });
-  $('#ump-2').click(function() {
-    if($('#ump-2').is(':checked')) {
-      $('#d-custom-upah-2').addClass('d-none');
-    }
-  });
-  $('#umk-2').click(function() {
-    if($('#umk-2').is(':checked')) {
-      $('#d-custom-upah-2').addClass('d-none');
-    }
-  });
-  
 </script>
 @endsection

@@ -298,6 +298,7 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->full_name
                 ]);
 
+                $kebutuhanPerjanjian ="";
                 foreach ($request->kebutuhan as $key => $value) {
                     $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
                     $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')
@@ -305,6 +306,15 @@ class QuotationController extends Controller
                                             ->where('quotation_id',$request->id)
                                             ->where('kebutuhan_id',$value)->first();
                     $kebutuhan = DB::table('m_kebutuhan')->where('id',$value)->first();
+
+                    if($key==(count($request->kebutuhan)-1)){
+                        $kebutuhanPerjanjian = $kebutuhanPerjanjian." dan <b>".$kebutuhan->nama."</b>";
+                    }else if($key==0){
+                        $kebutuhanPerjanjian = "<b>".$kebutuhan->nama."</b>";
+                    }else{
+                        $kebutuhanPerjanjian = $kebutuhanPerjanjian." , <b>".$kebutuhan->nama."</b>";
+                    };
+                    
                     if($quotationKebutuhan == null){
                         DB::table('sl_quotation_kebutuhan')->insert([
                             'nomor' => $this->generateNomor($quotation->leads_id,$request->entitas),
@@ -335,6 +345,29 @@ class QuotationController extends Controller
                     'deleted_at' => $current_date_time,
                     'deleted_by' => Auth::user()->full_name
                 ]);
+
+                DB::table('sl_quotation')->where('id',$request->id)->update([
+                    'step' => 3,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+
+                //buat perjanjian
+                $arrPerjanjian = [
+                    "Penawaran harga ini berlaku 30 hari sejak tanggal diterbitkan.",
+                    "Akan dilakukan <i>survey</i> area untuk kebutuhan ".$kebutuhanPerjanjian." sebagai tahapan <i>assesment</i> area untuk memastikan efektifitas pekerjaan.",
+                    "Komponen dan nilai dalam penawaran harga ini berdasarkan kesepakatan para pihak dalam pengajuan harga awal, apabila ada perubahan, pengurangan maupun penambahan pada komponen dan nilai pada penawaran, maka <b>para pihak</b> sepakat akan melanjutkan ke tahap negosiasi selanjutnya.",
+                ];
+
+                foreach ($arrPerjanjian as $key => $value) {
+                    DB::table('sl_quotation_kerjasama')->insert([
+                        'quotation_id' => $request->id,
+                        'perjanjian' => $value,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+                }
+
                 return redirect()->route('quotation.edit-3',$request->id);
             }
         } catch (\Exception $e) {
@@ -346,6 +379,12 @@ class QuotationController extends Controller
 
     public function saveEdit3 (Request $request){
         try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 4,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
             return redirect()->route('quotation.edit-4',$request->id);
         } catch (\Exception $e) {
             dd($e);
@@ -400,6 +439,12 @@ class QuotationController extends Controller
                 ]);
             }
 
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 5,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
             return redirect()->route('quotation.edit-5',$request->id);
         } catch (\Exception $e) {
             dd($e);
@@ -435,6 +480,12 @@ class QuotationController extends Controller
                 ]);
             }
 
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 6,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
             return redirect()->route('quotation.edit-6',$request->id);
         } catch (\Exception $e) {
             dd($e);
@@ -445,6 +496,13 @@ class QuotationController extends Controller
 
     public function saveEdit6 (Request $request){
         try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 100,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
             return redirect()->route('quotation');
         } catch (\Exception $e) {
             dd($e);
@@ -599,6 +657,56 @@ class QuotationController extends Controller
     public function changeKota (Request $request){
         $data = DB::connection('mysqlhris')->table('m_city')->where('province_id',$request->province_id)->get();
         return $data;
+    }
+
+    public function listQuotationKerjasama (Request $request){
+        $data = DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->quotation_id)->whereNull('deleted_at')->get();
+        
+        foreach ($data as $key => $value) {
+            $value->nomor = $key+1;
+        };
+        
+        return DataTables::of($data)
+        ->addColumn('aksi', function ($data) {
+            if($data->is_delete==1){
+                return '<div class="justify-content-center d-flex">
+                    <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+                </div>';
+            }else{
+                return '';
+            }
+        })
+        ->rawColumns(['aksi','perjanjian'])
+        ->make(true);
+    }
+
+    public function addQuotationKerjasama(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kerjasama')->insert([
+                'quotation_id' => $request->quotation_id,
+                'perjanjian' => $request->perjanjian,
+                'is_delete' => 1,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function deleteQuotationKerjasama(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kerjasama')->where('id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
     }
 
     public function generateNomor ($leadsId,$companyId){
