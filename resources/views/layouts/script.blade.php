@@ -24,6 +24,7 @@
     <!-- <script src="{{ asset('public/assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script> -->
     <!-- <script src="{{ asset('public/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script> -->
     <!-- <script src="{{ asset('public/assets/vendor/libs/select2/select2.js') }}"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- Flat Picker -->
     <script src="{{ asset('public/assets/vendor/libs/moment/moment.js')}}"></script>

@@ -196,6 +196,12 @@
 <script>
   $(document).ready(function(){
     @foreach($quotationKebutuhan as $value)
+    
+    $(document).ready(function() {
+      $('#jenis-perusahaan-{{$value->id}}').select2();
+    });
+    
+
     $('#jenis-perusahaan-{{$value->id}}').on('change', function() {
       let id = '#resiko-{{$value->id}}';
       

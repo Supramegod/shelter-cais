@@ -41,6 +41,7 @@
     <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/cards-analytics.css') }}" />
     <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/bs-stepper/bs-stepper.css') }}" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/sweetalert2/sweetalert2.css') }}" /> -->
     <!-- <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" /> -->
@@ -51,6 +52,17 @@
 
     <script src="{{ asset('public/assets/js/config.js') }}"></script>
 
+    <style>
+        .select2-selection__rendered {
+                line-height: 31px !important;
+            }
+            .select2-container .select2-selection--single {
+                height: 35px !important;
+            }
+            .select2-selection__arrow {
+                height: 34px !important;
+            }
+    </style>
     <!-- custom style -->
     @yield('pageStyle')
     <!-- End of style -->
