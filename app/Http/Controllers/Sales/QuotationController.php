@@ -224,7 +224,12 @@ class QuotationController extends Controller
                 $data->manajemen_fee = $manajemenFeeList->nama;
             }
 
-            return view('sales.quotation.view',compact('now','data','master','leads'));
+            $aplikasiPendukung = DB::table('sl_quotation_kebutuhan_aplikasi')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$id)->get();
+            foreach ($aplikasiPendukung as $key => $value) {
+                $app = DB::table('m_aplikasi_pendukung')->where('id',$value->aplikasi_pendukung_id)->first();
+                $value->link_icon = $app->link_icon;
+            }
+            return view('sales.quotation.view',compact('now','data','master','leads','aplikasiPendukung'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -693,7 +698,9 @@ class QuotationController extends Controller
             if(!empty($request->company)){
                 $data = $data->where('sl_quotation.company_id',$request->company);
             }
-
+            if(isset($request->is_aktif)){
+                $data = $data->where('sl_quotation_kebutuhan.is_aktif',$request->is_aktif);
+            }
             //divisi sales
             if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
                 // sales

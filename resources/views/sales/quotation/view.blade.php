@@ -13,7 +13,7 @@
         class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
           <div class="d-flex flex-column justify-content-center">
             <h5 class="mb-1 mt-3">
-              {{$data->nomor}} 
+              {{$data->nomor}}
               <!-- <span class="badge bg-label-success me-2 ms-2 rounded-pill">Paid</span> -->
                @if($data->quotation_status !="" && $data->quotation_status !=null )
                <span class="badge bg-label-warning rounded-pill">{{$data->quotation_status}}</span>
@@ -26,6 +26,7 @@
                @endif
             </h5>
             <p class="text-body">{{$master->nama_perusahaan}}</p>
+            <p class="text-body">Revisi Ke : {{$master->revisi}}</p>
           </div>
           <div class="d-flex align-content-center flex-wrap gap-2">
             <button class="btn btn-warning" @if($data->is_aktif==1) disabled @endif><i class="mdi mdi-file-refresh"></i>&nbsp; Ajukan Ulang ( Ubah )</button>
@@ -45,8 +46,9 @@
   <div class="row">
     <div class="col-12 col-lg-8">
       <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="card-title m-0">Quotation Info</h5>
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title m-0">Quotation Info</h5>
+          <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
         </div>
         <div class="card-body">
           <div class="row mb-3">
@@ -92,8 +94,9 @@
         </div>
       </div>
       <div class="card mb-4">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Service Info</h5>
+          <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
         </div>
         <div class="card-body">
           <div class="row mb-3">
@@ -214,18 +217,32 @@
         </div>
       </div>
 
-      <!-- <div class="card mb-4">
+       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between">
-          <h6 class="card-title m-0">Shipping address</h6>
+          <h6 class="card-title m-0">Aplikasi Pendukung</h6>
           <h6 class="m-0">
             <a href=" javascript:void(0)">Edit</a>
           </h6>
         </div>
         <div class="card-body">
-          <p class="mb-0">45 Roker Terrace <br />Latheronwheel <br />KW5 8NW,London <br />UK</p>
+          <div class="table-responsive text-nowrap">
+            <table class="table table-hover">
+              <tbody class="table-border-bottom-0">
+                @foreach($aplikasiPendukung as $value)
+                <tr>
+                  <td>
+                    <img src="{{$value->link_icon}}" alt="{{$value->aplikasi_pendukung}}" style="max-width:60px">
+                  </td>
+                  <td><span class="fw-medium">{{$value->aplikasi_pendukung}}</span></td>
+                </tr>
+                @endforeach
+
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <div class="card mb-4">
+      <!--<div class="card mb-4">
         <div class="card-header d-flex justify-content-between">
           <h6 class="card-title m-0">Billing address</h6>
           <h6 class="m-0">
@@ -295,6 +312,32 @@
             </div>
           </div>
         </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center pb-0">
+          <h5 class="card-title m-0">Perjanjian Kerjasama</h5>
+            <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+          </div>
+          <div class="card-body pt-0">
+            <div class="row mt-5">
+              <div class="table-responsive overflow-hidden table-data">
+                <table id="table-data-perjanjian" class="dt-column-search table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Nomor</th>
+                            <th class="text-center">Perjanjian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- data table ajax --}}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -461,5 +504,43 @@
       }
     });
   });
+
+  $('#table-data-perjanjian').DataTable({
+    scrollX: true,
+    "bPaginate": false,
+    "bFilter": false,
+    "bInfo": false,
+      'processing': true,
+      'language': {
+          'loadingRecords': '&nbsp;',
+          'processing': 'Loading...'
+      },
+      ajax: {
+          url: "{{ route('quotation.list-quotation-kerjasama') }}",
+          data: function (d) {
+              d.quotation_id = {{$master->id}};
+          },
+      },   
+      "order":[
+          [0,'asc']
+      ],
+      columns:[{
+          data : 'id',
+          name : 'id',
+          visible: false,
+          searchable: false
+      },{
+          data : 'nomor',
+          name : 'nomor',
+          className:'text-center',
+          width: "10%",
+      },{
+          data : 'perjanjian',
+          name : 'perjanjian',
+          width: "70%",
+      }],
+      "language": datatableLang,
+    });
+  
 </script>
 @endsection

@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="card-body pt-4">
-                    <form action="{{route('customer-activity')}}" method="GET">
+                    <form action="{{route('quotation')}}" method="GET">
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-2">
@@ -38,19 +38,6 @@
                                         <div class="form-floating form-floating-outline">
                                             <input type="date" class="form-control" id="tgl_sampai" name="tgl_sampai" value="{{$tglSampai}}">
                                             <label for="tgl_sampai">Tanggal Sampai</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="branch" name="branch">
-                                                <option value="">- Semua Wilayah -</option>
-                                                @foreach($branch as $data)
-                                                <option value="{{$data->id}}" @if($request->branch==$data->id) selected @endif>{{$data->name}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="branch">Wilayah</label>
                                         </div>
                                     </div>
                                 </div>
@@ -77,6 +64,18 @@
                                                 @endforeach
                                             </select>
                                             <label for="kebutuhan">Kebutuhan</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group input-group-merge mb-4">
+                                        <div class="form-floating form-floating-outline">
+                                            <select class="form-select" id="is_aktif" name="is_aktif">
+                                                <option value="">- Semua Status -</option>
+                                                <option value="0" @if($request->is_aktif=='0') selected @endif>Perlu Approval</option>
+                                                <option value="1" @if($request->is_aktif=='1') selected @endif>Quotation Aktif</option>
+                                            </select>
+                                            <label for="is_aktif">Status Data</label>
                                         </div>
                                     </div>
                                 </div>
@@ -171,6 +170,7 @@
                         d.branch = $('#branch').find(":selected").val();
                         d.company = $('#company').find(":selected").val();
                         d.kebutuhan = $('#kebutuhan').find(":selected").val();
+                        d.is_aktif = $('#is_aktif').find(":selected").val();
                     },
                 },   
                 "order":[
