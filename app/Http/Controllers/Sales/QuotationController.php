@@ -455,6 +455,8 @@ class QuotationController extends Controller
                     $customUpah = $request['custom-upah-'.$value->id];
                 }
 
+                $quotationStatus = "";
+                $successStatus = "";
                 $isAktif = $value->is_aktif;
                 if($value->is_aktif==2){
                     if($upah == "Custom"){
@@ -474,6 +476,13 @@ class QuotationController extends Controller
                     }
                 }
 
+                if($isAktif == 1){
+                    $successStatus = "Quotation telah Aktif";
+                }else if($isAktif == 0) {
+                    $quotationStatus = "Memerlukan Approval Manajemen";
+                }
+
+
                 DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
                     'provinsi_id' => $provinsiId,
                     'provinsi' => $provinsi,
@@ -483,6 +492,8 @@ class QuotationController extends Controller
                     'custom_upah' => $customUpah,
                     'management_fee_id' => $manfee,
                     'is_aktif' =>$isAktif,
+                    'quotation_status' => $quotationStatus,
+                    'success_status' => $successStatus,
                     'persentase' => $presentase,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -520,6 +531,8 @@ class QuotationController extends Controller
                     }
                 }
 
+                $quotationStatus = "";
+                $successStatus = "";
                 $isAktif = $value->is_aktif;
                 if($isAktif==2){
                     if($programBpjs != "4 BPJS"){
@@ -531,11 +544,19 @@ class QuotationController extends Controller
                     $isAktif = 1;
                 };
 
+                if($isAktif == 1){
+                    $successStatus = "Quotation telah Aktif";
+                }else if($isAktif == 0) {
+                    $quotationStatus = "Memerlukan Approval Manajemen";
+                }
+
                 DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
                     'jenis_perusahaan_id' => $jenisPerusahaanId,
                     'jenis_perusahaan' => $jenisPerusahaan,
                     'resiko' => $resiko,
                     'is_aktif' => $isAktif,
+                    'quotation_status' => $quotationStatus,
+                    'success_status' => $successStatus,
                     'program_bpjs' => $programBpjs,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name

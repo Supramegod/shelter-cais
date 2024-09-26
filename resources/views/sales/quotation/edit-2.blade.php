@@ -109,7 +109,7 @@
                         <i class="mdi mdi-account-hard-hat-outline"></i>
                         <span class="custom-option-title">Direct Labour</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="1" id="direct_labour" @if(str_contains($quotation->kebutuhan_id, '1')) checked @endif>
+                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="1" id="direct_labour" @if(str_contains($quotation->kebutuhan_id, '1')) checked @endif>
                     </label>
                   </div>
                 </div>
@@ -120,7 +120,7 @@
                         <i class="mdi mdi-security"></i>
                         <span class="custom-option-title">Security</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="2" id="security" @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif>
+                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="2" id="security" @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif>
                     </label>
                   </div>
                 </div>
@@ -131,7 +131,7 @@
                         <i class="mdi mdi-spray-bottle"></i>
                         <span class="custom-option-title">Cleaning Service</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="3" id="cleaning_service" @if(str_contains($quotation->kebutuhan_id, '3')) checked @endif>
+                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="3" id="cleaning_service" @if(str_contains($quotation->kebutuhan_id, '3')) checked @endif>
                     </label>
                   </div>
                 </div>
@@ -142,7 +142,7 @@
                         <i class="mdi mdi-truck-fast-outline"></i>
                         <span class="custom-option-title">Logistik</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="checkbox" value="4" id="logistik" @if(str_contains($quotation->kebutuhan_id, '4')) checked @endif>
+                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="4" id="logistik" @if(str_contains($quotation->kebutuhan_id, '4')) checked @endif>
                     </label>
                   </div>
                 </div>
