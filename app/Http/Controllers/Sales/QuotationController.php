@@ -176,9 +176,39 @@ class QuotationController extends Controller
 
     public function view (Request $request,$id){
         try {
+            $data = DB::table('sl_quotation_kebutuhan')->where('id',$id)->first();
+            $data->detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$id)->get();
+            $data->totalHc = 0;
+
+            foreach ($data->detail as $key => $value) {
+                $data->totalHc += $value->jumlah_hc;
+            }
+            
+            $master = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
+            $leads = DB::table('sl_leads')->where('id',$master->leads_id)->first();
             $now = Carbon::now()->isoFormat('DD MMMM Y');
-            return view('sales.quotation.view',compact('now'));
+
+            //format
+            $master->smulai_kontrak = Carbon::createFromFormat('Y-m-d',$master->mulai_kontrak)->isoFormat('D MMMM Y');
+            $master->skontrak_selesai = Carbon::createFromFormat('Y-m-d',$master->kontrak_selesai)->isoFormat('D MMMM Y');
+            $master->stgl_penempatan = Carbon::createFromFormat('Y-m-d',$master->tgl_penempatan)->isoFormat('D MMMM Y');
+            $master->screated_at = Carbon::createFromFormat('Y-m-d h:i:s',$master->created_at)->isoFormat('D MMMM Y');
+
+            $master->salary_rule = "";
+            $salaryRuleList = DB::table('m_salary_rule')->where('id',$master->salary_rule_id)->first();
+            if($salaryRuleList != null){
+                $master->salary_rule = $salaryRuleList->nama_salary_rule;
+            }
+
+            $data->manajemen_fee = "";
+            $manajemenFeeList = DB::table('m_management_fee')->where('id',$data->management_fee_id)->first();
+            if($manajemenFeeList != null){
+                $data->manajemen_fee = $manajemenFeeList->nama;
+            }
+
+            return view('sales.quotation.view',compact('now','data','master','leads'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -425,6 +455,25 @@ class QuotationController extends Controller
                     $customUpah = $request['custom-upah-'.$value->id];
                 }
 
+                $isAktif = $value->is_aktif;
+                if($value->is_aktif==2){
+                    if($upah == "Custom"){
+                        if($customUpah < 1800000){
+                            $isAktif = 0;
+                        }
+                    }
+
+                    if($value->kebutuhan =="Security"){
+                        if($manfee <7){
+                            $isAktif = 0;
+                        }
+                    }else{
+                        if($manfee <6){
+                            $isAktif = 0;
+                        }
+                    }
+                }
+
                 DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
                     'provinsi_id' => $provinsiId,
                     'provinsi' => $provinsi,
@@ -433,6 +482,7 @@ class QuotationController extends Controller
                     'upah' => $upah,
                     'custom_upah' => $customUpah,
                     'management_fee_id' => $manfee,
+                    'is_aktif' =>$isAktif,
                     'persentase' => $presentase,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -470,10 +520,22 @@ class QuotationController extends Controller
                     }
                 }
 
+                $isAktif = $value->is_aktif;
+                if($isAktif==2){
+                    if($programBpjs != "4 BPJS"){
+                        $isAktif = 0;
+                    }
+                }
+
+                if($isAktif ==2){
+                    $isAktif = 1;
+                };
+
                 DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
                     'jenis_perusahaan_id' => $jenisPerusahaanId,
                     'jenis_perusahaan' => $jenisPerusahaan,
                     'resiko' => $resiko,
+                    'is_aktif' => $isAktif,
                     'program_bpjs' => $programBpjs,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -521,7 +583,7 @@ class QuotationController extends Controller
                     ->join('sl_quotation','sl_quotation.id','sl_quotation_kebutuhan.quotation_id')
                     ->join('sl_leads','sl_leads.id','sl_quotation.leads_id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('sl_quotation.jenis_kontrak','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->select('sl_quotation.jenis_kontrak','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
                     ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation_kebutuhan.deleted_at');
 
             if(!empty($request->tgl_dari)){
@@ -690,6 +752,49 @@ class QuotationController extends Controller
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function deleteQuotation(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+
+            DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function approveQuotation(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            if(in_array(Auth::user()->role_id,[31,32,33,50,51,52])){
+                DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
+                    'ot1' => Auth::user()->full_name,
+                    'info_status' => "Quotation Menunggu di approve oleh Direktur",
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
+                    'ot2' => Auth::user()->full_name,
+                    'is_aktif' => 1,
+                    'success_status' => "Quotation Telah Aktif",
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);

@@ -66,7 +66,15 @@
             <div data-i18n="Customer Activity">Customer Activity</div>
             </a>
         </li>
-        
+        <!-- SUPER USER -->
+        @elseif(in_array(Auth::user()->role_id,[97,98,99,100]))
+        <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
+            <a href="{{route('quotation')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
+            <div data-i18n="Quotation">Quotation</div>
+            </a>
+        </li>
+
         <!-- SUPER USER -->
         @elseif(Auth::user()->role_id==2)
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">

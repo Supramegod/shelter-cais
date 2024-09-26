@@ -98,6 +98,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/list-quotation-kerjasama', 'listQuotationKerjasama')->name('quotation.list-quotation-kerjasama'); // ajax
         Route::post('/sales/quotation/add-quotation-kerjasama', 'addQuotationKerjasama')->name('quotation.add-quotation-kerjasama');
         Route::post('/sales/quotation/delete-quotation-kerjasama', 'deleteQuotationKerjasama')->name('quotation.delete-quotation-kerjasama');
+        Route::post('/sales/quotation/delete-quotation', 'deleteQuotation')->name('quotation.delete-quotation');
+        Route::post('/sales/quotation/approve-quotation', 'approveQuotation')->name('quotation.approve-quotation');
+
     });
 
 

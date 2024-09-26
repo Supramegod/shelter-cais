@@ -146,6 +146,7 @@
                               <label class="form-check-label custom-option-content" for="umk">
                                 <span class="custom-option-body">
                                   <span class="custom-option-title">UMK</span>
+                                  <span>Surabaya : Rp. 1.800.000</span>
                                 </span>
                                 <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMK" id="umk-{{$value->id}}" @if($value->upah == 'UMK') checked @endif>
                               </label>
@@ -156,6 +157,7 @@
                               <label class="form-check-label custom-option-content" for="ump">
                                 <span class="custom-option-body">
                                   <span class="custom-option-title">UMP</span>
+                                  <span>Jawa Timur : Rp. 1.800.000</span>
                                 </span>
                                 <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMP" id="ump-{{$value->id}}" @if($value->upah == 'UMP') checked @endif>
                               </label>
@@ -166,6 +168,7 @@
                               <label class="form-check-label custom-option-content" for="custom">
                                 <span class="custom-option-body">
                                   <span class="custom-option-title">Custom</span>
+                                  <span>&nbsp;</span>
                                 </span>
                                 <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="Custom" id="custom-{{$value->id}}" @if($value->upah == 'Custom') checked @endif>
                               </label>
@@ -179,7 +182,7 @@
                               <input type="number" class="form-control" value="{{$value->custom_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
                             </div>
                           </div>
-                          <span>*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
+                          <span class="text-warning">*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
                         </div>
                         <div class="row mb-3">
                           <div class="col-sm-6">
@@ -199,6 +202,11 @@
                               <input type="number" class="form-control" name="persentase_{{$value->id}}" value="{{$value->persentase}}">
                               <span class="input-group-text">%</span>
                             </div>
+                            @if($value->kebutuhan=="Security")
+                              <span class="text-warning">*MF dibawah 7% membutuhkan persetujuan terlebih dahulu</span>
+                            @else
+                            <span class="text-warning">*MF dibawah 6% membutuhkan persetujuan terlebih dahulu</span>
+                            @endif
                           </div>
                         </div>
                       </div>

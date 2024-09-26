@@ -2,857 +2,464 @@
 @section('title','Quotation')
 @section('content')
 <!--/ Content -->
-<div class="container-fluid flex-grow-1 container-p-y">
-  <!-- <h4 class="py-3 mb-4"><span class="text-muted fw-light">Sales /</span> Quotation Baru</h4> -->
-  <!-- Default -->
-  <div class="row">
-    <!-- Vertical Wizard -->
-    <div class="col-12 mb-4">
-      <div class="card mb-4">
-        <h5 class="card-header">
-          <div class="d-flex justify-content-between">
-            <span class="text-center">Summary Quotation</span>
-            <span class="text-center"><span>{{$now}}</span></span>
+<div class="container-fluid flex-grow-1 container-p-y"> 
+  <div class="col-12 col-lg-12">
+    <div class="card mb-2">
+      <div class="card-header pb-1">
+        <h5 class="card-title m-0">Quotation Information</h5>
+      </div>
+      <div class="card-body pt-1">
+        <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+          <div class="d-flex flex-column justify-content-center">
+            <h5 class="mb-1 mt-3">
+              {{$data->nomor}} 
+              <!-- <span class="badge bg-label-success me-2 ms-2 rounded-pill">Paid</span> -->
+               @if($data->quotation_status !="" && $data->quotation_status !=null )
+               <span class="badge bg-label-warning rounded-pill">{{$data->quotation_status}}</span>
+               @endif
+               @if($data->success_status !="" && $data->success_status !=null )
+               <span class="badge bg-label-success rounded-pill">{{$data->success_status}}</span>
+               @endif
+               @if($data->info_status !="" && $data->info_status !=null )
+               <span class="badge bg-label-success rounded-pill">{{$data->success_status}}</span>
+               @endif
+            </h5>
+            <p class="text-body">{{$master->nama_perusahaan}}</p>
           </div>
-        </h5>
-        <form class="card-body overflow-hidden">
-        <!-- Account Details -->
-        <div>
-          <div class="mb-5 text-center">
-            <h4 class="mb-0">PT. Setia Hati Sejahtera Tbk.</h4>
+          <div class="d-flex align-content-center flex-wrap gap-2">
+            <button class="btn btn-warning" @if($data->is_aktif==1) disabled @endif><i class="mdi mdi-file-refresh"></i>&nbsp; Ajukan Ulang ( Ubah )</button>
+            @if(in_array(Auth::user()->role_id,[2,31,32,33,50,51,52,97,98,99,100]))
+            <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
+            @endif
+            <button id="cetak-quotation" class="btn btn-info" @if($data->is_aktif==0) disabled @endif><i class="mdi mdi-printer"></i>&nbsp; Print</button>
+            <button id="delete-quotation" class="btn btn-danger" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif><i class="mdi mdi-trash-can"></i>&nbsp;  Delete</button>
           </div>
-          <div class="row mb-3">
-            <div class="col-xl-12">
-              <div class="nav-align-top">
-                <ul class="nav nav-tabs nav-fill" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-home" aria-controls="navs-justified-home" aria-selected="true">
-                      Informasi Leads
-                    </button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false" tabindex="-1">
-                      Detail Kontrak
-                    </button>
-                  </li>
-                  <li class="nav-item" role="upahbpjs">
-                    <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-upah" aria-controls="navs-justified-upah" aria-selected="false" tabindex="-1">
-                      Upah dan BPJS
-                    </button>
-                  </li>
-                  <li class="nav-item" role="perjanjian">
-                    <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-perjanjian" aria-controls="navs-justified-perjanjian" aria-selected="false" tabindex="-1">
-                      Upah dan BPJS
-                    </button>
-                  </li>
-                <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
-              </div>
-              <div class="tab-content p-0">
-                <div class="tab-pane fade active show" id="navs-justified-home" role="tabpanel">
-                  <!-- Informasi Leads -->
-                  <div class="row mb-3 mt-3">
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Nomor</label>
-                      <div class="input-group">
-                        <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Wilayah</label>
-                      <div class="input-group">
-                        <input type="text" id="branch" name="branch" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Tim Sales</label>
-                      <div class="input-group">
-                        <input type="text" id="branch" name="branch" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Sales</label>
-                      <div class="input-group">
-                        <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">CRM</label>
-                      <div class="input-group">
-                        <input type="text" id="branch" name="branch" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">RO</label>
-                      <div class="input-group">
-                        <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Informasi Leads -->
-                <!-- Detail Kontrak -->
-                <div class="tab-pane fade" id="navs-justified-profile" role="tabpanel">
-                  <div class="row mb-2 mt-3">
-                    <h5 class="text-center">Kebutuhan</h5>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col-md mb-md-0 mb-2">
-                      <div class="form-check custom-option custom-option-icon checked">
-                        <label class="form-check-label custom-option-content" for="direct_labour">
-                          <span class="custom-option-body">
-                            <i class="mdi mdi-account-hard-hat-outline"></i>
-                            <span class="custom-option-title">Direct Labour</span>
-                          </span>
-                          <input name="kebutuhan" class="form-check-input" type="checkbox" value="" id="direct_labour" checked>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-md mb-md-0 mb-2">
-                      <div class="form-check custom-option custom-option-icon checked">
-                        <label class="form-check-label custom-option-content" for="security">
-                          <span class="custom-option-body">
-                            <i class="mdi mdi-security"></i>
-                            <span class="custom-option-title">Security</span>
-                          </span>
-                          <input name="kebutuhan" class="form-check-input" type="checkbox" value="" id="security" checked>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-md mb-md-0 mb-2">
-                      <div class="form-check custom-option custom-option-icon">
-                        <label class="form-check-label custom-option-content" for="cleaning_service">
-                          <span class="custom-option-body">
-                            <i class="mdi mdi-spray-bottle"></i>
-                            <span class="custom-option-title">Cleaning Service</span>
-                          </span>
-                          <input name="kebutuhan" class="form-check-input" type="checkbox" value="" id="cleaning_service">
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-md mb-md-0 mb-2">
-                      <div class="form-check custom-option custom-option-icon">
-                        <label class="form-check-label custom-option-content" for="logistik">
-                          <span class="custom-option-body">
-                            <i class="mdi mdi-truck-fast-outline"></i>
-                            <span class="custom-option-title">Logistik</span>
-                          </span>
-                          <input name="kebutuhan" class="form-check-input" type="checkbox" value="" id="logistik">
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3 mt-3">
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Jumlah Site</label>
-                      <div class="input-group">
-                        <input type="text" id="branch" name="branch" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Jenis Kontrak</label>
-                      <div class="input-group">
-                        <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('branch')}}" class="form-control" readonly>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col-sm-12">
-                      <label class="form-label" for="basic-default-password42">Entitas</label>
-                      <div class="input-group">
-                        <select id="entitas" name="entitas" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                          <option value="">- Pilih data -</option>
-                          <option value="">PT. SIG</option>  
-                          <option value="">PT. Shelter Indonesia</option>  
-                          <option value="">PT. Shelter Nusantara</option>  
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Tanggal Penempatan</label>
-                      <div class="input-group">
-                        <input type="date" class="form-control" id="basic-default-password42">
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Salary Rule</label>
-                      <div class="input-group">
-                        <select id="salary_rule" name="salary_rule" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                          <option value="">- Pilih data -</option>
-                          <option value="">1 Bulan</option>  
-                          <option value="">Mingguan</option>  
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Mulai Kontrak</label>
-                      <div class="input-group">
-                        <input type="date" class="form-control" id="basic-default-password42">
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label" for="basic-default-password42">Kontrak Selesai</label>
-                      <div class="input-group">
-                        <input type="date" class="form-control" id="basic-default-password42">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3 mt-3">
-                    <div class="col-xl-12">
-                      <div class="nav-align-top">
-                        <ul class="nav nav-tabs nav-fill" role="tablist-kebutuhan">
-                          <li class="nav-item" role="tablist-kebutuhan">
-                            <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-direct-labour" aria-controls="navs-justified-direct-labour" aria-selected="true">
-                              <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i> Direct Labour
-                            </button>
-                          </li>
-                          <li class="nav-item" role="tablist-kebutuhan">
-                            <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-security" aria-controls="navs-justified-security" aria-selected="false" tabindex="-1">
-                              <i class="tf-icons mdi mdi-security me-1"></i> Security
-                            </button>
-                          </li>
-                        <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
-                      </div>
-                      <div class="tab-content p-0">
-                        <div class="tab-pane fade active show" id="navs-justified-direct-labour" role="tabpanel">
-                          <div class="row mb-3 mt-3">
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
-                              <div class="input-group">
-                                <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Security</option>  
-                                  <option value="">Chief Security</option>  
-                                  <option value="">Security Non Shift</option>  
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Jumlah Headcount</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" id="basic-default-password42">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-12 d-flex justify-content-center">
-                              <button class="btn btn-info btn-back w-20">
-                                <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
-                                <i class="mdi mdi-plus"></i>
-                              </button>
-                            </div>
-                          </div>
-                          <div class="row mt-5">
-                            <div class="table-responsive text-nowrap">
-                              <table class="table">
-                                <thead class="table-light">
-                                  <tr>
-                                    <th class="text-center">Kebutuhan</th>
-                                    <th class="text-center">Nama Posisi/Jabatan</th>
-                                    <th class="text-center">Jumlah Headcount</th>
-                                    <th class="text-center">Action</th>
-                                  </tr>
-                                </thead>
-                                <tbody class="table-border-bottom-0">
-                                  <tr>
-                                    <td>Direct Labour</td>
-                                    <td>Direct Labour</td>
-                                    <td class="text-center">9</td>
-                                    <td>
-                                      <div class="col-12 d-flex justify-content-center">
-                                        <button class="btn btn-danger btn-back w-20">
-                                          <i class="mdi mdi-trash-can-outline"></i>
-                                        </button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="tab-pane fade" id="navs-justified-security" role="tabpanel">
-                          <div class="row mb-3 mt-3">
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
-                              <div class="input-group">
-                                <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Security</option>  
-                                  <option value="">Chief Security</option>  
-                                  <option value="">Security Non Shift</option>  
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Jumlah Headcount</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" id="basic-default-password42">
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-12 d-flex justify-content-center mt-4">
-                                <button class="btn btn-info btn-back w-20">
-                                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
-                                  <i class="mdi mdi-plus"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row mt-5">
-                            <div class="table-responsive text-nowrap">
-                              <table class="table">
-                                <thead class="table-light">
-                                  <tr>
-                                    <th class="text-center">Kebutuhan</th>
-                                    <th class="text-center">Nama Posisi/Jabatan</th>
-                                    <th class="text-center">Jumlah Headcount</th>
-                                    <th class="text-center">Action</th>
-                                  </tr>
-                                </thead>
-                                <tbody class="table-border-bottom-0">
-                                  <tr>
-                                    <td>Security</td>
-                                    <td>Chief Security</td>
-                                    <td class="text-center">2</td>
-                                    <td>
-                                      <div class="col-12 d-flex justify-content-center">
-                                        <button class="btn btn-danger btn-back w-20">
-                                          <i class="mdi mdi-trash-can-outline"></i>
-                                        </button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>Security</td>
-                                    <td>Security</td>
-                                    <td class="text-center">15</td>
-                                    <td>
-                                      <div class="col-12 d-flex justify-content-center">
-                                        <button class="btn btn-danger btn-back w-20">
-                                          <i class="mdi mdi-trash-can-outline"></i>
-                                        </button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Detail Kontrak -->
-                <!-- Upah dan BPJS -->
-                <div class="tab-pane fade" id="navs-justified-upah" role="tabpanel">
-                  <div class="row mb-3 mt-3">
-                    <div class="col-xl-12">
-                      <div class="nav-align-top">
-                        <ul class="nav nav-tabs nav-fill" role="tablist-kebutuhan">
-                          <li class="nav-item" role="tablist-kebutuhan">
-                            <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-direct-labour-upah" aria-controls="navs-justified-direct-labour" aria-selected="true">
-                              <i class="tf-icons mdi mdi-account-hard-hat-outline me-1"></i> Direct Labour
-                            </button>
-                          </li>
-                          <li class="nav-item" role="tablist-kebutuhan">
-                            <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-security-upah" aria-controls="navs-justified-security" aria-selected="false" tabindex="-1">
-                              <i class="tf-icons mdi mdi-security me-1"></i> Security
-                            </button>
-                          </li>
-                        <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
-                      </div>
-                      <div class="tab-content p-0">
-                        <div class="tab-pane fade active show" id="navs-justified-direct-labour-upah" role="tabpanel">
-                          <div class="row mb-3 mt-3">
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Provinsi</label>
-                              <div class="input-group">
-                                <select id="provinsi" name="provinsi" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Aceh</option>  
-                                  <option value="">Jawa Timur</option>
-                                  <option value="">Jawa Barat</option>  
-                                  <option value="">Jawa Tengah</option>  
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Kabupaten / Kota</label>
-                              <div class="input-group">
-                                <select id="kota" name="kota" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Surabaya</option>  
-                                  <option value="">Sidoarjo</option>
-                                  <option value="">Jombang</option>  
-                                  <option value="">Gresik</option>  
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row mb-2">
-                            <h4 class="text-center">Upah</h4>
-                          </div>
-                          <div class="row mb-3">
-                            <div class="col-md mb-md-0 mb-2">
-                              <div class="form-check custom-option custom-option-icon checked">
-                                <label class="form-check-label custom-option-content" for="umk">
-                                  <span class="custom-option-body">
-                                    <span class="custom-option-title">UMK</span>
-                                  </span>
-                                  <input name="upah" class="form-check-input" type="radio" value="" id="upah-1" checked="">
-                                </label>
-                              </div>
-                            </div>
-                            <div class="col-md mb-md-0 mb-2">
-                              <div class="form-check custom-option custom-option-icon">
-                                <label class="form-check-label custom-option-content" for="ump">
-                                  <span class="custom-option-body">
-                                    <span class="custom-option-title">UMP</span>
-                                  </span>
-                                  <input name="upah" class="form-check-input" type="radio" value="" id="ump-1">
-                                </label>
-                              </div>
-                            </div>
-                            <div class="col-md mb-md-0 mb-2">
-                              <div class="form-check custom-option custom-option-icon">
-                                <label class="form-check-label custom-option-content" for="custom">
-                                  <span class="custom-option-body">
-                                    <span class="custom-option-title">Custom</span>
-                                  </span>
-                                  <input name="upah" class="form-check-input" type="radio" value="" id="custom-1">
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row mb-3 d-none" id="d-custom-upah-1">
-                            <div class="col-sm-12">
-                              <label class="form-label" for="basic-default-password42">Masukkan Upah</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" id="basic-default-password42">
-                              </div>
-                            </div>
-                            <span>*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
-                          </div>
-                          <div class="row mb-3">
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Manajemen Fee</label>
-                              <div class="input-group">
-                                <select id="manajemen_fee" name="manajemen_fee" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Total Upah</option>  
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Persentase</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" placeholder="">
-                                <span class="input-group-text">%</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="tab-pane fade" id="navs-justified-security-upah" role="tabpanel">
-                        <div class="row mb-3 mt-3">
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Provinsi</label>
-                              <div class="input-group">
-                                <select id="provinsi" name="provinsi" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Aceh</option>  
-                                  <option value="">Jawa Timur</option>
-                                  <option value="">Jawa Barat</option>  
-                                  <option value="">Jawa Tengah</option>  
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Kabupaten / Kota</label>
-                              <div class="input-group">
-                                <select id="kota" name="kota" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Surabaya</option>  
-                                  <option value="">Sidoarjo</option>
-                                  <option value="">Jombang</option>  
-                                  <option value="">Gresik</option>  
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row mb-2">
-                            <h4 class="text-center">Upah</h4>
-                          </div>
-                          <div class="row mb-3">
-                            <div class="col-md mb-md-0 mb-2">
-                              <div class="form-check custom-option custom-option-icon checked">
-                                <label class="form-check-label custom-option-content" for="umk">
-                                  <span class="custom-option-body">
-                                    <span class="custom-option-title">UMK</span>
-                                  </span>
-                                  <input name="upah" class="form-check-input" type="radio" value="" id="upah-1" checked="">
-                                </label>
-                              </div>
-                            </div>
-                            <div class="col-md mb-md-0 mb-2">
-                              <div class="form-check custom-option custom-option-icon">
-                                <label class="form-check-label custom-option-content" for="ump">
-                                  <span class="custom-option-body">
-                                    <span class="custom-option-title">UMP</span>
-                                  </span>
-                                  <input name="upah" class="form-check-input" type="radio" value="" id="ump-1">
-                                </label>
-                              </div>
-                            </div>
-                            <div class="col-md mb-md-0 mb-2">
-                              <div class="form-check custom-option custom-option-icon">
-                                <label class="form-check-label custom-option-content" for="custom">
-                                  <span class="custom-option-body">
-                                    <span class="custom-option-title">Custom</span>
-                                  </span>
-                                  <input name="upah" class="form-check-input" type="radio" value="" id="custom-1">
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row mb-3 d-none" id="d-custom-upah-1">
-                            <div class="col-sm-12">
-                              <label class="form-label" for="basic-default-password42">Masukkan Upah</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" id="basic-default-password42">
-                              </div>
-                            </div>
-                            <span>*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
-                          </div>
-                          <div class="row mb-3">
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Manajemen Fee</label>
-                              <div class="input-group">
-                                <select id="manajemen_fee" name="manajemen_fee" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
-                                  <option value="">- Pilih data -</option>
-                                  <option value="">Total Upah</option>  
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col-sm-6">
-                              <label class="form-label" for="basic-default-password42">Persentase</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" placeholder="">
-                                <span class="input-group-text">%</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Upah dan BPJS -->
-                <!-- Perjanjian -->
-                <div class="tab-pane fade" id="navs-justified-perjanjian" role="tabpanel">
-                  <div class="row mb-3 mt-4">
-                    <div class="table-responsive text-nowrap">
-                      <table class="table">
-                        <thead class="table-light">
-                          <tr>
-                            <th class="text-center">No</th>
-                            <th class="text-center">Perjanjian</th>
-                            <th class="text-center">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody class="table-border-bottom-0">
-                          <tr>
-                            <td>1</td>
-                            <td>...</td>
-                            <td>
-                              
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>2</td>
-                            <td>...</td>
-                            <td>
-                              
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>3</td>
-                            <td>...</td>
-                            <td>
-                              
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>4</td>
-                            <td>...</td>
-                            <td>
-                              
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>5</td>
-                            <td>...</td>
-                            <td>
-                              <div class="col-12 d-flex justify-content-center">
-                                <button class="btn btn-danger btn-back w-20">
-                                  <i class="mdi mdi-trash-can-outline"></i>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-12 d-flex justify-content-center">
-                      <button class="btn btn-info btn-back w-50">
-                        <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Perjanjian</span>
-                        <i class="mdi mdi-plus"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <!-- Perjanjian -->
-              </div>
-            </div>
-          </div>
-          
-          <!-- Keterangan Tambahan -->
-          <div class="row mb-3 mt-5">
-            <div class="col-xl-12">
-              <div class="nav-align-top">
-                <ul class="nav nav-tabs nav-fill" role="tablist-keterangan-tambahan">
-                  <li class="nav-item" role="tablist-kebutuhan">
-                    <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-kaporlap" aria-controls="navs-justified-direct-labour" aria-selected="true">
-                      Kaporlap
-                    </button>
-                  </li>
-                  <li class="nav-item" role="tablist-keterangan-tambahan">
-                    <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-devices" aria-controls="navs-justified-security" aria-selected="false" tabindex="-1">
-                      Devices
-                    </button>
-                  </li>
-                  <li class="nav-item" role="tablist-keterangan-tambahan">
-                    <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-ohc" aria-controls="navs-justified-security" aria-selected="false" tabindex="-1">
-                      OHC
-                    </button>
-                  </li>
-                  <li class="nav-item" role="tablist-keterangan-tambahan">
-                    <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-hpp" aria-controls="navs-justified-security" aria-selected="false" tabindex="-1">
-                      HPP
-                    </button>
-                  </li>
-                  <li class="nav-item" role="tablist-keterangan-tambahan">
-                    <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-coss" aria-controls="navs-justified-security" aria-selected="false" tabindex="-1">
-                      COSS
-                    </button>
-                  </li>
-                <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span></ul>
-              </div>
-              <div class="tab-content p-0">
-                <div class="tab-pane fade active show" id="navs-justified-kaporlap" role="tabpanel">
-                  <div class="row mb-3 mt-4">
-                      <div class="table-responsive text-nowrap">
-                        <table class="table">
-                          <thead class="table-light">
-                            <tr>
-                              <th class="text-center">No</th>
-                              <th class="text-center">Keterangan</th>
-                            </tr>
-                          </thead>
-                          <tbody class="table-border-bottom-0">
-                            <tr>
-                              <td>1</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>4</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>5</td>
-                              <td>...</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="navs-justified-devices" role="tabpanel">
-                  <div class="row mb-3 mt-4">
-                      <div class="table-responsive text-nowrap">
-                        <table class="table">
-                          <thead class="table-light">
-                            <tr>
-                              <th class="text-center">No</th>
-                              <th class="text-center">Keterangan</th>
-                            </tr>
-                          </thead>
-                          <tbody class="table-border-bottom-0">
-                            <tr>
-                              <td>1</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>4</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>5</td>
-                              <td>...</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="navs-justified-ohc" role="tabpanel">
-                  <div class="row mb-3 mt-4">
-                      <div class="table-responsive text-nowrap">
-                        <table class="table">
-                          <thead class="table-light">
-                            <tr>
-                              <th class="text-center">No</th>
-                              <th class="text-center">Keterangan</th>
-                            </tr>
-                          </thead>
-                          <tbody class="table-border-bottom-0">
-                            <tr>
-                              <td>1</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>4</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>5</td>
-                              <td>...</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="navs-justified-hpp" role="tabpanel">
-                  <div class="row mb-3 mt-4">
-                      <div class="table-responsive text-nowrap">
-                        <table class="table">
-                          <thead class="table-light">
-                            <tr>
-                              <th class="text-center">No</th>
-                              <th class="text-center">Keterangan</th>
-                            </tr>
-                          </thead>
-                          <tbody class="table-border-bottom-0">
-                            <tr>
-                              <td>1</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>4</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>5</td>
-                              <td>...</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="navs-justified-coss" role="tabpanel">
-                  <div class="row mb-3 mt-4">
-                      <div class="table-responsive text-nowrap">
-                        <table class="table">
-                          <thead class="table-light">
-                            <tr>
-                              <th class="text-center">No</th>
-                              <th class="text-center">Keterangan</th>
-                            </tr>
-                          </thead>
-                          <tbody class="table-border-bottom-0">
-                            <tr>
-                              <td>1</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>4</td>
-                              <td>...</td>
-                            </tr>
-                            <tr>
-                              <td>5</td>
-                              <td>...</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Keterangan Tambahan -->
         </div>
-      </form>
+      </div>
     </div>
   </div>
-  <hr class="container-m-nx mb-5" />
+
+  <!-- Order Details Table -->
+
+  <div class="row">
+    <div class="col-12 col-lg-8">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title m-0">Quotation Info</h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Jumlah Site</label>
+              <input type="text" value="{{$master->jumlah_site}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Jenis Kontrak</label>
+              <input type="text" value="{{$master->jenis_kontrak}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Mulai Kontrak</label>
+              <input type="text" value="{{$master->smulai_kontrak}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Kontrak Selesai</label>
+              <input type="text" value="{{$master->skontrak_selesai}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Tanggal Penempatan</label>
+              <input type="text" value="{{$master->stgl_penempatan}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Salary Rule</label>
+              <input type="text" value="{{$master->salary_rule}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Dibuat Oleh</label>
+              <input type="text" value="{{$master->created_by}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Dibuat Tanggal</label>
+              <input type="text" value="{{$master->screated_at}}" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title m-0">Service Info</h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Kebutuhan</label>
+              <input type="text" value="{{$data->kebutuhan}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Entitas</label>
+              <input type="text" value="{{$data->company}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Provinsi</label>
+              <input type="text" value="{{$data->provinsi}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Kabupaten / Kota</label>
+              <input type="text" value="{{$data->kota}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Upah</label>
+              <input type="text" value="{{$data->upah}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Nominal Upah</label>
+              <input type="text" value="{{$data->custom_upah}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Manajemen Fee</label>
+              <input type="text" value="{{$data->manajemen_fee}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Persentase</label>
+              <input type="text" value="{{$data->persentase}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">Jenis Perusahaan</label>
+              <input type="text" value="{{$data->jenis_perusahaan}}" class="form-control">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Resiko</label>
+              <input type="text" value="{{$data->resiko}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="form-label">BPJS</label>
+              <input type="text" value="{{$data->program_bpjs}}" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title m-0">Quotation details</h5>
+          <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+        </div>
+        <div class="table-responsive overflow-hidden table-data card-datatable table-responsive">
+          <table id="table-data" class="dt-column-search table w-100 table-hover datatables-quotation-details" style="text-wrap: nowrap;">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Kebutuhan</th>
+                    <th class="text-center">Nama Posisi/Jabatan</th>
+                    <th class="text-center">Jumlah Headcount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{-- data table ajax --}}
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-end align-items-center m-3 p-1">
+          <div class="order-calculations">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-heading">Total Headcount : {{$data->totalHc}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title m-0">Customer details</h5>
+          <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-start align-items-center mb-4">
+            <div class="d-flex flex-column">
+              <a href="javascript:void(0)">
+                <h6 class="mb-1">{{$leads->nama_perusahaan}}</h6>
+              </a>
+              <small>Customer ID: {{$leads->nomor}}</small>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <h6 class="mb-2">PIC info</h6>
+          </div>
+          <p class="mb-0">PIC : {{$leads->pic}}</p>
+          <p class="mb-0">Jabatan : {{$leads->jabatan}}</p>
+          <p class="mb-0">No. Telp : {{$leads->no_telp}}</p>
+          <p class="mb-0">Email : {{$leads->email}}</p>
+          
+          <div class="mt-3 d-flex justify-content-between">
+            <h6 class="mb-2">CRM / RO info</h6>
+          </div>
+          <p class="mb-1">CRM : {{$leads->crm}}</p>
+          <p class="mb-1">RO : {{$leads->ro}}</p>
+        </div>
+      </div>
+
+      <!-- <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <h6 class="card-title m-0">Shipping address</h6>
+          <h6 class="m-0">
+            <a href=" javascript:void(0)">Edit</a>
+          </h6>
+        </div>
+        <div class="card-body">
+          <p class="mb-0">45 Roker Terrace <br />Latheronwheel <br />KW5 8NW,London <br />UK</p>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <h6 class="card-title m-0">Billing address</h6>
+          <h6 class="m-0">
+            <a href=" javascript:void(0)">Edit</a>
+          </h6>
+        </div>
+        <div class="card-body">
+          <p class="mb-4">45 Roker Terrace <br />Latheronwheel <br />KW5 8NW,London <br />UK</p>
+          <h6 class="mb-0 pb-2">Mastercard</h6>
+          <p class="mb-0">Card Number: ******4291</p>
+        </div>
+      </div> -->
+    </div>
+    <div class="col-12 col-lg-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title m-0">Cost Structure</h5>
+        </div>
+        <div class="card-body">
+        <div class="card-header p-0">
+          <div class="nav-align-top">
+            <ul class="nav nav-tabs nav-fill" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-kaporlap" aria-controls="navs-top-kaporlap" aria-selected="true">
+                  Kaporlap
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-devices" aria-controls="navs-top-devices" aria-selected="false" tabindex="-1">
+                  Devices
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-ohc" aria-controls="navs-top-ohc" aria-selected="false" tabindex="-1">
+                  OHC
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-hpp" aria-controls="navs-top-hpp" aria-selected="false" tabindex="-1">
+                  HPP
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-coss" aria-controls="navs-top-coss" aria-selected="false" tabindex="-1">
+                  COSS
+                </button>
+              </li>
+            <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span></ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="tab-content p-0">
+            <div class="tab-pane fade active show" id="navs-top-kaporlap" role="tabpanel">
+              
+            </div>
+            <div class="tab-pane fade" id="navs-top-devices" role="tabpanel">
+              
+            </div>
+            <div class="tab-pane fade" id="navs-top-ohc" role="tabpanel">
+              
+            </div>
+            <div class="tab-pane fade" id="navs-top-hpp" role="tabpanel">
+              
+            </div>
+            <div class="tab-pane fade" id="navs-top-coss" role="tabpanel">
+              
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!--/ Content -->
 @endsection
 
 @section('pageScript')
+<script>
+  $('#table-data').DataTable({
+      scrollX: true,
+      "bPaginate": false,
+      "bLengthChange": false,
+      "bFilter": false,
+      "bInfo": false,
+      'processing': true,
+      'language': {
+          'loadingRecords': '&nbsp;',
+          'processing': 'Loading...'
+      },
+      ajax: {
+          url: "{{ route('quotation.list-detail-hc') }}",
+          data: function (d) {
+              d.quotation_kebutuhan_id = {{$data->id}};
+          },
+      },   
+      "order":[
+          [0,'asc']
+      ],
+      columns:[{
+          data : 'id',
+          name : 'id',
+          visible: false,
+          searchable: false
+      },{
+          data : 'kebutuhan',
+          name : 'kebutuhan',
+          className:'text-center'
+      },{
+          data : 'jabatan_kebutuhan',
+          name : 'jabatan_kebutuhan',
+          className:'text-center'
+      },{
+          data : 'jumlah_hc',
+          name : 'jumlah_hc',
+          className:'text-center'
+      }],
+      "language": datatableLang,
+    });
 
+  $('body').on('click', '#delete-quotation', function() {
+    Swal.fire({
+      icon: "question",
+      title: "Apakah anda yakin ingin menghapus data ini ?",
+      showCancelButton: true,
+      confirmButtonText: "Hapus",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        let formData = {
+          "id":$(this).data('id'),
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.delete-quotation')}}",
+          data:formData,
+          success: function(response){
+            let timerInterval;
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: "Data berhasil dihapus.",
+              icon: "success",
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                timerInterval = setInterval(() => {
+                  timer.textContent = `${Swal.getTimerLeft()}`;
+                }, 100);
+              },
+              willClose: () => {
+                clearInterval(timerInterval);
+              }
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                window.location.href="{{route('quotation')}}";
+              }
+            });
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      }
+    });
+  });
+  $('body').on('click', '#approve-quotation', function() {
+    Swal.fire({
+      icon: "question",
+      title: "Apakah anda yakin ingin menyetujui data ini ?",
+      showCancelButton: true,
+      confirmButtonText: "Approve",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        let formData = {
+          "id":$(this).data('id'),
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.approve-quotation')}}",
+          data:formData,
+          success: function(response){
+            let timerInterval;
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: "Data berhasil disetujui.",
+              icon: "success",
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                timerInterval = setInterval(() => {
+                  timer.textContent = `${Swal.getTimerLeft()}`;
+                }, 100);
+              },
+              willClose: () => {
+                clearInterval(timerInterval);
+              }
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                location.reload();
+              }
+            });
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      }
+    });
+  });
+  $('body').on('click', '#cetak-quotation', function() {
+    Swal.fire({
+      icon: "question",
+      title: "Apakah anda yakin ingin mencetak dokumen ini ?",
+      showCancelButton: true,
+      confirmButtonText: "Cetak",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        alert("berhasil mencetak");
+        location("reload");
+      }
+    });
+  });
+</script>
 @endsection

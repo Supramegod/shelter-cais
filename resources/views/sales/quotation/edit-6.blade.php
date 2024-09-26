@@ -217,7 +217,6 @@
       });
       
       $('#btn-tambah-kerjasama').on('click',function () {
-     
         Swal.fire({
           title: "Masukkan Perjanjian",
           input: "textarea",
