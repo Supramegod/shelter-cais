@@ -10,7 +10,7 @@
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
         <div class="bs-stepper-header gap-lg-3 pt-5"  style="border-right:1px solid rgba(0, 0, 0, 0.1);">
-          <div class="mt-5 step crossed" data-target="#account-details-1">
+          <div class="step crossed" data-target="#account-details-1">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
               <span class="bs-stepper-label">
@@ -80,6 +80,19 @@
               <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
               <span class="bs-stepper-label">
                 <span class="bs-stepper-number">06</span>
+                <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">Aplikasi Pendukung</span>
+                  <span class="bs-stepper-subtitle">Informasi Aplikasi Pendukung</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step" data-target="#social-links-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">07</span>
                 <span class="d-flex flex-column gap-1 ms-2">
                   <span class="bs-stepper-title">Perjanjian</span>
                   <span class="bs-stepper-subtitle">Informasi Perjanjian</span>

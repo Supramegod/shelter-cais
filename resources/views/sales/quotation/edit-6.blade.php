@@ -2,9 +2,6 @@
 @section('title','Quotation')
 @section('content')
 <!--/ Content -->
-<style>
-  
-</style>
 <div class="container-fluid flex-grow-1 container-p-y">
   <!-- <h4 class="py-3 mb-4"><span class="text-muted fw-light">Sales /</span> Quotation Baru</h4> -->
   <!-- Default -->
@@ -13,7 +10,7 @@
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
       <div class="bs-stepper-header gap-lg-3 pt-5"  style="border-right:1px solid rgba(0, 0, 0, 0.1);">
-          <div class="mt-5 step crossed" data-target="#account-details-1">
+          <div class="step crossed" data-target="#account-details-1">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
               <span class="bs-stepper-label">
@@ -84,6 +81,19 @@
               <span class="bs-stepper-label">
                 <span class="bs-stepper-number">06</span>
                 <span class="d-flex flex-column gap-1 ms-2">
+                  <span class="bs-stepper-title">Aplikasi Pendukung</span>
+                  <span class="bs-stepper-subtitle">Informasi Aplikasi Pendukung</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="line"></div>
+          <div class="step" data-target="#social-links-1">
+            <button type="button" class="step-trigger">
+              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+              <span class="bs-stepper-label">
+                <span class="bs-stepper-number">07</span>
+                <span class="d-flex flex-column gap-1 ms-2">
                   <span class="bs-stepper-title">Perjanjian</span>
                   <span class="bs-stepper-subtitle">Informasi Perjanjian</span>
                 </span>
@@ -97,35 +107,24 @@
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
-            <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">PERJANJIAN</h6>
-                <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
+              <div class="content-header mb-5 text-center">
+                <h6 class="mb-3">APLIKASI PENDUKUNG</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
-                <div class="table-responsive overflow-hidden table-data">
-                  <table id="table-data" class="dt-column-search table table-hover">
-                      <thead>
-                          <tr>
-                              <th class="text-center">ID</th>
-                              <th class="text-center">Nomor</th>
-                              <th class="text-center">Perjanjian</th>
-                              <th class="text-center">Aksi</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          {{-- data table ajax --}}
-                      </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12 d-flex justify-content-center">
-                  <button type="button" class="btn btn-info btn-back w-50" id="btn-tambah-kerjasama">
-                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Perjanjian</span>
-                    <i class="mdi mdi-plus"></i>
-                  </button>
-                </div>
+                @foreach($aplikasiPendukung as $value)
+                  <div class="col-md mb-md-0 mb-2">
+                    <div class="form-check custom-option custom-option-icon @if(in_array($value->id,$arrAplikasiSel)) checked @endif">
+                      <label class="form-check-label custom-option-content">
+                        <span class="custom-option-body">
+                            <img src="{{$value->link_icon}}" alt="{{$value->nama}}" style="max-width:60px">
+                          <span class="custom-option-title">{{$value->nama}}</span>
+                        </span>
+                        <input name="aplikasi_pendukung[]" class="form-check-input" type="checkbox" value="{{$value->id}}" @if(in_array($value->id,$arrAplikasiSel)) checked @endif>
+                      </label>
+                    </div>
+                  </div>
+                @endforeach
               </div>
               <div class="row mt-5">
                 <div class="col-12 d-flex justify-content-between">
@@ -134,7 +133,7 @@
                     <i class="mdi mdi-arrow-left"></i>
                   </a>
                   <button type="submit" class="btn btn-primary btn-next w-20">
-                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Selesai</span>
+                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
                     <i class="mdi mdi-arrow-right"></i>
                   </button>
                 </div>
@@ -153,103 +152,5 @@
 
 @section('pageScript')
 <script>
-  $(document).ready(function(){
-    $('#table-data').DataTable({
-      scrollX: true,
-      "bPaginate": false,
-      "bFilter": false,
-      "bInfo": false,
-        'processing': true,
-        'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...'
-        },
-        ajax: {
-            url: "{{ route('quotation.list-quotation-kerjasama') }}",
-            data: function (d) {
-                d.quotation_id = {{$quotation->id}};
-            },
-        },   
-        "order":[
-            [0,'asc']
-        ],
-        columns:[{
-            data : 'id',
-            name : 'id',
-            visible: false,
-            searchable: false
-        },{
-            data : 'nomor',
-            name : 'nomor',
-            width: "10%",
-        },{
-            data : 'perjanjian',
-            name : 'perjanjian',
-            width: "70%",
-        },{
-            data : 'aksi',
-            name : 'aksi',
-            width: "10%",
-            orderable: false,
-            searchable: false,
-        }],
-        "language": datatableLang,
-      });
-
-      $('body').on('click', '.btn-delete', function() {
-        let formData = {
-          "id":$(this).data('id'),
-          "_token": "{{ csrf_token() }}"
-        };
-
-        let table ='#table-data';
-        $.ajax({
-          type: "POST",
-          url: "{{route('quotation.delete-quotation-kerjasama')}}",
-          data:formData,
-          success: function(response){
-            $(table).DataTable().ajax.reload();
-          },
-          error:function(error){
-            console.log(error);
-          }
-        });
-      });
-      
-      $('#btn-tambah-kerjasama').on('click',function () {
-        Swal.fire({
-          title: "Masukkan Perjanjian",
-          input: "textarea",
-          inputAttributes: {
-            autocapitalize: "off"
-          },
-          showCancelButton: true,
-          confirmButtonText: "Simpan",
-          showLoaderOnConfirm: true,
-          preConfirm: async (value) => {
-            let formData = {
-              "quotation_id":{{$quotation->id}},
-              "perjanjian":value,
-              "_token": "{{ csrf_token() }}"
-            };
-
-            $.ajax({
-              type: "POST",
-              url: "{{route('quotation.add-quotation-kerjasama')}}",
-              data:formData,
-              success: function(response){
-                  $('#table-data').DataTable().ajax.reload();
-              },
-              error:function(error){
-                console.log(error);
-              }
-            });
-          },
-        }).then((result) => {
-          $(table).DataTable().ajax.reload();
-        });
-    });
-
-  });
 </script>
 @endsection

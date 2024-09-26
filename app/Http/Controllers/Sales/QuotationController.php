@@ -166,8 +166,26 @@ class QuotationController extends Controller
 
     public function edit6 (Request $request,$id){
         try {
+            $aplikasiPendukung = DB::table('m_aplikasi_pendukung')->whereNull('deleted_at')->get();
+            $arrAplikasiSel = [];
+
+            $listApp = DB::table('sl_quotation_kebutuhan_aplikasi')->where('quotation_id',$id)->whereNull('deleted_at')->get();
+
+            foreach ($listApp as $key => $value) {
+                array_push($arrAplikasiSel,$value->aplikasi_pendukung_id);
+            }
             $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            return view('sales.quotation.edit-6',compact('quotation'));
+            return view('sales.quotation.edit-6',compact('quotation','aplikasiPendukung','arrAplikasiSel'));
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function edit7 (Request $request,$id){
+        try {
+            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
+            return view('sales.quotation.edit-7',compact('quotation'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -571,13 +589,65 @@ class QuotationController extends Controller
 
             return redirect()->route('quotation.edit-6',$request->id);
         } catch (\Exception $e) {
-            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
     }
 
     public function saveEdit6 (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            foreach ($quotationKebutuhan as $key => $value) {
+                $aplikasiPendukung = $request->aplikasi_pendukung;
+                foreach ($aplikasiPendukung as $keyd => $valued) {
+                    $appdukung = DB::table('m_aplikasi_pendukung')->where('id',$valued)->first();
+
+                    $dataAplikasi = DB::table('sl_quotation_kebutuhan_aplikasi')->where('aplikasi_pendukung_id',$valued)->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->first();
+                    if($dataAplikasi==null){
+                        DB::table('sl_quotation_kebutuhan_aplikasi')->insert([
+                            'quotation_id' => $request->id,
+                            'quotation_kebutuhan_id' => $value->id,
+                            'aplikasi_pendukung_id' => $valued,
+                            'aplikasi_pendukung' => $appdukung->nama,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }else{
+                        DB::table('sl_quotation_kebutuhan_aplikasi')->where('id',$dataAplikasi->id)->update([
+                            'quotation_id' => $request->id,
+                            'quotation_kebutuhan_id' => $value->id,
+                            'aplikasi_pendukung_id' => $valued,
+                            'aplikasi_pendukung' => $appdukung->nama,
+                            'updated_at' => $current_date_time,
+                            'updated_by' => Auth::user()->full_name
+                        ]);
+                    }
+                }
+
+                DB::table('sl_quotation_kebutuhan_aplikasi')->where('quotation_kebutuhan_id',$value->id)->whereNotIn('aplikasi_pendukung_id', $aplikasiPendukung)->update([
+                    'deleted_at' => $current_date_time,
+                    'deleted_by' => Auth::user()->full_name
+                ]);
+            }
+
+            
+
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 7,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+            return redirect()->route('quotation.edit-7',$request->id);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit7 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
