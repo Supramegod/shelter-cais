@@ -182,7 +182,7 @@
                               <input type="number" class="form-control" value="{{$value->custom_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
                             </div>
                           </div>
-                          <span class="text-warning">*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
+                          <span class="text-warning">*Gaji dibawah UMP membutuhkan persetujuan</span>
                         </div>
                         <div class="row mb-3">
                           <div class="col-sm-6">
@@ -203,9 +203,9 @@
                               <span class="input-group-text">%</span>
                             </div>
                             @if($value->kebutuhan=="Security")
-                              <span class="text-warning">*MF dibawah 7% membutuhkan persetujuan terlebih dahulu</span>
+                              <span class="text-warning">*MF dibawah 7% membutuhkan persetujuan</span>
                             @else
-                            <span class="text-warning">*MF dibawah 6% membutuhkan persetujuan terlebih dahulu</span>
+                            <span class="text-warning">*MF dibawah 6% membutuhkan persetujuan</span>
                             @endif
                           </div>
                         </div>

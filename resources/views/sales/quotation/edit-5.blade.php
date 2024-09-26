@@ -147,7 +147,7 @@
                               <option value="4 BPJS" @if($value->program_bpjs == '4 BPJS') selected @endif>4 BPJS</option>
                             </select>
                           </div>
-                          <span class="text-warning">*Program BPJS selain 4 program membutuhkan persetujuan terlebih dahulu</span>
+                          <span class="text-warning">*Program BPJS selain 4 program membutuhkan persetujuan</span>
                         </div>
                       </div>
                     </div>

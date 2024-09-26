@@ -312,7 +312,7 @@
                         <input type="number" class="form-control" id="basic-default-password42">
                       </div>
                     </div>
-                    <span>*Gaji dibawah UMP membutuhkan persetujuan terlebih dahulu</span>
+                    <span>*Gaji dibawah UMP membutuhkan persetujuan</span>
                   </div>
                   <div class="row mb-3">
                     <div class="col-sm-6">

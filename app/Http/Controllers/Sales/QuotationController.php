@@ -804,6 +804,8 @@ class QuotationController extends Controller
                 DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
                     'ot1' => Auth::user()->full_name,
                     'info_status' => "Quotation Menunggu di approve oleh Direktur",
+                    'quotation_status' => null,
+                    'success_status' => null,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
@@ -812,6 +814,8 @@ class QuotationController extends Controller
                     'ot2' => Auth::user()->full_name,
                     'is_aktif' => 1,
                     'success_status' => "Quotation Telah Aktif",
+                    'quotation_status' => null,
+                    'info_status' => null,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
