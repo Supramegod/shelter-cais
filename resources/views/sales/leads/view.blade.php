@@ -30,7 +30,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Jenis Perusahaan</label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="jenis_perusahaan" name="jenis_perusahaan" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                <select id="jenis_perusahaan" name="jenis_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($jenisPerusahaan as $value)
                   <option value="{{$value->id}}" @if($data->jenis_perusahaan_id == $value->id) selected @endif>{{$value->nama}}</option>
@@ -43,7 +43,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Wilayah <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="branch" name="branch" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                <select id="branch" name="branch" class="form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($branch as $value)
                   <option value="{{$value->id}}" @if($data->branch_id == $value->id) selected @endif>{{$value->name}}</option>
@@ -71,7 +71,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Sumber Leads</label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="platform" name="platform" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                <select id="platform" name="platform" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($platform as $value)
                   <option value="{{$value->id}}" @if($data->platform_id == $value->id) selected @endif>{{$value->nama}}</option>
@@ -82,7 +82,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="kebutuhan" name="kebutuhan" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('kebutuhan')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                <select id="kebutuhan" name="kebutuhan" class="form-select @if ($errors->any()) @if($errors->has('kebutuhan')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($kebutuhan as $value)
                   <option value="{{$value->id}}" @if($data->kebutuhan_id == $value->id) selected @endif>{{$value->nama}}</option>
@@ -107,7 +107,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
             <div class="col-sm-4">
               <div class="position-relative">
-                <select id="jabatan_pic" name="jabatan_pic" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                <select id="jabatan_pic" name="jabatan_pic" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($jabatanPic as $value)
                   <option value="{{$value->id}}" @if($data->jabatan == $value->id) selected @endif>{{$value->nama}}</option>

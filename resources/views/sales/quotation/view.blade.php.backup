@@ -130,7 +130,7 @@
             <div class="col-sm-12">
               <label class="form-label" for="basic-default-password42">Entitas</label>
               <div class="input-group">
-                <select id="entitas" name="entitas" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                <select id="entitas" name="entitas" class="form-select" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   <option value="">PT. SIG</option>  
                   <option value="">PT. Shelter Indonesia</option>  
@@ -149,7 +149,7 @@
             <div class="col-sm-6">
               <label class="form-label" for="basic-default-password42">Salary Rule</label>
               <div class="input-group">
-                <select id="salary_rule" name="salary_rule" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                <select id="salary_rule" name="salary_rule" class="form-select" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   <option value="">1 Bulan</option>  
                   <option value="">Mingguan</option>  
@@ -193,7 +193,7 @@
                     <div class="col-sm-6">
                       <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
                       <div class="input-group">
-                        <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                        <select id="nama_jabatan" name="nama_jabatan" class="form-select" data-allow-clear="true" tabindex="-1">
                           <option value="">- Pilih data -</option>
                           <option value="">Security</option>  
                           <option value="">Chief Security</option>  
@@ -248,7 +248,7 @@
                     <div class="col-sm-6">
                       <label class="form-label" for="basic-default-password42">Provinsi</label>
                       <div class="input-group">
-                        <select id="provinsi" name="provinsi" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                        <select id="provinsi" name="provinsi" class="form-select" data-allow-clear="true" tabindex="-1">
                           <option value="">- Pilih data -</option>
                           <option value="">Aceh</option>  
                           <option value="">Jawa Timur</option>
@@ -260,7 +260,7 @@
                     <div class="col-sm-6">
                       <label class="form-label" for="basic-default-password42">Kabupaten / Kota</label>
                       <div class="input-group">
-                        <select id="kota" name="kota" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                        <select id="kota" name="kota" class="form-select" data-allow-clear="true" tabindex="-1">
                           <option value="">- Pilih data -</option>
                           <option value="">Surabaya</option>  
                           <option value="">Sidoarjo</option>
@@ -318,7 +318,7 @@
                     <div class="col-sm-6">
                       <label class="form-label" for="basic-default-password42">Manajemen Fee</label>
                       <div class="input-group">
-                        <select id="manajemen_fee" name="manajemen_fee" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                        <select id="manajemen_fee" name="manajemen_fee" class="form-select" data-allow-clear="true" tabindex="-1">
                           <option value="">- Pilih data -</option>
                           <option value="">Total Upah</option>  
                         </select>
@@ -338,7 +338,7 @@
                     <div class="col-sm-6">
                       <label class="form-label" for="basic-default-password42">Nama Posisi/Jabatan</label>
                       <div class="input-group">
-                        <select id="nama_jabatan" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                        <select id="nama_jabatan" name="nama_jabatan" class="form-select" data-allow-clear="true" tabindex="-1">
                           <option value="">- Pilih data -</option>
                           <option value="">Security</option>  
                           <option value="">Chief Security</option>  

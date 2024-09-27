@@ -134,7 +134,7 @@
                           <div class="col-sm-6">
                             <label class="form-label" for="provinsi-{{$value->id}}">Provinsi</label>
                             <div class="input-group">
-                              <select id="provinsi-{{$value->id}}" name="provinsi-{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                              <select id="provinsi-{{$value->id}}" name="provinsi-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
                                 <option value="">- Pilih data -</option>
                                 @foreach($province as $data)
                                   <option value="{{$data->id}}" @if($value->provinsi_id == $data->id) selected @endif>{{$data->name}}</option>  
@@ -145,7 +145,7 @@
                           <div class="col-sm-6">
                             <label class="form-label" for="kota-{{$value->id}}">Kabupaten / Kota</label>
                             <div class="input-group">
-                              <select id="kota-{{$value->id}}" name="kota-{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                              <select id="kota-{{$value->id}}" name="kota-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
                               </select>
                             </div>
                           </div>
@@ -201,7 +201,7 @@
                           <div class="col-sm-6">
                             <label class="form-label" for="manajemen_fee_{{$value->id}}">Manajemen Fee</label>
                             <div class="input-group">
-                              <select id="manajemen_fee_{{$value->id}}" name="manajemen_fee_{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                              <select id="manajemen_fee_{{$value->id}}" name="manajemen_fee_{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
                                 <option value="">- Pilih data -</option>
                                 @foreach($manfee as $data)
                                   <option value="{{$data->id}}" @if($value->management_fee_id == $data->id) selected @endif>{{$data->nama}}</option>  

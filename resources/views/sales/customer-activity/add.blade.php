@@ -72,7 +72,7 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Status Leads <span class="text-danger">*</span></label>
             <div class="col-sm-10">
-              <select id="status_leads_id" name="status_leads_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('status_leads_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+              <select id="status_leads_id" name="status_leads_id" class="form-select @if ($errors->any()) @if($errors->has('status_leads_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                 <option value="">- Pilih data -</option>  
                 @foreach($statusLeads as $value)
                 <option value="{{$value->id}}" @if(old('status_leads_id') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -189,7 +189,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end @if(in_array(Auth::user()->role_id,[31])) d-none @endif">Tim Sales <span class="text-danger">*</span></label>
                   <div class="col-sm-4 @if(in_array(Auth::user()->role_id,[31])) d-none @endif">
                     <div class="position-relative">
-                      <select id="tim_sales_id" name="tim_sales_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('tim_sales_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                      <select id="tim_sales_id" name="tim_sales_id" class="form-select @if ($errors->any()) @if($errors->has('tim_sales_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>  
                         @foreach($timSales as $value)
                         <option value="{{$value->id}}" @if(old('tim_sales_id') == $value->id) selected @endif>{{$value->nama}}</option>
@@ -203,7 +203,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end">Sales <span class="text-danger">*</span></label>
                   <div class="@if(in_array(Auth::user()->role_id,[31])) col-sm-10 @else col-sm-4 @endif">
                     <input type="hidden" name="sales_d" id="sales_d">
-                    <select id="tim_sales_d_id" name="tim_sales_d_id" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('tim_sales_d_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                    <select id="tim_sales_d_id" name="tim_sales_d_id" class="form-select @if ($errors->any()) @if($errors->has('tim_sales_d_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>  
                     </select>
                     @if($errors->has('tim_sales_d_id'))
@@ -216,7 +216,7 @@
                 <div class="row">
                   <label class="col-sm-2 col-form-label text-sm-end">RO</label>
                   <div class="col-sm-10">
-                    <select id="ro" name="ro" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                    <select id="ro" name="ro" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($roList as $value)
                       <option value="{{$value->id}}" @if(old('ro') == $value->id) selected @endif>{{$value->full_name}}</option>
@@ -230,7 +230,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end">CRM </label>
                   <div class="col-sm-10">
                     <div class="position-relative">
-                      <select id="crm" name="crm" class="select2 form-select select2-hidden-accessible @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                      <select id="crm" name="crm" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>  
                         @foreach($crmList as $value)
                         <option value="{{$value->id}}" @if(old('crm') == $value->id) selected @endif>{{$value->full_name}}</option>
@@ -281,7 +281,7 @@
                   <label class="col-sm-2 col-form-label text-sm-end">Jenis Visit <span class="text-danger">*</span></label>
                   <div class="col-sm-10">
                     <div class="position-relative">
-                      <select id="jenis_visit" name="jenis_visit" class="select2 form-select select2-hidden-accessible @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                      <select id="jenis_visit" name="jenis_visit" class="form-select @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>  
                         <option value="Client Visit" @if(old('jenis_visit') == 'Client Visit') selected @endif>Client Visit</option>
                         <option value="Offline Meeting" @if(old('jenis_visit') == 'Offline Meeting') selected @endif>Offline Meeting</option>  

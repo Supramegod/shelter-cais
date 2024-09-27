@@ -134,7 +134,7 @@
                         <div class="col-sm-6">
                           <label class="form-label" for="jabatan_detail_{{$value->id}}">Nama Posisi/Jabatan</label>
                           <div class="input-group">
-                            <select id="jabatan_detail_{{$value->id}}" name="nama_jabatan" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                            <select id="jabatan_detail_{{$value->id}}" name="nama_jabatan" class="form-select" data-allow-clear="true" tabindex="-1">
                               <option value="">- Pilih data -</option>
                               @foreach($value->detail as $detail)
                                 <option value="{{$detail->id}}">{{$detail->nama}}</option>  

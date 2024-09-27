@@ -153,7 +153,7 @@
                         <div class="col-sm-12">
                           <label class="form-label" for="program-bpjs-{{$value->id}}">Program BPJS</label>
                           <div class="input-group">
-                            <select id="program-bpjs-{{$value->id}}" name="program-bpjs-{{$value->id}}" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1">
+                            <select id="program-bpjs-{{$value->id}}" name="program-bpjs-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
                               <option value="">- Pilih data -</option>
                               <option value="2 BPJS" @if($value->program_bpjs == '2 BPJS') selected @endif>2 BPJS</option>  
                               <option value="3 BPJS" @if($value->program_bpjs == '3 BPJS') selected @endif>3 BPJS</option>

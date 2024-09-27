@@ -166,7 +166,7 @@
               <div class="row mb-3">
                 <div class="col-sm-12">
                   <label class="form-label" for="basic-default-password42">Entitas</label>
-                  <select id="entitas" name="entitas" class="select2 form-select select2-hidden-accessible @if($errors->has('entitas')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                  <select id="entitas" name="entitas" class="form-select @if($errors->has('entitas')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($company as $value)
                       <option value="{{$value->id}}" @if($quotation->company_id==$value->id) selected @endif>{{$value->code}} | {{$value->name}}</option>  
@@ -206,7 +206,7 @@
                 </div>
                 <div class="col-sm-6">
                   <label class="form-label" for="salary_rule">Salary Rule</label>
-                  <select id="salary_rule" name="salary_rule" class="select2 form-select select2-hidden-accessible @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                  <select id="salary_rule" name="salary_rule" class="form-select @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($salaryRule as $value)
                       <option value="{{$value->id}}"  @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}}</option>  
