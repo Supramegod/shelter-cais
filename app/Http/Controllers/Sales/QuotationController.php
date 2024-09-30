@@ -121,10 +121,10 @@ class QuotationController extends Controller
             //step 8 ohc
             $listOhc = null;
             if($request->step==8){
-                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[5,6])->get();
+                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[5,6,7])->get();
                 $listOhc = DB::table('m_barang')
                                     ->whereNull('deleted_at')
-                                    ->whereIn('jenis_barang_id',[5,6])
+                                    ->whereIn('jenis_barang_id',[5,6,7])
                                     ->get();
                 foreach ($listOhc as $key => $value) {
                     $ohc = DB::table('sl_quotation_kebutuhan_ohc')->where('barang_id',$value->id)->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->first();
@@ -136,7 +136,43 @@ class QuotationController extends Controller
                 }
             }
 
-            return view('sales.quotation.edit-'.$request->step,compact('listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            //step 9 - devices
+            $listDevices = null;
+            if($request->step==9){
+                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[8,9,10,11])->get();
+                $listDevices = DB::table('m_barang')
+                                    ->whereNull('deleted_at')
+                                    ->whereIn('jenis_barang_id',[8,9,10,11])
+                                    ->get();
+                foreach ($listDevices as $key => $value) {
+                    $devices = DB::table('sl_quotation_kebutuhan_devices')->where('barang_id',$value->id)->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->first();
+                    if($devices != null){
+                        $value->jumlah = $devices->jumlah;
+                    }else{
+                        $value->jumlah = 0;
+                    }
+                }
+            }
+
+            //step 10 - chemical
+            $listChemical = null;
+            if($request->step==10){
+                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[12,13,14,15])->get();
+                $listChemical = DB::table('m_barang')
+                                    ->whereNull('deleted_at')
+                                    ->whereIn('jenis_barang_id',[12,13,14,15])
+                                    ->get();
+                foreach ($listChemical as $key => $value) {
+                    $chemical = DB::table('sl_quotation_kebutuhan_chemical')->where('barang_id',$value->id)->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->first();
+                    if($chemical != null){
+                        $value->jumlah = $chemical->jumlah;
+                    }else{
+                        $value->jumlah = 0;
+                    }
+                }
+            }
+
+            return view('sales.quotation.edit-'.$request->step,compact('listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -638,10 +674,6 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
-            $listKaporlap = DB::table('m_barang')
-                                    ->whereNull('deleted_at')
-                                    ->whereIn('jenis_barang_id',[1,2,3,4])
-                                    ->get();
             $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             foreach ($quotationKebutuhan as $key => $value) {
                 foreach ($request->barang as $keyD => $valueD) {
@@ -689,10 +721,6 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
-            $listOhc = DB::table('m_barang')
-                                    ->whereNull('deleted_at')
-                                    ->whereIn('jenis_barang_id',[5,6])
-                                    ->get();
             $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             foreach ($quotationKebutuhan as $key => $value) {
                 foreach ($request->barang as $keyD => $valueD) {
@@ -738,13 +766,39 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            foreach ($quotationKebutuhan as $key => $value) {
+                foreach ($request->barang as $keyD => $valueD) {
+                    //cari dulu apakah ada data
+                    $data = DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->first();
+                    $devices = DB::table('m_barang')->where('id',$valueD)->first();
+                    if($data == null){
+                        DB::table('sl_quotation_kebutuhan_devices')->insert([
+                            'quotation_kebutuhan_id' => $value->id,
+                            'quotation_id' => $request->id,
+                            'barang_id' => $valueD,
+                            'jumlah' => $request['jumlah_'.$valueD],
+                            'harga' => $devices->harga,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }else{
+                        DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->update([
+                            'jumlah' => $request['jumlah_'.$valueD],
+                            'harga' => $devices->harga,
+                            'updated_at' => $current_date_time,
+                            'updated_by' => Auth::user()->full_name
+                        ]);
+                    }
+                };
+            };
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 100,
+                'step' => 10,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
             
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
             return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
         } catch (\Exception $e) {
             dd($e);
