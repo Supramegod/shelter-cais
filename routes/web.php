@@ -69,8 +69,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(QuotationController::class)->group(function() {
         Route::get('/sales/quotation', 'index')->name('quotation');
         Route::get('/sales/quotation/add', 'add')->name('quotation.add');
+        Route::get('/sales/quotation/step/{id}', 'step')->name('quotation.step');
+        Route::post('/sales/quotation/save-step', 'saveStep')->name('quotation.save-step');
 
         //page quotation
+        
         Route::get('/sales/quotation/edit-1/{id}', 'edit1')->name('quotation.edit-1');
         Route::get('/sales/quotation/edit-2/{id}', 'edit2')->name('quotation.edit-2');
         Route::get('/sales/quotation/edit-3/{id}', 'edit3')->name('quotation.edit-3');
@@ -78,6 +81,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/edit-5/{id}', 'edit5')->name('quotation.edit-5');
         Route::get('/sales/quotation/edit-6/{id}', 'edit6')->name('quotation.edit-6');
         Route::get('/sales/quotation/edit-7/{id}', 'edit7')->name('quotation.edit-7');
+        Route::get('/sales/quotation/edit-8/{id}', 'edit8')->name('quotation.edit-8');
 
         Route::get('/sales/quotation/view/{id}', 'view')->name('quotation.view');
 
@@ -89,6 +93,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/saveEdit5', 'saveEdit5')->name('quotation.save-edit-5');
         Route::post('/sales/quotation/saveEdit6', 'saveEdit6')->name('quotation.save-edit-6');
         Route::post('/sales/quotation/saveEdit7', 'saveEdit7')->name('quotation.save-edit-7');
+        Route::post('/sales/quotation/saveEdit8', 'saveEdit8')->name('quotation.save-edit-8');
 
         Route::post('/sales/quotation/delete', 'delete')->name('quotation.delete');
 

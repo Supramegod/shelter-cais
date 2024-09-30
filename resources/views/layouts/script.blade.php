@@ -78,6 +78,19 @@
                 }
             )
         };
+        // $(document).ready(function(){
+        //     $('.form-control').keyup(function(){
+        //         $(this).removeClass('is-invalid');
+        //         let errname = "#"+$(this).attr('name')+"-add-error";
+        //         $(errname).html("");
+        //     });
+        //     $('.form-select').on('change',function(){
+        //         $(this).removeClass('is-invalid');
+        //         let errname = "#"+$(this).attr('name')+"-add-error";
+        //         $(errname).html("");
+        //     });
+        // });
+        
     </script>
     <!-- Custom script -->
     @yield('pageScript')

@@ -9,146 +9,65 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-      <div class="bs-stepper-header gap-lg-3 pt-5"  style="border-right:1px solid rgba(0, 0, 0, 0.1);">
-          <div class="mt-5 step crossed" data-target="#account-details-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">01</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Site & Jenis Kontrak</span>
-                  <span class="bs-stepper-subtitle">Informasi Site & Kontrak</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step crossed" data-target="#personal-info-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">02</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Detail Kontrak</span>
-                  <span class="bs-stepper-subtitle">Informasi detail kontrak</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step crossed" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">03</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Headcount</span>
-                  <span class="bs-stepper-subtitle">Informasi Headcount </span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step crossed" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">04</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Upah dan MF</span>
-                  <span class="bs-stepper-subtitle">Informasi Upah dan MF</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step crossed" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">05</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">BPJS</span>
-                  <span class="bs-stepper-subtitle">Informasi Program BPJS</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step crossed" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">06</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Aplikasi Pendukung</span>
-                  <span class="bs-stepper-subtitle">Informasi Aplikasi Pendukung</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step active" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">07</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Perjanjian</span>
-                  <span class="bs-stepper-subtitle">Informasi Perjanjian</span>
-                </span>
-              </span>
-            </button>
-          </div>
-        </div>
+        @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-6')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-7')}}" method="POST" enctype="multipart/form-data">        
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">PERJANJIAN</h6>
-                <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
+                <h6 class="mb-3">KAPORLAP / SERAGAM</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
-                <div class="table-responsive overflow-hidden table-data">
-                  <table id="table-data" class="dt-column-search table table-hover">
-                      <thead>
-                          <tr>
-                              <th class="text-center">ID</th>
-                              <th class="text-center">Nomor</th>
-                              <th class="text-center">Perjanjian</th>
-                              <th class="text-center">Aksi</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          {{-- data table ajax --}}
-                      </tbody>
-                  </table>
-                </div>
+              <div class="table-responsive text-nowrap">
+                <table class="table" >
+                  @foreach($listJenis as $data)
+                  <thead class="text-center">
+                    <tr class="table-primary">
+                      <th rowspan="2" style="vertical-align: middle;">{{$data->nama}}</th>
+                      <th rowspan="2" style="vertical-align: middle;">Harga / Unit</th>
+                      <th colspan="2">Kebutuhan</th>
+                    </tr>
+                    <tr class="table-primary">
+                      <th>Security Guard</th>
+                      <th>SC</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($listKaporlap as $detail)
+                    @if($detail->jenis_barang_id == $data->id)
+                      <tr>
+                        <td>{{$detail->nama}}</td>
+                        <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
+                        <td class="sg">
+                          <button type="button" type="button" class="min-sg btn rounded-pill btn-danger waves-effect waves-light">
+                            <span class="mdi mdi-minus"></span> &nbsp;
+                          </button>
+                          <input type="number" class="input-sg text-center" name="" value="0" style="max-width:50px" readonly>
+                          <button type="button" type="button" class="add-sg btn rounded-pill btn-primary waves-effect waves-light">
+                            <span class="mdi mdi-plus"></span> &nbsp;
+                          </button>
+                        </td>
+                        <td class="sc">
+                          <button type="button" type="button" class="min-sc btn rounded-pill btn-danger waves-effect waves-light">
+                            <span class="mdi mdi-minus"></span> &nbsp;
+                          </button>
+                          <input type="number" class="input-sc text-center" name="" value="0" style="max-width:50px" readonly>
+                          <button type="button" type="button" class="add-sc btn rounded-pill btn-primary waves-effect waves-light">
+                            <span class="mdi mdi-plus"></span> &nbsp;
+                          </button>
+                        </td>
+                      </tr>
+                    @endif
+                    @endforeach
+                  </tbody>
+                  @endforeach
+                </table>
               </div>
-              <div class="row">
-                <div class="col-12 d-flex justify-content-center">
-                  <button type="button" class="btn btn-info btn-back w-50" id="btn-tambah-kerjasama">
-                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Perjanjian</span>
-                    <i class="mdi mdi-plus"></i>
-                  </button>
-                </div>
               </div>
-              <div class="row mt-5">
-                <div class="col-12 d-flex justify-content-between">
-                <a href="{{route('quotation.edit-6',$quotation->id)}}" class="btn btn-primary btn-back w-20">
-                    <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
-                    <i class="mdi mdi-arrow-left"></i>
-                  </a>
-                  <button type="submit" class="btn btn-primary btn-next w-20">
-                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Selesai</span>
-                    <i class="mdi mdi-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
+              @include('sales.quotation.action')
             </div>
           </form>
         </div>
@@ -163,103 +82,50 @@
 
 @section('pageScript')
 <script>
-  $(document).ready(function(){
-    $('#table-data').DataTable({
-      scrollX: true,
-      "bPaginate": false,
-      "bFilter": false,
-      "bInfo": false,
-        'processing': true,
-        'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...'
-        },
-        ajax: {
-            url: "{{ route('quotation.list-quotation-kerjasama') }}",
-            data: function (d) {
-                d.quotation_id = {{$quotation->id}};
-            },
-        },   
-        "order":[
-            [0,'asc']
-        ],
-        columns:[{
-            data : 'id',
-            name : 'id',
-            visible: false,
-            searchable: false
-        },{
-            data : 'nomor',
-            name : 'nomor',
-            width: "10%",
-        },{
-            data : 'perjanjian',
-            name : 'perjanjian',
-            width: "70%",
-        },{
-            data : 'aksi',
-            name : 'aksi',
-            width: "10%",
-            orderable: false,
-            searchable: false,
-        }],
-        "language": datatableLang,
-      });
+  $('.min-sg').on('click',function(){
+    let val = $(this).closest('.sg').find('.input-sg').val();
+    let newVal = 0;
 
-      $('body').on('click', '.btn-delete', function() {
-        let formData = {
-          "id":$(this).data('id'),
-          "_token": "{{ csrf_token() }}"
-        };
+    if(val!=null && val !=""){
+      newVal = parseInt(val)-1;
+    }
+    if(newVal <0){
+      newVal = 0;
+    }
+    $(this).closest('.sg').find('.input-sg').val(newVal);
+  });
 
-        let table ='#table-data';
-        $.ajax({
-          type: "POST",
-          url: "{{route('quotation.delete-quotation-kerjasama')}}",
-          data:formData,
-          success: function(response){
-            $(table).DataTable().ajax.reload();
-          },
-          error:function(error){
-            console.log(error);
-          }
-        });
-      });
-      
-      $('#btn-tambah-kerjasama').on('click',function () {
-        Swal.fire({
-          title: "Masukkan Perjanjian",
-          input: "textarea",
-          inputAttributes: {
-            autocapitalize: "off"
-          },
-          showCancelButton: true,
-          confirmButtonText: "Simpan",
-          showLoaderOnConfirm: true,
-          preConfirm: async (value) => {
-            let formData = {
-              "quotation_id":{{$quotation->id}},
-              "perjanjian":value,
-              "_token": "{{ csrf_token() }}"
-            };
+  $('.add-sg').on('click',function(){
+    let val = $(this).closest('.sg').find('.input-sg').val();
+    let newVal = 0;
 
-            $.ajax({
-              type: "POST",
-              url: "{{route('quotation.add-quotation-kerjasama')}}",
-              data:formData,
-              success: function(response){
-                  $('#table-data').DataTable().ajax.reload();
-              },
-              error:function(error){
-                console.log(error);
-              }
-            });
-          },
-        }).then((result) => {
-          $(table).DataTable().ajax.reload();
-        });
-    });
+    if(val!=null && val !=""){
+      newVal = parseInt(val)+1;
+    }
+    $(this).closest('.sg').find('.input-sg').val(newVal);
+  });
 
+  $('.min-sc').on('click',function(){
+    let val = $(this).closest('.sc').find('.input-sc').val();
+    let newVal = 0;
+
+    if(val!=null && val !=""){
+      newVal = parseInt(val)-1;
+    }
+    if(newVal <0){
+      newVal = 0;
+    }
+    $(this).closest('.sc').find('.input-sc').val(newVal);
+  });
+
+  $('.add-sc').on('click',function(){
+    let val = $(this).closest('.sc').find('.input-sc').val();
+    let newVal = 0;
+
+    if(val!=null && val !=""){
+      newVal = parseInt(val)+1;
+    }
+    $(this).closest('.sg').find('.input-sg').val(newVal);
   });
 </script>
 @endsection

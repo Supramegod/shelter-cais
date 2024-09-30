@@ -61,64 +61,18 @@ class QuotationController extends Controller
             abort(500);
         }
     }
-    
-    public function edit1 (Request $request,$id){
-        try {
-            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            return view('sales.quotation.edit-1',compact('quotation'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function edit2 (Request $request,$id){
+    public function step(Request $request,$id){
         try {
             $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
-            return view('sales.quotation.edit-2',compact('quotation','company','salaryRule'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function edit3 (Request $request,$id){
-        try {
-            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             $quotationKebutuhan = 
             DB::table("sl_quotation_kebutuhan")
             ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
-            ->get();
-
-            foreach ($quotationKebutuhan as $key => $value) {
-                $value->detail = DB::table('m_kebutuhan_detail')->where('kebutuhan_id',$value->kebutuhan_id)->whereNull('deleted_at')->get();
-                $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
-            }
-
-            return view('sales.quotation.edit-3',compact('quotation','quotationKebutuhan'));
-        } catch (\Exception $e) {
-            dd($e);
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function edit4 (Request $request,$id){
-        try {
-            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            $quotationKebutuhan = 
-            DB::table("sl_quotation_kebutuhan")
-            ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
-            ->whereNull('sl_quotation_kebutuhan.deleted_at')
-            ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
-            ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.custom_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->select('sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.custom_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -129,43 +83,8 @@ class QuotationController extends Controller
             $province = DB::connection('mysqlhris')->table('m_province')->get();
             $kota = DB::connection('mysqlhris')->table('m_city')->get();
             $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
-
-            return view('sales.quotation.edit-4',compact('quotation','quotationKebutuhan','province','manfee','kota'));
-        } catch (\Exception $e) {
-            dd($e);
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-    
-    public function edit5 (Request $request,$id){
-        try {
-            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            $quotationKebutuhan = 
-            DB::table("sl_quotation_kebutuhan")
-            ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
-            ->whereNull('sl_quotation_kebutuhan.deleted_at')
-            ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
-            ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
-            ->get();
-
-            foreach ($quotationKebutuhan as $key => $value) {
-                $value->detail = DB::table('m_kebutuhan_detail')->where('kebutuhan_id',$value->kebutuhan_id)->whereNull('deleted_at')->get();
-                $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
-            }
-
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
 
-            return view('sales.quotation.edit-5',compact('quotation','quotationKebutuhan','jenisPerusahaan'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function edit6 (Request $request,$id){
-        try {
             $aplikasiPendukung = DB::table('m_aplikasi_pendukung')->whereNull('deleted_at')->get();
             $arrAplikasiSel = [];
 
@@ -174,23 +93,42 @@ class QuotationController extends Controller
             foreach ($listApp as $key => $value) {
                 array_push($arrAplikasiSel,$value->aplikasi_pendukung_id);
             }
-            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            return view('sales.quotation.edit-6',compact('quotation','aplikasiPendukung','arrAplikasiSel'));
+
+            //kaporlap
+            $listKaporlap = null;
+            $listJenis = [];
+            if($request->step==7){
+                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[1,2,3,4])->get();
+                $listKaporlap = DB::table('m_barang')->whereNull('deleted_at')->whereIn('jenis_barang_id',[1,2,3,4])->get();
+            }
+
+            return view('sales.quotation.edit-'.$request->step,compact('listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
     }
 
-    public function edit7 (Request $request,$id){
-        try {
-            $quotation = DB::table("sl_quotation")->where('id',$id)->first();
-            return view('sales.quotation.edit-7',compact('quotation'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
+    // public function edit7 (Request $request,$id){
+    //     try {
+    //         $quotation = DB::table("sl_quotation")->where('id',$id)->first();
+    //         return view('sales.quotation.edit-7',compact('quotation','request'));
+    //     } catch (\Exception $e) {
+    //         SystemController::saveError($e,Auth::user(),$request);
+    //         abort(500);
+    //     }
+    // }
+
+    // public function edit8 (Request $request,$id){
+    //     try {
+    //         $quotation = DB::table("sl_quotation")->where('id',$id)->first();
+    //         return view('sales.quotation.edit-8',compact('quotation','request'));
+    //     } catch (\Exception $e) {
+    //         SystemController::saveError($e,Auth::user(),$request);
+    //         abort(500);
+    //     }
+    // }
+
 
     public function view (Request $request,$id){
         try {
@@ -264,7 +202,7 @@ class QuotationController extends Controller
                 ]);
 
                 DB::commit();
-                return redirect()->route('quotation.edit-1',$newId);
+                return redirect()->route('quotation.step',['id'=>$newId,'step'=>'1']);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -301,7 +239,7 @@ class QuotationController extends Controller
                 ]);
 
                 DB::commit();
-                return redirect()->route('quotation.edit-2',$request->id);
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'2']);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -328,13 +266,18 @@ class QuotationController extends Controller
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
             }else{
+                if($request->mulai_kontrak>$request->kontrak_selesai){
+                    return back()->withErrors(['mulai_kontrak' => 'Mulai Kontrak tidak boleh lebih dari Kontrak Selesai']);
+                };
+                if($request->kontrak_selesai<$request->mulai_kontrak){
+                    return back()->withErrors(['kontrak_selesai' => 'Kontrak Selesai tidak boleh kurang dari mulai kontrak']);
+                };
                 if($request->tgl_penempatan<$request->mulai_kontrak){
                     return back()->withErrors(['tgl_penempatan_kurang' => 'Tanggal Penempatan tidak boleh kurang dari Kontrak Awal']);
                 };
                 if($request->tgl_penempatan>$request->kontrak_selesai){
                     return back()->withErrors(['tgl_penempatan_kurang' => 'Tanggal Penempatan tidak boleh lebih dari Kontrak Selesai']);
                 };
-
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $current_date = Carbon::now()->toDateString();
                 $quotation = DB::table('sl_quotation')->where('id',$request->id)->first();
@@ -405,6 +348,12 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->full_name
                 ]);
 
+                //hapus dulu perjanjian yg lama atau kalau ada
+                DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->id)->whereNull('deleted_at')->update([
+                    'deleted_at' => $current_date_time,
+                    'deleted_by' => Auth::user()->full_name
+                ]);
+
                 //buat perjanjian
                 $arrPerjanjian = [
                     "Penawaran harga ini berlaku 30 hari sejak tanggal diterbitkan.",
@@ -421,7 +370,7 @@ class QuotationController extends Controller
                     ]);
                 }
 
-                return redirect()->route('quotation.edit-3',$request->id);
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -438,7 +387,7 @@ class QuotationController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            return redirect()->route('quotation.edit-4',$request->id);
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -529,7 +478,7 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.edit-5',$request->id);
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -592,7 +541,7 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.edit-6',$request->id);
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -644,7 +593,7 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.edit-7',$request->id);
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -653,6 +602,82 @@ class QuotationController extends Controller
     }
 
     public function saveEdit7 (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 100,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit8 (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 100,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'9']);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit9 (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 100,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit10 (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => 100,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit11 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 

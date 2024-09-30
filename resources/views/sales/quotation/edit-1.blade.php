@@ -9,98 +9,7 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-      <div class="bs-stepper-header gap-lg-3 pt-5"  style="border-right:1px solid rgba(0, 0, 0, 0.1);">
-          <div class="step active" data-target="#account-details-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">01</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Site & Jenis Kontrak</span>
-                  <span class="bs-stepper-subtitle">Informasi Site & Kontrak</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step" data-target="#personal-info-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">02</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Detail Kontrak</span>
-                  <span class="bs-stepper-subtitle">Informasi detail kontrak</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">03</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Headcount</span>
-                  <span class="bs-stepper-subtitle">Informasi Headcount </span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">04</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Upah dan MF</span>
-                  <span class="bs-stepper-subtitle">Informasi Upah dan MF</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">05</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">BPJS</span>
-                  <span class="bs-stepper-subtitle">Informasi Program BPJS</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">06</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Aplikasi Pendukung</span>
-                  <span class="bs-stepper-subtitle">Informasi Aplikasi Pendukung</span>
-                </span>
-              </span>
-            </button>
-          </div>
-          <div class="line"></div>
-          <div class="step" data-target="#social-links-1">
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-number">07</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                  <span class="bs-stepper-title">Perjanjian</span>
-                  <span class="bs-stepper-subtitle">Informasi Perjanjian</span>
-                </span>
-              </span>
-            </button>
-          </div>
-        </div>
+        @include('sales.quotation.step')
         <div class="bs-stepper-content">
           <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-1')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
           @csrf
@@ -187,14 +96,7 @@
                   <span class="text-danger">{{$errors->first('jenis_kontrak')}}</span>
                 @endif
               </div>
-              <div class="row mt-5">
-                <div class="col-12 d-flex flex-row-reverse">
-                  <button class="btn btn-primary btn-next w-20">
-                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
-                    <i class="mdi mdi-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
+              @include('sales.quotation.action')
             </div>
           </form>
         </div>
