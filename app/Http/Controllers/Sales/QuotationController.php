@@ -219,7 +219,7 @@ class QuotationController extends Controller
             $master->smulai_kontrak = Carbon::createFromFormat('Y-m-d',$master->mulai_kontrak)->isoFormat('D MMMM Y');
             $master->skontrak_selesai = Carbon::createFromFormat('Y-m-d',$master->kontrak_selesai)->isoFormat('D MMMM Y');
             $master->stgl_penempatan = Carbon::createFromFormat('Y-m-d',$master->tgl_penempatan)->isoFormat('D MMMM Y');
-            $master->screated_at = Carbon::createFromFormat('Y-m-d h:i:s',$master->created_at)->isoFormat('D MMMM Y');
+            $master->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$master->created_at)->isoFormat('D MMMM Y');
 
             $master->salary_rule = "";
             $salaryRuleList = DB::table('m_salary_rule')->where('id',$master->salary_rule_id)->first();
@@ -811,13 +811,39 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            foreach ($quotationKebutuhan as $key => $value) {
+                foreach ($request->barang as $keyD => $valueD) {
+                    //cari dulu apakah ada data
+                    $data = DB::table('sl_quotation_kebutuhan_chemical')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->first();
+                    $chemical = DB::table('m_barang')->where('id',$valueD)->first();
+                    if($data == null){
+                        DB::table('sl_quotation_kebutuhan_chemical')->insert([
+                            'quotation_kebutuhan_id' => $value->id,
+                            'quotation_id' => $request->id,
+                            'barang_id' => $valueD,
+                            'jumlah' => $request['jumlah_'.$valueD],
+                            'harga' => $chemical->harga,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }else{
+                        DB::table('sl_quotation_kebutuhan_chemical')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->update([
+                            'jumlah' => $request['jumlah_'.$valueD],
+                            'harga' => $chemical->harga,
+                            'updated_at' => $current_date_time,
+                            'updated_by' => Auth::user()->full_name
+                        ]);
+                    }
+                };
+            };
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 100,
+                'step' => 11,
                 'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
+                'updated_by' => Auth::user()->fulsl_name
             ]);
             
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
             return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
         } catch (\Exception $e) {
             dd($e);

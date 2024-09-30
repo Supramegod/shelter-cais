@@ -9,7 +9,7 @@
         <div></div>
         @endif
         <button type="submit" class="btn btn-primary btn-next w-20">
-            <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
+            <span class="align-middle d-sm-inline-block d-none me-sm-1">@if($request->step==11) Selesai @else Next @endif</span>
             <i class="mdi mdi-arrow-right"></i>
         </button>
     </div>
