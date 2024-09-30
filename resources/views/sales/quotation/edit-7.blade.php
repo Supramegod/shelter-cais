@@ -45,7 +45,8 @@
                           <button type="button" type="button" class="min-sg btn rounded-pill btn-danger waves-effect waves-light">
                             <span class="mdi mdi-minus"></span> &nbsp;
                           </button>
-                          <input type="number" class="input-sg text-center" name="" value="0" style="max-width:50px" readonly>
+                          <input type="hidden" name="barang[]" value="{{$detail->id}}">
+                          <input type="number" class="input-sg text-center" name="sg_{{$detail->id}}" value="{{$detail->jumlah_sg}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
                           <button type="button" type="button" class="add-sg btn rounded-pill btn-primary waves-effect waves-light">
                             <span class="mdi mdi-plus"></span> &nbsp;
                           </button>
@@ -54,7 +55,7 @@
                           <button type="button" type="button" class="min-sc btn rounded-pill btn-danger waves-effect waves-light">
                             <span class="mdi mdi-minus"></span> &nbsp;
                           </button>
-                          <input type="number" class="input-sc text-center" name="" value="0" style="max-width:50px" readonly>
+                          <input type="number" class="input-sc text-center" name="sc_{{$detail->id}}" value="{{$detail->jumlah_sc}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
                           <button type="button" type="button" class="add-sc btn rounded-pill btn-primary waves-effect waves-light">
                             <span class="mdi mdi-plus"></span> &nbsp;
                           </button>
@@ -125,7 +126,7 @@
     if(val!=null && val !=""){
       newVal = parseInt(val)+1;
     }
-    $(this).closest('.sg').find('.input-sg').val(newVal);
+    $(this).closest('.sc').find('.input-sc').val(newVal);
   });
 </script>
 @endsection

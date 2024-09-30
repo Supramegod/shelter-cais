@@ -11,29 +11,49 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-6')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-8')}}" method="POST" enctype="multipart/form-data">        
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">APLIKASI PENDUKUNG</h6>
+                <h6 class="mb-3">OHC</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
-                @foreach($aplikasiPendukung as $value)
-                  <div class="col-md mb-md-0 mb-2">
-                    <div class="form-check custom-option custom-option-icon @if(in_array($value->id,$arrAplikasiSel)) checked @endif">
-                      <label class="form-check-label custom-option-content">
-                        <span class="custom-option-body">
-                            <img src="{{$value->link_icon}}" alt="{{$value->nama}}" style="max-width:60px">
-                          <span class="custom-option-title">{{$value->nama}}</span>
-                        </span>
-                        <input name="aplikasi_pendukung[]" class="form-check-input" type="checkbox" value="{{$value->id}}" @if(in_array($value->id,$arrAplikasiSel)) checked @endif>
-                      </label>
-                    </div>
-                  </div>
-                @endforeach
+              <div class="table-responsive text-nowrap">
+                <table class="table" >
+                  @foreach($listJenis as $data)
+                  <thead class="text-center">
+                    <tr class="table-primary">
+                      <th style="vertical-align: middle;">{{$data->nama}}</th>
+                      <th style="vertical-align: middle;">Harga / Unit</th>
+                      <th>Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($listOhc as $detail)
+                    @if($detail->jenis_barang_id == $data->id)
+                      <tr>
+                        <td>{{$detail->nama}}</td>
+                        <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
+                        <td class="jumlah" style="display:flex;flex=1;justify-content:center">
+                          <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
+                            <span class="mdi mdi-minus"></span> &nbsp;
+                          </button>
+                          <input type="hidden" name="barang[]" value="{{$detail->id}}">
+                          <input type="number" class="input-jumlah text-center" name="jumlah_{{$detail->id}}" value="{{$detail->jumlah}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
+                          <button type="button" type="button" class="add-jumlah btn rounded-pill btn-primary waves-effect waves-light">
+                            <span class="mdi mdi-plus"></span> &nbsp;
+                          </button>
+                        </td>
+                      </tr>
+                    @endif
+                    @endforeach
+                  </tbody>
+                  @endforeach
+                </table>
+              </div>
               </div>
               @include('sales.quotation.action')
             </div>
@@ -50,5 +70,27 @@
 
 @section('pageScript')
 <script>
+  $('.min-jumlah').on('click',function(){
+    let val = $(this).closest('.jumlah').find('.input-jumlah').val();
+    let newVal = 0;
+
+    if(val!=null && val !=""){
+      newVal = parseInt(val)-1;
+    }
+    if(newVal <0){
+      newVal = 0;
+    }
+    $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
+  });
+
+  $('.add-jumlah').on('click',function(){
+    let val = $(this).closest('.jumlah').find('.input-jumlah').val();
+    let newVal = 0;
+
+    if(val!=null && val !=""){
+      newVal = parseInt(val)+1;
+    }
+    $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
+  });
 </script>
 @endsection
