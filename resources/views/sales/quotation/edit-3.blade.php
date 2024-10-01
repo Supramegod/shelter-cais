@@ -184,6 +184,8 @@
           data:formData,
           success: function(response){
               $('#table-data-{{$value->id}}').DataTable().ajax.reload();
+              $('#jabatan_detail_{{$value->id}}').val("");
+              $('#jumlah_hc_{{$value->id}}').val("");
           },
           error:function(error){
             console.log(error);
