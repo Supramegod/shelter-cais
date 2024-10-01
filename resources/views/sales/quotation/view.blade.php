@@ -242,19 +242,6 @@
           </div>
         </div>
       </div>
-      <!--<div class="card mb-4">
-        <div class="card-header d-flex justify-content-between">
-          <h6 class="card-title m-0">Billing address</h6>
-          <h6 class="m-0">
-            <a href=" javascript:void(0)">Edit</a>
-          </h6>
-        </div>
-        <div class="card-body">
-          <p class="mb-4">45 Roker Terrace <br />Latheronwheel <br />KW5 8NW,London <br />UK</p>
-          <h6 class="mb-0 pb-2">Mastercard</h6>
-          <p class="mb-0">Card Number: ******4291</p>
-        </div>
-      </div> -->
     </div>
     <div class="col-12 col-lg-12">
       <div class="card mb-4">
@@ -286,13 +273,96 @@
         <div class="card-body">
           <div class="tab-content p-0">
             <div class="tab-pane fade active show" id="navs-top-hpp" role="tabpanel">
-              
+              <div class="row">
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    <thead class="text-center">
+                      <tr class="table-success">
+                        <th rowspan="2" style="vertical-align: middle;">No.</th>
+                        <th>Structure</th>
+                        <th rowspan="2" style="vertical-align: middle;">%</th>
+                        <th >{{$data->kebutuhan}}</th>
+                      </tr>
+                      <tr class="table-success">
+                        <th>Jumlah Head Count ( Personil ) </th>
+                        <th>{{$data->totalHc}}</th>
+                      </tr>
+                    </thead>              
+                    <tbody>
+                      @foreach($listHPP as $ihpp => $hpp)
+                        <tr>
+                          <td style="text-align:center">{{$ihpp+1}}</td>
+                          <td style="text-align:left">{{$hpp->structure}}</td>
+                          <td style="text-align:center">{{$hpp->percentage}}</td>
+                          <td style="text-align:right">Rp {{number_format($hpp->nominal,0,",",".")}}</td>
+                        </tr>
+                      @endforeach                
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
             <div class="tab-pane fade" id="navs-top-coss" role="tabpanel">
-              
+              <div class="row">
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    <thead class="text-center">
+                      <tr class="table-success">
+                        <th rowspan="2" style="vertical-align: middle;">No.</th>
+                        <th>Structure</th>
+                        <th rowspan="2" style="vertical-align: middle;">%</th>
+                        <th >{{$data->kebutuhan}}</th>
+                      </tr>
+                      <tr class="table-success">
+                        <th>Jumlah Head Count ( Personil ) </th>
+                        <th>{{$data->totalHc}}</th>
+                      </tr>
+                    </thead>              
+                    <tbody>
+                      @foreach($listCS as $ics => $cs)
+                        <tr>
+                          <td style="text-align:center">{{$ics+1}}</td>
+                          <td style="text-align:left">{{$cs->structure}}</td>
+                          <td style="text-align:center">{{$cs->percentage}}</td>
+                          <td style="text-align:right">Rp {{number_format($cs->nominal,0,",",".")}}</td>
+                        </tr>
+                      @endforeach                
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
             <div class="tab-pane fade" id="navs-top-gpm" role="tabpanel">
-              
+              <div class="row">
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    <thead class="text-center">
+                      <tr class="table-success">
+                        <th>No.</th>
+                        <th>Keterangan</th>
+                        <th>HPP</th>
+                        <th>Harga Jual</th>
+                      </tr>
+                    </thead>              
+                    <tbody>
+                      @foreach($listGpm as $igpm => $gpm)
+                        <tr>
+                          <td style="text-align:center">{{$ics+1}}</td>
+                          <td style="text-align:left">{{$gpm->keterangan}}</td>
+                          @if($gpm->kunci == 'gpm')
+                          <td style="text-align:right">{{number_format($gpm->hpp,2,",",".")}} %</td>
+                          <td style="text-align:right">{{number_format($gpm->harga_jual,2,",",".")}} %</td>
+                          @else
+                          <td style="text-align:right">Rp {{number_format($gpm->hpp,0,",",".")}}</td>
+                          <td style="text-align:right">Rp {{number_format($gpm->harga_jual,0,",",".")}}</td>
+                          @endif
+
+                        </tr>
+                      @endforeach                
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
