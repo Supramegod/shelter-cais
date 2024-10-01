@@ -31,9 +31,9 @@
                         continue;
                     }
                 }else if($quotationKebutuhan[0]->kebutuhan_id==2){
-                    // if(in_array($data['stepno'],[10])){
-                    //    continue;
-                    // }
+                    if(in_array($data['stepno'],[10])){
+                        continue;
+                    }
                 }else if($quotationKebutuhan[0]->kebutuhan_id==3){
                     if(in_array($data['stepno'],[9])){
                         continue;

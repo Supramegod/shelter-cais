@@ -831,8 +831,14 @@ class QuotationController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
+
+            // jika security maka skip chemical
+            if($quotationKebutuhan[0]->kebutuhan_id==2){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+            }else{
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
+            }
             
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
