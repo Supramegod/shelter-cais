@@ -338,7 +338,6 @@ class QuotationController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'kebutuhan' => 'required',
-                'top' => 'required',
                 'entitas' => 'required',
                 'mulai_kontrak' => 'required',
                 'kontrak_selesai' => 'required',
@@ -368,7 +367,7 @@ class QuotationController extends Controller
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $current_date = Carbon::now()->toDateString();
                 $quotation = DB::table('sl_quotation')->where('id',$request->id)->first();
-
+                $salaryRule = DB::table('m_salary_rule')->where('id',$request->salary_rule)->first();
                 DB::table('sl_quotation')->where('id',$request->id)->update([
                     'kebutuhan_id' =>  implode(",",$request->kebutuhan),
                     'company_id' => $request->entitas,
@@ -376,7 +375,7 @@ class QuotationController extends Controller
                     'kontrak_selesai' => $request->kontrak_selesai,
                     'tgl_penempatan' => $request->tgl_penempatan,
                     'salary_rule_id' => $request->salary_rule,
-                    'top' => $request->top,
+                    'top' => $salaryRule->top,
                     'step' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name

@@ -87,19 +87,6 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-12">
-                  <label class="form-label" for="top">TOP</label>
-                  <select id="top" name="top" class="form-select @if($errors->has('top')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
-                      <option value="Kurang 7 Hari" @if($quotation->top=="Kurang 7 Hari") selected @endif>Kurang 7 Hari</option>  
-                      <option value="Lebih Dari 7 Hari" @if($quotation->top=="Lebih Dari 7 Hari") selected @endif>Lebih Dari 7 Hari</option>  
-                    </select>
-                    @if($errors->has('top'))
-                      <span class="text-danger">{{$errors->first('top')}}</span>
-                    @endif
-                </div>
-              </div>
-              <div class="row mb-3">
                 <div class="col-sm-6">
                   <label class="form-label" for="mulai-kontrak">Mulai Kontrak</label>
                   <input type="date" name="mulai_kontrak" value="{{$quotation->mulai_kontrak}}" class="form-control @if($errors->has('mulai_kontrak')) is-invalid @endif" id="mulai-kontrak">
@@ -126,18 +113,29 @@
                     <span class="text-danger">{{$errors->first('tgl_penempatan_kurang')}}</span>
                   @endif
                 </div>
-                <div class="col-sm-6">
-                  <label class="form-label" for="salary_rule">Salary Rule</label>
-                  <select id="salary_rule" name="salary_rule" class="form-select @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
-                      @foreach($salaryRule as $value)
-                      <option value="{{$value->id}}"  @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}}</option>  
-                      @endforeach
-                    </select>
-                    @if($errors->has('salary_rule'))
-                      <span class="text-danger">{{$errors->first('salary_rule')}}</span>
-                    @endif
+              </div>
+              <div class="row mb-2">
+                <h4 class="text-center">Salary Rule</h4>
+              </div>
+              <div class="row mb-3">
+              @foreach($salaryRule as $value)
+                <div class="col-md mb-md-0 mb-2">
+                  <div class="form-check custom-option custom-option-icon @if($quotation->kebutuhan_id==$value->id) checked @endif">
+                    <label class="form-check-label custom-option-content" for="salary_rule_{{$value->id}}">
+                      <span class="custom-option-body">
+                        <span class="custom-option-title">{{$value->nama_salary_rule}}</span>
+                        <span>Cut Off Gaji : {{$value->mulai}} s/d {{$value->cutoff}}</span><br>
+                        <span>Tgl Gajian : {{$value->gajian}}</span><br>
+                        <span>TOP : {{$value->top}}</span>
+                      </span>
+                      <input name="salary_rule" class="form-check-input" type="radio" value="{{$value->id}}" id="salary_rule_{{$value->id}}" @if($quotation->kebutuhan_id==$value->id) checked @endif>
+                    </label>
+                  </div>
                 </div>
+              @endforeach
+              @if($errors->has('salary_rule'))
+                <span class="text-danger">{{$errors->first('salary_rule')}}</span>
+              @endif
               </div>
               @include('sales.quotation.action')
             </div>
