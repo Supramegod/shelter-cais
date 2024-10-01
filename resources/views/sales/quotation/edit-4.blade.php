@@ -46,7 +46,7 @@
                               <select id="provinsi-{{$value->id}}" name="provinsi-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
                                 <option value="">- Pilih data -</option>
                                 @foreach($province as $data)
-                                  <option value="{{$data->id}}" @if($value->provinsi_id == $data->id) selected @endif>{{$data->name}}</option>  
+                                  <option value="{{$data->id}}" data-ump="{{$data->ump}}" @if($value->provinsi_id == $data->id) selected @endif>{{$data->name}}</option>  
                                 @endforeach
                               </select>
                             </div>
@@ -64,24 +64,24 @@
                         </div>
                         <div class="row mb-3">
                           <div class="col-md mb-md-0 mb-2">
-                            <div class="form-check custom-option custom-option-icon hide-custom-{{$value->id}} @if($value->upah == 'UMK') checked @endif">
-                              <label class="form-check-label custom-option-content" for="umk">
-                                <span class="custom-option-body">
-                                  <span class="custom-option-title">UMK</span>
-                                  <span>Surabaya : Rp. 1.800.000</span>
-                                </span>
-                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMK" id="umk-{{$value->id}}" @if($value->upah == 'UMK') checked @endif>
-                              </label>
-                            </div>
-                          </div>
-                          <div class="col-md mb-md-0 mb-2">
                             <div class="form-check custom-option custom-option-icon hide-custom-{{$value->id}} @if($value->upah == 'UMP') checked @endif">
                               <label class="form-check-label custom-option-content" for="ump">
                                 <span class="custom-option-body">
                                   <span class="custom-option-title">UMP</span>
-                                  <span>Jawa Timur : Rp. 1.800.000</span>
+                                  <span id="label-provinsi"></span>
                                 </span>
                                 <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMP" id="ump-{{$value->id}}" @if($value->upah == 'UMP') checked @endif>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md mb-md-0 mb-2">
+                            <div class="form-check custom-option custom-option-icon hide-custom-{{$value->id}} @if($value->upah == 'UMK') checked @endif">
+                              <label class="form-check-label custom-option-content" for="umk">
+                                <span class="custom-option-body">
+                                  <span class="custom-option-title">UMK</span>
+                                  <span id="label-kota"></span>
+                                </span>
+                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMK" id="umk-{{$value->id}}" @if($value->upah == 'UMK') checked @endif>
                               </label>
                             </div>
                           </div>
@@ -159,10 +159,14 @@
     $('#d-custom-upah-{{$value->id}}').addClass('d-none');
   });
 
+  $('#kota-{{$value->id}}').on('change', function() {
+    $('#label-kota').html($('#kota-{{$value->id}} option:selected').text()+" : "+$('#kota-{{$value->id}} option:selected').data("umk"));
+  });
+
   $('#provinsi-{{$value->id}}').on('change', function() {
     $('#kota-{{$value->id}}').find('option').remove();
     $('#kota-{{$value->id}}').append('<option value="">- Pilih data -</option>');
-
+    $('#label-provinsi').html($('#provinsi-{{$value->id}} option:selected').text()+" : "+$('#provinsi-{{$value->id}} option:selected').data("ump"));
     if(this.value!=""){
       var param = "province_id="+this.value;
       $.ajax({
@@ -172,7 +176,7 @@
         success: function(res) {
           res.forEach(element => {
             let selected = "";
-            $('#kota-{{$value->id}}').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+            $('#kota-{{$value->id}}').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
           });
         }
       });
@@ -192,7 +196,7 @@
               selected = "selected";
             };
 
-            $('#kota-{{$value->id}}').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+            $('#kota-{{$value->id}}').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
           });
         }
       });

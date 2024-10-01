@@ -81,6 +81,9 @@ class QuotationController extends Controller
             }
 
             $province = DB::connection('mysqlhris')->table('m_province')->get();
+            foreach ($province as $key => $value) {
+                $value->ump = "Rp 2.165.244,30";
+            }
             $kota = DB::connection('mysqlhris')->table('m_city')->get();
             $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
@@ -1062,6 +1065,9 @@ class QuotationController extends Controller
     
     public function changeKota (Request $request){
         $data = DB::connection('mysqlhris')->table('m_city')->where('province_id',$request->province_id)->get();
+        foreach ($data as $key => $value) {
+            $value->umk = "Rp 4.725.479";
+        }
         return $data;
     }
 
