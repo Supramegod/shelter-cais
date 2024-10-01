@@ -183,9 +183,17 @@
           url: "{{route('quotation.add-detail-hc')}}",
           data:formData,
           success: function(response){
+            if(response=="Data Berhasil Ditambahkan"){
               $('#table-data-{{$value->id}}').DataTable().ajax.reload();
               $('#jabatan_detail_{{$value->id}}').val("");
               $('#jumlah_hc_{{$value->id}}').val("");
+            }else{
+              Swal.fire({
+                title: "Pemberitahuan",
+                html: response,
+                icon: "warning",
+              });
+            }
           },
           error:function(error){
             console.log(error);

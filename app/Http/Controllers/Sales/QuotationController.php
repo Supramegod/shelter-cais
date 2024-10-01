@@ -1010,6 +1010,13 @@ class QuotationController extends Controller
             $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$request->quotation_kebutuhan_id)->first();
             $kebutuhan = DB::table('m_kebutuhan')->where('id',$quotationKebutuhan->kebutuhan_id)->first();
             $kebutuhanD = DB::table('m_kebutuhan_detail')->where('id',$request->jabatan_detail_id)->first();
+
+            // cek apakah data sudah ada
+            $checkExist = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$quotationKebutuhan->id)->where('kebutuhan_detail_id',$request->jabatan_detail_id)->whereNull('deleted_at')->get();
+            if(count($checkExist)>0){
+                return "Jabatan ini sudah ada";
+            };
+
             DB::table('sl_quotation_kebutuhan_detail')->insert([
                 'quotation_id' => $quotationKebutuhan->quotation_id,
                 'quotation_kebutuhan_id' => $quotationKebutuhan->id,
@@ -1020,11 +1027,11 @@ class QuotationController extends Controller
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
-            return "sukses";
+            return "Data Berhasil Ditambahkan";
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
-            return "gagal";
+            return "Data Gagal Ditambahkan";
         }
     }
 
