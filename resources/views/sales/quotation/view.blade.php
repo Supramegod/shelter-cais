@@ -126,7 +126,7 @@
             </div>
             <div class="col-sm-6">
               <label class="form-label">Nominal Upah</label>
-              <input type="text" value="{{$data->custom_upah}}" class="form-control">
+              <input type="text" value="{{$data->nominal_upah}}" class="form-control">
             </div>
           </div>
           <div class="row mb-3">
@@ -266,13 +266,49 @@
           <div class="nav-align-top">
             <ul class="nav nav-tabs nav-fill" role="tablist">
               <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-kaporlap" aria-controls="navs-top-kaporlap" aria-selected="true">
-                  Kaporlap
+                <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-hpp" aria-controls="navs-top-hpp" aria-selected="false" tabindex="-1">
+                  HPP
                 </button>
               </li>
               <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-devices" aria-controls="navs-top-devices" aria-selected="false" tabindex="-1">
-                  Devices
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-coss" aria-controls="navs-top-coss" aria-selected="false" tabindex="-1">
+                  Cost Structure
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-gpm" aria-controls="navs-top-gpm" aria-selected="false" tabindex="-1">
+                  Analisa GPM
+                </button>
+              </li>
+            <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span></ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="tab-content p-0">
+            <div class="tab-pane fade active show" id="navs-top-hpp" role="tabpanel">
+              
+            </div>
+            <div class="tab-pane fade" id="navs-top-coss" role="tabpanel">
+              
+            </div>
+            <div class="tab-pane fade" id="navs-top-gpm" role="tabpanel">
+              
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title m-0">Cost Structure</h5>
+        </div>
+        <div class="card-body">
+        <div class="card-header p-0">
+          <div class="nav-align-top">
+            <ul class="nav nav-tabs nav-fill" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-kaporlap" aria-controls="navs-top-kaporlap" aria-selected="true">
+                  Kaporlap
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -281,34 +317,169 @@
                 </button>
               </li>
               <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-hpp" aria-controls="navs-top-hpp" aria-selected="false" tabindex="-1">
-                  HPP
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-devices" aria-controls="navs-top-devices" aria-selected="false" tabindex="-1">
+                  Devices
                 </button>
               </li>
               <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-coss" aria-controls="navs-top-coss" aria-selected="false" tabindex="-1">
-                  COSS
+                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-chemical" aria-controls="navs-top-chemical" aria-selected="false" tabindex="-1">
+                  Chemical
                 </button>
               </li>
-            <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span></ul>
+              <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span>
+            </ul>
           </div>
         </div>
         <div class="card-body">
           <div class="tab-content p-0">
             <div class="tab-pane fade active show" id="navs-top-kaporlap" role="tabpanel">
-              
-            </div>
-            <div class="tab-pane fade" id="navs-top-devices" role="tabpanel">
-              
+              <div class="row mb-5">
+                <div class="col-12 d-flex justify-content-between">
+                  <div></div>
+                  <a href="#" class="btn btn-primary btn-next w-20">
+                      <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Kaporlap</span>
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    @foreach($listJenisKaporlap as $jenisKaporlap)
+                    <thead class="text-center">
+                      <tr class="table-primary">
+                        <th rowspan="2" style="vertical-align: middle;">{{$jenisKaporlap->jenis_barang}}</th>
+                        <th rowspan="2" style="vertical-align: middle;">Harga / Unit</th>
+                        <th colspan="2">Kebutuhan</th>
+                      </tr>
+                      <tr class="table-primary">
+                        <th>Security Guard</th>
+                        <th>SC</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($listKaporlap as $kaporlap)
+                      @if($kaporlap->jenis_barang == $jenisKaporlap->jenis_barang)
+                        <tr>
+                          <td>{{$kaporlap->nama}}</td>
+                          <td style="text-align:right">Rp {{number_format($kaporlap->harga,0,",",".")}}</td>
+                          <td style="text-align:center">{{$kaporlap->jumlah_sg}}</td>
+                          <td style="text-align:center">{{$kaporlap->jumlah_sc}}</td>
+                        </tr>
+                      @endif
+                      @endforeach
+                    </tbody>
+                    @endforeach
+                  </table>
+                </div>
+              </div>
             </div>
             <div class="tab-pane fade" id="navs-top-ohc" role="tabpanel">
-              
+              <div class="row mb-5">
+                <div class="col-12 d-flex justify-content-between">
+                  <div></div>
+                  <a href="#" class="btn btn-primary btn-next w-20">
+                      <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit OHC</span>
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    @foreach($listJenisOhc as $jenisOhc)
+                    <thead class="text-center">
+                      <tr class="table-primary">
+                        <th style="vertical-align: middle;">{{$jenisOhc->jenis_barang}}</th>
+                        <th style="vertical-align: middle;">Harga / Unit</th>
+                        <th>Jumlah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($listOhc as $ohc)
+                      @if($ohc->jenis_barang == $jenisOhc->jenis_barang)
+                        <tr>
+                          <td>{{$ohc->nama}}</td>
+                          <td style="text-align:right">Rp {{number_format($ohc->harga,0,",",".")}}</td>
+                          <td style="text-align:center">{{$ohc->jumlah}}</td>
+                        </tr>
+                      @endif
+                      @endforeach
+                    </tbody>
+                    @endforeach
+                  </table>
+                </div>
+              </div>
             </div>
-            <div class="tab-pane fade" id="navs-top-hpp" role="tabpanel">
-              
+            <div class="tab-pane fade" id="navs-top-devices" role="tabpanel">
+              <div class="row mb-5">
+                <div class="col-12 d-flex justify-content-between">
+                  <div></div>
+                  <a href="#" class="btn btn-primary btn-next w-20">
+                      <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Devices</span>
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    @foreach($listJenisDevices as $jenisDevices)
+                    <thead class="text-center">
+                      <tr class="table-primary">
+                        <th style="vertical-align: middle;">{{$jenisDevices->jenis_barang}}</th>
+                        <th style="vertical-align: middle;">Harga / Unit</th>
+                        <th>Jumlah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($listDevices as $devices)
+                      @if($devices->jenis_barang == $jenisDevices->jenis_barang)
+                        <tr>
+                          <td>{{$devices->nama}}</td>
+                          <td style="text-align:right">Rp {{number_format($devices->harga,0,",",".")}}</td>
+                          <td style="text-align:center">{{$devices->jumlah}}</td>
+                        </tr>
+                      @endif
+                      @endforeach
+                    </tbody>
+                    @endforeach
+                  </table>
+                </div>
+              </div>
             </div>
-            <div class="tab-pane fade" id="navs-top-coss" role="tabpanel">
-              
+            <div class="tab-pane fade" id="navs-top-chemical" role="tabpanel">
+              <div class="row mb-5">
+                <div class="col-12 d-flex justify-content-between">
+                  <div></div>
+                  <a href="#" class="btn btn-primary btn-next w-20">
+                      <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Chemical</span>
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    @foreach($listJenisChemical as $jenisChemical)
+                    <thead class="text-center">
+                      <tr class="table-primary">
+                        <th style="vertical-align: middle;">{{$jenisChemical->jenis_barang}}</th>
+                        <th style="vertical-align: middle;">Harga / Unit</th>
+                        <th>Jumlah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($listChemical as $chemical)
+                      @if($chemical->jenis_barang == $jenisChemical->jenis_barang)
+                        <tr>
+                          <td>{{$chemical->nama}}</td>
+                          <td style="text-align:right">Rp {{number_format($chemical->harga,0,",",".")}}</td>
+                          <td style="text-align:center">{{$chemical->jumlah}}</td>
+                        </tr>
+                      @endif
+                      @endforeach
+                    </tbody>
+                    @endforeach
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>

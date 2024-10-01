@@ -72,7 +72,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.custom_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->select('sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -238,7 +238,18 @@ class QuotationController extends Controller
                 $app = DB::table('m_aplikasi_pendukung')->where('id',$value->aplikasi_pendukung_id)->first();
                 $value->link_icon = $app->link_icon;
             }
-            return view('sales.quotation.view',compact('now','data','master','leads','aplikasiPendukung'));
+
+            $listJenisKaporlap = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_kaporlap where deleted_at is null and quotation_kebutuhan_id = ".$id);
+            $listJenisOhc = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_ohc where deleted_at is null and quotation_kebutuhan_id = ".$id);
+            $listJenisDevices = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_devices where deleted_at is null and quotation_kebutuhan_id = ".$id);
+            $listJenisChemical = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_chemical where deleted_at is null and quotation_kebutuhan_id = ".$id);
+
+            $listKaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+            $listOhc = DB::table('sl_quotation_kebutuhan_ohc')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+            $listDevices = DB::table('sl_quotation_kebutuhan_devices')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+            $listChemical = DB::table('sl_quotation_kebutuhan_chemical')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+
+            return view('sales.quotation.view',compact('listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','data','master','leads','aplikasiPendukung'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -323,6 +334,7 @@ class QuotationController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'kebutuhan' => 'required',
+                'top' => 'required',
                 'entitas' => 'required',
                 'mulai_kontrak' => 'required',
                 'kontrak_selesai' => 'required',
@@ -360,6 +372,7 @@ class QuotationController extends Controller
                     'kontrak_selesai' => $request->kontrak_selesai,
                     'tgl_penempatan' => $request->tgl_penempatan,
                     'salary_rule_id' => $request->salary_rule,
+                    'top' => $request->top,
                     'step' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -496,6 +509,8 @@ class QuotationController extends Controller
                 $customUpah = 0;
                 if($upah == "Custom"){
                     $customUpah = $request['custom-upah-'.$value->id];
+                }else{
+                    $customUpah = 5200000;
                 }
 
                 $quotationStatus = "";
@@ -532,7 +547,7 @@ class QuotationController extends Controller
                     'kota_id' => $kotaId,
                     'kota' => $kota,
                     'upah' => $upah,
-                    'custom_upah' => $customUpah,
+                    'nominal_upah' => $customUpah,
                     'management_fee_id' => $manfee,
                     'is_aktif' =>$isAktif,
                     'quotation_status' => $quotationStatus,
@@ -688,6 +703,8 @@ class QuotationController extends Controller
                             'jumlah_sc' => $request['sc_'.$valueD],
                             'jumlah_sg' => $request['sg_'.$valueD],
                             'harga' => $kaporlap->harga,
+                            'nama' => $kaporlap->nama,
+                            'jenis_barang' => $kaporlap->jenis_barang,
                             'created_at' => $current_date_time,
                             'created_by' => Auth::user()->full_name
                         ]);
@@ -696,6 +713,8 @@ class QuotationController extends Controller
                             'jumlah_sc' => $request['sc_'.$valueD],
                             'jumlah_sg' => $request['sg_'.$valueD],
                             'harga' => $kaporlap->harga,
+                            'nama' => $kaporlap->nama,
+                            'jenis_barang' => $kaporlap->jenis_barang,
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
                         ]);
@@ -734,6 +753,8 @@ class QuotationController extends Controller
                             'barang_id' => $valueD,
                             'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $ohc->harga,
+                            'nama' => $ohc->nama,
+                            'jenis_barang' => $ohc->jenis_barang,
                             'created_at' => $current_date_time,
                             'created_by' => Auth::user()->full_name
                         ]);
@@ -741,6 +762,8 @@ class QuotationController extends Controller
                         DB::table('sl_quotation_kebutuhan_ohc')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->update([
                             'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $ohc->harga,
+                            'nama' => $ohc->nama,
+                            'jenis_barang' => $ohc->jenis_barang,
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
                         ]);
@@ -779,6 +802,8 @@ class QuotationController extends Controller
                             'barang_id' => $valueD,
                             'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $devices->harga,
+                            'nama' => $devices->nama,
+                            'jenis_barang' => $devices->jenis_barang,
                             'created_at' => $current_date_time,
                             'created_by' => Auth::user()->full_name
                         ]);
@@ -786,6 +811,8 @@ class QuotationController extends Controller
                         DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->update([
                             'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $devices->harga,
+                            'nama' => $devices->nama,
+                            'jenis_barang' => $devices->jenis_barang,
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
                         ]);
@@ -824,6 +851,8 @@ class QuotationController extends Controller
                             'barang_id' => $valueD,
                             'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $chemical->harga,
+                            'nama' => $chemical->nama,
+                            'jenis_barang' => $chemical->jenis_barang,
                             'created_at' => $current_date_time,
                             'created_by' => Auth::user()->full_name
                         ]);
@@ -831,6 +860,8 @@ class QuotationController extends Controller
                         DB::table('sl_quotation_kebutuhan_chemical')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->update([
                             'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $chemical->harga,
+                            'nama' => $chemical->nama,
+                            'jenis_barang' => $chemical->jenis_barang,
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
                         ]);
@@ -863,6 +894,9 @@ class QuotationController extends Controller
             ]);
             
             $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+
+            $this->perhitunganHPPSecurity($data->id);
+
             return redirect()->route('quotation.view',$data->id);
         } catch (\Exception $e) {
             dd($e);
@@ -1146,4 +1180,538 @@ class QuotationController extends Controller
         return $nomor;
     }
 
+    public function perhitunganHPPSecurity ($quotationKebutuhanId){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            //Gaji Pokok
+            $gajiPokok = 0;
+
+            $data = DB::table('sl_quotation_kebutuhan')->where('id',$quotationKebutuhanId)->first();
+            if($data != null ){
+                if($data->nominal_upah !=null){
+                    $gajiPokok = $data->nominal_upah;
+                }
+            }
+
+            //cari data
+            $existGajiPokok = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','gaji_pokok')->first();
+            if($existGajiPokok !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','gaji_pokok')->update([
+                    'percentage' => null,
+                    'nominal' => $gajiPokok,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'gaji_pokok',
+                    'structure' => 'Gaji Pokok',
+                    'percentage' => null,
+                    'nominal' => $gajiPokok,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //tunjangan overtime 72 jam
+            $tunjanganOverTime = 400000;
+            
+            //cari data
+            $existTunjanganOvertime = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','tunjanan_overtime')->first();
+            if($existTunjanganOvertime !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','tunjanan_overtime')->update([
+                    'percentage' => null,
+                    'nominal' => $tunjanganOverTime,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'tunjanan_overtime',
+                    'structure' => 'Tunjangan Overtime Flat 72 Jam',
+                    'percentage' => null,
+                    'nominal' => $tunjanganOverTime,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+            
+            //tunjangan Hari Raya
+            $tunjanganHariRaya = $gajiPokok/12;
+            
+            //cari data
+            $existTunjanganHariRaya = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','tunjangan_hari_raya')->first();
+            if($existTunjanganHariRaya !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','tunjangan_hari_raya')->update([
+                    'percentage' => null,
+                    'nominal' => $tunjanganHariRaya,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'tunjangan_hari_raya',
+                    'structure' => 'Tunjangan Hari Raya',
+                    'percentage' => null,
+                    'nominal' => $tunjanganHariRaya,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //BPJS JKK
+            $bpjsJKK = $gajiPokok*24/100;
+            
+            //cari data
+            $existBpjsJKK = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkk')->first();
+            if($existBpjsJKK !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkk')->update([
+                    'percentage' => 0.24,
+                    'nominal' => $bpjsJKK,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'bpjs_jkk',
+                    'structure' => 'BPJS Ketenagakerjaan J. Kecelakaan Kerja',
+                    'percentage' => 0.24,
+                    'nominal' => $bpjsJKK,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //BPJS Jkm
+            $bpjsJKM = $gajiPokok*30/100;
+            
+            //cari data
+            $existBpjsJKM = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkm')->first();
+            if($existBpjsJKM !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkm')->update([
+                    'percentage' => 0.30,
+                    'nominal' => $bpjsJKM,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'bpjs_jkm',
+                    'structure' => 'BPJS Ketenagakerjaan J. Kematian',
+                    'percentage' => 0.30,
+                    'nominal' => $bpjsJKK,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //BPJS JHT
+            $bpjsJHT = $gajiPokok*37/100;
+            
+            //cari data
+            $existBpjsJHT = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jht')->first();
+            if($existBpjsJHT !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jht')->update([
+                    'percentage' => 3.7,
+                    'nominal' => $bpjsJHT,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'bpjs_jht',
+                    'structure' => 'BPJS Ketenagakerjaan J. Hari Tua',
+                    'percentage' => 3.7,
+                    'nominal' => $bpjsJKK,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //BPJS KESEHATAN
+            $bpjsKes = $gajiPokok*40/100;
+            
+            //cari data
+            $existBpjsKes = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_kes')->first();
+            if($existBpjsKes !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_kes')->update([
+                    'percentage' => 4,
+                    'nominal' => $bpjsKes,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'bpjs_kes',
+                    'structure' => 'BPJS Kesehatan',
+                    'percentage' => 4,
+                    'nominal' => $bpjsKes,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //Provisi Seragam
+            $provisiSeragam = 0;
+            
+            //collect data
+            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah_sg)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            if(count($qProvisiSeragam)>0){
+                if($qProvisiSeragam[0]->kaporlap !=null){
+                    $provisiSeragam = $qProvisiSeragam[0]->kaporlap;
+                }
+            }
+
+            //cari data
+            $existBpjsKes = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','provisi_seragam')->first();
+            if($existBpjsKes !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','provisi_seragam')->update([
+                    'percentage' => null,
+                    'nominal' => $provisiSeragam,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'provisi_seragam',
+                    'structure' => 'Provisi 1 Seragam (Pdl)',
+                    'percentage' => null,
+                    'nominal' => $provisiSeragam,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //Provisi Seragam
+            $provisiSeragam = 0;
+            
+            //collect data
+            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah_sg)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            if(count($qProvisiSeragam)>0){
+                if($qProvisiSeragam[0]->kaporlap !=null){
+                    $provisiSeragam = $qProvisiSeragam[0]->kaporlap;
+                }
+            }
+
+            //cari data
+            $existProvisiSeragam = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','provisi_seragam')->first();
+            if($existProvisiSeragam !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','provisi_seragam')->update([
+                    'percentage' => null,
+                    'nominal' => $provisiSeragam,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'provisi_seragam',
+                    'structure' => 'Provisi 1 Seragam (Pdl)',
+                    'percentage' => null,
+                    'nominal' => $provisiSeragam,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //Provisi Devices
+            $provisiDevices = 0;
+            
+            //collect data
+            $qProvisiDevices = DB::select("SELECT sum(harga*jumlah)/12 as devices from sl_quotation_kebutuhan_devices WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            if(count($qProvisiDevices)>0){
+                if($qProvisiDevices[0]->devices !=null){
+                    $provisiDevices = $qProvisiDevices[0]->devices;
+                }
+            }
+
+            //cari data
+            $existProvisiDevices = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','provisi_devices')->first();
+            if($existProvisiDevices !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','provisi_devices')->update([
+                    'percentage' => null,
+                    'nominal' => $provisiDevices,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'provisi_devices',
+                    'structure' => 'Provisi Peralatan Pos Security',
+                    'percentage' => null,
+                    'nominal' => $provisiDevices,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //OHC
+            $ohc = 0;
+            
+            //collect data
+            $qOhc = DB::select("SELECT sum(harga*jumlah)/12 as ohc from sl_quotation_kebutuhan_ohc WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            if(count($qOhc)>0){
+                if($qOhc[0]->ohc !=null){
+                    $ohc = $qOhc[0]->ohc;
+                }
+            }
+
+            //cari data
+            $existOhc = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','ohc')->first();
+            if($existOhc !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','ohc')->update([
+                    'percentage' => null,
+                    'nominal' => $ohc,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'ohc',
+                    'structure' => 'Over Head Cost',
+                    'percentage' => null,
+                    'nominal' => $ohc,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //Total Biaya Personil
+            $totalBiayaPersonil = $gajiPokok+$tunjanganOverTime+$tunjanganHariRaya+$bpjsJKK+$bpjsJKM+$bpjsJHT+$bpjsKes+$provisiSeragam+$provisiDevices+$ohc;
+
+            //cari data
+            $existBiayaPersonil = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','biaya_personil')->first();
+            if($existBiayaPersonil !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','biaya_personil')->update([
+                    'percentage' => null,
+                    'nominal' => $totalBiayaPersonil,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'biaya_personil',
+                    'structure' => 'Total Biaya per Personil',
+                    'percentage' => null,
+                    'nominal' => $totalBiayaPersonil,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //Sub Total Biaya Personil
+            $personil = 0;
+
+            $qPersonil = DB::select('SELECT sum(jumlah_hc) as  jumlah_hc from sl_quotation_kebutuhan_detail WHERE deleted_at is null and quotation_kebutuhan_id ='.$quotationKebutuhanId);
+            if(count($qPersonil)>0){
+                if($qPersonil[0]->jumlah_hc !=null){
+                    $personil = $qPersonil[0]->jumlah_hc;
+                }
+            }
+            $subTotalBiayaPersonil = $totalBiayaPersonil*$personil;
+
+            //cari data
+            $existSubBiayaPersonil = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','sub_biaya_personil')->first();
+            if($existSubBiayaPersonil !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','sub_biaya_personil')->update([
+                    'percentage' => null,
+                    'nominal' => $subTotalBiayaPersonil,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'sub_biaya_personil',
+                    'structure' => 'Sub Total Biaya All Personil',
+                    'percentage' => null,
+                    'nominal' => $subTotalBiayaPersonil,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //Management Fee
+            $managementFee = 0;
+            if($data->persentase !=null){
+                $managementFee = $subTotalBiayaPersonil*$data->persentase/100;
+            }
+
+            //cari data
+            $existSubManagementFee = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','management_fee')->first();
+            if($existSubBiayaPersonil !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','management_fee')->update([
+                    'percentage' => null,
+                    'nominal' => $managementFee,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'management_fee',
+                    'structure' => 'Management Fee (MF)',
+                    'percentage' => null,
+                    'nominal' => $managementFee,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+            
+            //Grant Total Sebelum Pajak
+            $grandTotal = $managementFee+$subTotalBiayaPersonil;
+
+            //cari data
+            $existGrandTotal = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','grand_total')->first();
+            if($existGrandTotal !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','grand_total')->update([
+                    'percentage' => null,
+                    'nominal' => $grandTotal,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'grand_total',
+                    'structure' => 'Grand Total Sebelum Pajak',
+                    'percentage' => null,
+                    'nominal' => $grandTotal,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+            
+            //PPN Management Fee
+            $ppnManagementFee = $managementFee*11/100;
+
+            //cari data
+            $existPpnManagementFee = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','ppn_management_fee')->first();
+            if($existPpnManagementFee !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','ppn_management_fee')->update([
+                    'percentage' => null,
+                    'nominal' => $ppnManagementFee,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'ppn_management_fee',
+                    'structure' => 'PPn *dari management fee',
+                    'percentage' => null,
+                    'nominal' => $ppnManagementFee,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //PPh Management Fee
+            $pphManagementFee = $managementFee*(-2)/100;
+
+            //cari data
+            $existPphManagementFee = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','pph_management_fee')->first();
+            if($existPphManagementFee !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','pph_management_fee')->update([
+                    'percentage' => null,
+                    'nominal' => $pphManagementFee,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'pph_management_fee',
+                    'structure' => 'PPh *dari management fee',
+                    'percentage' => null,
+                    'nominal' => $pphManagementFee,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //TotalInvoice
+            $totalInvoice = $grandTotal+$ppnManagementFee+$pphManagementFee;
+
+            //cari data
+            $existPphTotalInvoice = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','total_invoice')->first();
+            if($existPphTotalInvoice !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','total_invoice')->update([
+                    'percentage' => null,
+                    'nominal' => $totalInvoice,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'total_invoice',
+                    'structure' => 'TOTAL INVOICE',
+                    'percentage' => null,
+                    'nominal' => $totalInvoice,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            //Pembulatan
+            $pembulatan = ceil($totalInvoice / 100) * 100;
+
+            //cari data
+            $existPembulatan = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','pembulatan')->first();
+            if($existPembulatan !=null){
+                DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','pembulatan')->update([
+                    'percentage' => null,
+                    'nominal' => $pembulatan,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }else{
+                DB::table('sl_quotation_kebutuhan_hpp')->insert([
+                    'quotation_id' => $data->quotation_id,
+                    'quotation_kebutuhan_id' => $data->id,
+                    'kunci' => 'pembulatan',
+                    'structure' => 'PEMBULATAN',
+                    'percentage' => null,
+                    'nominal' => $pembulatan,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
 }

@@ -21,52 +21,52 @@
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
-              <div class="table-responsive text-nowrap">
-                <table class="table" >
-                  @foreach($listJenis as $data)
-                  <thead class="text-center">
-                    <tr class="table-primary">
-                      <th rowspan="2" style="vertical-align: middle;">{{$data->nama}}</th>
-                      <th rowspan="2" style="vertical-align: middle;">Harga / Unit</th>
-                      <th colspan="2">Kebutuhan</th>
-                    </tr>
-                    <tr class="table-primary">
-                      <th>Security Guard</th>
-                      <th>SC</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach($listKaporlap as $detail)
-                    @if($detail->jenis_barang_id == $data->id)
-                      <tr>
-                        <td>{{$detail->nama}}</td>
-                        <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
-                        <td class="sg">
-                          <button type="button" type="button" class="min-sg btn rounded-pill btn-danger waves-effect waves-light">
-                            <span class="mdi mdi-minus"></span> &nbsp;
-                          </button>
-                          <input type="hidden" name="barang[]" value="{{$detail->id}}">
-                          <input type="number" class="input-sg text-center" name="sg_{{$detail->id}}" value="{{$detail->jumlah_sg}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
-                          <button type="button" type="button" class="add-sg btn rounded-pill btn-primary waves-effect waves-light">
-                            <span class="mdi mdi-plus"></span> &nbsp;
-                          </button>
-                        </td>
-                        <td class="sc">
-                          <button type="button" type="button" class="min-sc btn rounded-pill btn-danger waves-effect waves-light">
-                            <span class="mdi mdi-minus"></span> &nbsp;
-                          </button>
-                          <input type="number" class="input-sc text-center" name="sc_{{$detail->id}}" value="{{$detail->jumlah_sc}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
-                          <button type="button" type="button" class="add-sc btn rounded-pill btn-primary waves-effect waves-light">
-                            <span class="mdi mdi-plus"></span> &nbsp;
-                          </button>
-                        </td>
+                <div class="table-responsive text-nowrap">
+                  <table class="table" >
+                    @foreach($listJenis as $data)
+                    <thead class="text-center">
+                      <tr class="table-primary">
+                        <th rowspan="2" style="vertical-align: middle;">{{$data->nama}}</th>
+                        <th rowspan="2" style="vertical-align: middle;">Harga / Unit</th>
+                        <th colspan="2">Kebutuhan</th>
                       </tr>
-                    @endif
+                      <tr class="table-primary">
+                        <th>Security Guard</th>
+                        <th>SC</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($listKaporlap as $detail)
+                      @if($detail->jenis_barang_id == $data->id)
+                        <tr>
+                          <td>{{$detail->nama}}</td>
+                          <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
+                          <td class="sg">
+                            <button type="button" type="button" class="min-sg btn rounded-pill btn-danger waves-effect waves-light">
+                              <span class="mdi mdi-minus"></span> &nbsp;
+                            </button>
+                            <input type="hidden" name="barang[]" value="{{$detail->id}}">
+                            <input type="number" class="input-sg text-center" name="sg_{{$detail->id}}" value="{{$detail->jumlah_sg}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
+                            <button type="button" type="button" class="add-sg btn rounded-pill btn-primary waves-effect waves-light">
+                              <span class="mdi mdi-plus"></span> &nbsp;
+                            </button>
+                          </td>
+                          <td class="sc">
+                            <button type="button" type="button" class="min-sc btn rounded-pill btn-danger waves-effect waves-light">
+                              <span class="mdi mdi-minus"></span> &nbsp;
+                            </button>
+                            <input type="number" class="input-sc text-center" name="sc_{{$detail->id}}" value="{{$detail->jumlah_sc}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
+                            <button type="button" type="button" class="add-sc btn rounded-pill btn-primary waves-effect waves-light">
+                              <span class="mdi mdi-plus"></span> &nbsp;
+                            </button>
+                          </td>
+                        </tr>
+                      @endif
+                      @endforeach
+                    </tbody>
                     @endforeach
-                  </tbody>
-                  @endforeach
-                </table>
-              </div>
+                  </table>
+                </div>
               </div>
               @include('sales.quotation.action')
             </div>

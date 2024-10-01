@@ -87,6 +87,19 @@
                 </div>
               </div>
               <div class="row mb-3">
+                <div class="col-sm-12">
+                  <label class="form-label" for="top">TOP</label>
+                  <select id="top" name="top" class="form-select @if($errors->has('top')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      <option value="Kurang 7 Hari" @if($quotation->top=="Kurang 7 Hari") selected @endif>Kurang 7 Hari</option>  
+                      <option value="Lebih Dari 7 Hari" @if($quotation->top=="Lebih Dari 7 Hari") selected @endif>Lebih Dari 7 Hari</option>  
+                    </select>
+                    @if($errors->has('top'))
+                      <span class="text-danger">{{$errors->first('top')}}</span>
+                    @endif
+                </div>
+              </div>
+              <div class="row mb-3">
                 <div class="col-sm-6">
                   <label class="form-label" for="mulai-kontrak">Mulai Kontrak</label>
                   <input type="date" name="mulai_kontrak" value="{{$quotation->mulai_kontrak}}" class="form-control @if($errors->has('mulai_kontrak')) is-invalid @endif" id="mulai-kontrak">

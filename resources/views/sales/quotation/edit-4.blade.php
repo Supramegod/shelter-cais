@@ -101,7 +101,7 @@
                           <div class="col-sm-12">
                             <label class="form-label" for="custom-upah-{{$value->id}}">Masukkan Upah</label>
                             <div class="input-group">
-                              <input type="number" class="form-control" value="{{$value->custom_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
+                              <input type="number" class="form-control" value="{{$value->nominal_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
                             </div>
                           </div>
                           <span class="text-warning">*Gaji dibawah UMP membutuhkan persetujuan</span>
