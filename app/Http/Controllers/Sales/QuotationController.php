@@ -242,15 +242,15 @@ class QuotationController extends Controller
                 $value->link_icon = $app->link_icon;
             }
 
-            $listJenisKaporlap = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_kaporlap where deleted_at is null and quotation_kebutuhan_id = ".$id);
-            $listJenisOhc = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_ohc where deleted_at is null and quotation_kebutuhan_id = ".$id);
-            $listJenisDevices = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_devices where deleted_at is null and quotation_kebutuhan_id = ".$id);
-            $listJenisChemical = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_chemical where deleted_at is null and quotation_kebutuhan_id = ".$id);
+            $listJenisKaporlap = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_kaporlap where deleted_at is null and (jumlah_sc =1 or jumlah_sg=1) and quotation_kebutuhan_id = ".$id);
+            $listJenisOhc = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_ohc where deleted_at is null and jumlah=1 and quotation_kebutuhan_id = ".$id);
+            $listJenisDevices = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_devices where deleted_at is null and jumlah=1 and quotation_kebutuhan_id = ".$id);
+            $listJenisChemical = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_chemical where deleted_at is null and jumlah=1 and quotation_kebutuhan_id = ".$id);
 
-            $listKaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
-            $listOhc = DB::table('sl_quotation_kebutuhan_ohc')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
-            $listDevices = DB::table('sl_quotation_kebutuhan_devices')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
-            $listChemical = DB::table('sl_quotation_kebutuhan_chemical')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+            $listKaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereRaw("(jumlah_sc =1 or jumlah_sg=1)")->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+            $listOhc = DB::table('sl_quotation_kebutuhan_ohc')->where('quotation_kebutuhan_id',$id)->where('jumlah',1)->whereNull('deleted_at')->get();
+            $listDevices = DB::table('sl_quotation_kebutuhan_devices')->where('quotation_kebutuhan_id',$id)->where('jumlah',1)->whereNull('deleted_at')->get();
+            $listChemical = DB::table('sl_quotation_kebutuhan_chemical')->where('quotation_kebutuhan_id',$id)->where('jumlah',1)->whereNull('deleted_at')->get();
 
             $listHPP = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
             $listCS = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
@@ -838,7 +838,7 @@ class QuotationController extends Controller
             }else{
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
             }
-            
+
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1289,7 +1289,7 @@ class QuotationController extends Controller
             }
 
             //BPJS JKK
-            $bpjsJKK = $gajiPokok*24/100;
+            $bpjsJKK = $gajiPokok*0.24/100;
             
             //cari data
             $existBpjsJKK = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkk')->first();
@@ -1314,7 +1314,7 @@ class QuotationController extends Controller
             }
 
             //BPJS Jkm
-            $bpjsJKM = $gajiPokok*30/100;
+            $bpjsJKM = $gajiPokok*0.30/100;
             
             //cari data
             $existBpjsJKM = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkm')->first();
@@ -1339,7 +1339,7 @@ class QuotationController extends Controller
             }
 
             //BPJS JHT
-            $bpjsJHT = $gajiPokok*37/100;
+            $bpjsJHT = $gajiPokok*3.7/100;
             
             //cari data
             $existBpjsJHT = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jht')->first();
@@ -1364,7 +1364,7 @@ class QuotationController extends Controller
             }
 
             //BPJS KESEHATAN
-            $bpjsKes = $gajiPokok*40/100;
+            $bpjsKes = $gajiPokok*4/100;
             
             //cari data
             $existBpjsKes = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_kes')->first();
@@ -1588,7 +1588,7 @@ class QuotationController extends Controller
             $existSubManagementFee = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','management_fee')->first();
             if($existSubBiayaPersonil !=null){
                 DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','management_fee')->update([
-                    'percentage' => null,
+                    'percentage' => $data->persentase,
                     'nominal' => $managementFee,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -1599,7 +1599,7 @@ class QuotationController extends Controller
                     'quotation_kebutuhan_id' => $data->id,
                     'kunci' => 'management_fee',
                     'structure' => 'Management Fee (MF)',
-                    'percentage' => null,
+                    'percentage' => $data->persentase,
                     'nominal' => $managementFee,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
@@ -1638,7 +1638,7 @@ class QuotationController extends Controller
             $existPpnManagementFee = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','ppn_management_fee')->first();
             if($existPpnManagementFee !=null){
                 DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','ppn_management_fee')->update([
-                    'percentage' => null,
+                    'percentage' => 11,
                     'nominal' => $ppnManagementFeeHpp,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -1648,8 +1648,8 @@ class QuotationController extends Controller
                     'quotation_id' => $data->quotation_id,
                     'quotation_kebutuhan_id' => $data->id,
                     'kunci' => 'ppn_management_fee',
-                    'structure' => 'PPn *dari management fee',
-                    'percentage' => null,
+                    'structure' => 'PPn <span class="text-danger"><i>*dari management fee</i></span>',
+                    'percentage' => 11,
                     'nominal' => $ppnManagementFeeHpp,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
@@ -1663,7 +1663,7 @@ class QuotationController extends Controller
             $existPphManagementFee = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','pph_management_fee')->first();
             if($existPphManagementFee !=null){
                 DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','pph_management_fee')->update([
-                    'percentage' => null,
+                    'percentage' => -2,
                     'nominal' => $pphManagementFee,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -1673,8 +1673,8 @@ class QuotationController extends Controller
                     'quotation_id' => $data->quotation_id,
                     'quotation_kebutuhan_id' => $data->id,
                     'kunci' => 'pph_management_fee',
-                    'structure' => 'PPh *dari management fee',
-                    'percentage' => null,
+                    'structure' => 'PPh <span class="text-danger"><i>*dari management fee</i></span>',
+                    'percentage' => -2,
                     'nominal' => $pphManagementFee,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
@@ -1815,7 +1815,7 @@ class QuotationController extends Controller
             }
 
             //BPJS JKK
-            $bpjsJKK = $gajiPokok*24/100;
+            $bpjsJKK = $gajiPokok*0.24/100;
             
             //cari data
             $existBpjsJKK = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkk')->first();
@@ -1840,7 +1840,7 @@ class QuotationController extends Controller
             }
 
             //BPJS Jkm
-            $bpjsJKM = $gajiPokok*30/100;
+            $bpjsJKM = $gajiPokok*0.30/100;
             
             //cari data
             $existBpjsJKM = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jkm')->first();
@@ -1865,7 +1865,7 @@ class QuotationController extends Controller
             }
 
             //BPJS JHT
-            $bpjsJHT = $gajiPokok*37/100;
+            $bpjsJHT = $gajiPokok*3.7/100;
             
             //cari data
             $existBpjsJHT = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_jht')->first();
@@ -1890,7 +1890,7 @@ class QuotationController extends Controller
             }
 
             //BPJS KESEHATAN
-            $bpjsKes = $gajiPokok*40/100;
+            $bpjsKes = $gajiPokok*4/100;
             
             //cari data
             $existBpjsKes = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhanId)->where('kunci','bpjs_kes')->first();
@@ -2055,7 +2055,7 @@ class QuotationController extends Controller
                     'quotation_id' => $data->quotation_id,
                     'quotation_kebutuhan_id' => $data->id,
                     'kunci' => 'biaya_personil',
-                    'structure' => 'Total Biaya per Personil',
+                    'structure' => 'Total Biaya per Personil <span class="text-danger"><i>(1+2+3)</i></span>',
                     'percentage' => null,
                     'nominal' => $totalBiayaPersonil,
                     'created_at' => $current_date_time,
@@ -2116,7 +2116,7 @@ class QuotationController extends Controller
                     'quotation_id' => $data->quotation_id,
                     'quotation_kebutuhan_id' => $data->id,
                     'kunci' => 'management_fee',
-                    'structure' => 'Management Fee (MF)',
+                    'structure' => 'Management Fee (MF) <span class="text-danger"><i>*dari sub total biaya</i></span>',
                     'percentage' => null,
                     'nominal' => $managementFee,
                     'created_at' => $current_date_time,
@@ -2166,7 +2166,7 @@ class QuotationController extends Controller
                     'quotation_id' => $data->quotation_id,
                     'quotation_kebutuhan_id' => $data->id,
                     'kunci' => 'ppn_management_fee',
-                    'structure' => 'PPn *dari management fee',
+                    'structure' => 'PPn <span class="text-danger"><i>*dari management fee</i></span>',
                     'percentage' => null,
                     'nominal' => $ppnManagementFeeCs,
                     'created_at' => $current_date_time,
@@ -2191,7 +2191,7 @@ class QuotationController extends Controller
                     'quotation_id' => $data->quotation_id,
                     'quotation_kebutuhan_id' => $data->id,
                     'kunci' => 'pph_management_fee',
-                    'structure' => 'PPh *dari management fee',
+                    'structure' => 'PPh <span class="text-danger"><i>*dari management fee</i></span>',
                     'percentage' => null,
                     'nominal' => $pphManagementFee,
                     'created_at' => $current_date_time,
