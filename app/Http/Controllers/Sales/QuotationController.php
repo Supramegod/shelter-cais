@@ -345,10 +345,16 @@ class QuotationController extends Controller
             }else{
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $current_date = Carbon::now()->toDateString();
+
+                $newStep = 2;
+                $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+                if($dataQuotation->step>$newStep){
+                    $newStep = $dataQuotation->step;
+                }
                 DB::table('sl_quotation')->where('id',$request->id)->update([
                     'jumlah_site' =>  $request->jumlah_site,
                     'jenis_kontrak' => $request->jenis_kontrak,
-                    'step' => 2,
+                    'step' => $newStep,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
@@ -453,8 +459,14 @@ class QuotationController extends Controller
                     'deleted_by' => Auth::user()->full_name
                 ]);
 
+                $newStep = 3;
+                $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+                if($dataQuotation->step>$newStep){
+                    $newStep = $dataQuotation->step;
+                }
+
                 DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'step' => 3,
+                    'step' => $newStep,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
@@ -493,8 +505,13 @@ class QuotationController extends Controller
     public function saveEdit3 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
+            $newStep = 4;
+                $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+                if($dataQuotation->step>$newStep){
+                    $newStep = $dataQuotation->step;
+                }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 4,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -586,8 +603,14 @@ class QuotationController extends Controller
                 ]);
             }
 
+            $newStep = 5;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 5,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -650,8 +673,13 @@ class QuotationController extends Controller
                 ]);
             }
 
+            $newStep = 6;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 6,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -701,8 +729,14 @@ class QuotationController extends Controller
                 ]);
             }
 
+            $newStep = 7;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
+            
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 7,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -753,8 +787,13 @@ class QuotationController extends Controller
                 };
             };
 
+            $newStep = 8;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 8,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -807,8 +846,13 @@ class QuotationController extends Controller
                 };
             };
 
+            $newStep = 9;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 9,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -861,8 +905,13 @@ class QuotationController extends Controller
                 };
             };
 
+            $newStep = 10;
+                $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+                if($dataQuotation->step>$newStep){
+                    $newStep = $dataQuotation->step;
+                }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 10,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -919,8 +968,13 @@ class QuotationController extends Controller
                 };
             };
 
+            $newStep = 11;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 11,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->fulsl_name
             ]);
@@ -942,8 +996,13 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
+            $newStep = 12;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => 12,
+                'step' => $newStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
