@@ -124,7 +124,7 @@
                     <label class="form-check-label custom-option-content" for="salary_rule_{{$value->id}}">
                       <span class="custom-option-body">
                         <span class="custom-option-title">{{$value->nama_salary_rule}}</span>
-                        <span>Cut Off Gaji : {{$value->mulai}} s/d {{$value->cutoff}}</span><br>
+                        <span>Cut Off : {{$value->mulai}} s/d {{$value->cutoff}}</span><br>
                         <span>Tgl Gajian : {{$value->gajian}}</span><br>
                         <span>TOP : {{$value->top}}</span>
                       </span>

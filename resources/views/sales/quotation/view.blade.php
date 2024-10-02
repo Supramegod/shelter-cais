@@ -24,16 +24,24 @@
                @if($data->info_status !="" && $data->info_status !=null )
                <span class="badge bg-label-success rounded-pill">{{$data->success_status}}</span>
                @endif
+
+               @if($master->step != 100)
+                <span class="badge bg-label-warning rounded-pill">Data Belum Terisi Lengkap</span>
+               @endif
             </h5>
             <p class="text-body">{{$master->nama_perusahaan}}</p>
             <p class="text-body">Revisi Ke : {{$master->revisi}}</p>
           </div>
           <div class="d-flex align-content-center flex-wrap gap-2">
+            @if($master->step != 100)
+            <a href="{{route('quotation.step',['id'=>$master->id,'step'=>$master->step])}}" class="btn btn-primary"><i class="mdi mdi-list-box-outline"></i>&nbsp; Lanjutkan Pengisian</a>
+            @else
             <button class="btn btn-warning" @if($data->is_aktif==1) disabled @endif><i class="mdi mdi-file-refresh"></i>&nbsp; Ajukan Ulang ( Ubah )</button>
             @if(in_array(Auth::user()->role_id,[2,31,32,33,50,51,52,97,98,99,100]))
             <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
             @endif
             <button id="cetak-quotation" class="btn btn-info" @if($data->is_aktif==0) disabled @endif><i class="mdi mdi-printer"></i>&nbsp; Print</button>
+            @endif
             <button id="delete-quotation" class="btn btn-danger" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif><i class="mdi mdi-trash-can"></i>&nbsp;  Delete</button>
           </div>
         </div>
@@ -48,7 +56,9 @@
       <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title m-0">Quotation Info</h5>
+          @if($master->step == 100)
           <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+          @endif
         </div>
         <div class="card-body">
           <div class="row mb-3">
@@ -96,7 +106,9 @@
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Service Info</h5>
+          @if($master->step == 100)
           <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+          @endif
         </div>
         <div class="card-body">
           <div class="row mb-3">
@@ -160,7 +172,9 @@
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Quotation details</h5>
+          @if($master->step == 100)
           <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+          @endif
         </div>
         <div class="table-responsive overflow-hidden table-data card-datatable table-responsive">
           <table id="table-data" class="dt-column-search table w-100 table-hover datatables-quotation-details" style="text-wrap: nowrap;">
@@ -190,7 +204,9 @@
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Customer details</h5>
+          @if($master->step == 100)
           <h6 class="m-0"><a href="{{route('leads.view',$master->leads_id)}}">Edit</a></h6>
+          @endif
         </div>
         <div class="card-body">
           <div class="d-flex justify-content-start align-items-center mb-4">
@@ -221,7 +237,9 @@
         <div class="card-header d-flex justify-content-between">
           <h6 class="card-title m-0">Aplikasi Pendukung</h6>
           <h6 class="m-0">
-            <a href=" javascript:void(0)">Edit</a>
+          @if($master->step == 100)
+            <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'6','edit'=>1])}}">Edit</a>
+          @endif
           </h6>
         </div>
         <div class="card-body">
@@ -480,7 +498,6 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                   <table class="table" >
                     <thead class="text-center">
                       <tr class="table-success">
-                        <th>No.</th>
                         <th>Keterangan</th>
                         <th>HPP</th>
                         <th>Harga Jual</th>
@@ -489,7 +506,6 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                     <tbody>
                       @foreach($listGpm as $igpm => $gpm)
                         <tr>
-                          <td style="text-align:center">{{$ics+1}}</td>
                           <td style="text-align:left">{{$gpm->keterangan}}</td>
                           @if($gpm->kunci == 'gpm')
                           <td style="text-align:right">{{number_format($gpm->hpp,2,",",".")}} %</td>
@@ -548,12 +564,14 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
           <div class="tab-content p-0">
             <div class="tab-pane fade active show" id="navs-top-kaporlap" role="tabpanel">
               <div class="row mb-5">
-                <div class="col-12 d-flex justify-content-between">
-                  <div></div>
-                  <a href="#" class="btn btn-primary btn-next w-20">
-                      <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Kaporlap</span>
-                  </a>
-                </div>
+              @if($master->step == 100)
+              <div class="col-12 d-flex justify-content-between">
+                <div></div>
+                <a href="#" class="btn btn-primary btn-next w-20">
+                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Kaporlap</span>
+                </a>
+              </div>
+              @endif
               </div>
               <div class="row">
                 <div class="table-responsive text-nowrap">
@@ -589,12 +607,14 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             </div>
             <div class="tab-pane fade" id="navs-top-ohc" role="tabpanel">
               <div class="row mb-5">
+              @if($master->step == 100)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
                   <a href="#" class="btn btn-primary btn-next w-20">
                       <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit OHC</span>
                   </a>
                 </div>
+                @endif
               </div>
               <div class="row">
                 <div class="table-responsive text-nowrap">
@@ -625,12 +645,14 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             </div>
             <div class="tab-pane fade" id="navs-top-devices" role="tabpanel">
               <div class="row mb-5">
+              @if($master->step == 100)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
                   <a href="#" class="btn btn-primary btn-next w-20">
                       <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Devices</span>
                   </a>
                 </div>
+              @endif
               </div>
               <div class="row">
                 <div class="table-responsive text-nowrap">
@@ -662,12 +684,14 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             @if($data->kebutuhan_id != 2)
             <div class="tab-pane fade" id="navs-top-chemical" role="tabpanel">
               <div class="row mb-5">
+              @if($master->step == 100)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
                   <a href="#" class="btn btn-primary btn-next w-20">
                       <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Chemical</span>
                   </a>
                 </div>
+              @endif
               </div>
               <div class="row">
                 <div class="table-responsive text-nowrap">
@@ -705,7 +729,9 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
         <div class="card mb-4">
           <div class="card-header d-flex justify-content-between align-items-center pb-0">
           <h5 class="card-title m-0">Perjanjian Kerjasama</h5>
+          @if($master->step == 100)
             <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+            @endif
           </div>
           <div class="card-body pt-0">
             <div class="row mt-5">

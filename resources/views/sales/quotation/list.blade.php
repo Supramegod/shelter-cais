@@ -172,7 +172,18 @@
                         d.kebutuhan = $('#kebutuhan').find(":selected").val();
                         d.is_aktif = $('#is_aktif').find(":selected").val();
                     },
-                },   
+                },
+                "createdRow": function( row, data, dataIndex){
+                    if(data.step!=100){
+                        $('td', row).css('background-color', '#f39c1240');
+                        // $('td', row).css('color', '#fff');
+                    }
+                    if(data.is_aktif==0){
+                        $('td', row).css('background-color', '##27ae6040');
+                        // $('td', row).css('color', '#fff');
+                    }
+                    
+                },     
                 "order":[
                     [0,'desc']
                 ],

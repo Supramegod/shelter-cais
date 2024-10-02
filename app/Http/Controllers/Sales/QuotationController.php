@@ -175,7 +175,12 @@ class QuotationController extends Controller
                 }
             }
 
-            return view('sales.quotation.edit-'.$request->step,compact('listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            $isEdit = false;
+
+            if(isset($request->edit)){
+                $isEdit = true;
+            }
+            return view('sales.quotation.edit-'.$request->step,compact('isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -328,6 +333,7 @@ class QuotationController extends Controller
                 ]);
 
                 DB::commit();
+                
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'2']);
             }
         } catch (\Exception $e) {
@@ -460,7 +466,12 @@ class QuotationController extends Controller
                     ]);
                 }
 
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
+                if($request->is_edit=="0"){
+                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
+                }else{
+                    $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                    return redirect()->route('quotation.view',$dKebutuhan->id);
+                }
             }
         } catch (\Exception $e) {
             dd($e);
@@ -477,7 +488,13 @@ class QuotationController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
+
+            if($request->is_edit=="0"){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
+            }else{
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -570,7 +587,12 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
+            if($request->is_edit=="0"){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
+            }else{
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -633,7 +655,12 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
+            if($request->is_edit=="0"){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
+            }else{
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
+            }
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -683,7 +710,12 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
+            if($request->is_edit=="0"){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
+            }else{
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -733,8 +765,13 @@ class QuotationController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
+           
+            if($request->is_edit=="0"){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
+            }else{
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -783,7 +820,12 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
             
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'9']);
+            if($request->is_edit=="0"){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'9']);
+            }else{
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -832,13 +874,17 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            // jika security maka skip chemical
-            if($quotationKebutuhan[0]->kebutuhan_id==2){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+            if($request->is_edit=="0"){
+                // jika security maka skip chemical
+                if($quotationKebutuhan[0]->kebutuhan_id==2){
+                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+                }else{
+                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
+                }
             }else{
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
             }
-
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -887,7 +933,12 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->fulsl_name
             ]);
             
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+            if($request->is_edit=="0"){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+            }else{
+                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+                return redirect()->route('quotation.view',$dKebutuhan->id);
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -923,11 +974,11 @@ class QuotationController extends Controller
 
     public function list (Request $request){
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
-        $data = DB::table('sl_quotation_kebutuhan')
-                    ->join('sl_quotation','sl_quotation.id','sl_quotation_kebutuhan.quotation_id')
-                    ->join('sl_leads','sl_leads.id','sl_quotation.leads_id')
+        $data = DB::table('sl_quotation')
+                    ->leftJoin('sl_quotation_kebutuhan','sl_quotation.id','sl_quotation_kebutuhan.quotation_id')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('sl_quotation.jenis_kontrak','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->select('sl_quotation_kebutuhan.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
                     ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation_kebutuhan.deleted_at');
 
             if(!empty($request->tgl_dari)){
@@ -998,15 +1049,32 @@ class QuotationController extends Controller
 
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
-                return '<div class="justify-content-center d-flex">
-                                    <a href="'.route('quotation.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
-                        </div>';
+                $id = null;
+                if($data->id == null){
+                    $id = $data->quotation_id;
+                }
+                if($data->step != 100){
+                    return '<div class="justify-content-center d-flex">
+                                <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
+                    </div>';
+                }else{
+                    return '<div class="justify-content-center d-flex">
+                                <a href="'.route('quotation.view',$id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                    </div>';
+                }
+                
             })
             ->editColumn('nomor', function ($data) {
-                return '<a href="'.route('quotation.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+                if($data->id != null){
+                    return '<a href="'.route('quotation.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+                }
+                return "";
             })
             ->editColumn('nama_perusahaan', function ($data) {
-                return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
+                if($data->id != null){
+                    return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
+                }
+                return "";
             })
             ->rawColumns(['aksi','nomor','nama_perusahaan'])
             ->make(true);
