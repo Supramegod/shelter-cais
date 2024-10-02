@@ -10,7 +10,8 @@
         [ 'stepno' => 8 ,'step' => 'OHC', 'info' => 'Informasi OHC' ],
         [ 'stepno' => 9 ,'step' => 'Devices', 'info' => 'Informasi Devices' ],
         [ 'stepno' => 10 ,'step' => 'Chemical', 'info' => 'Informasi Chemical' ],
-        [ 'stepno' => 11 ,'step' => 'Perjanjian', 'info' => 'Informasi Perjanjian' ]
+        [ 'stepno' => 11 ,'step' => 'Cost Structure', 'info' => 'Informasi Cost Structure' ],
+        [ 'stepno' => 12 ,'step' => 'Perjanjian', 'info' => 'Informasi Perjanjian' ]
     ];
 @endphp
 

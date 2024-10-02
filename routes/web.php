@@ -97,6 +97,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/saveEdit9', 'saveEdit9')->name('quotation.save-edit-9');
         Route::post('/sales/quotation/saveEdit10', 'saveEdit10')->name('quotation.save-edit-10');
         Route::post('/sales/quotation/saveEdit11', 'saveEdit11')->name('quotation.save-edit-11');
+        Route::post('/sales/quotation/saveEdit12', 'saveEdit12')->name('quotation.save-edit-12');
 
         Route::post('/sales/quotation/delete', 'delete')->name('quotation.delete');
 
