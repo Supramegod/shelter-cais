@@ -461,6 +461,17 @@ Tunjangan overtime flat		<br>
                     </tbody>
                   </table>
                 </div>
+                <div class="mt-3">
+                  <p><b><i>Note :</i></b>	<br>
+                  <b>Upah pokok base on Umk 2024 Karawang.</b> <br>
+Tunjangan overtime flat total 75 jam. <span class="text-danger">*jika system jam kerja 12 jam </span> <br>
+Tunjangan hari raya ditagihkan provisi setiap bulan. (upah/12) <br>
+BPJS Ketenagakerjaan 3 program (Jkk, Jkm, Jht). <span class="text-danger">*base on upah pokok</span> <br>
+BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
+<br>
+<span class="text-danger">*prosentase Bpjs Tk J. Kecelakaan Kerja disesuaikan dengan tingkat resiko sesuai ketentuan.</span>
+</p>
+                </div>
               </div>
             </div>
             <div class="tab-pane fade" id="navs-top-gpm" role="tabpanel">
