@@ -481,12 +481,7 @@ class QuotationController extends Controller
                     ]);
                 }
 
-                if($request->is_edit=="0"){
-                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
-                }else{
-                    $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                    return redirect()->route('quotation.view',$dKebutuhan->id);
-                }
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -504,12 +499,7 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -602,12 +592,8 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
+
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -670,12 +656,8 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
+
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -725,12 +707,8 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
+
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -785,12 +763,8 @@ class QuotationController extends Controller
 
             $this->perhitunganHPPSecurity($data->id);
             
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
+
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -839,12 +813,8 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
             
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'9']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'9']);
+
 
             $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
@@ -901,16 +871,11 @@ class QuotationController extends Controller
 
             $this->perhitunganHPPSecurity($data->id);
 
-            if($request->is_edit=="0"){
-                // jika security maka skip chemical
-                if($quotationKebutuhan[0]->kebutuhan_id==2){
-                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
-                }else{
-                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
-                }
+            // jika security maka skip chemical
+            if($quotationKebutuhan[0]->kebutuhan_id==2){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
             }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -964,12 +929,8 @@ class QuotationController extends Controller
 
             $this->perhitunganHPPSecurity($data->id);
 
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -991,12 +952,7 @@ class QuotationController extends Controller
 
             $this->perhitunganHPPSecurity($data->id);
 
-            if($request->is_edit=="0"){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'12']);
-            }else{
-                $dKebutuhan = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-                return redirect()->route('quotation.view',$dKebutuhan->id);
-            }
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'12']);
 
         } catch (\Exception $e) {
             dd($e);
@@ -1118,7 +1074,7 @@ class QuotationController extends Controller
                     </div>';
                 }else{
                     return '<div class="justify-content-center d-flex">
-                                <a href="'.route('quotation.view',$id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                                <a href="'.route('quotation.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
                     </div>';
                 }
                 

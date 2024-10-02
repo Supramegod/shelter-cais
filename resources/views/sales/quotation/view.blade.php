@@ -56,8 +56,8 @@
       <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title m-0">Quotation Info</h5>
-          @if($master->step == 100)
-          <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+        @if($master->step == 100 && $data->is_aktif == 0)
+        <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'1','edit'=>1])}}">Edit</a></h6>
           @endif
         </div>
         <div class="card-body">
@@ -106,8 +106,8 @@
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Service Info</h5>
-          @if($master->step == 100)
-          <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+          @if($master->step == 100 && $data->is_aktif == 0)
+          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'2','edit'=>1])}}">Edit</a></h6>
           @endif
         </div>
         <div class="card-body">
@@ -172,8 +172,8 @@
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Quotation details</h5>
-          @if($master->step == 100)
-          <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+          @if($master->step == 100 && $data->is_aktif == 0)
+          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'3','edit'=>1])}}">Edit</a></h6>
           @endif
         </div>
         <div class="table-responsive overflow-hidden table-data card-datatable table-responsive">
@@ -204,7 +204,7 @@
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Customer details</h5>
-          @if($master->step == 100)
+          @if($master->step == 100 && $data->is_aktif == 0)
           <h6 class="m-0"><a href="{{route('leads.view',$master->leads_id)}}">Edit</a></h6>
           @endif
         </div>
@@ -237,8 +237,8 @@
         <div class="card-header d-flex justify-content-between">
           <h6 class="card-title m-0">Aplikasi Pendukung</h6>
           <h6 class="m-0">
-          @if($master->step == 100)
-            <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'6','edit'=>1])}}">Edit</a>
+          @if($master->step == 100 && $data->is_aktif == 0)
+          <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'6','edit'=>1])}}">Edit</a>
           @endif
           </h6>
         </div>
@@ -564,10 +564,10 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
           <div class="tab-content p-0">
             <div class="tab-pane fade active show" id="navs-top-kaporlap" role="tabpanel">
               <div class="row mb-5">
-              @if($master->step == 100)
+              @if($master->step == 100 && $data->is_aktif == 0)
               <div class="col-12 d-flex justify-content-between">
                 <div></div>
-                <a href="#" class="btn btn-primary btn-next w-20">
+                <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'7','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Kaporlap</span>
                 </a>
               </div>
@@ -607,10 +607,10 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             </div>
             <div class="tab-pane fade" id="navs-top-ohc" role="tabpanel">
               <div class="row mb-5">
-              @if($master->step == 100)
+              @if($master->step == 100 && $data->is_aktif == 0)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
-                  <a href="#" class="btn btn-primary btn-next w-20">
+                  <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'8','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                       <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit OHC</span>
                   </a>
                 </div>
@@ -645,10 +645,10 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             </div>
             <div class="tab-pane fade" id="navs-top-devices" role="tabpanel">
               <div class="row mb-5">
-              @if($master->step == 100)
+              @if($master->step == 100 && $data->is_aktif == 0)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
-                  <a href="#" class="btn btn-primary btn-next w-20">
+                  <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'9','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                       <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Devices</span>
                   </a>
                 </div>
@@ -684,10 +684,10 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             @if($data->kebutuhan_id != 2)
             <div class="tab-pane fade" id="navs-top-chemical" role="tabpanel">
               <div class="row mb-5">
-              @if($master->step == 100)
+              @if($master->step == 100 && $data->is_aktif == 0)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
-                  <a href="#" class="btn btn-primary btn-next w-20">
+                  <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'10','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                       <span class="align-middle d-sm-inline-block d-none me-sm-1">Edit Chemical</span>
                   </a>
                 </div>
@@ -729,8 +729,8 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
         <div class="card mb-4">
           <div class="card-header d-flex justify-content-between align-items-center pb-0">
           <h5 class="card-title m-0">Perjanjian Kerjasama</h5>
-          @if($master->step == 100)
-            <h6 class="m-0"><a href="javascript:void(0)">Edit</a></h6>
+          @if($master->step == 100 && $data->is_aktif == 0)
+          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'12','edit'=>1])}}">Edit</a></h6>
             @endif
           </div>
           <div class="card-body pt-0">
