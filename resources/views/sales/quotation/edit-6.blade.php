@@ -50,5 +50,10 @@
 
 @section('pageScript')
 <script>
+  $('#btn-submit').on('click',function(e){
+      e.preventDefault();
+      var form = $(this).parents('form');
+      form.submit();
+    });
 </script>
 @endsection

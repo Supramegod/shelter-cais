@@ -696,38 +696,40 @@ class QuotationController extends Controller
     public function saveEdit6 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
-            foreach ($quotationKebutuhan as $key => $value) {
-                $aplikasiPendukung = $request->aplikasi_pendukung;
-                foreach ($aplikasiPendukung as $keyd => $valued) {
-                    $appdukung = DB::table('m_aplikasi_pendukung')->where('id',$valued)->first();
-
-                    $dataAplikasi = DB::table('sl_quotation_kebutuhan_aplikasi')->where('aplikasi_pendukung_id',$valued)->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->first();
-                    if($dataAplikasi==null){
-                        DB::table('sl_quotation_kebutuhan_aplikasi')->insert([
-                            'quotation_id' => $request->id,
-                            'quotation_kebutuhan_id' => $value->id,
-                            'aplikasi_pendukung_id' => $valued,
-                            'aplikasi_pendukung' => $appdukung->nama,
-                            'created_at' => $current_date_time,
-                            'created_by' => Auth::user()->full_name
-                        ]);
-                    }else{
-                        DB::table('sl_quotation_kebutuhan_aplikasi')->where('id',$dataAplikasi->id)->update([
-                            'quotation_id' => $request->id,
-                            'quotation_kebutuhan_id' => $value->id,
-                            'aplikasi_pendukung_id' => $valued,
-                            'aplikasi_pendukung' => $appdukung->nama,
-                            'updated_at' => $current_date_time,
-                            'updated_by' => Auth::user()->full_name
-                        ]);
+            if($request->aplikasi_pendukung !=null){
+                $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+                foreach ($quotationKebutuhan as $key => $value) {
+                    $aplikasiPendukung = $request->aplikasi_pendukung;
+                    foreach ($aplikasiPendukung as $keyd => $valued) {
+                        $appdukung = DB::table('m_aplikasi_pendukung')->where('id',$valued)->first();
+    
+                        $dataAplikasi = DB::table('sl_quotation_kebutuhan_aplikasi')->where('aplikasi_pendukung_id',$valued)->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->first();
+                        if($dataAplikasi==null){
+                            DB::table('sl_quotation_kebutuhan_aplikasi')->insert([
+                                'quotation_id' => $request->id,
+                                'quotation_kebutuhan_id' => $value->id,
+                                'aplikasi_pendukung_id' => $valued,
+                                'aplikasi_pendukung' => $appdukung->nama,
+                                'created_at' => $current_date_time,
+                                'created_by' => Auth::user()->full_name
+                            ]);
+                        }else{
+                            DB::table('sl_quotation_kebutuhan_aplikasi')->where('id',$dataAplikasi->id)->update([
+                                'quotation_id' => $request->id,
+                                'quotation_kebutuhan_id' => $value->id,
+                                'aplikasi_pendukung_id' => $valued,
+                                'aplikasi_pendukung' => $appdukung->nama,
+                                'updated_at' => $current_date_time,
+                                'updated_by' => Auth::user()->full_name
+                            ]);
+                        }
                     }
+    
+                    DB::table('sl_quotation_kebutuhan_aplikasi')->where('quotation_kebutuhan_id',$value->id)->whereNotIn('aplikasi_pendukung_id', $aplikasiPendukung)->update([
+                        'deleted_at' => $current_date_time,
+                        'deleted_by' => Auth::user()->full_name
+                    ]);
                 }
-
-                DB::table('sl_quotation_kebutuhan_aplikasi')->where('quotation_kebutuhan_id',$value->id)->whereNotIn('aplikasi_pendukung_id', $aplikasiPendukung)->update([
-                    'deleted_at' => $current_date_time,
-                    'deleted_by' => Auth::user()->full_name
-                ]);
             }
 
             $newStep = 7;
