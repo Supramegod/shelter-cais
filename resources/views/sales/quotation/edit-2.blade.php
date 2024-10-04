@@ -154,12 +154,12 @@
 @section('pageScript')
 <script>
   // validasi input
-  $('form').bind("keypress", function(e) {
-    if (e.keyCode == 13) {               
-      e.preventDefault();
-      return false;
-    }
-  });
+$('form').bind("keypress", function(e) {
+  if (e.keyCode == 13) {               
+    e.preventDefault();
+    return false;
+  }
+});
 $('#btn-submit').on('click',function(e){
   e.preventDefault();
   var form = $(this).parents('form');
@@ -194,8 +194,6 @@ $('#btn-submit').on('click',function(e){
   if(msg == ""){
     form.submit();
   }else{
-    //cek tanggal
-
     Swal.fire({
       title: "Pemberitahuan",
       html: msg,

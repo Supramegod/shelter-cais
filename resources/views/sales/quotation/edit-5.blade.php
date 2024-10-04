@@ -66,7 +66,7 @@
                               <option value="">- Pilih data -</option>
                               <option value="2 BPJS" @if($value->program_bpjs == '2 BPJS') selected @endif>2 BPJS</option>  
                               <option value="3 BPJS" @if($value->program_bpjs == '3 BPJS') selected @endif>3 BPJS</option>
-                              <option value="4 BPJS" @if($value->program_bpjs == '4 BPJS') selected @endif>4 BPJS</option>
+                              <option value="4 BPJS" @if($value->program_bpjs == '4 BPJS') selected @elseif($value->program_bpjs ==null) selected @endif>4 BPJS</option>
                             </select>
                           </div>
                           <span class="text-warning">*Program BPJS selain 4 program membutuhkan persetujuan</span>
@@ -105,6 +105,42 @@
       
       $(id).val($(this).find(':selected').data('resiko'));
     });
+
+
+    $('form').bind("keypress", function(e) {
+      if (e.keyCode == 13) {               
+        e.preventDefault();
+        return false;
+      }
+    });
+    $('#btn-submit').on('click',function(e){
+      e.preventDefault();
+      var form = $(this).parents('form');
+      let msg = "";
+      let obj = $("form").serializeObject();
+        
+      if(obj['jenis-perusahaan-{{$value->id}}'] == null || obj['jenis-perusahaan-{{$value->id}}'] == ""){
+        msg += "<b>Jenis Perusahaan</b> belum dipilih </br>";
+      }
+      if(obj['program-bpjs-{{$value->id}}'] == null || obj['program-bpjs-{{$value->id}}'] == ""){
+        msg += "<b>Program BPJS </b> belum dipilih </br>";
+      }
+
+      if(obj['resiko-{{$value->id}}'] == null || obj['resiko-{{$value->id}}'] == ""){
+        msg += "<b>Resiko </b> belum dipilih </br>";
+      }
+
+      if(msg == ""){
+        form.submit();
+      }else{
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: msg,
+          icon: "warning"
+        });
+      }
+    });
+
   @endforeach
   });
   

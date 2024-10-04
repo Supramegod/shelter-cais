@@ -238,8 +238,6 @@
   if(msg == ""){
     form.submit();
   }else{
-    //cek tanggal
-
     Swal.fire({
       title: "Pemberitahuan",
       html: msg,
