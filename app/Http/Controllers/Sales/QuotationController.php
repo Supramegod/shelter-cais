@@ -182,7 +182,7 @@ class QuotationController extends Controller
 
             if($request->step==11){
                 $data = DB::table('sl_quotation_kebutuhan')->where('id',$quotationKebutuhan[0]->id)->first();
-                $data->detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
+                $data->detail = DB::table('sl_quotation_kebutuhan_detail')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
                 $data->totalHc = 0;
 
                 foreach ($data->detail as $key => $value) {
@@ -231,7 +231,7 @@ class QuotationController extends Controller
     public function view (Request $request,$id){
         try {
             $data = DB::table('sl_quotation_kebutuhan')->where('id',$id)->first();
-            $data->detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$id)->get();
+            $data->detail = DB::table('sl_quotation_kebutuhan_detail')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$id)->get();
             $data->totalHc = 0;
 
             foreach ($data->detail as $key => $value) {

@@ -576,6 +576,9 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
               <div class="row">
                 <div class="table-responsive text-nowrap">
                   <table class="table" >
+                    @php
+                    $totalKaporlap = 0;
+                    @endphp
                     @foreach($listJenisKaporlap as $jenisKaporlap)
                     <thead class="text-center">
                       <tr class="table-primary">
@@ -592,10 +595,21 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                           <td style="text-align:right">Rp {{number_format($kaporlap->harga,0,",",".")}}</td>
                           <td style="text-align:center">{{$kaporlap->jumlah}}</td>
                         </tr>
+
+                        @php
+                          $totalKaporlap += ($kaporlap->jumlah*$kaporlap->harga);
+                        @endphp
                       @endif
                       @endforeach
                     </tbody>
                     @endforeach
+                    <tbody>
+                    <tr class="table-success">
+                      <td><b>TOTAL</b> </td>
+                      <td style="text-align:right">Rp {{number_format($totalKaporlap,0,",",".")}}</td>
+                      <td class="total-semua" style="text-align:right"></td>
+                    </tr>
+                  </tbody>
                   </table>
                 </div>
               </div>
@@ -614,6 +628,9 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
               <div class="row">
                 <div class="table-responsive text-nowrap">
                   <table class="table" >
+                    @php
+                      $totalOhc = 0;
+                    @endphp
                     @foreach($listJenisOhc as $jenisOhc)
                     <thead class="text-center">
                       <tr class="table-primary">
@@ -630,10 +647,20 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                           <td style="text-align:right">Rp {{number_format($ohc->harga,0,",",".")}}</td>
                           <td style="text-align:center">{{$ohc->jumlah}}</td>
                         </tr>
+                        @php
+                          $totalOhc += ($ohc->jumlah*$ohc->harga);
+                        @endphp
                       @endif
                       @endforeach
                     </tbody>
                     @endforeach
+                    <tbody>
+                    <tr class="table-success">
+                      <td><b>TOTAL</b> </td>
+                      <td style="text-align:right">Rp {{number_format($totalOhc,0,",",".")}}</td>
+                      <td class="total-semua" style="text-align:right"></td>
+                    </tr>
+                  </tbody>
                   </table>
                 </div>
               </div>
@@ -652,6 +679,9 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
               <div class="row">
                 <div class="table-responsive text-nowrap">
                   <table class="table" >
+                    @php
+                      $totalDevices = 0;
+                    @endphp
                     @foreach($listJenisDevices as $jenisDevices)
                     <thead class="text-center">
                       <tr class="table-primary">
@@ -668,10 +698,20 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                           <td style="text-align:right">Rp {{number_format($devices->harga,0,",",".")}}</td>
                           <td style="text-align:center">{{$devices->jumlah}}</td>
                         </tr>
+                        @php
+                          $totalDevices += ($devices->jumlah*$devices->harga);
+                        @endphp
                       @endif
                       @endforeach
                     </tbody>
                     @endforeach
+                    <tbody>
+                    <tr class="table-success">
+                      <td><b>TOTAL</b> </td>
+                      <td style="text-align:right">Rp {{number_format($totalDevices,0,",",".")}}</td>
+                      <td class="total-semua" style="text-align:right"></td>
+                    </tr>
+                  </tbody>
                   </table>
                 </div>
               </div>
@@ -691,6 +731,9 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
               <div class="row">
                 <div class="table-responsive text-nowrap">
                   <table class="table" >
+                    @php
+                      $totalChemical = 0;
+                    @endphp
                     @foreach($listJenisChemical as $jenisChemical)
                     <thead class="text-center">
                       <tr class="table-primary">
@@ -707,10 +750,20 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                           <td style="text-align:right">Rp {{number_format($chemical->harga,0,",",".")}}</td>
                           <td style="text-align:center">{{$chemical->jumlah}}</td>
                         </tr>
+                        @php
+                          $totalChemical += ($chemical->jumlah*$chemical->harga);
+                        @endphp
                       @endif
                       @endforeach
                     </tbody>
                     @endforeach
+                    <tbody>
+                    <tr class="table-success">
+                      <td><b>TOTAL</b> </td>
+                      <td style="text-align:right">Rp {{number_format($totalChemical,0,",",".")}}</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
                   </table>
                 </div>
               </div>
