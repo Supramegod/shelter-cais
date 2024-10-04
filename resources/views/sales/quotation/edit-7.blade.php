@@ -105,6 +105,8 @@
     hitungJumlah();
   });
 
+  hitungJumlah();
+
   function hitungJumlah() {
     let jumlah =0;    
     $('.input-jumlah').each(function( index ) {

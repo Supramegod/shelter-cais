@@ -28,6 +28,7 @@
                         <span class="custom-option-body">
                             <img src="{{$value->link_icon}}" alt="{{$value->nama}}" style="max-width:60px">
                           <span class="custom-option-title">{{$value->nama}}</span>
+                          <span class="custom-option-title">Harga : Rp {{number_format($value->harga,0,",",".")}}</span>
                         </span>
                         <input name="aplikasi_pendukung[]" class="form-check-input" type="checkbox" value="{{$value->id}}" @if(in_array($value->id,$arrAplikasiSel)) checked @endif>
                       </label>

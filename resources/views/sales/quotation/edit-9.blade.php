@@ -51,6 +51,17 @@
                     @endif
                     @endforeach
                   </tbody>
+                  <tbody>
+                    @foreach($listAplikasiPendukung as $aplikasiPendukung)
+                      <tr>
+                        <td>{{$aplikasiPendukung->aplikasi_pendukung}}</td>
+                        <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
+                        <td class="jumlah" style="display:flex;flex=1;justify-content:center">
+                          <input type="number" class="input-jumlah text-center" data-harga="{{$detail->harga}}"  value="1" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
                   @endforeach
                   <tbody>
                     <tr class="table-success">
@@ -116,6 +127,8 @@
     });
     $('.total-semua').text("Rp "+jumlah.toLocaleString('id-ID'));
   }
+
+  hitungJumlah();
 
   $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {               

@@ -708,6 +708,7 @@ class QuotationController extends Controller
                                 'quotation_kebutuhan_id' => $value->id,
                                 'aplikasi_pendukung_id' => $valued,
                                 'aplikasi_pendukung' => $appdukung->nama,
+                                'harga' => $appdukung->harga,
                                 'created_at' => $current_date_time,
                                 'created_by' => Auth::user()->full_name
                             ]);
@@ -717,6 +718,7 @@ class QuotationController extends Controller
                                 'quotation_kebutuhan_id' => $value->id,
                                 'aplikasi_pendukung_id' => $valued,
                                 'aplikasi_pendukung' => $appdukung->nama,
+                                'harga' => $appdukung->harga,
                                 'updated_at' => $current_date_time,
                                 'updated_by' => Auth::user()->full_name
                             ]);
