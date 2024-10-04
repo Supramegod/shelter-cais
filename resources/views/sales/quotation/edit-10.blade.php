@@ -42,7 +42,7 @@
                             <span class="mdi mdi-minus"></span> &nbsp;
                           </button>
                           <input type="hidden" name="barang[]" value="{{$detail->id}}">
-                          <input type="number" class="input-jumlah text-center" name="jumlah_{{$detail->id}}" value="{{$detail->jumlah}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
+                          <input type="number" class="input-jumlah text-center" name="jumlah_{{$detail->id}}" value="{{$detail->jumlah}}" data-harga="{{$detail->harga}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
                           <button type="button" type="button" class="add-jumlah btn rounded-pill btn-primary waves-effect waves-light">
                             <span class="mdi mdi-plus"></span> &nbsp;
                           </button>
@@ -52,6 +52,15 @@
                     @endforeach
                   </tbody>
                   @endforeach
+                  <tbody>
+                    <tr class="table-success">
+                      <td><b>TOTAL</b> </td>
+                      <td class="total-semua" style="text-align:right"></td>
+                      <td>
+
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
               </div>
@@ -81,6 +90,9 @@
       newVal = 0;
     }
     $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
+
+    hitungJumlah();
+
   });
 
   $('.add-jumlah').on('click',function(){
@@ -91,6 +103,31 @@
       newVal = parseInt(val)+1;
     }
     $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
+
+    hitungJumlah();
+  });
+
+
+  function hitungJumlah() {
+    let jumlah =0;    
+    $('.input-jumlah').each(function( index ) {
+      let harga = parseInt($(this).val())*parseInt($(this).data('harga'));
+      jumlah = jumlah+parseInt(harga);
+    });
+    $('.total-semua').text("Rp "+jumlah.toLocaleString('id-ID'));
+  }
+
+  $('form').bind("keypress", function(e) {
+      if (e.keyCode == 13) {               
+        e.preventDefault();
+        return false;
+      }
+    });
+    
+  $('#btn-submit').on('click',function(e){
+    e.preventDefault();
+    var form = $(this).parents('form');
+    form.submit();
   });
 </script>
 @endsection

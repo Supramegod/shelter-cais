@@ -189,9 +189,9 @@ class QuotationController extends Controller
                     $data->totalHc += $value->jumlah_hc;
                 }
                 $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
-                $listHPP = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
-                $listCS = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
-                $listGpm = DB::table('sl_quotation_kebutuhan_analisa_gpm')->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+                $listHPP = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();
+                $listCS = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();
+                $listGpm = DB::table('sl_quotation_kebutuhan_analisa_gpm')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();            
             }
 
             $isEdit = false;

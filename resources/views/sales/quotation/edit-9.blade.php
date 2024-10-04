@@ -117,6 +117,13 @@
     $('.total-semua').text("Rp "+jumlah.toLocaleString('id-ID'));
   }
 
+  $('form').bind("keypress", function(e) {
+      if (e.keyCode == 13) {               
+        e.preventDefault();
+        return false;
+      }
+    });
+    
   $('#btn-submit').on('click',function(e){
     e.preventDefault();
     var form = $(this).parents('form');

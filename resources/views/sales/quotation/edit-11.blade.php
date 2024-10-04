@@ -21,10 +21,7 @@
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
-              <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="card-title m-0">Cost Structure</h5>
-        </div>
+              <div class="card-header">        </div>
         <div class="card-body">
         <div class="card-header p-0">
           <div class="nav-align-top">
@@ -283,7 +280,6 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             </div>
           </div>
         </div>
-        </div>
       </div>
               </div>
               @include('sales.quotation.action')
@@ -300,4 +296,20 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
 @endsection
 
 @section('pageScript')  
+
+<script>
+      $('form').bind("keypress", function(e) {
+      if (e.keyCode == 13) {               
+        e.preventDefault();
+        return false;
+      }
+    });
+
+  $('#btn-submit').on('click',function(e){
+    e.preventDefault();
+    var form = $(this).parents('form');
+    form.submit();
+  });
+
+</script>
 @endsection
