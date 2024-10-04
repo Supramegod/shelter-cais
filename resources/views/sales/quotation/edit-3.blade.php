@@ -105,7 +105,7 @@
 @section('pageScript')
 <script>
   @foreach($quotationKebutuhan as $value)
-    $('#table-data-{{$value->id}}').DataTable({
+    let table = $('#table-data-{{$value->id}}').DataTable({
       scrollX: true,
       "bPaginate": false,
     "bLengthChange": false,
@@ -201,6 +201,33 @@
         });
       }
     });
+
+    $('form').bind("keypress", function(e) {
+      if (e.keyCode == 13) {               
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    $('#btn-submit').on('click',function(e){
+      e.preventDefault();
+      var form = $(this).parents('form');
+      let msg = "";
+      if(table.page.info().recordsTotal==0){
+        msg += "Isikan minimal 1 data";
+      }
+
+      if(msg == ""){
+        form.submit();
+      }else{
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: msg,
+          icon: "warning"
+        });
+      }
+    });
+
   @endforeach
 
   $('body').on('click', '.btn-delete', function() {
@@ -222,5 +249,10 @@
       }
     });
   });
+
+  @foreach($quotationKebutuhan as $value)
+    
+  @endforeach
+
 </script>
 @endsection

@@ -11,7 +11,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-1')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
+          <form id="form" class="card-body overflow-hidden" action="{{route('quotation.save-edit-1')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
           @csrf
           <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -229,5 +229,30 @@
       }
     });
 
+// validasi input
+$('#btn-submit').on('click',function(e){
+  e.preventDefault();
+  var form = $(this).parents('form');
+  let msg = "";
+  let obj = $("form").serializeObject();
+  
+  if(obj.jenis_kontrak == null || obj.jenis_kontrak == "" ){
+    msg += "<b>Jenis kontrak</b> belum dipilih </br>";
+  };
+
+  if(obj.jumlah_site == null || obj.jumlah_site == ""){
+    msg += "<b>Jumlah site</b> belum dipilih </br>";
+  }
+
+  if(msg == ""){
+    form.submit();
+  }else{
+    Swal.fire({
+      title: "Pemberitahuan",
+      html: msg,
+      icon: "warning"
+    });
+  }
+});
 </script>
 @endsection

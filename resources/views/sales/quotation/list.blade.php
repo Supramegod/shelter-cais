@@ -188,8 +188,8 @@
                     [0,'desc']
                 ],
                 columns:[{
-                    data : 'id',
-                    name : 'id',
+                    data : 'quotation_id',
+                    name : 'quotation_id',
                     visible: false,
                     searchable: false
                 },{

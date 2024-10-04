@@ -25,7 +25,7 @@
     <!-- <script src="{{ asset('public/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script> -->
     <!-- <script src="{{ asset('public/assets/vendor/libs/select2/select2.js') }}"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
     <!-- Flat Picker -->
     <script src="{{ asset('public/assets/vendor/libs/moment/moment.js')}}"></script>
     <script src="{{ asset('public/assets/vendor/libs/flatpickr/flatpickr.js')}}"></script>
@@ -91,6 +91,23 @@
         //     });
         // });
         
+        $.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+    
     </script>
     <!-- Custom script -->
     @yield('pageScript')

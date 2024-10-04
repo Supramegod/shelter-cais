@@ -378,6 +378,7 @@ class QuotationController extends Controller
                 'mulai_kontrak' => 'required',
                 'kontrak_selesai' => 'required',
                 'tgl_penempatan' => 'required',
+                'top' => 'required',
                 'salary_rule' => 'required'
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
@@ -411,7 +412,7 @@ class QuotationController extends Controller
                     'kontrak_selesai' => $request->kontrak_selesai,
                     'tgl_penempatan' => $request->tgl_penempatan,
                     'salary_rule_id' => $request->salary_rule,
-                    'top' => $salaryRule->top,
+                    'top' => $request->top,
                     'step' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -1165,7 +1166,12 @@ class QuotationController extends Controller
             // cek apakah data sudah ada
             $checkExist = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$quotationKebutuhan->id)->where('kebutuhan_detail_id',$request->jabatan_detail_id)->whereNull('deleted_at')->get();
             if(count($checkExist)>0){
-                return "Jabatan ini sudah ada";
+                DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$quotationKebutuhan->id)->where('kebutuhan_detail_id',$request->jabatan_detail_id)->whereNull('deleted_at')->update([
+                    'jumlah_hc' => $checkExist[0]->jumlah_hc+$request->jumlah_hc,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+                return "Data Berhasil Ditambahkan";
             };
 
             DB::table('sl_quotation_kebutuhan_detail')->insert([
@@ -1180,6 +1186,7 @@ class QuotationController extends Controller
             ]);
             return "Data Berhasil Ditambahkan";
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
             return "Data Gagal Ditambahkan";

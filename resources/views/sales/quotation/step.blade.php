@@ -49,18 +49,20 @@
         @if(!$loop->first)
             <div class="line"></div>
         @endif
-        <div class="step @if($request->step>$data['stepno']) crossed @elseif($request->step==$data['stepno']) active @endif)">
-            <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
-                <span class="bs-stepper-label">
-                <span class="bs-stepper-number">{{sprintf('%02d',$no)}}</span>
-                <span class="d-flex flex-column gap-1 ms-2">
-                    <span class="bs-stepper-title">{{$data["step"]}}</span>
-                    <span class="bs-stepper-subtitle">{{$data["info"]}}</span>
-                </span>
-                </span>
-            </button>
-        </div>
+        <a href="@if($data['stepno']<$quotation->step) {{route('quotation.step',['id'=>$request->id,'step'=>$data['stepno']])}} @else javascript:void(0) @endif">
+            <div class="step @if($request->step>$data['stepno']) crossed @elseif($request->step==$data['stepno']) active @endif)">
+                <button type="button" class="step-trigger">
+                    <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
+                    <span class="bs-stepper-label">
+                    <span class="bs-stepper-number">{{sprintf('%02d',$no)}}</span>
+                    <span class="d-flex flex-column gap-1 ms-2">
+                        <span class="bs-stepper-title">{{$data["step"]}}</span>
+                        <span class="bs-stepper-subtitle">{{$data["info"]}}</span>
+                    </span>
+                    </span>
+                </button>
+            </div>
+        </a>
         @php
         $no++;
         @endphp

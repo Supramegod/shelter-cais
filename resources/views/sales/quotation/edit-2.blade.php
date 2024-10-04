@@ -105,7 +105,7 @@
               <div class="row mb-3">
                 <div class="col-sm-6">
                   <label class="form-label" for="tgl_penempatan">Tanggal Penempatan</label>
-                  <input type="date" name="tgl_penempatan" value="{{$quotation->tgl_penempatan}}" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl_penempatan">
+                  <input type="date" name="tgl_penempatan" value="{{$quotation->tgl_penempatan}}" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl-penempatan">
                   @if($errors->has('tgl_penempatan'))
                     <span class="text-danger">{{$errors->first('tgl_penempatan')}}</span>
                   @endif
@@ -113,29 +113,31 @@
                     <span class="text-danger">{{$errors->first('tgl_penempatan_kurang')}}</span>
                   @endif
                 </div>
-              </div>
-              <div class="row mb-2">
-                <h4 class="text-center">Salary Rule</h4>
+                <div class="col-sm-6">
+                  <label class="form-label" for="basic-default-password42">Salary Rule</label>
+                  <select id="salary_rule" name="salary_rule" class="form-select @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($salaryRule as $value)
+                      <option value="{{$value->id}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->mulai}} s/d {{$value->cutoff}} | Tgl Gajian : {{$value->gajian}} | Jarak Hari : {{$value->top}}</option>  
+                      @endforeach
+                    </select>
+                    @if($errors->has('salary_rule'))
+                      <span class="text-danger">{{$errors->first('salary_rule')}}</span>
+                    @endif
+                </div>
               </div>
               <div class="row mb-3">
-              @foreach($salaryRule as $value)
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon @if($quotation->kebutuhan_id==$value->id) checked @endif">
-                    <label class="form-check-label custom-option-content" for="salary_rule_{{$value->id}}">
-                      <span class="custom-option-body">
-                        <span class="custom-option-title">{{$value->nama_salary_rule}}</span>
-                        <span>Cut Off : {{$value->mulai}} s/d {{$value->cutoff}}</span><br>
-                        <span>Tgl Gajian : {{$value->gajian}}</span><br>
-                        <span>TOP : {{$value->top}}</span>
-                      </span>
-                      <input name="salary_rule" class="form-check-input" type="radio" value="{{$value->id}}" id="salary_rule_{{$value->id}}" @if($quotation->kebutuhan_id==$value->id) checked @endif>
-                    </label>
-                  </div>
+                <div class="col-sm-12">
+                  <label class="form-label" for="basic-default-password42">TOP Invoice</label>
+                  <select id="top" name="top" class="form-select @if($errors->has('top')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                    <option value="Kurang Dari 7 Hari" @if($quotation->top=='Kurang Dari 7 Hari') selected @endif>Kurang Dari 7 Hari</option>  
+                    <option value="Lebih Dari 7 Hari" @if($quotation->top=='Lebih Dari 7 Hari') selected @endif>Lebih Dari 7 Hari</option>  
+                    </select>
+                    @if($errors->has('top'))
+                      <span class="text-danger">{{$errors->first('top')}}</span>
+                    @endif
+                  <span class="text-warning">*TOP invoice lebih dari 7 hari membutuhkan approval dari direksi</span>
                 </div>
-              @endforeach
-              @if($errors->has('salary_rule'))
-                <span class="text-danger">{{$errors->first('salary_rule')}}</span>
-              @endif
               </div>
               @include('sales.quotation.action')
             </div>
@@ -149,6 +151,112 @@
 
 <!--/ Content -->
 @endsection
-
 @section('pageScript')
+<script>
+  // validasi input
+$('#btn-submit').on('click',function(e){
+  e.preventDefault();
+  var form = $(this).parents('form');
+  let msg = "";
+  let obj = $("form").serializeObject();
+    
+  if(obj['kebutuhan[]'] == null || obj['kebutuhan[]'] == "" ){
+    msg += "<b>Kebutuhan</b> belum dipilih </br>";
+  };
+
+  if(obj.entitas == null || obj.entitas == "" ){
+    msg += "<b>Entitas</b> belum dipilih </br>";
+  };
+
+  if(obj.mulai_kontrak == null || obj.mulai_kontrak == ""){
+    msg += "<b>Mulai Kontrak</b> belum dipilih </br>";
+  }
+
+  if(obj.kontrak_selesai == null || obj.kontrak_selesai == ""){
+    msg += "<b>Kontrak Selesai</b> belum dipilih </br>";
+  }
+  if(obj.tgl_penempatan == null || obj.tgl_penempatan == ""){
+    msg += "<b>Tanggal Penempatan</b> belum dipilih </br>";
+  }
+  if(obj.salary_rule == null || obj.salary_rule == ""){
+    msg += "<b>Salary Rule</b> belum dipilih </br>";
+  }
+  if(obj.top == null || obj.top == ""){
+    msg += "<b>TOP Invoice</b> belum dipilih </br>";
+  }
+
+  if(msg == ""){
+    form.submit();
+  }else{
+    //cek tanggal
+
+    Swal.fire({
+      title: "Pemberitahuan",
+      html: msg,
+      icon: "warning"
+    });
+  }
+});
+
+function validasiKontrak() {
+  let awal = $('#mulai-kontrak').val();
+  let akhir = $('#kontrak-selesai').val();
+
+  if (awal != null && awal != "" && akhir != null && akhir != "") {
+    let dtAwal = new Date($('#mulai-kontrak').val());
+    let dtAkhir = new Date($('#kontrak-selesai').val());
+    if(dtAwal>dtAkhir){
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: "Mulai Kontrak melebihi Kontrak Selesai",
+        icon: "warning"
+      });
+
+      $('#mulai-kontrak').val('').attr('type', 'text').attr('type', 'date');
+      $('#kontrak-selesai').val('').attr('type', 'text').attr('type', 'date');
+    }
+  }
+}
+
+function validasiPenempatan() {
+  let awal = $('#mulai-kontrak').val();
+  let akhir = $('#kontrak-selesai').val();
+  let penempatan = $('#tgl-penempatan').val();
+
+  if (awal != null && awal != "" && akhir != null && akhir != "" && penempatan != null && penempatan != "") {
+    let dtAwal = new Date($('#mulai-kontrak').val());
+    let dtAkhir = new Date($('#kontrak-selesai').val());
+    let dtPenempatan = new Date($('#tgl-penempatan').val());
+
+    if(dtPenempatan>dtAkhir){
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: "Tanggal Kontrak melebihi Kontrak Selesai",
+        icon: "warning"
+      });
+
+      $('#tgl-penempatan').val('').attr('type', 'text').attr('type', 'date');
+    } else if(dtPenempatan<dtAwal){
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: "Tanggal Kontrak kurang dari Mulai Kontrak",
+        icon: "warning"
+      });
+
+      $('#tgl-penempatan').val('').attr('type', 'text').attr('type', 'date');
+    }
+  }
+}
+
+$('#mulai-kontrak').on('change', function() {
+  validasiKontrak();
+});
+$('#kontrak-selesai').on('change', function() {
+  validasiKontrak();
+});
+$('#tgl-penempatan').on('change', function() {
+  validasiPenempatan();
+});
+
+</script>
 @endsection
