@@ -205,6 +205,61 @@
   @if($value->upah=="Custom")
     $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
   @endif
+
+  $('#btn-submit').on('click',function(e){
+  e.preventDefault();
+  var form = $(this).parents('form');
+  let msg = "";
+  let obj = $("form").serializeObject();
+
+  if(obj['provinsi-{{$value->id}}'] == null || obj['provinsi-{{$value->id}}'] == ""){
+    msg += "<b>Provinsi</b> belum dipilih </br>";
+  }
+  if(obj['kota-{{$value->id}}'] == null || obj['kota-{{$value->id}}'] == ""){
+    msg += "<b>Kabupaten / Kota </b> belum dipilih </br>";
+  }
+
+  if(obj['upah-{{$value->id}}'] == null || obj['upah-{{$value->id}}'] == ""){
+    msg += "<b>Jenis Upah</b> belum dipilih </br>";
+  }
+  if(obj['upah-{{$value->id}}'] =="Custom"){
+    if(obj['custom-upah-{{$value->id}}'] == null || obj['custom-upah-{{$value->id}}'] == ""){
+      msg += "<b>Costum Upah</b> belum dipilih </br>";
+    }
+  }
+  if(obj['manajemen_fee_{{$value->id}}'] == null || obj['manajemen_fee_{{$value->id}}'] == ""){
+    msg += "<b>Manajemen Fee </b> belum dipilih </br>";
+  }
+  if(obj['persentase_{{$value->id}}'] == null || obj['persentase_{{$value->id}}'] == ""){
+    msg += "<b>Persentase </b> belum diisi </br>";
+  }
+  
+  
+  if(msg == ""){
+    form.submit();
+  }else{
+    //cek tanggal
+
+    Swal.fire({
+      title: "Pemberitahuan",
+      html: msg,
+      icon: "warning"
+    });
+  }
+});
+
 @endforeach
+
+ // validasi input
+
+  $('form').bind("keypress", function(e) {
+    if (e.keyCode == 13) {               
+      e.preventDefault();
+      return false;
+    }
+  });
+  
+ 
+
 </script>
 @endsection
