@@ -26,13 +26,9 @@
                     @foreach($listJenis as $data)
                     <thead class="text-center">
                       <tr class="table-primary">
-                        <th rowspan="2" style="vertical-align: middle;">{{$data->nama}}</th>
-                        <th rowspan="2" style="vertical-align: middle;">Harga / Unit</th>
-                        <th colspan="2">Kebutuhan</th>
-                      </tr>
-                      <tr class="table-primary">
-                        <th>Security Guard</th>
-                        <th>SC</th>
+                        <th>{{$data->nama}}</th>
+                        <th>Harga / Unit</th>
+                        <th>Jumlah</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -41,22 +37,13 @@
                         <tr>
                           <td>{{$detail->nama}}</td>
                           <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
-                          <td class="sg">
-                            <button type="button" type="button" class="min-sg btn rounded-pill btn-danger waves-effect waves-light">
+                          <td class="jumlah" style="display:flex;flex=1;justify-content:center">
+                            <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
                               <span class="mdi mdi-minus"></span> &nbsp;
                             </button>
                             <input type="hidden" name="barang[]" value="{{$detail->id}}">
-                            <input type="number" class="input-sg text-center" name="sg_{{$detail->id}}" value="{{$detail->jumlah_sg}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
-                            <button type="button" type="button" class="add-sg btn rounded-pill btn-primary waves-effect waves-light">
-                              <span class="mdi mdi-plus"></span> &nbsp;
-                            </button>
-                          </td>
-                          <td class="sc">
-                            <button type="button" type="button" class="min-sc btn rounded-pill btn-danger waves-effect waves-light">
-                              <span class="mdi mdi-minus"></span> &nbsp;
-                            </button>
-                            <input type="number" class="input-sc text-center" name="sc_{{$detail->id}}" value="{{$detail->jumlah_sc}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
-                            <button type="button" type="button" class="add-sc btn rounded-pill btn-primary waves-effect waves-light">
+                            <input type="number" class="input-jumlah text-center" name="jumlah_{{$detail->id}}" value="{{$detail->jumlah}}" data-harga="{{$detail->harga}}" style="max-width:50px;margin-left:5px;margin-right:5px">
+                            <button type="button" type="button" class="add-jumlah btn rounded-pill btn-primary waves-effect waves-light">
                               <span class="mdi mdi-plus"></span> &nbsp;
                             </button>
                           </td>
@@ -65,6 +52,15 @@
                       @endforeach
                     </tbody>
                     @endforeach
+                    <tbody>
+                      <tr class="table-success">
+                        <td><b>TOTAL</b> </td>
+                        <td class="total-semua" style="text-align:right"></td>
+                        <td>
+  
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -83,8 +79,8 @@
 
 @section('pageScript')
 <script>
-  $('.min-sg').on('click',function(){
-    let val = $(this).closest('.sg').find('.input-sg').val();
+  $('.min-jumlah').on('click',function(){
+    let val = $(this).closest('.jumlah').find('.input-jumlah').val();
     let newVal = 0;
 
     if(val!=null && val !=""){
@@ -93,40 +89,35 @@
     if(newVal <0){
       newVal = 0;
     }
-    $(this).closest('.sg').find('.input-sg').val(newVal);
+    $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
+    hitungJumlah();
   });
 
-  $('.add-sg').on('click',function(){
-    let val = $(this).closest('.sg').find('.input-sg').val();
+  $('.add-jumlah').on('click',function(){
+    let val = $(this).closest('.jumlah').find('.input-jumlah').val();
     let newVal = 0;
 
     if(val!=null && val !=""){
       newVal = parseInt(val)+1;
     }
-    $(this).closest('.sg').find('.input-sg').val(newVal);
+    $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
+
+    hitungJumlah();
   });
 
-  $('.min-sc').on('click',function(){
-    let val = $(this).closest('.sc').find('.input-sc').val();
-    let newVal = 0;
+  function hitungJumlah() {
+    let jumlah =0;    
+    $('.input-jumlah').each(function( index ) {
+      let harga = parseInt($(this).val())*parseInt($(this).data('harga'));
+      jumlah = jumlah+parseInt(harga);
+    });
+    $('.total-semua').text("Rp "+jumlah.toLocaleString('id-ID'));
+  }
 
-    if(val!=null && val !=""){
-      newVal = parseInt(val)-1;
-    }
-    if(newVal <0){
-      newVal = 0;
-    }
-    $(this).closest('.sc').find('.input-sc').val(newVal);
-  });
-
-  $('.add-sc').on('click',function(){
-    let val = $(this).closest('.sc').find('.input-sc').val();
-    let newVal = 0;
-
-    if(val!=null && val !=""){
-      newVal = parseInt(val)+1;
-    }
-    $(this).closest('.sc').find('.input-sc').val(newVal);
+  $('#btn-submit').on('click',function(e){
+    e.preventDefault();
+    var form = $(this).parents('form');
+    form.submit();
   });
 </script>
 @endsection

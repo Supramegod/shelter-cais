@@ -579,13 +579,9 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                     @foreach($listJenisKaporlap as $jenisKaporlap)
                     <thead class="text-center">
                       <tr class="table-primary">
-                        <th rowspan="2" style="vertical-align: middle;">{{$jenisKaporlap->jenis_barang}}</th>
-                        <th rowspan="2" style="vertical-align: middle;">Harga / Unit</th>
-                        <th colspan="2">Kebutuhan</th>
-                      </tr>
-                      <tr class="table-primary">
-                        <th>Security Guard</th>
-                        <th>SC</th>
+                        <th>{{$jenisKaporlap->jenis_barang}}</th>
+                        <th>Harga / Unit</th>
+                        <th>Jumlah</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -594,8 +590,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                         <tr>
                           <td>{{$kaporlap->nama}}</td>
                           <td style="text-align:right">Rp {{number_format($kaporlap->harga,0,",",".")}}</td>
-                          <td style="text-align:center">{{$kaporlap->jumlah_sg}}</td>
-                          <td style="text-align:center">{{$kaporlap->jumlah_sc}}</td>
+                          <td style="text-align:center">{{$kaporlap->jumlah}}</td>
                         </tr>
                       @endif
                       @endforeach

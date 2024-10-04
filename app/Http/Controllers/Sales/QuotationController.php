@@ -112,11 +112,9 @@ class QuotationController extends Controller
                 foreach ($listKaporlap as $key => $value) {
                     $kaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->where('barang_id',$value->id)->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->first();
                     if($kaporlap != null){
-                        $value->jumlah_sc = $kaporlap->jumlah_sc;
-                        $value->jumlah_sg = $kaporlap->jumlah_sg;
+                        $value->jumlah = $kaporlap->jumlah;
                     }else{
-                        $value->jumlah_sc = 0;
-                        $value->jumlah_sg = 0;
+                        $value->jumlah = 0;
                     }
                 }
             }
@@ -268,12 +266,12 @@ class QuotationController extends Controller
                 $value->link_icon = $app->link_icon;
             }
 
-            $listJenisKaporlap = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_kaporlap where deleted_at is null and (jumlah_sc =1 or jumlah_sg=1) and quotation_kebutuhan_id = ".$id);
+            $listJenisKaporlap = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_kaporlap where deleted_at is null and jumlah=1 and quotation_kebutuhan_id = ".$id);
             $listJenisOhc = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_ohc where deleted_at is null and jumlah=1 and quotation_kebutuhan_id = ".$id);
             $listJenisDevices = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_devices where deleted_at is null and jumlah=1 and quotation_kebutuhan_id = ".$id);
             $listJenisChemical = DB::select("select distinct jenis_barang from sl_quotation_kebutuhan_chemical where deleted_at is null and jumlah=1 and quotation_kebutuhan_id = ".$id);
 
-            $listKaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereRaw("(jumlah_sc =1 or jumlah_sg=1)")->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
+            $listKaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->where('jumlah',1)->where('quotation_kebutuhan_id',$id)->whereNull('deleted_at')->get();
             $listOhc = DB::table('sl_quotation_kebutuhan_ohc')->where('quotation_kebutuhan_id',$id)->where('jumlah',1)->whereNull('deleted_at')->get();
             $listDevices = DB::table('sl_quotation_kebutuhan_devices')->where('quotation_kebutuhan_id',$id)->where('jumlah',1)->whereNull('deleted_at')->get();
             $listChemical = DB::table('sl_quotation_kebutuhan_chemical')->where('quotation_kebutuhan_id',$id)->where('jumlah',1)->whereNull('deleted_at')->get();
@@ -768,8 +766,7 @@ class QuotationController extends Controller
                             'quotation_kebutuhan_id' => $value->id,
                             'quotation_id' => $request->id,
                             'barang_id' => $valueD,
-                            'jumlah_sc' => $request['sc_'.$valueD],
-                            'jumlah_sg' => $request['sg_'.$valueD],
+                            'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $kaporlap->harga,
                             'nama' => $kaporlap->nama,
                             'jenis_barang' => $kaporlap->jenis_barang,
@@ -778,8 +775,7 @@ class QuotationController extends Controller
                         ]);
                     }else{
                         DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->update([
-                            'jumlah_sc' => $request['sc_'.$valueD],
-                            'jumlah_sg' => $request['sg_'.$valueD],
+                            'jumlah' => $request['jumlah_'.$valueD],
                             'harga' => $kaporlap->harga,
                             'nama' => $kaporlap->nama,
                             'jenis_barang' => $kaporlap->jenis_barang,
@@ -1543,7 +1539,7 @@ class QuotationController extends Controller
             $provisiSeragam = 0;
             
             //collect data
-            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah_sg)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
             if(count($qProvisiSeragam)>0){
                 if($qProvisiSeragam[0]->kaporlap !=null){
                     $provisiSeragam = $qProvisiSeragam[0]->kaporlap;
@@ -1576,7 +1572,7 @@ class QuotationController extends Controller
             $provisiSeragam = 0;
             
             //collect data
-            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah_sg)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
             if(count($qProvisiSeragam)>0){
                 if($qProvisiSeragam[0]->kaporlap !=null){
                     $provisiSeragam = $qProvisiSeragam[0]->kaporlap;
@@ -2069,7 +2065,7 @@ class QuotationController extends Controller
             $provisiSeragam = 0;
             
             //collect data
-            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah_sg)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
             if(count($qProvisiSeragam)>0){
                 if($qProvisiSeragam[0]->kaporlap !=null){
                     $provisiSeragam = $qProvisiSeragam[0]->kaporlap;
@@ -2102,7 +2098,7 @@ class QuotationController extends Controller
             $provisiSeragam = 0;
             
             //collect data
-            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah_sg)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
+            $qProvisiSeragam = DB::select("SELECT sum(harga*jumlah)/12 as kaporlap from sl_quotation_kebutuhan_kaporlap WHERE deleted_at is null and quotation_kebutuhan_id =".$quotationKebutuhanId);
             if(count($qProvisiSeragam)>0){
                 if($qProvisiSeragam[0]->kaporlap !=null){
                     $provisiSeragam = $qProvisiSeragam[0]->kaporlap;

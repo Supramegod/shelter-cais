@@ -27,7 +27,6 @@
                   <thead class="text-center">
                     <tr class="table-primary">
                       <th style="vertical-align: middle;">{{$data->nama}}</th>
-                      <th style="vertical-align: middle;">Harga Penawaran</th>
                       <th style="vertical-align: middle;">Harga / Unit</th>
                       <th>Jumlah</th>
                     </tr>
@@ -38,13 +37,6 @@
                       <tr>
                         <td>{{$detail->nama}}</td>
                         <td style="text-align:right">
-                        <input
-                              type="text"
-                              id="numeral-mask"
-                              class="form-control numeral-mask"
-                              value="{{$detail->harga}}"
-                              placeholder="" />
-                        </td>
                         <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
                         <td class="jumlah" style="display:flex;flex=1;justify-content:center">
                           <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
@@ -101,11 +93,5 @@
     }
     $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
   });
-
-  const numeralMask = document.querySelector('.numeral-mask');
-  new Cleave(numeralMask, {
-      numeral: true,
-      numeralThousandsGroupStyle: 'thousand'
-    });
 </script>
 @endsection
