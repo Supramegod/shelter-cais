@@ -127,17 +127,42 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-12">
+                <div class="col-sm-4">
                   <label class="form-label" for="basic-default-password42">TOP Invoice</label>
-                  <select id="top" name="top" class="form-select @if($errors->has('top')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                    <select id="top" name="top" class="form-select @if($errors->has('top')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
                     <option value="Kurang Dari 7 Hari" @if($quotation->top=='Kurang Dari 7 Hari') selected @endif>Kurang Dari 7 Hari</option>  
                     <option value="Lebih Dari 7 Hari" @if($quotation->top=='Lebih Dari 7 Hari') selected @endif>Lebih Dari 7 Hari</option>  
                     </select>
                     @if($errors->has('top'))
                       <span class="text-danger">{{$errors->first('top')}}</span>
                     @endif
-                  <span class="text-warning">*TOP invoice lebih dari 7 hari membutuhkan approval dari direksi</span>
                 </div>
+                <div class="col-sm-4 d-top-invoice">
+                  <label class="form-label">&nbsp;</label>
+                  <select id="jumlah_hari_invoice" name="jumlah_hari_invoice" class="form-select @if($errors->has('jumlah_hari_invoice')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                    <option value=""></option>  
+                    <option value="7" @if($quotation->jumlah_hari_invoice=='7') selected @endif>7</option>  
+                    <option value="14" @if($quotation->jumlah_hari_invoice=='14') selected @endif>14</option>  
+                    <option value="15" @if($quotation->jumlah_hari_invoice=='15') selected @endif>15</option>  
+                    <option value="21" @if($quotation->jumlah_hari_invoice=='21') selected @endif>21</option>  
+                    <option value="30" @if($quotation->jumlah_hari_invoice=='30') selected @endif>30</option>  
+                    </select>
+                    @if($errors->has('jumlah_hari_invoice'))
+                      <span class="text-danger">{{$errors->first('jumlah_hari_invoice')}}</span>
+                    @endif
+                </div>
+                <div class="col-sm-4 d-top-invoice d-top-tipe">
+                  <label class="form-label" for="">&nbsp;</label>
+                  <select id="tipe_hari_invoice" name="tipe_hari_invoice" class="form-select @if($errors->has('tipe_hari_invoice')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                    <option value=""></option>    
+                    <option value="Kalender" @if($quotation->tipe_hari_invoice=='Kalender') selected @endif>Hari Kalender</option>  
+                    <option class="opt_tipe_hari_kerja" value="Kerja" @if($quotation->tipe_hari_invoice=='Kerja') selected @endif>Hari Kerja</option>  
+                    </select>
+                    @if($errors->has('tipe_hari_invoice'))
+                      <span class="text-danger">{{$errors->first('tipe_hari_invoice')}}</span>
+                    @endif
+                </div>
+                <span class="text-warning mt-3">*TOP invoice lebih dari 7 hari membutuhkan approval dari direksi</span>
               </div>
               @include('sales.quotation.action')
             </div>
@@ -189,6 +214,20 @@ $('#btn-submit').on('click',function(e){
   }
   if(obj.top == null || obj.top == ""){
     msg += "<b>TOP Invoice</b> belum dipilih </br>";
+  }
+
+  console.log(obj);
+  
+  if (obj.top != null && obj.top != "") {
+    if(obj.top=="Lebih Dari 7 Hari"){
+      if(obj.jumlah_hari_invoice==""){
+        msg += "<b>Jumlah Hari TOP Invoice</b> belum dipilih </br>";
+      }
+
+      if(obj.tipe_hari_invoice==""){
+        msg += "<b>Tipe Hari TOP Invoice</b> belum dipilih </br>";
+      }
+    }
   }
 
   if(msg == ""){
@@ -252,14 +291,47 @@ function validasiPenempatan() {
   }
 }
 
-$('#mulai-kontrak').on('change', function() {
+$('#mulai-kontrak').on('focusout', function() {
   validasiKontrak();
 });
-$('#kontrak-selesai').on('change', function() {
+$('#kontrak-selesai').on('focusout', function() {
   validasiKontrak();
 });
-$('#tgl-penempatan').on('change', function() {
+$('#tgl-penempatan').on('focusout', function() {
   validasiPenempatan();
+});
+
+function showDTop() {
+  let selected = $("#top option:selected").val();
+  if (selected=="Lebih Dari 7 Hari") {
+    $('.d-top-invoice').removeClass('d-none');
+  }else{
+    $('.d-top-invoice').addClass('d-none');
+    $("#jumlah_hari_invoice").val("").change();
+    $("#tipe_hari_invoice").val("").change();
+  }
+}
+
+function showDTipeHari() {
+  let selected = $("#jumlah_hari_invoice option:selected").val();
+  console.log(selected);
+  
+  if (selected=="21" || selected=="30") {
+    $('.opt_tipe_hari_kerja').addClass('d-none');
+    $("#tipe_hari_invoice").val("Kalender").change();
+  }else{
+    $('.opt_tipe_hari_kerja').removeClass('d-none');
+    $("#tipe_hari_invoice").val("").change();
+  }
+}
+showDTop();
+showDTipeHari(); 
+$('#top').on('change', function() {
+  showDTop();
+});
+
+$('#jumlah_hari_invoice').on('change', function() {
+  showDTipeHari();
 });
 
 </script>
