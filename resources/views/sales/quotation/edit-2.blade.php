@@ -215,8 +215,6 @@ $('#btn-submit').on('click',function(e){
   if(obj.top == null || obj.top == ""){
     msg += "<b>TOP Invoice</b> belum dipilih </br>";
   }
-
-  console.log(obj);
   
   if (obj.top != null && obj.top != "") {
     if(obj.top=="Lebih Dari 7 Hari"){
@@ -314,7 +312,6 @@ function showDTop() {
 
 function showDTipeHari() {
   let selected = $("#jumlah_hari_invoice option:selected").val();
-  console.log(selected);
   
   if (selected=="21" || selected=="30") {
     $('.opt_tipe_hari_kerja').addClass('d-none');

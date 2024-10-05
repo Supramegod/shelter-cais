@@ -412,6 +412,8 @@ class QuotationController extends Controller
                     'tgl_penempatan' => $request->tgl_penempatan,
                     'salary_rule_id' => $request->salary_rule,
                     'top' => $request->top,
+                    'jumlah_hari_invoice' => $request->jumlah_hari_invoice,
+                    'tipe_hari_invoice' => $request->tipe_hari_invoice,
                     'step' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
