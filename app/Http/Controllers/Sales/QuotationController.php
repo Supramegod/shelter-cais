@@ -139,7 +139,9 @@ class QuotationController extends Controller
 
             //step 9 - devices
             $listDevices = null;
+            $listAplikasiPendukung = null;
             if($request->step==9){
+                $listAplikasiPendukung = DB::table('sl_quotation_kebutuhan_aplikasi')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
                 $listJenis = DB::table('m_jenis_barang')->whereIn('id',[8,9,10,11])->get();
                 $listDevices = DB::table('m_barang')
                                     ->whereNull('deleted_at')
@@ -193,13 +195,12 @@ class QuotationController extends Controller
                 $listCS = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();
                 $listGpm = DB::table('sl_quotation_kebutuhan_analisa_gpm')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();            
             }
-
             $isEdit = false;
 
             if(isset($request->edit)){
                 $isEdit = true;
             }
-            return view('sales.quotation.edit-'.$request->step,compact('data','leads','listGpm','listCS','listHPP','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            return view('sales.quotation.edit-'.$request->step,compact('listAplikasiPendukung','data','leads','listGpm','listCS','listHPP','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
