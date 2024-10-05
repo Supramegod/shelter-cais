@@ -68,7 +68,7 @@
                               <label class="form-check-label custom-option-content" for="ump">
                                 <span class="custom-option-body">
                                   <span class="custom-option-title">UMP</span>
-                                  <span id="label-provinsi"></span>
+                                  <span id="label-provinsi">&nbsp;</span>
                                 </span>
                                 <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMP" id="ump-{{$value->id}}" @if($value->upah == 'UMP') checked @endif>
                               </label>
@@ -79,7 +79,7 @@
                               <label class="form-check-label custom-option-content" for="umk">
                                 <span class="custom-option-body">
                                   <span class="custom-option-title">UMK</span>
-                                  <span id="label-kota"></span>
+                                  <span id="label-kota">&nbsp;</span>
                                 </span>
                                 <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMK" id="umk-{{$value->id}}" @if($value->upah == 'UMK') checked @endif>
                               </label>
@@ -101,7 +101,7 @@
                           <div class="col-sm-12">
                             <label class="form-label" for="custom-upah-{{$value->id}}">Masukkan Upah</label>
                             <div class="input-group">
-                              <input type="number" class="form-control" value="{{$value->nominal_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
+                              <input type="text" class="form-control mask-nominal" value="{{$value->nominal_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
                             </div>
                           </div>
                           <span class="text-warning">*Gaji dibawah UMP membutuhkan persetujuan</span>
@@ -154,7 +154,9 @@
 @foreach($quotationKebutuhan as $value)
   $('.show-custom-{{$value->id}}').on('click',function(){
     $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
+    $('#custom-upah-{{$value->id}}').val('');
   });
+
   $('.hide-custom-{{$value->id}}').on('click',function(){
     $('#d-custom-upah-{{$value->id}}').addClass('d-none');
   });
@@ -184,6 +186,9 @@
   });
 
   @if($value->provinsi_id != null)
+
+  $('#label-provinsi').html($('#provinsi-{{$value->id}} option:selected').text()+" : "+$('#provinsi-{{$value->id}} option:selected').data("ump"));
+
     var param = "province_id="+{{$value->provinsi_id}};
       $.ajax({
         url: "{{route('quotation.change-kota')}}",
@@ -194,6 +199,7 @@
             let selected = "";
             if(element.id == {{$value->kota_id}}){
               selected = "selected";
+              $('#label-kota').html(element.name+" : "+element.umk);
             };
 
             $('#kota-{{$value->id}}').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
@@ -204,6 +210,17 @@
 
   @if($value->upah=="Custom")
     $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
+
+    var $this = $('.mask-nominal');
+    // Get the value.
+    var input = $this.val();
+    var input = input.replace(/[\D\s\._\-]+/g, "");
+    input = input ? parseInt(input, 10) : 0;
+    input += 0;
+    $this.val(function() {
+      return (input === 0) ? "" : input.toLocaleString("id-ID");
+    });
+
   @endif
 
   $('#btn-submit').on('click',function(e){
@@ -257,7 +274,37 @@
     }
   });
   
- 
+  let extra = 0;
+  $('.mask-nominal').on("keyup", function(event) {    
+    // When user select text in the document, also abort.
+    var selection = window.getSelection().toString();
+    if (selection !== '') {
+      return;
+    }
+
+    // When the arrow keys are pressed, abort.
+    if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+      if (event.keyCode == 38) {
+        extra = 1000;
+      } else if (event.keyCode == 40) {
+        extra = -1000;
+      } else {
+        return;
+      }
+
+    }
+
+    var $this = $(this);
+    // Get the value.
+    var input = $this.val();
+    var input = input.replace(/[\D\s\._\-]+/g, "");
+    input = input ? parseInt(input, 10) : 0;
+    input += extra;
+    extra = 0;
+    $this.val(function() {
+      return (input === 0) ? "" : input.toLocaleString("id-ID");
+    });
+  });
 
 </script>
 @endsection

@@ -82,7 +82,11 @@ class QuotationController extends Controller
 
             $province = DB::connection('mysqlhris')->table('m_province')->get();
             foreach ($province as $key => $value) {
-                $value->ump = "Rp 2.165.244,30";
+                $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$value->id)->first();
+                $value->ump = "Rp. 0";
+                if($dataUmp !=null){
+                    $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
+                }
             }
             $kota = DB::connection('mysqlhris')->table('m_city')->get();
             $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
@@ -555,39 +559,25 @@ class QuotationController extends Controller
 
                 $customUpah = 0;
                 if($upah == "Custom"){
-                    $customUpah = $request['custom-upah-'.$value->id];
+                    $customUpah = str_replace(".","",$request['custom-upah-'.$value->id]);
                 }else{
-                    $customUpah = 5200000;
+                    //cari ump / umk
+                    if($upah =="UMP"){
+                        $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$provinsiId)->first();
+                        if($dataUmp !=null){
+                            $customUpah = $dataUmp->ump;
+                        }
+                    }else if ($upah =="UMK") {
+                        $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$kotaId)->first();
+                        if($dataUmk !=null){
+                            $customUpah = $dataUmk->umk;
+                        }
+                    }
                 }
 
                 $quotationStatus = "";
                 $successStatus = "";
-                $isAktif = $value->is_aktif;
-                if($value->is_aktif==2){
-                    if($upah == "Custom"){
-                        if($customUpah < 1800000){
-                            $isAktif = 0;
-                        }
-                    }
-
-                    if($value->kebutuhan =="Security"){
-                        if($manfee <7){
-                            $isAktif = 0;
-                        }
-                    }else{
-                        if($manfee <6){
-                            $isAktif = 0;
-                        }
-                    }
-                }
-
-                if($isAktif == 1){
-                    $successStatus = "Quotation telah Aktif";
-                }else if($isAktif == 0) {
-                    $quotationStatus = "Memerlukan Approval Manajemen";
-                }
-
-
+                
                 DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
                     'provinsi_id' => $provinsiId,
                     'provinsi' => $provinsi,
@@ -596,7 +586,7 @@ class QuotationController extends Controller
                     'upah' => $upah,
                     'nominal_upah' => $customUpah,
                     'management_fee_id' => $manfee,
-                    'is_aktif' =>$isAktif,
+                    'is_aktif' => 0,
                     'quotation_status' => $quotationStatus,
                     'success_status' => $successStatus,
                     'persentase' => $presentase,
@@ -1224,7 +1214,11 @@ class QuotationController extends Controller
     public function changeKota (Request $request){
         $data = DB::connection('mysqlhris')->table('m_city')->where('province_id',$request->province_id)->get();
         foreach ($data as $key => $value) {
-            $value->umk = "Rp 4.725.479";
+            $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$value->id)->first();
+            $value->umk = "Rp. 0";
+            if($dataUmk !=null){
+                $value->umk = "Rp. ".number_format($dataUmk->umk,0,",",".");
+            }
         }
         return $data;
     }
