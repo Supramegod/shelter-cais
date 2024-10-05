@@ -64,9 +64,9 @@
                           <div class="input-group">
                             <select id="program-bpjs-{{$value->id}}" name="program-bpjs-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
                               <option value="">- Pilih data -</option>
-                              <option value="2 BPJS" @if($value->program_bpjs == '2 BPJS') selected @endif>2 BPJS</option>  
-                              <option value="3 BPJS" @if($value->program_bpjs == '3 BPJS') selected @endif>3 BPJS</option>
-                              <option value="4 BPJS" @if($value->program_bpjs == '4 BPJS') selected @elseif($value->program_bpjs ==null) selected @endif>4 BPJS</option>
+                              <option value="2 BPJS" @if($value->program_bpjs == '2 BPJS') selected @endif>2 BPJS ( BPJS JKK , BPJS JKM ) </option>  
+                              <option value="3 BPJS" @if($value->program_bpjs == '3 BPJS') selected @endif>3 BPJS ( BPJS JKK , BPJS JKM , BPJS JHT )</option>
+                              <option value="4 BPJS" @if($value->program_bpjs == '4 BPJS') selected @elseif($value->program_bpjs ==null) selected @endif>4 BPJS ( BPJS JKK , BPJS JKM , BPJS JHT , BPJS JP )</option>
                             </select>
                           </div>
                           <span class="text-warning">*Program BPJS selain 4 program membutuhkan persetujuan</span>
