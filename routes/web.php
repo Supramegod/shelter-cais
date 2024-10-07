@@ -121,6 +121,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/list-ohc', 'listOhc')->name('quotation.list-ohc'); // ajax
         Route::post('/sales/quotation/add-detail-ohc', 'addDetailOhc')->name('quotation.add-detail-ohc');
         Route::post('/sales/quotation/delete-detail-ohc', 'deleteDetailOhc')->name('quotation.delete-detail-ohc');
+
+        //DEVICES
+        Route::get('/sales/quotation/list-devices', 'listDevices')->name('quotation.list-devices'); // ajax
+        Route::post('/sales/quotation/add-detail-devices', 'addDetailDevices')->name('quotation.add-detail-devices');
+        Route::post('/sales/quotation/delete-detail-devices', 'deleteDetailDevices')->name('quotation.delete-detail-devices');
     });
 
 
