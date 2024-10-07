@@ -1586,6 +1586,126 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
     }
     // END OF AJAX DEVICES
 
+    // AJAX CHEMICAL
+
+    public function addDetailChemical (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $data = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->get();
+
+            foreach ($data as $key => $value) {
+                if($request['jumlah'.$value->id] !=null && $request['jumlah'.$value->id] !=""){
+                    $dataExist = DB::table("sl_quotation_kebutuhan_chemical")
+                    ->whereNull('deleted_at')
+                    ->where('quotation_kebutuhan_id',$value->quotation_kebutuhan_id)
+                    ->where('quotation_kebutuhan_detail_id',$value->id)
+                    ->where('barang_id',$request->barang)
+                    ->first();
+
+                    $barang = DB::table('m_barang')->where('id',$request->barang)->first();
+                    if($dataExist!=null){
+                        DB::table("sl_quotation_kebutuhan_chemical")
+                            ->whereNull('deleted_at')
+                            ->where('quotation_kebutuhan_id',$value->quotation_kebutuhan_id)
+                            ->where('quotation_kebutuhan_detail_id',$value->id)
+                            ->where('barang_id',$request->barang)->update([
+                                    'jumlah' => $dataExist->jumlah+(int)$request['jumlah'.$value->id],
+                                    'harga' => $barang->harga,
+                                    'nama' => $barang->nama,
+                                    'jenis_barang' => $barang->jenis_barang,
+                                    'updated_at' => $current_date_time,
+                                    'updated_by' => Auth::user()->full_name
+                            ]);
+                    }else{
+                        DB::table('sl_quotation_kebutuhan_chemical')->insert([
+                            'quotation_kebutuhan_detail_id' => $value->id,
+                            'quotation_kebutuhan_id' => $value->quotation_kebutuhan_id,
+                            'quotation_id' => $value->quotation_id,
+                            'barang_id' => $request->barang,
+                            'jumlah' => $request['jumlah'.$value->id],
+                            'harga' => $barang->harga,
+                            'nama' => $barang->nama,
+                            'jenis_barang' => $barang->jenis_barang,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }
+                }
+            }
+
+            return "Data Berhasil Ditambahkan";
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            return "Data Gagal Ditambahkan";
+
+            abort(500);
+        }
+    }
+
+    public function listChemical (Request $request){
+        $raw = ['aksi'];
+        $data = DB::select("SELECT DISTINCT m_barang.jenis_barang_id,sl_quotation_kebutuhan_chemical.quotation_kebutuhan_id,sl_quotation_kebutuhan_chemical.barang_id,sl_quotation_kebutuhan_chemical.jenis_barang,sl_quotation_kebutuhan_chemical.nama,sl_quotation_kebutuhan_chemical.harga 
+from sl_quotation_kebutuhan_chemical 
+INNER JOIN m_barang ON sl_quotation_kebutuhan_chemical.barang_id = m_barang.id
+WHERE sl_quotation_kebutuhan_chemical.deleted_at is null 
+and quotation_kebutuhan_id = $request->quotation_kebutuhan_id
+ORDER BY m_barang.jenis_barang_id asc,sl_quotation_kebutuhan_chemical.nama ASC;");
+
+$total =DB::select("select sum(harga*jumlah) as total from sl_quotation_kebutuhan_chemical WHERE deleted_at is null and quotation_kebutuhan_id = $request->quotation_kebutuhan_id")[0]->total;
+$objectTotal = (object) ['jenis_barang_id' => 100,
+'quotation_kebutuhan_id' => 0,
+'barang_id' => 0,
+'jenis_barang' => 'TOTAL',
+'nama' => '',
+'harga' => $total];
+
+        array_push($data,$objectTotal);
+        $dt = DataTables::of($data)
+        ->addColumn('aksi', function ($data){
+            if($data->barang_id==0){
+                return null;
+            }
+            return '<div class="justify-content-center d-flex">
+                        <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-barang="'.$data->barang_id.'" data-kebutuhan="'.$data->quotation_kebutuhan_id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+                    </div>';
+        });
+        $dt = $dt->editColumn('harga', function ($data){
+            return "Rp ".number_format($data->harga,0,",",".");
+        });
+
+        $dataDetail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->whereNull('deleted_at')->get();
+
+        foreach ($dataDetail as $key => $value) {
+            $dt = $dt->addColumn("data-$value->id", function ($data) use ($value) {
+                $dataD = DB::select("select jumlah from sl_quotation_kebutuhan_chemical WHERE deleted_at is null and quotation_kebutuhan_id = $data->quotation_kebutuhan_id and quotation_kebutuhan_detail_id = $value->id and barang_id = $data->barang_id");
+                if(count($dataD)>0){
+                    return $dataD[0]->jumlah;
+                }else{
+                    return "";
+                };
+            });
+        };
+
+        $dt = $dt->rawColumns($raw);
+        $dt = $dt->make(true);
+
+        return $dt;
+    }
+
+    public function deleteDetailChemical(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kebutuhan_chemical')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->where('barang_id',$request->barang_id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    // END OF AJAX CHEMICAL
     
     public function generateNomor ($leadsId,$companyId){
         // generate nomor QUOT/SIG/AAABB-092024-00001

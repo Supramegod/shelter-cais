@@ -126,6 +126,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/list-devices', 'listDevices')->name('quotation.list-devices'); // ajax
         Route::post('/sales/quotation/add-detail-devices', 'addDetailDevices')->name('quotation.add-detail-devices');
         Route::post('/sales/quotation/delete-detail-devices', 'deleteDetailDevices')->name('quotation.delete-detail-devices');
+
+        //CHEMICAL
+        Route::get('/sales/quotation/list-chemical', 'listChemical')->name('quotation.list-chemical'); // ajax
+        Route::post('/sales/quotation/add-detail-chemical', 'addDetailChemical')->name('quotation.add-detail-chemical');
+        Route::post('/sales/quotation/delete-detail-chemical', 'deleteDetailChemical')->name('quotation.delete-detail-chemical');
     });
 
 
