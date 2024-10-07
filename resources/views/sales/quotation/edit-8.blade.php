@@ -17,52 +17,72 @@
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">OHC</h6>
+                <h6 class="mb-3">OVER HEAD COST ( OHC )</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
-              <div class="row mt-5">
-              <div class="table-responsive text-nowrap">
-                <table class="table" >
-                  @foreach($listJenis as $data)
-                  <thead class="text-center">
-                    <tr class="table-primary">
-                      <th style="vertical-align: middle;">{{$data->nama}}</th>
-                      <th style="vertical-align: middle;">Harga / Unit</th>
-                      <th>Jumlah</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach($listOhc as $detail)
-                    @if($detail->jenis_barang_id == $data->id)
-                      <tr>
-                        <td>{{$detail->nama}}</td>
-                        <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}</td>
-                        <td class="jumlah" style="display:flex;flex=1;justify-content:center">
-                          <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
-                            <span class="mdi mdi-minus"></span> &nbsp;
-                          </button>
-                          <input type="hidden" name="barang[]" value="{{$detail->id}}">
-                          <input type="number" class="input-jumlah text-center" name="jumlah_{{$detail->id}}" data-harga="{{$detail->harga}}" value="{{$detail->jumlah}}" style="max-width:50px;margin-left:5px;margin-right:5px" readonly>
-                          <button type="button" type="button" class="add-jumlah btn rounded-pill btn-primary waves-effect waves-light">
-                            <span class="mdi mdi-plus"></span> &nbsp;
-                          </button>
-                        </td>
-                      </tr>
-                    @endif
-                    @endforeach
-                  </tbody>
+              <div class="row mt-1">
+                <div class="row mb-3" style="display: flex;justify-content: center;">
+                  <div class="col-sm-3">
+                    <label class="form-label" for="barang">Nama Barang</label>
+                    <div class="input-group">
+                      <select id="barang" name="barang" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($listJenis as $jenis)
+                          <optgroup label="{{$jenis->nama}}">
+                          @foreach($listOhc as $ohc)
+                            @if($ohc->jenis_barang_id == $jenis->id)
+                            <option value="{{$ohc->id}}" data-harga="{{$ohc->harga}}">{{$ohc->nama}}</option>  
+                            @endif
+                          @endforeach  
+                        @endforeach
+                        
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="form-label" for="harga">Harga</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control mask-nominal text-end" id="harga">
+                    </div>
+                  </div>
+                  @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                  <div class="col-sm-2">
+                    <label class="form-label" for="jumlah_{{$detailJabatan->id}}">{{$detailJabatan->jabatan_kebutuhan}}</label>
+                    <div class="input-group">
+                      <input type="number" class="form-control" id="jumlah_{{$detailJabatan->id}}">
+                    </div>
+                  </div>
                   @endforeach
-                  <tbody>
-                    <tr class="table-success">
-                      <td><b>TOTAL</b> </td>
-                      <td class="total-semua" style="text-align:right"></td>
-                      <td>
-
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 d-flex justify-content-center">
+                    <button type="button" id="btn-tambah-detail" class="btn btn-info btn-back w-20">
+                      <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
+                      <i class="mdi mdi-plus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="row mt-5">
+                  <div class="table-responsive overflow-hidden table-data">
+                    <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Jenis ID</th>
+                                <th class="text-center">Jenis</th>
+                                <th class="text-center">Nama Barang</th>
+                                <th class="text-center">Harga/Unit</th>
+                                @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                                  <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
+                                @endforeach
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{-- data table ajax --}}
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
               @include('sales.quotation.action')
             </div>
@@ -79,45 +99,6 @@
 
 @section('pageScript')
 <script>
-  $('.min-jumlah').on('click',function(){
-    let val = $(this).closest('.jumlah').find('.input-jumlah').val();
-    let newVal = 0;
-
-    if(val!=null && val !=""){
-      newVal = parseInt(val)-1;
-    }
-    if(newVal <0){
-      newVal = 0;
-    }
-    $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
-
-    hitungJumlah();
-
-  });
-
-  $('.add-jumlah').on('click',function(){
-    let val = $(this).closest('.jumlah').find('.input-jumlah').val();
-    let newVal = 0;
-
-    if(val!=null && val !=""){
-      newVal = parseInt(val)+1;
-    }
-    $(this).closest('.jumlah').find('.input-jumlah').val(newVal);
-
-    hitungJumlah();
-  });
-
-  function hitungJumlah() {
-    let jumlah =0;    
-    $('.input-jumlah').each(function( index ) {
-      let harga = parseInt($(this).val())*parseInt($(this).data('harga'));
-      jumlah = jumlah+parseInt(harga);
-    });
-    $('.total-semua').text("Rp "+jumlah.toLocaleString('id-ID'));
-  }
-
-  hitungJumlah();
-
   $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {               
         e.preventDefault();
@@ -130,5 +111,206 @@
     var form = $(this).parents('form');
     form.submit();
   });
+
+  let table = $('#table-data').DataTable({
+      scrollX: true,
+      "bPaginate": false,
+      "bLengthChange": false,
+      "bFilter": false,
+      "bInfo": false,
+      'processing': true,
+      'language': {
+          'loadingRecords': '&nbsp;',
+          'processing': 'Loading...'
+      },
+      ajax: {
+          url: "{{ route('quotation.list-ohc') }}",
+          data: function (d) {
+              d.quotation_kebutuhan_id = {{$quotationKebutuhan[0]->id}};
+          },
+      }, 
+      rowGroup: {
+          dataSrc: 'jenis_barang'
+      },
+      "order":[
+          [0,'asc']
+      ],
+      columns:[{
+          data : 'jenis_barang_id',
+          name : 'jenis_barang_id',
+          className:'text-center',
+          visible: false,
+          searchable: false,
+          orderable:false
+      },{
+          data : 'jenis_barang',
+          name : 'jenis_barang',
+          className:'text-center',
+          visible: false,
+          orderable:false
+      },{
+          data : 'nama',
+          name : 'nama',
+          className:'text-center',
+          orderable:false
+      },{
+          data : 'harga',
+          name : 'harga',
+          className:'text-end',
+          orderable:false
+      },
+      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+      {
+          data : 'data-{{$detailJabatan->id}}',
+          name : 'data-{{$detailJabatan->id}}',
+          className:'text-center',
+          orderable:false
+      },
+      @endforeach
+      {
+          data : 'aksi',
+          name : 'aksi',
+          width: "10%",
+          orderable: false,
+          searchable: false,
+      }
+    ],
+      "language": datatableLang,
+    });
+
+    $('#btn-tambah-detail').on('click',function () {
+      let barang = $('#barang').val();
+      let harga = $('#harga').val();
+      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+        let jumlah{{$detailJabatan->id}} = $('#jumlah_{{$detailJabatan->id}}').val();
+      @endforeach
+
+      let msg="";
+      if(barang ==""){
+        msg += "Barang Belum Diisi <br />";
+      }
+      if(harga ==""){
+        msg += "Harga masih kosong <br />";
+      }
+      
+      let isJumlahKeisi = false;
+      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+      if(jumlah{{$detailJabatan->id}} !=null && jumlah{{$detailJabatan->id}} !=""){
+        isJumlahKeisi = true;
+      }
+      @endforeach
+      
+      if(!isJumlahKeisi){
+        msg += "Masukkan salah satu jumlah <br />";
+      }
+
+      if(msg!=""){
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: msg,
+          icon: "warning",
+        });
+      }else{
+        let formData = {
+          "barang":barang,
+          "harga":harga,
+          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+          "jumlah{{$detailJabatan->id}}":jumlah{{$detailJabatan->id}},
+          @endforeach
+          "quotation_kebutuhan_id":{{$quotationKebutuhan[0]->id}},
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.add-detail-ohc')}}",
+          data:formData,
+          success: function(response){
+            if(response=="Data Berhasil Ditambahkan"){
+              $('#table-data').DataTable().ajax.reload();
+              $('#barang').val("").change();
+              $('#harga').val("")
+              @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                $('#jumlah_{{$detailJabatan->id}}').val("");
+              @endforeach
+            }else{
+              Swal.fire({
+                title: "Pemberitahuan",
+                html: response,
+                icon: "warning",
+              });
+            }
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      }
+    });
+
+    $('body').on('click', '.btn-delete', function() {
+    let formData = {
+      "barang_id":$(this).data('barang'),
+      "quotation_kebutuhan_id":$(this).data('kebutuhan'),
+      "_token": "{{ csrf_token() }}"
+    };
+
+    let table ='#table-data';
+    $.ajax({
+      type: "POST",
+      url: "{{route('quotation.delete-detail-ohc')}}",
+      data:formData,
+      success: function(response){
+        $(table).DataTable().ajax.reload();
+      },
+      error:function(error){
+        console.log(error);
+      }
+    });
+  });
+
+  $(document).ready(function() {
+    $('#barang').select2();
+  });
+
+
+  let extra = 0;
+  $('.mask-nominal').on("keyup", function(event) {    
+    // When user select text in the document, also abort.
+    var selection = window.getSelection().toString();
+    if (selection !== '') {
+      return;
+    }
+
+    // When the arrow keys are pressed, abort.
+    if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+      if (event.keyCode == 38) {
+        extra = 1000;
+      } else if (event.keyCode == 40) {
+        extra = -1000;
+      } else {
+        return;
+      }
+
+    }
+
+    var $this = $(this);
+    // Get the value.
+    var input = $this.val();
+    var input = input.replace(/[\D\s\._\-]+/g, "");
+    input = input ? parseInt(input, 10) : 0;
+    input += extra;
+    extra = 0;
+    $this.val(function() {
+      return (input === 0) ? "" : input.toLocaleString("id-ID");
+    });
+  });
+
+  $('#barang').on('change', function() {    
+    if($('#barang option:selected').val() !=""){
+      $('#harga').val($('#barang option:selected').data("harga"));
+    }
+  });
+
 </script>
 @endsection
