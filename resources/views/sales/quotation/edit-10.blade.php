@@ -11,7 +11,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-7')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-10')}}" method="POST" enctype="multipart/form-data">        
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->

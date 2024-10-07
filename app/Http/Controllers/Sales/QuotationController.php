@@ -838,37 +838,6 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
-            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
-            foreach ($quotationKebutuhan as $key => $value) {
-                foreach ($request->barang as $keyD => $valueD) {
-                    //cari dulu apakah ada data
-                    $data = DB::table('sl_quotation_kebutuhan_chemical')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->first();
-                    $chemical = DB::table('m_barang')->where('id',$valueD)->first();
-                    if($data == null){
-                        DB::table('sl_quotation_kebutuhan_chemical')->insert([
-                            'quotation_kebutuhan_id' => $value->id,
-                            'quotation_id' => $request->id,
-                            'barang_id' => $valueD,
-                            'jumlah' => $request['jumlah_'.$valueD],
-                            'harga' => $chemical->harga,
-                            'nama' => $chemical->nama,
-                            'jenis_barang' => $chemical->jenis_barang,
-                            'created_at' => $current_date_time,
-                            'created_by' => Auth::user()->full_name
-                        ]);
-                    }else{
-                        DB::table('sl_quotation_kebutuhan_chemical')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->where('barang_id',$valueD)->update([
-                            'jumlah' => $request['jumlah_'.$valueD],
-                            'harga' => $chemical->harga,
-                            'nama' => $chemical->nama,
-                            'jenis_barang' => $chemical->jenis_barang,
-                            'updated_at' => $current_date_time,
-                            'updated_by' => Auth::user()->full_name
-                        ]);
-                    }
-                };
-            };
-
             $newStep = 11;
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
             if($dataQuotation->step>$newStep){
@@ -877,13 +846,13 @@ class QuotationController extends Controller
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
                 'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->fulsl_name
+                'updated_by' => Auth::user()->full_name
             ]);
-            
+           
             $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
-            $this->perhitunganHPPSecurity($data->id);
-
+            // $this->perhitunganHPPSecurity($data->id);
+            
             return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
 
         } catch (\Exception $e) {
