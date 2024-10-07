@@ -42,7 +42,8 @@
     <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/bs-stepper/bs-stepper.css') }}" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+    <link href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.dataTables.css" rel="stylesheet" />
+    
     <!-- <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/sweetalert2/sweetalert2.css') }}" /> -->
     <!-- <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" /> -->
     <!-- <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/select2/select2.css') }}" /> -->

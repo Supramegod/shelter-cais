@@ -112,6 +112,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/delete-quotation', 'deleteQuotation')->name('quotation.delete-quotation');
         Route::post('/sales/quotation/approve-quotation', 'approveQuotation')->name('quotation.approve-quotation');
 
+        Route::get('/sales/quotation/list-kaporlap', 'listKaporlap')->name('quotation.list-kaporlap'); // ajax
+        Route::post('/sales/quotation/add-detail-kaporlap', 'addDetailKaporlap')->name('quotation.add-detail-kaporlap');
+        Route::post('/sales/quotation/delete-detail-kaporlap', 'deleteDetailKaporlap')->name('quotation.delete-detail-kaporlap');
+
     });
 
 
