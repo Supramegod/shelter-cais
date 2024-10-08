@@ -254,6 +254,26 @@ class QuotationController extends Controller
 
                     $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
+                    // COST STRUCTURE
+                    $kbd->total_base_manpower = $quotationKebutuhan[0]->nominal_upah + 400000;
+                    $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
+
+                    $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
+
+                    $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
+                    
+                    $kbd->management_fee_coss = $kbd->sub_total_personil_coss*$quotationKebutuhan[0]->persentase/100;
+
+                    $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss;
+
+                    $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
+
+                    $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+
+                    $kbd->total_invoice_coss = $kbd->grand_total_coss + $kbd->ppn_coss + $kbd->pph_coss;
+
+                    $kbd->pembulatan_coss = ceil($kbd->total_invoice_coss / 1000) * 1000;
+
                 };
 
                 $data = DB::table('sl_quotation_kebutuhan')->where('id',$quotationKebutuhan[0]->id)->first();
@@ -1755,6 +1775,20 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             DB::table('sl_quotation_kebutuhan_chemical')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->where('barang_id',$request->barang_id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function addBiayaMonitoring(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kebutuhan_detail')->where('id',$request->detailId)->update([
+                'biaya_monitoring_kontrol' => $request-> nominal,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
             ]);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);

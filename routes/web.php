@@ -131,6 +131,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/list-chemical', 'listChemical')->name('quotation.list-chemical'); // ajax
         Route::post('/sales/quotation/add-detail-chemical', 'addDetailChemical')->name('quotation.add-detail-chemical');
         Route::post('/sales/quotation/delete-detail-chemical', 'deleteDetailChemical')->name('quotation.delete-detail-chemical');
+
+        Route::post('/sales/quotation/add-biaya-monitoring', 'addBiayaMonitoring')->name('quotation.add-biaya-monitoring');
+
     });
 
 
