@@ -169,6 +169,43 @@ class QuotationController extends Controller
 
             if($request->step==11){
                 foreach ($quotationKebutuhan[0]->kebutuhan_detail as $ikbd => $kbd) {
+
+                    $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/12;
+
+                    $kbd->tunjangan_overtime = 400000;
+
+                    // hitung JKK
+                    if($quotationKebutuhan[0]->resiko=="Sangat Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.24/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.54/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sedang"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.89/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.27/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sangat Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.74/100;
+                    };
+
+                    //hitung JKM
+                    $kbd->bpjs_jkm = $quotationKebutuhan[0]->nominal_upah*0.3/100;
+
+                    //Hitung JHT
+                    if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jht = $quotationKebutuhan[0]->nominal_upah*3.7/100;
+                    }else{
+                        $kbd->bpjs_jht = 0;
+                    }
+                    
+                    //Hitung JP
+                    if($quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jp = $quotationKebutuhan[0]->nominal_upah*2/100;
+                    }else {
+                        $kbd->bpjs_jp = 0;
+                    }
+
+                    $kbd->bpjs_kes = $quotationKebutuhan[0]->nominal_upah*4/100;
+
                     $personilKaporlap = 0;
                     $kbdkaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                     foreach ($kbdkaporlap as $ikdbkap => $kdbkap) {
@@ -201,7 +238,7 @@ class QuotationController extends Controller
 
                     $kbd->personil_chemical = $personilChemical;
 
-                    $kbd->total_personil = $kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                    $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$kbd->tunjangan_overtime+$kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
