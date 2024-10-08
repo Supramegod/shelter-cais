@@ -73,16 +73,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/save-step', 'saveStep')->name('quotation.save-step');
 
         //page quotation
-        
-        // Route::get('/sales/quotation/edit-1/{id}', 'edit1')->name('quotation.edit-1');
-        // Route::get('/sales/quotation/edit-2/{id}', 'edit2')->name('quotation.edit-2');
-        // Route::get('/sales/quotation/edit-3/{id}', 'edit3')->name('quotation.edit-3');
-        // Route::get('/sales/quotation/edit-4/{id}', 'edit4')->name('quotation.edit-4');
-        // Route::get('/sales/quotation/edit-5/{id}', 'edit5')->name('quotation.edit-5');
-        // Route::get('/sales/quotation/edit-6/{id}', 'edit6')->name('quotation.edit-6');
-        // Route::get('/sales/quotation/edit-7/{id}', 'edit7')->name('quotation.edit-7');
-        // Route::get('/sales/quotation/edit-8/{id}', 'edit8')->name('quotation.edit-8');
-
         Route::get('/sales/quotation/view/{id}', 'view')->name('quotation.view');
 
         Route::post('/sales/quotation/save', 'save')->name('quotation.save');
@@ -98,6 +88,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/saveEdit10', 'saveEdit10')->name('quotation.save-edit-10');
         Route::post('/sales/quotation/saveEdit11', 'saveEdit11')->name('quotation.save-edit-11');
         Route::post('/sales/quotation/saveEdit12', 'saveEdit12')->name('quotation.save-edit-12');
+        Route::post('/sales/quotation/saveEdit13', 'saveEdit13')->name('quotation.save-edit-13');
 
         Route::post('/sales/quotation/delete', 'delete')->name('quotation.delete');
 

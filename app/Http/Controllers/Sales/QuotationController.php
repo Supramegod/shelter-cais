@@ -161,9 +161,6 @@ class QuotationController extends Controller
             }
 
             // step 11 cost structure
-            $listHPP = null;
-            $listCS = null;
-            $listGpm = null;
             $leads = null;
             $data = null;
 
@@ -283,17 +280,14 @@ class QuotationController extends Controller
                 foreach ($data->detail as $key => $value) {
                     $data->totalHc += $value->jumlah_hc;
                 }
-                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
-                $listHPP = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();
-                $listCS = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();
-                $listGpm = DB::table('sl_quotation_kebutuhan_analisa_gpm')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();            
+                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();         
             }
             $isEdit = false;
 
             if(isset($request->edit)){
                 $isEdit = true;
             }
-            return view('sales.quotation.edit-'.$request->step,compact('data','leads','listGpm','listCS','listHPP','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            return view('sales.quotation.edit-'.$request->step,compact('data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -999,6 +993,34 @@ class QuotationController extends Controller
     }
 
     public function saveEdit12 (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            $newStep = 13;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => $newStep,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+
+            // $this->perhitunganHPPSecurity($data->id);
+
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'13']);
+
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit13 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
