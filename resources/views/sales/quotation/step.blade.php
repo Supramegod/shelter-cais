@@ -28,7 +28,7 @@
                 }
             }else{
                 if($quotationKebutuhan[0]->kebutuhan_id==1){
-                    if(in_array($data['stepno'],[9,10])){
+                    if(in_array($data['stepno'],[])){
                         continue;
                     }
                 }else if($quotationKebutuhan[0]->kebutuhan_id==2){
@@ -36,11 +36,11 @@
                         continue;
                     }
                 }else if($quotationKebutuhan[0]->kebutuhan_id==3){
-                    if(in_array($data['stepno'],[9])){
+                    if(in_array($data['stepno'],[])){
                         continue;
                     }
                 }else if($quotationKebutuhan[0]->kebutuhan_id==4){
-                    if(in_array($data['stepno'],[9,10])){
+                    if(in_array($data['stepno'],[])){
                         continue;
                     }
                 }

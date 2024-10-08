@@ -307,86 +307,44 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="fw-bold" style="text-align:right">Rp {{number_format($quotationKebutuhan[0]->nominal_upah+400000,0,",",".")}}</th>
                         @endforeach
                       </tr>
-                      @php
-                      $total = 0;
-                      @endphp
-                      @foreach($listCS as $ics => $cs)
-                        @php
-                        $total = $total+$cs->nominal;
-                        @endphp
-                        @if($cs->kunci=="tunjangan_hari_raya")
-                        @php
-                        $total = $total-$cs->nominal;
-                        @endphp
-                        
-                        <tr>
-                          <td class="fw-bold">2. EXCLUDE BASE MANPOWER COST</th>
-                          <td class="text-center fw-bold"></th>
-                          <td class="text-center fw-bold">Unit/Month</th>
-                          </tr>
-
-                          @php
-                          $total = $cs->nominal;
-                          @endphp
-                        @endif
-                        @if($cs->kunci=="biaya_monitoring_kontrol")
-                        <tr class="table-success">
-                          <td class="fw-bold text-center">Total Exclude Base Manpower Cost</th>
-                          <td class="text-center fw-bold"></th>
-                          <td class="fw-bold" style="text-align:right">Rp {{number_format($total,0,",",".")}}</th>
-                        </tr>
-                        <tr>
-                          <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
-                          <td class="text-center fw-bold"></th>
-                          <td class="text-center fw-bold">Unit/Month</th>
-                        </tr>
-                        <tr>
-                          <td style="text-align:left">Biaya Visit & Kontrol Operasional, visit CRM</td>
-                          <td style="text-align:center"></td>
-                          <td rowspan="5" style="text-align:right;font-weight:bold">Rp {{number_format($cs->nominal,0,",",".")}}</td>
-                        </tr>
-                        <tr>
-                          <td style="text-align:left">Biaya Komunikasi Rekrutmen, Pembinaan, Training Induction & Supervisi</td>
-                          <td style="text-align:center"></td>
-                        </tr>
-                        <tr>
-                          <td style="text-align:left">Biaya Proses Kontrak Karyawan, Payroll, dll</td>
-                          <td style="text-align:center"></td>
-                        </tr>
-                        <tr>
-                          <td style="text-align:left">Biaya Emergency Response Team</td>
-                          <td style="text-align:center"></td>
-                        </tr>
-                        <tr>
-                          <td style="text-align:left">Biaya Investigasi Team</td>
-                          <td style="text-align:center"></td>
-                        </tr>
-                        @else
-                        @php
-                          $trclass = "";
-                          if(in_array($cs->kunci,['biaya_personil','grand_total','total_invoice','pembulatan'])){
-                            $trclass="table-success";
-                          }else{
-                            $trclass = "";
-                          }
-
-                          $structureAlign = "left";
-                          if(in_array($cs->kunci,['biaya_personil','sub_biaya_personil','management_fee','grand_total','ppn_management_fee','pph_management_fee','total_invoice','pembulatan'])){
-                            $structureAlign="right";
-                          }
-
-                          $fontWeight ="";
-                          if(in_array($cs->kunci,['management_fee','ppn_management_fee','pph_management_fee','biaya_personil','sub_biaya_personil','grand_total','total_invoice','pembulatan'])){
-                            $fontWeight="fw-bold";
-                          }
-                        @endphp
-                          <tr class="{{$trclass}}">
-                            <td class="{{$fontWeight}}" style="text-align:{{$structureAlign}}">{!!$cs->structure!!}</td>
-                            <td style="text-align:center">{{$cs->percentage}}</td>
-                            <td class="{{$fontWeight}}" style="text-align:right">Rp {{number_format($cs->nominal,0,",",".")}}</td>
-                          </tr>
-                        @endif
-                      @endforeach                
+                      <tr>
+                        <td class="fw-bold">2. EXCLUDE BASE MANPOWER COST</th>
+                        <td class="text-center fw-bold"></th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-center fw-bold">Unit/Month</th>
+                        @endforeach
+                      </tr>
+                      <tr class="table-success">
+                        <td class="fw-bold text-center">Total Exclude Base Manpower Cost</th>
+                        <td class="text-center fw-bold"></th>
+                        <td class="fw-bold" style="text-align:right"> </th>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
+                        <td class="text-center fw-bold"></th>
+                        <td class="text-center fw-bold">Unit/Month</th>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Biaya Visit & Kontrol Operasional, visit CRM</td>
+                        <td style="text-align:center"></td>
+                        <td rowspan="5" style="text-align:right;font-weight:bold"></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Biaya Komunikasi Rekrutmen, Pembinaan, Training Induction & Supervisi</td>
+                        <td style="text-align:center"></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Biaya Proses Kontrak Karyawan, Payroll, dll</td>
+                        <td style="text-align:center"></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Biaya Emergency Response Team</td>
+                        <td style="text-align:center"></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Biaya Investigasi Team</td>
+                        <td style="text-align:center"></td>
+                      </tr>       
                     </tbody>
                   </table>
                 </div>
