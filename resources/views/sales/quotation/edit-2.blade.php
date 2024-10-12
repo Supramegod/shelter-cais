@@ -104,6 +104,23 @@
               </div>
               <div class="row mb-3">
                 <div class="col-sm-6">
+                  <label class="form-label" for="evaluasi_kontrak">Evaluasi Kontrak</label>
+                  <select id="evaluasi_kontrak" name="evaluasi_kontrak" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="" @if($quotation->evaluasi_kontrak=='') selected @endif>- Pilih Data -</option>  
+                    <option value="1 Bulan" @if($quotation->evaluasi_kontrak=='1 Bulan') selected @endif>1 Bulan</option>  
+                    <option value="3 Bulan" @if($quotation->evaluasi_kontrak=='3 Bulan') selected @endif>3 Bulan</option>  
+                    <option value="6 Bulan" @if($quotation->evaluasi_kontrak=='6 Bulan') selected @endif>6 Bulan</option>  
+                    <option value="1 Tahun" @if($quotation->evaluasi_kontrak=='1 Tahun') selected @endif>1 Tahun</option>  
+                    <option value="2 Tahun" @if($quotation->evaluasi_kontrak=='2 Tahun') selected @endif>2 Tahun</option>  
+                  </select>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label" for="durasi_kerjasama">Durasi Kerjasama</label>
+                  <input type="text" name="durasi_kerjasama" value="{{$quotation->durasi_kerjasama}}" class="form-control" id="durasi_kerjasama" readonly>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm-6">
                   <label class="form-label" for="tgl_penempatan">Tanggal Penempatan</label>
                   <input type="date" name="tgl_penempatan" value="{{$quotation->tgl_penempatan}}" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl-penempatan">
                   @if($errors->has('tgl_penempatan'))
@@ -114,11 +131,35 @@
                   @endif
                 </div>
                 <div class="col-sm-6">
+                  <label class="form-label" for="durasi_karyawan">Durasi Karyawan</label>
+                  <select id="durasi_karyawan" name="durasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="" @if($quotation->durasi_karyawan=='') selected @endif>- Pilih Data -</option>  
+                    <option value="1 Bulan" @if($quotation->durasi_karyawan=='1 Bulan') selected @endif>1 Bulan</option>  
+                    <option value="3 Bulan" @if($quotation->durasi_karyawan=='3 Bulan') selected @endif>3 Bulan</option>  
+                    <option value="6 Bulan" @if($quotation->durasi_karyawan=='6 Bulan') selected @endif>6 Bulan</option>  
+                    <option value="1 Tahun" @if($quotation->durasi_karyawan=='1 Tahun') selected @endif>1 Tahun</option>  
+                    <option value="2 Tahun" @if($quotation->durasi_karyawan=='2 Tahun') selected @endif>2 Tahun</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label" for="evaluasi_karyawan">Evaluasi Karyawan</label>
+                  <select id="evaluasi_karyawan" name="evaluasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="" @if($quotation->evaluasi_karyawan=='') selected @endif>- Pilih Data -</option>  
+                    <option value="1 Bulan" @if($quotation->evaluasi_karyawan=='1 Bulan') selected @endif>1 Bulan</option>  
+                    <option value="3 Bulan" @if($quotation->evaluasi_karyawan=='3 Bulan') selected @endif>3 Bulan</option>  
+                    <option value="6 Bulan" @if($quotation->evaluasi_karyawan=='6 Bulan') selected @endif>6 Bulan</option>  
+                    <option value="1 Tahun" @if($quotation->evaluasi_karyawan=='1 Tahun') selected @endif>1 Tahun</option>  
+                    <option value="2 Tahun" @if($quotation->evaluasi_karyawan=='2 Tahun') selected @endif>2 Tahun</option>
+                  </select>
+                </div>
+                <div class="col-sm-6">
                   <label class="form-label" for="basic-default-password42">Salary Rule</label>
                   <select id="salary_rule" name="salary_rule" class="form-select @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($salaryRule as $value)
-                      <option value="{{$value->id}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->mulai}} s/d {{$value->cutoff}} | Tgl Gajian : {{$value->gajian}} | Jarak Hari : {{$value->top}}</option>  
+                      <option value="{{$value->id}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->cutoff}} | Tgl Gajian : {{$value->rilis_payroll}} | Pengiriman Invoice : {{$value->pengiriman_invoice}}</option>  
                       @endforeach
                     </select>
                     @if($errors->has('salary_rule'))
@@ -164,6 +205,22 @@
                 </div>
                 <span class="text-warning mt-3">*TOP invoice lebih dari 7 hari membutuhkan approval dari direksi</span>
               </div>
+              <div class="row mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
+                    <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="Ada" @if($quotation->thr!="") selected @endif>Ada</option>  
+                    <option value="Tidak Ada" @if($quotation->thr=="" && $quotation->thr!=null) selected @endif>Tidak Ada</option>  
+                    </select>
+                </div>
+                <div class="col-sm-6 ada_thr">
+                  <label class="form-label" for="thr">Provisi / Ditagihkan</label>
+                    <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
+                    <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                    </select>
+                </div>
+              </div>
               @include('sales.quotation.action')
             </div>
           </form>
@@ -206,8 +263,18 @@ $('#btn-submit').on('click',function(e){
   if(obj.kontrak_selesai == null || obj.kontrak_selesai == ""){
     msg += "<b>Kontrak Selesai</b> belum dipilih </br>";
   }
+
+  if(obj.evaluasi_kontrak == null || obj.evaluasi_kontrak == ""){
+    msg += "<b>Evaluasi Kontrak</b> belum dipilih </br>";
+  }
   if(obj.tgl_penempatan == null || obj.tgl_penempatan == ""){
     msg += "<b>Tanggal Penempatan</b> belum dipilih </br>";
+  }
+  if(obj.durasi_karyawan == null || obj.durasi_karyawan == ""){
+    msg += "<b>Durasi Karyawan</b> belum dipilih </br>";
+  }
+  if(obj.evaluasi_karyawan == null || obj.evaluasi_karyawan == ""){
+    msg += "<b>Evaluasi Karyawan</b> belum dipilih </br>";
   }
   if(obj.salary_rule == null || obj.salary_rule == ""){
     msg += "<b>Salary Rule</b> belum dipilih </br>";
@@ -215,7 +282,12 @@ $('#btn-submit').on('click',function(e){
   if(obj.top == null || obj.top == ""){
     msg += "<b>TOP Invoice</b> belum dipilih </br>";
   }
-  
+  if(obj.ada_thr == "Ada"){
+    if(obj.thr == null || obj.thr == ""){
+      msg += "<b>THR</b> belum dipilih </br>";
+    }
+  }
+
   if (obj.top != null && obj.top != "") {
     if(obj.top=="Lebih Dari 7 Hari"){
       if(obj.jumlah_hari_invoice==""){
@@ -255,6 +327,45 @@ function validasiKontrak() {
 
       $('#mulai-kontrak').val('').attr('type', 'text').attr('type', 'date');
       $('#kontrak-selesai').val('').attr('type', 'text').attr('type', 'date');
+    }else{      
+      var mulai = $('#mulai-kontrak').val();
+      var selesai = $('#kontrak-selesai').val();
+
+      if (mulai && selesai) {
+          // Konversi nilai input menjadi objek Date
+          var mulaiDate = new Date(mulai);
+          var selesaiDate = new Date(selesai);
+
+          // Hitung perbedaan tahun dan bulan
+          var tahun = selesaiDate.getFullYear() - mulaiDate.getFullYear();
+          var bulan = selesaiDate.getMonth() - mulaiDate.getMonth();
+
+          // Jika bulan negatif, kurangi satu tahun dan tambahkan 12 bulan
+          if (bulan < 0) {
+              tahun--;
+              bulan += 12;
+          }
+
+          // Siapkan string hasil
+          var hasil = '';
+
+          // Hanya tampilkan tahun jika tidak 0
+          if (tahun > 0) {
+              hasil += tahun + ' tahun';
+          }
+
+          // Hanya tampilkan bulan jika tidak 0
+          if (bulan > 0) {
+              // Tambahkan spasi jika ada tahun sebelumnya
+              if (hasil !== '') {
+                  hasil += ', ';
+              }
+              hasil += bulan + ' bulan';
+          }
+
+          // Tampilkan hasil
+          $('#durasi_kerjasama').val(hasil);
+      }
     }
   }
 }
@@ -310,7 +421,7 @@ function showDTop() {
   }
 }
 
-function showDTipeHari() {
+function showDTipeHari(first) {
   let selected = $("#jumlah_hari_invoice option:selected").val();
   
   if (selected=="21" || selected=="30") {
@@ -318,17 +429,37 @@ function showDTipeHari() {
     $("#tipe_hari_invoice").val("Kalender").change();
   }else{
     $('.opt_tipe_hari_kerja').removeClass('d-none');
-    $("#tipe_hari_invoice").val("").change();
+    if(first != 1 ){
+          $("#tipe_hari_invoice").val("").change();
+    }
   }
 }
 showDTop();
-showDTipeHari(); 
+showDTipeHari(1);
+showThr(1); 
 $('#top').on('change', function() {
   showDTop();
 });
 
+function showThr(first) {
+  let selected = $("#ada_thr option:selected").val();
+  
+  if (selected!="Ada") {
+    $('.ada_thr').addClass('d-none');
+  }else{
+    $('.ada_thr').removeClass('d-none');
+    if(first!=1){
+      $("#thr").val("").change();
+    }
+  }
+}
+
+$('#ada_thr').on('change', function() {
+  showThr(2);
+});
+
 $('#jumlah_hari_invoice').on('change', function() {
-  showDTipeHari();
+  showDTipeHari(2);
 });
 
 </script>

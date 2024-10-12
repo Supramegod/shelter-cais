@@ -480,6 +480,11 @@ class QuotationController extends Controller
                     'top' => $request->top,
                     'jumlah_hari_invoice' => $request->jumlah_hari_invoice,
                     'tipe_hari_invoice' => $request->tipe_hari_invoice,
+                    'evaluasi_kontrak' => $request->evaluasi_kontrak,
+                    'durasi_kerjasama' => $request->durasi_kerjasama,
+                    'durasi_karyawan' => $request->durasi_karyawan,
+                    'evaluasi_karyawan' => $request->evaluasi_karyawan,
+                    'thr' => $request->thr,
                     'step' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
