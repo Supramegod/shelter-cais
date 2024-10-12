@@ -86,7 +86,7 @@
                         <td style="text-align:left" class="">Tunjangan Overtime Flat 72 Jam</td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format(400000,0,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->tunjangan_overtime,0,",",".")}}</td>
                         @endforeach
                       </tr>
                       <tr class="">
@@ -94,7 +94,7 @@
                         <td style="text-align:left" class="">Tunjangan Hari Raya</td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah/12,0,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,0,",",".")}}</td>
                         @endforeach
                       </tr>
                       <tr class="">
@@ -102,9 +102,7 @@
                         <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Kecelakaan Kerja</td>
                         <td style="text-align:center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">
-                        @if($quotationKebutuhan[0]->resiko=="Sangat Rendah") {{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*0.24/100,0,",",".")}} @elseif($quotationKebutuhan[0]->resiko=="Rendah") {{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*0.54/100,0,",",".")}} @elseif($quotationKebutuhan[0]->resiko=="Sedang") {{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*0.89/100,0,",",".")}} @elseif($quotationKebutuhan[0]->resiko=="Tinggi") {{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*1.27/100,0,",",".")}} @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") {{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*1.74/100,0,",",".")}} @endif
-                        </td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jkk,0,",",".")}}</td>
                         @endforeach
                       </tr>
                       <tr class="">
@@ -112,16 +110,16 @@
                         <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Kematian</td>
                         <td style="text-align:center">0,3 %</td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*0.3/100,0,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jkm,0,",",".")}}</td>
                         @endforeach
                       </tr>
                       @if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS")
                       <tr class="">
                         <td style="text-align:center"></td>
                         <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Hari Tua</td>
-                        <td style="text-align:center">5,7 %</td>
+                        <td style="text-align:center">3,7 %</td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*5.7/100,0,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jht,0,",",".")}}</td>
                         @endforeach
                       </tr>
                       @endif
@@ -129,9 +127,9 @@
                       <tr class="">
                         <td style="text-align:center"></td>
                         <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Pensiun</td>
-                        <td style="text-align:center">3 %</td>
+                        <td style="text-align:center">2 %</td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*3/100,0,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jp,0,",",".")}}</td>
                         @endforeach
                       </tr>
                       @endif
@@ -140,7 +138,7 @@
                         <td style="text-align:left" class="">BPJS Kesehatan </td>
                         <td style="text-align:center">4 %</td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah*4/100,0,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_kes,0,",",".")}}</td>
                         @endforeach
                       </tr>
                       <tr class="">
@@ -297,14 +295,14 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td>Tunjangan Overtime Flat 72 Jam</th>
                         <td class="text-center"></th>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format(400000,0,",",".")}}</th>
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_overtime,0,",",".")}}</th>
                         @endforeach
                       </tr>
                       <tr class="table-success">
                         <td class="fw-bold text-center">Total Base Manpower Cost per Month (THP)</th>
                         <td class="text-center fw-bold"></th>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="fw-bold" style="text-align:right">Rp {{number_format($quotationKebutuhan[0]->nominal_upah+400000,0,",",".")}}</th>
+                        <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_base_manpower,0,",",".")}}</th>
                         @endforeach
                       </tr>
                       <tr>
@@ -314,20 +312,93 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="text-center fw-bold">Unit/Month</th>
                         @endforeach
                       </tr>
+                      <tr>
+                        <td>Provisi Tunjangan Hari Raya (THR)</th>
+                        <td class="text-center"></th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      <tr>
+                        <td>Premi BPJS TK J. Kecelakaan Kerja</th>
+                        <td class="text-center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jkk,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      <tr>
+                        <td>Premi BPJS TK J. Kematian</th>
+                        <td class="text-center">0,30 %</th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jkm,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      @if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                      <tr>
+                        <td>Premi BPJS TK J. Hari Tua</th>
+                        <td class="text-center">3,7 %</th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jht,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      @endif
+                      @if($quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                      <tr>
+                        <td>Premi BPJS TK J. Pensiun</th>
+                        <td class="text-center">2 %</th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jp,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      @endif
+                      <tr>
+                        <td>Premi BPJS Kesehatan</th>
+                        <td class="text-center">4 %</th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_kes,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      <tr>
+                        <td>Provisi Seragam</th>
+                        <td class="text-center"></th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_kaporlap,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      <tr>
+                        <td>Provisi Peralatan</th>
+                        <td class="text-center"></th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_devices,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      <tr>
+                        <td>Provisi Chemical</th>
+                        <td class="text-center"></th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_chemical,0,",",".")}}</th>
+                        @endforeach
+                      </tr>
                       <tr class="table-success">
                         <td class="fw-bold text-center">Total Exclude Base Manpower Cost</th>
                         <td class="text-center fw-bold"></th>
-                        <td class="fw-bold" style="text-align:right"> </th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_exclude_base_manpower,0,",",".")}}</th>
+                        @endforeach
                       </tr>
                       <tr>
                         <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
                         <td class="text-center fw-bold"></th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
                         <td class="text-center fw-bold">Unit/Month</th>
+                        @endforeach
                       </tr>
                       <tr>
                         <td style="text-align:left">Biaya Visit & Kontrol Operasional, visit CRM</td>
                         <td style="text-align:center"></td>
-                        <td rowspan="5" style="text-align:right;font-weight:bold"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td rowspan="5" style="text-align:right;font-weight:bold"><span data-kebutuhan_detail_id="{{$detailJabatan->id}}" data-quotation_kebutuhan_id="{{$detailJabatan->quotation_kebutuhan_id}}" class="edit-biaya-monitoring">Rp {{number_format($detailJabatan->biaya_monitoring_kontrol,0,",",".")}} <i class="mdi mdi-pencil text-warning"></i></span></td>
+                        @endforeach
                       </tr>
                       <tr>
                         <td style="text-align:left">Biaya Komunikasi Rekrutmen, Pembinaan, Training Induction & Supervisi</td>
@@ -344,7 +415,63 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                       <tr>
                         <td style="text-align:left">Biaya Investigasi Team</td>
                         <td style="text-align:center"></td>
-                      </tr>       
+                      </tr>
+                      <tr class="table-success">
+                        <td style="text-align:right" class="fw-bold">Total Biaya per Personil <span class="text-danger">(1+2+3)</span></td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->total_personil_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
+                        <td style="text-align:right" class="fw-bold">Sub Total Biaya All Personil</td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->sub_total_personil_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
+                        <td style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari sub total biaya</span></td>
+                        <td style="text-align:center">{{$quotationKebutuhan[0]->persentase}} %</td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->management_fee_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="table-success">
+                        <td style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->grand_total_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
+                        <td style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari management fee</span></td>
+                        <td style="text-align:center">11 %</td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->ppn_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
+                        <td style="text-align:right" class="fw-bold">PPh <span class='text-danger'>*dari management fee</span></td>
+                        <td style="text-align:center">-2 %</td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pph_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="table-success">
+                        <td style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->total_invoice_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="table-success">
+                        <td style="text-align:right" class="fw-bold">PEMBULATAN</td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pembulatan_coss,0,",",".")}}</td>
+                        @endforeach
+                      </tr>      
                     </tbody>
                   </table>
                 </div>
@@ -380,19 +507,99 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                       </tr>
                     </thead>              
                     <tbody>
-                      @foreach($listGpm as $igpm => $gpm)
-                        <tr>
-                          <td style="text-align:left">{{$gpm->keterangan}}</td>
-                          @if($gpm->kunci == 'gpm')
-                          <td style="text-align:right">{{number_format($gpm->hpp,2,",",".")}} %</td>
-                          <td style="text-align:right">{{number_format($gpm->harga_jual,2,",",".")}} %</td>
-                          @else
-                          <td style="text-align:right">Rp {{number_format($gpm->hpp,0,",",".")}}</td>
-                          <td style="text-align:right">Rp {{number_format($gpm->harga_jual,0,",",".")}}</td>
-                          @endif
-
-                        </tr>
-                      @endforeach                
+                      <tr>
+                        <td style="text-align:left">Nominal</td>
+                        <td style="text-align:right">
+                          @php
+                          $totalNominal = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $totalNominal += $detailJabatan->total_invoice;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($totalNominal,0,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                          $totalNominalCoss = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $totalNominalCoss += $detailJabatan->total_invoice_coss;
+                          }
+                        @endphp
+                          {{"Rp. ".number_format($totalNominalCoss,0,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">PPN</td>
+                        <td style="text-align:right">
+                        @php
+                          $ppn = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $ppn += $detailJabatan->ppn;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($ppn,0,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                          $ppnCoss = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $ppnCoss += $detailJabatan->ppn_coss;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($ppnCoss,0,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Total Biaya</td>
+                        <td style="text-align:right">
+                        @php
+                          $totalBiaya = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $totalBiaya += $detailJabatan->sub_total_personil;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($totalBiaya,0,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                          $totalBiayaCoss = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $totalBiayaCoss += $detailJabatan->sub_total_personil_coss;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($totalBiayaCoss,0,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Margin</td>
+                        <td style="text-align:right">
+                          @php
+                            $margin = $totalNominal-$ppn-$totalBiaya;
+                          @endphp
+                          {{"Rp. ".number_format($margin,0,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                            $marginCoss = $totalNominalCoss-$ppnCoss-$totalBiayaCoss;
+                          @endphp
+                          {{"Rp. ".number_format($marginCoss,0,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold" style="text-align:left">GPM</td>
+                        <td class="fw-bold" style="text-align:right">
+                          @php
+                            $gpm = ($margin/$totalBiaya)*100;
+                          @endphp
+                          {{$gpm}} %
+                        </td>
+                        <td class="fw-bold" style="text-align:right">
+                        @php
+                            $gpmCoss = ($marginCoss/$totalBiayaCoss)*100;
+                          @endphp
+                          {{$gpmCoss}} %
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -431,5 +638,45 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
     form.submit();
   });
 
+  $('.edit-biaya-monitoring').on('click',function(e){
+    let kebutuhanId = $(this).data('quotation_kebutuhan_id');
+    let detailId = $(this).data('kebutuhan_detail_id');
+    
+    Swal.fire({
+      title: "Masukkan nominal Biaya Monitoring dan Kontrol",
+      input: "number",
+      showCancelButton: true,
+      confirmButtonText: "Simpan",
+      showLoaderOnConfirm: true,
+      preConfirm: async (nominal) => {
+        try {
+          let formData = {
+            "kebutuhanId":$(this).data('quotation_kebutuhan_id'),
+            "nominal":nominal,
+            "detailId":$(this).data('kebutuhan_detail_id'),
+            "_token": "{{ csrf_token() }}"
+          };
+          
+          $.ajax({
+            type: "POST",
+            url: "{{route('quotation.add-biaya-monitoring')}}",
+            data:formData,
+            success: function(response){
+              window.location.reload();
+            },
+            error:function(error){
+              console.log(error);
+            }
+          });
+        } catch (error) {
+          Swal.showValidationMessage(`
+            Request failed: ${error}
+          `);
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+    });
+  });
 </script>
 @endsection

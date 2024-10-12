@@ -161,14 +161,48 @@ class QuotationController extends Controller
             }
 
             // step 11 cost structure
-            $listHPP = null;
-            $listCS = null;
-            $listGpm = null;
             $leads = null;
             $data = null;
 
             if($request->step==11){
                 foreach ($quotationKebutuhan[0]->kebutuhan_detail as $ikbd => $kbd) {
+
+                    $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/12;
+
+                    $kbd->tunjangan_overtime = 400000;
+
+                    // hitung JKK
+                    if($quotationKebutuhan[0]->resiko=="Sangat Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.24/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.54/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sedang"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.89/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.27/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sangat Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.74/100;
+                    };
+
+                    //hitung JKM
+                    $kbd->bpjs_jkm = $quotationKebutuhan[0]->nominal_upah*0.3/100;
+
+                    //Hitung JHT
+                    if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jht = $quotationKebutuhan[0]->nominal_upah*3.7/100;
+                    }else{
+                        $kbd->bpjs_jht = 0;
+                    }
+                    
+                    //Hitung JP
+                    if($quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jp = $quotationKebutuhan[0]->nominal_upah*2/100;
+                    }else {
+                        $kbd->bpjs_jp = 0;
+                    }
+
+                    $kbd->bpjs_kes = $quotationKebutuhan[0]->nominal_upah*4/100;
+
                     $personilKaporlap = 0;
                     $kbdkaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                     foreach ($kbdkaporlap as $ikdbkap => $kdbkap) {
@@ -201,7 +235,7 @@ class QuotationController extends Controller
 
                     $kbd->personil_chemical = $personilChemical;
 
-                    $kbd->total_personil = $kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                    $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$kbd->tunjangan_overtime+$kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
@@ -217,6 +251,26 @@ class QuotationController extends Controller
 
                     $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
+                    // COST STRUCTURE
+                    $kbd->total_base_manpower = $quotationKebutuhan[0]->nominal_upah + 400000;
+                    $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
+
+                    $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
+
+                    $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
+                    
+                    $kbd->management_fee_coss = $kbd->sub_total_personil_coss*$quotationKebutuhan[0]->persentase/100;
+
+                    $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss;
+
+                    $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
+
+                    $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+
+                    $kbd->total_invoice_coss = $kbd->grand_total_coss + $kbd->ppn_coss + $kbd->pph_coss;
+
+                    $kbd->pembulatan_coss = ceil($kbd->total_invoice_coss / 1000) * 1000;
+
                 };
 
                 $data = DB::table('sl_quotation_kebutuhan')->where('id',$quotationKebutuhan[0]->id)->first();
@@ -226,17 +280,14 @@ class QuotationController extends Controller
                 foreach ($data->detail as $key => $value) {
                     $data->totalHc += $value->jumlah_hc;
                 }
-                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
-                $listHPP = DB::table('sl_quotation_kebutuhan_hpp')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();
-                $listCS = DB::table('sl_quotation_kebutuhan_cost_structure')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();
-                $listGpm = DB::table('sl_quotation_kebutuhan_analisa_gpm')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->whereNull('deleted_at')->get();            
+                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();         
             }
             $isEdit = false;
 
             if(isset($request->edit)){
                 $isEdit = true;
             }
-            return view('sales.quotation.edit-'.$request->step,compact('data','leads','listGpm','listCS','listHPP','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            return view('sales.quotation.edit-'.$request->step,compact('data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -429,6 +480,11 @@ class QuotationController extends Controller
                     'top' => $request->top,
                     'jumlah_hari_invoice' => $request->jumlah_hari_invoice,
                     'tipe_hari_invoice' => $request->tipe_hari_invoice,
+                    'evaluasi_kontrak' => $request->evaluasi_kontrak,
+                    'durasi_kerjasama' => $request->durasi_kerjasama,
+                    'durasi_karyawan' => $request->durasi_karyawan,
+                    'evaluasi_karyawan' => $request->evaluasi_karyawan,
+                    'thr' => $request->thr,
                     'step' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -942,6 +998,34 @@ class QuotationController extends Controller
     }
 
     public function saveEdit12 (Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            $newStep = 13;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'step' => $newStep,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+
+            // $this->perhitunganHPPSecurity($data->id);
+
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'13']);
+
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEdit13 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
 
@@ -1718,6 +1802,20 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             DB::table('sl_quotation_kebutuhan_chemical')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->where('barang_id',$request->barang_id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function addBiayaMonitoring(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kebutuhan_detail')->where('id',$request->detailId)->update([
+                'biaya_monitoring_kontrol' => $request-> nominal,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
             ]);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);

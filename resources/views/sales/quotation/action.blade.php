@@ -15,7 +15,7 @@
         </a>
     @endif
         <button type="button" class="btn btn-primary btn-next w-20" id="btn-submit">
-            <span class="align-middle d-sm-inline-block d-none me-sm-1">@if($request->step==12) Selesai @else Next @endif</span>
+            <span class="align-middle d-sm-inline-block d-none me-sm-1">@if($request->step==13) Selesai @else Next @endif</span>
             <i class="mdi mdi-arrow-right"></i>
         </button>
     </div>
