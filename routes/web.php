@@ -11,6 +11,13 @@ use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Http\Controllers\Sales\QuotationController;
 
 use App\Http\Controllers\Master\PlatformController;
+use App\Http\Controllers\Master\AplikasiPendukungController;
+use App\Http\Controllers\Master\JenisBarangController;
+use App\Http\Controllers\Master\JabatanController;
+use App\Http\Controllers\Master\JenisPerusahaanController;
+use App\Http\Controllers\Master\ManagementFeeController;
+use App\Http\Controllers\Master\SalaryRuleController;
+use App\Http\Controllers\Master\StatusLeadsController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -143,6 +150,82 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/platform/delete', 'delete')->name('platform.delete');
 
         Route::get('/master/platform/list', 'list')->name('platform.list'); // ajax
+
+    });
+
+    Route::controller(AplikasiPendukungController::class)->group(function() {
+        Route::get('/master/aplikasi-pendukung', 'index')->name('aplikasi-pendukung');
+        Route::get('/master/aplikasi-pendukung/add', 'add')->name('aplikasi-pendukung.add');
+        Route::get('/master/aplikasi-pendukung/view/{id}', 'view')->name('aplikasi-pendukung.view');
+
+        Route::post('/master/aplikasi-pendukung/save', 'save')->name('aplikasi-pendukung.save');
+        Route::post('/master/aplikasi-pendukung/delete', 'delete')->name('aplikasi-pendukung.delete');
+
+        Route::get('/master/aplikasi-pendukung/list', 'list')->name('aplikasi-pendukung.list'); // ajax
+
+    });
+    
+    Route::controller(JenisBarangController::class)->group(function() {
+        Route::get('/master/jenis-barang', 'index')->name('jenis-barang');
+        Route::get('/master/jenis-barang/view/{id}', 'view')->name('jenis-barang.view');
+
+        Route::get('/master/jenis-barang/list', 'list')->name('jenis-barang.list'); // ajax
+        Route::get('/master/jenis-barang/detail-barang', 'detailBarang')->name('jenis-barang.detail-barang'); // ajax
+
+    });
+
+    Route::controller(JabatanController::class)->group(function() {
+        Route::get('/master/jabatan', 'index')->name('jabatan');
+        Route::get('/master/jabatan/add', 'add')->name('jabatan.add');
+        Route::get('/master/jabatan/view/{id}', 'view')->name('jabatan.view');
+
+        Route::post('/master/jabatan/save', 'save')->name('jabatan.save');
+        Route::post('/master/jabatan/delete', 'delete')->name('jabatan.delete');
+
+        Route::get('/master/jabatan/list', 'list')->name('jabatan.list'); // ajax
+
+    });
+
+    Route::controller(JenisPerusahaanController::class)->group(function() {
+        Route::get('/master/perusahaan', 'index')->name('perusahaan');
+        Route::get('/master/perusahaan/add', 'add')->name('perusahaan.add');
+        Route::get('/master/perusahaan/view/{id}', 'view')->name('perusahaan.view');
+
+        Route::post('/master/perusahaan/save', 'save')->name('perusahaan.save');
+        Route::post('/master/perusahaan/delete', 'delete')->name('perusahaan.delete');
+
+        Route::get('/master/perusahaan/list', 'list')->name('perusahaan.list'); // ajax
+
+    });
+    
+    Route::controller(ManagementFeeController::class)->group(function() {
+        Route::get('/master/management-fee', 'index')->name('management-fee');
+        Route::get('/master/management-fee/add', 'add')->name('management-fee.add');
+        Route::get('/master/management-fee/view/{id}', 'view')->name('management-fee.view');
+
+        Route::post('/master/management-fee/save', 'save')->name('management-fee.save');
+        Route::post('/master/management-fee/delete', 'delete')->name('management-fee.delete');
+
+        Route::get('/master/management-fee/list', 'list')->name('management-fee.list'); // ajax
+
+    });
+    
+    Route::controller(SalaryRuleController::class)->group(function() {
+        Route::get('/master/salary-rule', 'index')->name('salary-rule');
+        Route::get('/master/salary-rule/add', 'add')->name('salary-rule.add');
+        Route::get('/master/salary-rule/view/{id}', 'view')->name('salary-rule.view');
+
+        Route::post('/master/salary-rule/save', 'save')->name('salary-rule.save');
+        Route::post('/master/salary-rule/delete', 'delete')->name('salary-rule.delete');
+
+        Route::get('/master/salary-rule/list', 'list')->name('salary-rule.list'); // ajax
+
+    });
+    
+    Route::controller(StatusLeadsController::class)->group(function() {
+        Route::get('/master/status-leads', 'index')->name('status-leads');
+
+        Route::get('/master/status-leads/list', 'list')->name('status-leads.list'); // ajax
 
     });
 });
