@@ -18,6 +18,9 @@ use App\Http\Controllers\Master\JenisPerusahaanController;
 use App\Http\Controllers\Master\ManagementFeeController;
 use App\Http\Controllers\Master\SalaryRuleController;
 use App\Http\Controllers\Master\StatusLeadsController;
+use App\Http\Controllers\Master\TunjanganController;
+use App\Http\Controllers\Master\TunjanganJabatanController;
+use App\Http\Controllers\Master\BarangController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -223,5 +226,41 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/status-leads/list', 'list')->name('status-leads.list'); // ajax
 
+    });
+    
+    Route::controller(TunjanganController::class)->group(function() {
+        Route::get('/master/tunjangan', 'index')->name('tunjangan');
+        Route::get('/master/tunjangan/add', 'add')->name('tunjangan.add');
+        Route::get('/master/tunjangan/view/{id}', 'view')->name('tunjangan.view');
+
+        Route::post('/master/tunjangan/save', 'save')->name('tunjangan.save');
+        Route::post('/master/tunjangan/delete', 'delete')->name('tunjangan.delete');
+
+        Route::get('/master/tunjangan/list', 'list')->name('tunjangan.list'); // ajax
+
+    });
+    
+    Route::controller(TunjanganJabatanController::class)->group(function() {
+        Route::get('/master/tunjangan-jabatan', 'index')->name('tunjangan-jabatan');
+        Route::get('/master/tunjangan-jabatan/add', 'add')->name('tunjangan-jabatan.add');
+        Route::get('/master/tunjangan-jabatan/view/{id}', 'view')->name('tunjangan-jabatan.view');
+
+        Route::post('/master/tunjangan-jabatan/save', 'save')->name('tunjangan-jabatan.save');
+        Route::post('/master/tunjangan-jabatan/delete', 'delete')->name('tunjangan-jabatan.delete');
+
+        Route::get('/master/tunjangan-jabatan/list', 'list')->name('tunjangan-jabatan.list'); // ajax
+        Route::get('/master/tunjangan-jabatan/get-kebutuhan-detail', 'getKebutuhanDetail')->name('tunjangan-jabatan.get-kebutuhan-detail'); // ajax
+
+    });
+    
+    Route::controller(BarangController::class)->group(function() {
+        Route::get('/master/barang', 'index')->name('barang');
+        Route::get('/master/barang/add', 'add')->name('barang.add');
+        Route::get('/master/barang/view/{id}', 'view')->name('barang.view');
+
+        Route::post('/master/barang/save', 'save')->name('barang.save');
+        Route::post('/master/barang/delete', 'delete')->name('barang.delete');
+
+        Route::get('/master/barang/list', 'list')->name('barang.list'); // ajax
     });
 });
