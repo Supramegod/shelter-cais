@@ -21,43 +21,6 @@
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
-              <!-- <div class="row">
-                <h6 class="text-center">Informasi Leads</h6>
-              </div>
-              <div class="row mb-3">
-                <div class="col-sm-6">
-                  <label class="form-label" for="pengusul_kerjasama">Pengusul Kerjasama</label>
-                  <input type="text" name="pengusul_kerjasama" value="{{$quotation->pengusul_kerjasama}}" class="form-control" id="pengusul_kerjasama">
-                </div>
-                <div class="col-sm-6">
-                  <label class="form-label" for="alamat_pengusul_kerjasama">Alamat Pengusul Kerjasama</label>
-                  <input type="text" name="alamat_pengusul_kerjasama" value="{{$quotation->alamat_pengusul_kerjasama}}" class="form-control" id="alamat_pengusul_kerjasama">
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col-sm-6">
-                  <label class="form-label" for="npwp">NPWP</label>
-                  <input type="text" name="npwp" value="{{$quotation->npwp}}" class="form-control" id="npwp">
-                </div>
-                <div class="col-sm-6">
-                  <label class="form-label" for="alamat_npwp">Alamat NPWP</label>
-                  <input type="text" name="alamat_npwp" value="{{$quotation->alamat_npwp}}" class="form-control" id="alamat_npwp">
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col-sm-4">
-                  <label class="form-label" for="pic_invoice">PIC Invoice</label>
-                  <input type="text" name="pic_invoice" value="{{$quotation->pic_invoice}}" class="form-control" id="pic_invoice">
-                </div>
-                <div class="col-sm-4">
-                  <label class="form-label" for="telp_pic_invoice">No. Telp PIC Invoice</label>
-                  <input type="text" name="telp_pic_invoice" value="{{$quotation->telp_pic_invoice}}" class="form-control" id="telp_pic_invoice">
-                </div>
-                <div class="col-sm-4">
-                  <label class="form-label" for="email_pic_invoice">Email PIC Invoice</label>
-                  <input type="text" name="email_pic_invoice" value="{{$quotation->email_pic_invoice}}" class="form-control" id="email_pic_invoice">
-                </div>
-              </div> -->
               <div class="row mb-2">
                 <h6 class="text-center">Jumlah Site</h6>
               </div>
