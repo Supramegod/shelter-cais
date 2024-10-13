@@ -1107,7 +1107,7 @@ class QuotationController extends Controller
             if($dataQuotation->step>$newStep){
                 $dataStep = $dataQuotation->step;
             }
-            if($data->kebutuhan_id==2){
+            if($data->kebutuhan_id==2||$data->kebutuhan_id==1||$data->kebutuhan_id==4){
                 $newStep=11;
             }
             DB::table('sl_quotation')->where('id',$request->id)->update([

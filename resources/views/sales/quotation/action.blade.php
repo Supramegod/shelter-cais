@@ -5,7 +5,9 @@
 
     if(count($quotationKebutuhan)>0){
         if($quotationKebutuhan[0]->kebutuhan_id==1){
-            
+            if($stepSebelumnya==10){
+                $stepSebelumnya = 9;
+            }
         }else if($quotationKebutuhan[0]->kebutuhan_id==2){
             if($stepSebelumnya==10){
                 $stepSebelumnya = 9;
@@ -13,7 +15,9 @@
         }else if($quotationKebutuhan[0]->kebutuhan_id==3){
             
         }else if($quotationKebutuhan[0]->kebutuhan_id==4){
-            
+            if($stepSebelumnya==10){
+                $stepSebelumnya = 9;
+            }
         }
     }
     @endphp

@@ -29,7 +29,7 @@
                 }
             }else{
                 if($quotationKebutuhan[0]->kebutuhan_id==1){
-                    if(in_array($data['stepno'],[])){
+                    if(in_array($data['stepno'],[10])){
                         continue;
                     }
                 }else if($quotationKebutuhan[0]->kebutuhan_id==2){
@@ -41,7 +41,7 @@
                         continue;
                     }
                 }else if($quotationKebutuhan[0]->kebutuhan_id==4){
-                    if(in_array($data['stepno'],[])){
+                    if(in_array($data['stepno'],[10])){
                         continue;
                     }
                 }

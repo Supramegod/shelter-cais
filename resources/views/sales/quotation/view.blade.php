@@ -1129,14 +1129,14 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                 </div>
               </div>
             </div>
-            @if($data->kebutuhan_id != 2)
+            @if($data->kebutuhan_id == 3)
             <div class="tab-pane fade" id="navs-top-chemical" role="tabpanel">
               <div class="row mb-5">
               @if($master->step == 100 && $data->is_aktif == 0)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
                   <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'10','edit'=>1])}}" class="btn btn-primary btn-next w-20">
-                      <span class="align-middle me-sm-1">Edit Chemical</span>
+                      <span class="align-middle me-sm-1">Edit</span>
                   </a>
                 </div>
               @endif
