@@ -15,15 +15,9 @@
             <h5 class="mb-1 mt-3">
               {{$data->nomor}}
               <!-- <span class="badge bg-label-success me-2 ms-2 rounded-pill">Paid</span> -->
-               @if($data->quotation_status !="" && $data->quotation_status !=null )
-               <span class="badge bg-label-warning rounded-pill">{{$data->quotation_status}}</span>
-               @endif
-               @if($data->success_status !="" && $data->success_status !=null )
-               <span class="badge bg-label-success rounded-pill">{{$data->success_status}}</span>
-               @endif
-               @if($data->info_status !="" && $data->info_status !=null )
-               <span class="badge bg-label-success rounded-pill">{{$data->success_status}}</span>
-               @endif
+              <span class="badge bg-label-warning rounded-pill"></span>
+              <span class="badge bg-label-success rounded-pill"></span>
+              <span class="badge bg-label-success rounded-pill"></span>
 
                @if($master->step != 100)
                 <span class="badge bg-label-warning rounded-pill">Data Belum Terisi Lengkap</span>

@@ -684,9 +684,6 @@ class QuotationController extends Controller
                         }
                     }
                 }
-
-                $quotationStatus = "";
-                $successStatus = "";
                 
                 DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
                     'provinsi_id' => $provinsiId,
@@ -697,8 +694,6 @@ class QuotationController extends Controller
                     'nominal_upah' => $customUpah,
                     'management_fee_id' => $manfee,
                     'is_aktif' => 0,
-                    'quotation_status' => $quotationStatus,
-                    'success_status' => $successStatus,
                     'persentase' => $presentase,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -743,8 +738,6 @@ class QuotationController extends Controller
                     }
                 }
 
-                $quotationStatus = "";
-                $successStatus = "";
                 $isAktif = $value->is_aktif;
                 if($isAktif==2){
                     if($programBpjs != "4 BPJS"){
@@ -756,18 +749,11 @@ class QuotationController extends Controller
                     $isAktif = 1;
                 };
 
-                if($isAktif == 1){
-                    $successStatus = "Quotation telah Aktif";
-                }else if($isAktif == 0) {
-                    $quotationStatus = "Memerlukan Approval Manajemen";
-                }
-
                 DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
                     'jenis_perusahaan_id' => $jenisPerusahaanId,
                     'jenis_perusahaan' => $jenisPerusahaan,
                     'resiko' => $resiko,
                     'is_aktif' => $isAktif,
-                    'quotation_status' => $quotationStatus,
                     'success_status' => $successStatus,
                     'program_bpjs' => $programBpjs,
                     'updated_at' => $current_date_time,
@@ -1215,10 +1201,7 @@ class QuotationController extends Controller
                 return "";
             })
             ->editColumn('nama_perusahaan', function ($data) {
-                if($data->id != null){
-                    return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
-                }
-                return "";
+                return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
             })
             ->rawColumns(['aksi','nomor','nama_perusahaan'])
             ->make(true);
@@ -1360,9 +1343,6 @@ class QuotationController extends Controller
             if(in_array(Auth::user()->role_id,[31,32,33,50,51,52])){
                 DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
                     'ot1' => Auth::user()->full_name,
-                    'info_status' => "Quotation Menunggu di approve oleh Direktur",
-                    'quotation_status' => null,
-                    'success_status' => null,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
@@ -1370,9 +1350,6 @@ class QuotationController extends Controller
                 DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
                     'ot2' => Auth::user()->full_name,
                     'is_aktif' => 1,
-                    'success_status' => "Quotation Telah Aktif",
-                    'quotation_status' => null,
-                    'info_status' => null,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
