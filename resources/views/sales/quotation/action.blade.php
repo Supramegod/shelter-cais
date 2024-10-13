@@ -1,21 +1,23 @@
 <div class="row mt-5">
     <div class="col-12 d-flex justify-content-between">
-    @if($request->step>1)
     @php
     $stepSebelumnya = $request->step-1;
 
-    if($quotationKebutuhan[0]->kebutuhan_id==1){
-        
-    }else if($quotationKebutuhan[0]->kebutuhan_id==2){
-        if($stepSebelumnya==10){
-            $stepSebelumnya = 9;
+    if(count($quotationKebutuhan)>0){
+        if($quotationKebutuhan[0]->kebutuhan_id==1){
+            
+        }else if($quotationKebutuhan[0]->kebutuhan_id==2){
+            if($stepSebelumnya==10){
+                $stepSebelumnya = 9;
+            }
+        }else if($quotationKebutuhan[0]->kebutuhan_id==3){
+            
+        }else if($quotationKebutuhan[0]->kebutuhan_id==4){
+            
         }
-    }else if($quotationKebutuhan[0]->kebutuhan_id==3){
-        
-    }else if($quotationKebutuhan[0]->kebutuhan_id==4){
-        
     }
     @endphp
+    @if($request->step>1)
         <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>$stepSebelumnya])}}" class="btn btn-primary btn-back w-20">
             <span class="align-middle d-sm-inline-block d-none me-sm-1">back</span>
             <i class="mdi mdi-arrow-left"></i>

@@ -81,24 +81,28 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah,0,",",".")}}</td>
                         @endforeach
                       </tr>
+                      @foreach($daftarTunjangan as $it => $tunjangan)
                       <tr class="">
-                        <td style="text-align:center">2</td>
-                        <td style="text-align:left" class="">Tunjangan Overtime Flat 72 Jam</td>
+                        <td style="text-align:center">{{2+$it}}</td>
+                        <td style="text-align:left" class="">{{$tunjangan->nama}}</td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->tunjangan_overtime,0,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->{$tunjangan->nama},0,",",".")}}</td>
                         @endforeach
                       </tr>
+                      @endforeach
+                      @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan")
                       <tr class="">
-                        <td style="text-align:center">3</td>
-                        <td style="text-align:left" class="">Tunjangan Hari Raya</td>
+                        <td style="text-align:center">{{2+count($daftarTunjangan)}}</td>
+                        <td style="text-align:left" class="">Tunjangan Hari Raya <b>( {{$quotation->thr}} )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,0,",",".")}}</td>
+                        <td style="text-align:right" class="">@if($quotation->thr=="Diprovisikan"){{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,0,",",".")}}@elseif($quotation->thr=="Ditagihkan") Ditagihkan terpisah @endif</td>
                         @endforeach
                       </tr>
+                      @endif
                       <tr class="">
-                        <td style="text-align:center">4</td>
+                        <td style="text-align:center">{{3+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Kecelakaan Kerja</td>
                         <td style="text-align:center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -134,7 +138,7 @@
                       </tr>
                       @endif
                       <tr class="">
-                        <td style="text-align:center">5</td>
+                        <td style="text-align:center">{{4+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">BPJS Kesehatan </td>
                         <td style="text-align:center">4 %</td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -142,7 +146,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:center">6</td>
+                        <td style="text-align:center">{{5+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Provisi Seragam </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -150,7 +154,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:center">7</td>
+                        <td style="text-align:center">{{6+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Provisi Peralatan </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -158,7 +162,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:center">8</td>
+                        <td style="text-align:center">{{7+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Over Head Cost </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -166,7 +170,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:center">9</td>
+                        <td style="text-align:center">{{8+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Chemical </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -291,13 +295,15 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="text-end">{{"Rp. ".number_format($quotationKebutuhan[0]->nominal_upah,0,",",".")}}</th>
                         @endforeach
                       </tr>
+                      @foreach($daftarTunjangan as $it => $tunjangan)
                       <tr>
-                        <td>Tunjangan Overtime Flat 72 Jam</th>
+                        <td>{{$tunjangan->nama}}</th>
                         <td class="text-center"></th>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_overtime,0,",",".")}}</th>
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->{$tunjangan->nama},0,",",".")}}</th>
                         @endforeach
                       </tr>
+                      @endforeach
                       <tr class="table-success">
                         <td class="fw-bold text-center">Total Base Manpower Cost per Month (THP)</th>
                         <td class="text-center fw-bold"></th>
@@ -312,13 +318,15 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="text-center fw-bold">Unit/Month</th>
                         @endforeach
                       </tr>
+                      @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan")
                       <tr>
                         <td>Provisi Tunjangan Hari Raya (THR)</th>
                         <td class="text-center"></th>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,0,",",".")}}</th>
+                        <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,0,",",".")}} @endif</th>
                         @endforeach
                       </tr>
+                      @endif
                       <tr>
                         <td>Premi BPJS TK J. Kecelakaan Kerja</th>
                         <td class="text-center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</th>

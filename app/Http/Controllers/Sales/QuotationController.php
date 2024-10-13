@@ -163,13 +163,28 @@ class QuotationController extends Controller
             // step 11 cost structure
             $leads = null;
             $data = null;
+            $daftarTunjangan = null;
 
             if($request->step==11){
+                $daftarTunjangan = DB::select("SELECT DISTINCT tunjangan_id,nama FROM `m_kebutuhan_detail_tunjangan` WHERE deleted_at is null and kebutuhan_id =".$quotationKebutuhan[0]->kebutuhan_id);
+
                 foreach ($quotationKebutuhan[0]->kebutuhan_detail as $ikbd => $kbd) {
+                    // $kbd->daftar_tunjangan = [];
+                    $totalTunjangan = 0;
+                    foreach ($daftarTunjangan as $idt => $tunjangan) {
+                        $kbd->{$tunjangan->nama} = 0;
+                        //cari data tunjangan
+                        $dtTunjangan = DB::table('sl_quotation_kebutuhan_detail_tunjangan')->whereNull('deleted_at')->where('quotation_kebutuhan_detail_id',$kbd->id)->where('tunjangan_id',$tunjangan->tunjangan_id)->first();
+                        if($dtTunjangan != null){
+                            $kbd->{$tunjangan->nama} = $dtTunjangan->nominal;
 
-                    $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/12;
-
-                    $kbd->tunjangan_overtime = 400000;
+                            $totalTunjangan += $dtTunjangan->nominal;
+                        }
+                    }
+                    $kbd->tunjangan_hari_raya = 0;
+                    if($quotation->thr=="Diprovisikan"){
+                        $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/12;
+                    }
 
                     // hitung JKK
                     if($quotationKebutuhan[0]->resiko=="Sangat Rendah"){
@@ -235,7 +250,7 @@ class QuotationController extends Controller
 
                     $kbd->personil_chemical = $personilChemical;
 
-                    $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$kbd->tunjangan_overtime+$kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                    $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
@@ -252,7 +267,7 @@ class QuotationController extends Controller
                     $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
                     // COST STRUCTURE
-                    $kbd->total_base_manpower = $quotationKebutuhan[0]->nominal_upah + 400000;
+                    $kbd->total_base_manpower = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan;
                     $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
 
                     $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
@@ -330,7 +345,7 @@ class QuotationController extends Controller
             if(isset($request->edit)){
                 $isEdit = true;
             }
-            return view('sales.quotation.edit-'.$request->step,compact('salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            return view('sales.quotation.edit-'.$request->step,compact('daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1251,6 +1266,7 @@ class QuotationController extends Controller
                             'quotation_id' => $quotationKebutuhan->quotation_id,
                             'quotation_kebutuhan_id' => $quotationKebutuhan->id,
                             'quotation_kebutuhan_detail_id' => $detailIdBaru,
+                            'tunjangan_id' =>$tunjangan->tunjangan_id,
                             'nama_tunjangan' => $tunjangan->nama,
                             'nominal' => $tunjangan->nominal,
                             'created_at' => $current_date_time,
@@ -1289,9 +1305,7 @@ class QuotationController extends Controller
 
     public function listDetailHC (Request $request){
         $data = DB::table('sl_quotation_kebutuhan_detail')
-        ->join('m_kebutuhan_detail','m_kebutuhan_detail.id','sl_quotation_kebutuhan_detail.kebutuhan_detail_id')
         ->where('sl_quotation_kebutuhan_detail.quotation_kebutuhan_id',$request->quotation_kebutuhan_id)
-        ->orderBy('m_kebutuhan_detail.urutan','ASC')
         ->whereNull('sl_quotation_kebutuhan_detail.deleted_at')->get();
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
