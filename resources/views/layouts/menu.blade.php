@@ -108,6 +108,12 @@
                         <div data-i18n="Aplikasi Pendukung">Aplikasi Pendukung</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('barang'))) active @endif">
+                    <a href="{{route('barang')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Barang">Barang</div>
+                    </a>
+                </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
                     <a href="{{route('jenis-barang')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
@@ -142,6 +148,18 @@
                     <a href="{{route('status-leads')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Status Leads">Status Leads</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('tunjangan'))) active @endif">
+                    <a href="{{route('tunjangan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Tunjangan">Tunjangan</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('tunjangan-jabatan'))) active @endif">
+                    <a href="{{route('tunjangan-jabatan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Tunjangan Jabatan">Tunjangan Jabatan</div>
                     </a>
                 </li>
             </ul>

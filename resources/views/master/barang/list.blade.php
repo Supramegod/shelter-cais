@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','Aplikasi Pendukung')
+@section('title','Barang')
 @section('pageStyle')
 <style>
     .dt-buttons {width: 100%;}
@@ -14,10 +14,10 @@
             <div class="card">
                 <div class="card-header d-flex" style="padding-bottom: 0px !important;">
                     <div class="col-md-6 text-left col-12 my-auto">
-                        <h3 class="page-title">Aplikasi Pendukung</h3>
+                        <h3 class="page-title">Barang</h3>
                         <ol class="breadcrumb" style="background-color:white !important;padding:0 !important">
 							<li class="breadcrumb-item"><a href="javascript:void(0);">Master</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Aplikasi Pendukung</li>
+							<li class="breadcrumb-item active" aria-current="page">Barang</li>
 						</ol>
                     </div>
                 </div>
@@ -28,9 +28,12 @@
                                 <tr>
                                     <th class="text-center">ID</th>
                                     <th class="text-center">Nama</th>
-                                    <th class="text-center">Link Icon</th>
+                                    <th class="text-center">Jenis Barang</th>
                                     <th class="text-center">Harga</th>
-                                    <th class="text-center">Barang</th>
+                                    <th class="text-center">Satuan</th>
+                                    <th class="text-center">Masa Pakai</th>
+                                    <th class="text-center">Merk</th>
+                                    <th class="text-center">Jumlah Default</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
                                     <th class="text-center">Diedit Tanggal</th>
@@ -88,7 +91,7 @@
             'processing': 'Loading...'
         },
                 ajax: {
-                    url: "{{ route('aplikasi-pendukung.list') }}",
+                    url: "{{ route('barang.list') }}",
                     data: function (d) {
                         
                     },
@@ -106,8 +109,8 @@
                     name : 'nama',
                     className:'text-center'
                 },{
-                    data : 'link_icon',
-                    name : 'link_icon',
+                    data : 'nama_jenis_barang',
+                    name : 'nama_jenis_barang',
                     className:'text-center'
                 },{
                     data : 'harga',
@@ -116,8 +119,20 @@
                     className:'dt-body-right',
                     render: $.fn.dataTable.render.number('.','.', 0,'')
                 },{
-                    data : 'nama_barang',
-                    name : 'nama_barang',
+                    data : 'satuan',
+                    name : 'satuan',
+                    className:'text-center'
+                },{
+                    data : 'masa_pakai',
+                    name : 'masa_pakai',
+                    className:'text-center'
+                },{
+                    data : 'merk',
+                    name : 'merk',
+                    className:'text-center'
+                },{
+                    data : 'jumlah_default',
+                    name : 'jumlah_default',
                     className:'text-center'
                 },{
                     data : 'created_at',
@@ -140,12 +155,12 @@
                 dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
                 buttons: [
                     {
-                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Aplikasi Pendukung</span>',
+                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Barang</span>',
                     className: 'create-new btn btn-label-primary waves-effect waves-light',
                     action: function (e, dt, node, config)
                         {
                             //This will send the page to the location specified
-                            window.location.href = '{{route("aplikasi-pendukung.add")}}';
+                            window.location.href = '{{route("barang.add")}}';
                         }
                     }
                 ],
