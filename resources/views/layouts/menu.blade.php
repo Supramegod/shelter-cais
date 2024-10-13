@@ -102,10 +102,46 @@
                         <div data-i18n="Sumber Leads">Sumber Leads</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item @if(str_contains(Request::url(), route('aplikasi-pendukung'))) active @endif">
+                    <a href="{{route('aplikasi-pendukung')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Aplikasi Pendukung">Aplikasi Pendukung</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
+                    <a href="{{route('jenis-barang')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Jenis Barang">Jenis Barang</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('jabatan'))) active @endif">
+                    <a href="{{route('jabatan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Jabatan PIC">Jabatan PIC</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('perusahaan'))) active @endif">
+                    <a href="{{route('perusahaan')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Jenis Perusahaan">Jenis Perusahaan</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('management-fee'))) active @endif">
+                    <a href="{{route('management-fee')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Management Fee">Management Fee</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('salary-rule'))) active @endif">
+                    <a href="{{route('salary-rule')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Salary Rule">Salary Rule</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('status-leads'))) active @endif">
+                    <a href="{{route('status-leads')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Status Leads">Status Leads</div>
                     </a>
                 </li>
             </ul>
