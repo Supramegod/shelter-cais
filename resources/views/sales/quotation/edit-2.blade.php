@@ -209,6 +209,7 @@
                 <div class="col-sm-6">
                   <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
                     <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="" @if($quotation->thr=="") selected @endif>- Pilih Data -</option>  
                     <option value="Ada" @if($quotation->thr!="") selected @endif>Ada</option>  
                     <option value="Tidak Ada" @if($quotation->thr=="" && $quotation->thr!=null) selected @endif>Tidak Ada</option>  
                     </select>

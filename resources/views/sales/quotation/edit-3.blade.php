@@ -72,6 +72,7 @@
                               <thead>
                                   <tr>
                                       <th class="text-center">ID</th>
+                                      <th class="text-center">Urutan</th>
                                       <th class="text-center">Kebutuhan</th>
                                       <th class="text-center">Nama Posisi/Jabatan</th>
                                       <th class="text-center">Jumlah Headcount</th>
@@ -123,11 +124,16 @@
           },
       },   
       "order":[
-          [0,'asc']
+          [1,'asc']
       ],
       columns:[{
           data : 'id',
           name : 'id',
+          visible: false,
+          searchable: false
+      },{
+          data : 'urutan',
+          name : 'urutan',
           visible: false,
           searchable: false
       },{

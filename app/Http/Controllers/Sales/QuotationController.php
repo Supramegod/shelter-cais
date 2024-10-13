@@ -754,7 +754,6 @@ class QuotationController extends Controller
                     'jenis_perusahaan' => $jenisPerusahaan,
                     'resiko' => $resiko,
                     'is_aktif' => $isAktif,
-                    'success_status' => $successStatus,
                     'program_bpjs' => $programBpjs,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -775,6 +774,7 @@ class QuotationController extends Controller
             return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
 
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -947,21 +947,25 @@ class QuotationController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
 
             $newStep = 10;
+            $dataStep = 10;
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+
             if($dataQuotation->step>$newStep){
-                $newStep = $dataQuotation->step;
+                $dataStep = $dataQuotation->step;
+            }
+            if($data->kebutuhan_id==2){
+                $newStep=11;
             }
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'step' => $newStep,
+                'step' => $dataStep,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
            
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-
             // $this->perhitunganHPPSecurity($data->id);
             
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
+            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>$newStep]);
 
         } catch (\Exception $e) {
             dd($e);
@@ -1214,6 +1218,7 @@ class QuotationController extends Controller
             $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$request->quotation_kebutuhan_id)->first();
             $kebutuhan = DB::table('m_kebutuhan')->where('id',$quotationKebutuhan->kebutuhan_id)->first();
             $kebutuhanD = DB::table('m_kebutuhan_detail')->where('id',$request->jabatan_detail_id)->first();
+            $quotation = DB::table('sl_quotation')->where('id',$quotationKebutuhan->quotation_id)->first();
 
             // cek apakah data sudah ada
             $checkExist = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$quotationKebutuhan->id)->where('kebutuhan_detail_id',$request->jabatan_detail_id)->whereNull('deleted_at')->get();
@@ -1224,18 +1229,36 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->full_name
                 ]);
                 return "Data Berhasil Ditambahkan";
-            };
+            }else{
+                $detailIdBaru = DB::table('sl_quotation_kebutuhan_detail')->insertGetId([
+                    'quotation_id' => $quotationKebutuhan->quotation_id,
+                    'quotation_kebutuhan_id' => $quotationKebutuhan->id,
+                    'kebutuhan_detail_id' => $request->jabatan_detail_id,
+                    'kebutuhan' => $kebutuhan->nama,
+                    'jabatan_kebutuhan' => $kebutuhanD->nama,
+                    'jumlah_hc' => $request->jumlah_hc,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
 
-            DB::table('sl_quotation_kebutuhan_detail')->insert([
-                'quotation_id' => $quotationKebutuhan->quotation_id,
-                'quotation_kebutuhan_id' => $quotationKebutuhan->id,
-                'kebutuhan_detail_id' => $request->jabatan_detail_id,
-                'kebutuhan' => $kebutuhan->nama,
-                'jabatan_kebutuhan' => $kebutuhanD->nama,
-                'jumlah_hc' => $request->jumlah_hc,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+                //masukkan tunjangan
+                $listTunjangan = DB::table('m_kebutuhan_detail_tunjangan')->whereNull('deleted_at')->where('kebutuhan_detail_id',$request->jabatan_detail_id)->get();
+                //apabila ada THR masukkan THR
+
+                if (count($listTunjangan)>0) {
+                    foreach ($listTunjangan as $key => $tunjangan) {
+                        DB::table('sl_quotation_kebutuhan_detail_tunjangan')->insert([
+                            'quotation_id' => $quotationKebutuhan->quotation_id,
+                            'quotation_kebutuhan_id' => $quotationKebutuhan->id,
+                            'quotation_kebutuhan_detail_id' => $detailIdBaru,
+                            'nama_tunjangan' => $tunjangan->nama,
+                            'nominal' => $tunjangan->nominal,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }
+                }
+            }            
             return "Data Berhasil Ditambahkan";
         } catch (\Exception $e) {
             dd($e);
@@ -1252,6 +1275,12 @@ class QuotationController extends Controller
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
+
+            DB::table('sl_quotation_kebutuhan_detail_tunjangan')->where('quotation_kebutuhan_detail_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -1259,7 +1288,11 @@ class QuotationController extends Controller
     }
 
     public function listDetailHC (Request $request){
-        $data = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->whereNull('deleted_at')->get();
+        $data = DB::table('sl_quotation_kebutuhan_detail')
+        ->join('m_kebutuhan_detail','m_kebutuhan_detail.id','sl_quotation_kebutuhan_detail.kebutuhan_detail_id')
+        ->where('sl_quotation_kebutuhan_detail.quotation_kebutuhan_id',$request->quotation_kebutuhan_id)
+        ->orderBy('m_kebutuhan_detail.urutan','ASC')
+        ->whereNull('sl_quotation_kebutuhan_detail.deleted_at')->get();
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
             return '<div class="justify-content-center d-flex">
