@@ -48,7 +48,15 @@
               @elseif(Auth::user()->role_id==99 && $master->step == 100 && $data->is_aktif==0 && $data->ot2 != null && $data->ot1 != null && $data->ot3 == null && $master->top=="Lebih Dari 7 Hari")
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
               @endif
-            <button id="cetak-quotation" class="btn btn-info" @if($data->is_aktif==0) disabled @endif><i class="mdi mdi-printer"></i>&nbsp; Print</button>
+              <div class="btn-group" role="group">
+              <button id="btncetak" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" @if($data->is_aktif!=1) disabled @endif>
+                Cetak Dokumen
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="btncetak">
+                <li><a class="dropdown-item" href="#">Cetak Checklist</a></li>
+                <li><a class="dropdown-item" href="#">Cetak Quotation</a></li>
+              </ul>
+            </div>
             @endif
             <button id="delete-quotation" class="btn btn-danger" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif><i class="mdi mdi-trash-can"></i>&nbsp;  Delete</button>
           </div>
