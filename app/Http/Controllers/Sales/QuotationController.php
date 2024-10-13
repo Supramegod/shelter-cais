@@ -61,6 +61,71 @@ class QuotationController extends Controller
             abort(500);
         }
     }
+
+    public function cetakChecklist (Request $request,$id){
+        try {
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
+            $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
+            $quotationKebutuhan = 
+            DB::table("sl_quotation_kebutuhan")
+            ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
+            ->whereNull('sl_quotation_kebutuhan.deleted_at')
+            ->where('sl_quotation_kebutuhan.quotation_id',$id)
+            ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
+            ->select('sl_quotation_kebutuhan.quotation_id','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->get();
+            $quotation = DB::table("sl_quotation")->where('id',$quotationKebutuhan[0]->quotation_id)->first();
+
+            foreach ($quotationKebutuhan as $key => $value) {
+                $value->detail = DB::table('m_kebutuhan_detail')->where('kebutuhan_id',$value->kebutuhan_id)->whereNull('deleted_at')->get();
+                $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
+            }
+
+            $quotation->mulai_kontrak = Carbon::parse($quotation->mulai_kontrak)->format('d F Y');
+            $quotation->kontrak_selesai = Carbon::parse($quotation->kontrak_selesai)->format('d F Y');
+            $quotation->tgl_quotation = Carbon::parse($quotation->tgl_quotation)->format('d F Y');
+            $quotation->tgl_penempatan = Carbon::parse($quotation->tgl_penempatan)->format('d F Y');
+
+            $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+            $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
+            $sPersonil = "";
+            foreach ($quotationKebutuhan as $iqk => $qk) {
+                $jPersonil = DB::select("SELECT sum(jumlah_hc) as jumlah_hc FROM sl_quotation_kebutuhan_detail WHERE quotation_kebutuhan_id = $qk->id and deleted_at is null;");
+                if($jPersonil!=null){
+                    if ($jPersonil[0]->jumlah_hc!=null && $jPersonil[0]->jumlah_hc!=0) {
+                        $sPersonil .= $jPersonil[0]->jumlah_hc." Manpower (";
+                        $detailPersonil = DB::table('sl_quotation_kebutuhan_detail')
+                        ->join('m_kebutuhan_detail','m_kebutuhan_detail.id','sl_quotation_kebutuhan_detail.kebutuhan_detail_id')
+                        ->whereNull('sl_quotation_kebutuhan_detail.deleted_at')->where('sl_quotation_kebutuhan_detail.quotation_kebutuhan_id',$qk->id)
+                        ->orderBy('m_kebutuhan_detail.urutan','ASC')
+                        ->get();
+                        foreach ($detailPersonil as $idp => $vdp) {
+                            if($idp !=0){
+                                $sPersonil .= ", ";
+                            }
+                            $sPersonil .= $vdp->jumlah_hc." ".$vdp->jabatan_kebutuhan;
+                        }
+
+                        $sPersonil .= " )";
+                    }else{
+                        $sPersonil = "-";
+                    }
+                }else{
+                    $sPersonil = "-";
+                }
+
+                $qk->jumlah_personel = $sPersonil;
+
+            }
+            return view('sales.quotation.cetakan.checklist',compact('salaryRuleQ','salaryRule','leads','quotation','quotationKebutuhan','now'));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function step(Request $request,$id){
         try {
             $quotation = DB::table("sl_quotation")->where('id',$id)->first();

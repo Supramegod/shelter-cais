@@ -53,7 +53,7 @@
                 Cetak Dokumen
               </button>
               <ul class="dropdown-menu" aria-labelledby="btncetak">
-                <li><a class="dropdown-item" href="#">Cetak Checklist</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Checklist</a></li>
                 <li><a class="dropdown-item" href="#">Cetak Quotation</a></li>
               </ul>
             </div>
