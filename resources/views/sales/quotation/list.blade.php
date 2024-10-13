@@ -177,9 +177,8 @@
                     if(data.step!=100){
                         $('td', row).css('background-color', '#f39c1240');
                         // $('td', row).css('color', '#fff');
-                    }
-                    if(data.is_aktif==0){
-                        $('td', row).css('background-color', '##27ae6040');
+                    }else if(data.is_aktif==0){
+                        $('td', row).css('background-color', '#27ae6040');
                         // $('td', row).css('color', '#fff');
                     }
                     
