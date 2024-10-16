@@ -143,9 +143,48 @@
                           <div class="col-sm-6 ada_thr">
                             <label class="form-label" for="thr">Provisi / Ditagihkan</label>
                               <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                              <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
-                              <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                                <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
+                                <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
                               </select>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-sm-6">
+                            <label class="form-label" for="ada_kompensasi">Kompensasi</label>
+                              <select id="ada_kompensasi" name="ada_kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
+                                <option value="" @if($quotation->kompensasi=="" || $quotation->kompensasi==null) selected @endif>- Pilih Data -</option>  
+                                <option value="Ada" @if($quotation->kompensasi!=null && $quotation->kompensasi!="" && $quotation->kompensasi!="Tidak Ada") selected @endif>Ada</option>  
+                                <option value="Tidak Ada" @if($quotation->kompensasi=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                              </select>
+                          </div>
+                          <div class="col-sm-6 ada_kompensasi">
+                            <label class="form-label" for="kompensasi">Provisi / Ditagihkan</label>
+                              <select id="kompensasi" name="kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
+                                <option value="Diprovisikan" @if($quotation->kompensasi=="Diprovisikan") selected @endif>Diprovisikan</option>  
+                                <option value="Ditagihkan" @if($quotation->kompensasi=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                              </select>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-sm-4">
+                            <label class="form-label" for="ada_lembur">Lembur</label>
+                              <select id="ada_lembur" name="ada_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
+                                <option value="" @if($quotation->lembur=="" || $quotation->lembur==null) selected @endif>- Pilih Data -</option>  
+                                <option value="Ada" @if($quotation->lembur!=null && $quotation->lembur!="" && $quotation->lembur!="Tidak Ada") selected @endif>Ada</option>  
+                                <option value="Tidak Ada" @if($quotation->lembur=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                              </select>
+                          </div>
+                          <div class="col-sm-4 ada_lembur">
+                            <label class="form-label" for="lembur">Flat / Tidak Flat</label>
+                              <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
+                                <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>  
+                                <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>  
+                                <option value="Tidak Flat" @if($quotation->lembur=="Tidak Flat") selected @endif>Tidak Flat</option>  
+                              </select>
+                          </div>
+                          <div class="col-sm-4 d-nominal-lembur">
+                            <label class="form-label" for="nominal_lembur">Nominal Lembur</label>
+                            <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_lembur}}" name="nominal_lembur" id="nominal_lembur">
                           </div>
                         </div>
                       </div>
@@ -228,7 +267,7 @@
   @if($value->upah=="Custom")
     $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
 
-    var $this = $('.mask-nominal');
+    var $this = $('#custom-upah-{{$value->id}}');
     // Get the value.
     var input = $this.val();
     var input = input.replace(/[\D\s\._\-]+/g, "");
@@ -267,7 +306,41 @@
   if(obj['persentase_{{$value->id}}'] == null || obj['persentase_{{$value->id}}'] == ""){
     msg += "<b>Persentase </b> belum diisi </br>";
   }
-  
+  if(obj.ada_thr==null || obj.ada_thr==""){
+    msg += "<b>THR</b> belum dipilih </br>";
+  }else{
+    if(obj.ada_thr=="Ada"){
+      if(obj.thr==null || obj.thr==""){
+        msg += "<b>THR</b> belum dipilih </br>";
+      }
+    }
+  }
+  if(obj.ada_kompensasi==null || obj.ada_kompensasi==""){
+    msg += "<b>Kompensasi</b> belum dipilih </br>";
+  }else{
+    if(obj.ada_kompensasi=="Ada"){
+      if(obj.kompensasi==null || obj.kompensasi==""){
+        msg += "<b>Kompensasi</b> belum dipilih </br>";
+      }
+    }
+  }
+
+  if(obj.ada_lembur==null || obj.ada_lembur==""){
+    msg += "<b>Lembur</b> belum dipilih </br>";
+  }else{
+    if(obj.ada_lembur=="Ada"){
+      if(obj.lembur==null || obj.lembur==""){
+        msg += "<b>Tipe Lembur</b> belum dipilih </br>";
+      }else{
+        if(obj.lembur =="Flat"){
+          if(obj.nominal_lembur==null || obj.nominal_lembur==""){
+            msg += "<b>Nominal Lembur</b> belum diisi </br>";
+          }
+        }
+      }
+    }
+  }
+
   
   if(msg == ""){
     form.submit();
@@ -342,5 +415,57 @@ function showThr(first) {
 $('#ada_thr').on('change', function() {
   showThr(2);
 });
+
+showKompensasi(1);
+function showKompensasi(first) {
+  let selected = $("#ada_kompensasi option:selected").val();
+  
+  if (selected!="Ada") {
+    $('.ada_kompensasi').addClass('d-none');
+  }else{
+    $('.ada_kompensasi').removeClass('d-none');
+    if(first!=1){
+      $("#kompensasi").val("").change();
+    }
+  }
+}
+
+$('#ada_kompensasi').on('change', function() {
+  showKompensasi(2);
+});
+
+showLembur(1);
+function showLembur(first) {
+  let selected = $("#ada_lembur option:selected").val();
+  
+  if (selected!="Ada") {
+    $('.ada_lembur').addClass('d-none');
+  }else{
+    $('.ada_lembur').removeClass('d-none');
+    if(first!=1){
+      $("#lembur").val("").change();
+    }
+  }
+}
+
+$('#ada_lembur').on('change', function() {
+  showLembur(2);
+});
+
+lemburFlat(1);
+function lemburFlat(first) {
+  let selected = $("#lembur option:selected").val();
+    
+  if (selected!="Flat") {
+    $('.d-nominal-lembur').addClass('d-none');
+  }else{
+    $('.d-nominal-lembur').removeClass('d-none');
+  }
+}
+
+$('#lembur').on('change', function() {
+  lemburFlat(2);
+});
+
 </script>
 @endsection

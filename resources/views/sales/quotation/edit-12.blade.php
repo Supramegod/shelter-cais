@@ -261,13 +261,9 @@
                           <td colspan="3">detil terlampir</td>
                         </tr>
                         <tr>
-                          <td>Kompensasi <span class="text-danger fw-bold">*</span></td>
+                          <td>Kompensasi</td>
                           <td colspan="3">
-                            <select id="kompensasi" name="kompensasi" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->kompensasi=='') selected @endif>- Pilih Data -</option>  
-                              <option value="Ada" @if($quotation->kompensasi=='Ada') selected @endif>Ada</option>
-                              <option value="Tidak Ada" @if($quotation->kompensasi=='Tidak Ada') selected @endif>Tidak Ada</option>
-                            </select>
+                            {{$quotation->kompensasi}}
                           </td>
                         </tr>
                         <tr>
@@ -348,14 +344,8 @@ Absensi dari System/Aplikasi.@endif</textarea>
                           </td>
                         </tr>
                         <tr>
-                          <td>Lembur <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3">
-                            <select id="lembur" name="lembur" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->lembur=='') selected @endif>- Pilih Data -</option>  
-                              <option value="Ada" @if($quotation->lembur=='Ada') selected @endif>Ada</option>
-                              <option value="Tidak Ada" @if($quotation->lembur=='Tidak Ada') selected @endif>Tidak Ada</option>
-                            </select>
-                          </td>
+                          <td>Lembur</td>
+                          <td colspan="3">{{$quotation->lembur}}</td>
                         </tr>
                         <tr>
                           <td>Alamat Penagihan Invoice <span class="text-danger fw-bold">*</span></td>
@@ -449,10 +439,6 @@ Absensi dari System/Aplikasi.@endif</textarea>
             msg += "<b>Durasi Training</b> belum dipilih </br>";
           }
         }
-      }
-
-      if(obj.kompensasi==null || obj.kompensasi==""){
-        msg += "<b>Kompensasi</b> belum dipilih </br>";
       }
       if(obj.joker_reliever==null || obj.joker_reliever==""){
         msg += "<b>Joker / Reliever</b> belum dipilih </br>";

@@ -972,9 +972,19 @@ class QuotationController extends Controller
                 $newStep = $dataQuotation->step;
             }
 
+
+            if($request->lembur!="Flat"){
+                $request->nominal_lembur = null;
+            }else{
+                $request->nominal_lembur = str_replace(".","",$request->nominal_lembur);
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
                 'thr' => $request->thr,
+                'kompensasi' => $request->kompensasi,
+                'lembur' => $request->lembur,
+                'nominal_lembur' => $request->nominal_lembur,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
