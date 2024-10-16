@@ -185,6 +185,16 @@ class QuotationController extends Controller
                                     ->whereIn('jenis_barang_id',$arrKaporlap)
                                     ->orderBy("nama","asc")
                                     ->get();
+
+                foreach ($listKaporlap as $key => $kaporlap) {
+                    foreach ($quotationKebutuhan[0]->kebutuhan_detail as $kKd => $vKd) {
+                        $kaporlap->{'jumlah_'.$vKd->id} = 0;
+                        $kebkap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('barang_id',$kaporlap->id)->where('quotation_kebutuhan_detail_id',$vKd->id)->first();
+                        if($kebkap !=null){
+                            $kaporlap->{'jumlah_'.$vKd->id} = $kebkap->jumlah;
+                        }
+                    }
+                }
             }
 
             //step 8 ohc
@@ -1184,6 +1194,44 @@ class QuotationController extends Controller
     public function saveEdit7 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
+            $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->first();
+            $kebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->first();
+            $detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$kebutuhan->id)->whereNull('deleted_at')->get();
+
+            $listKaporlap = DB::table('m_barang')
+                                ->whereNull('deleted_at')
+                                ->orderBy("nama","asc")
+                                ->get();
+            
+            //hapus dulu data existing 
+            DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$kebutuhan->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+
+            foreach ($listKaporlap as $key => $value) {
+                foreach ($detail as $kd => $vd) {
+                    //cek apakah 0 jika 0 skip
+                    if($request->{'jumlah_'.$value->id.'_'.$vd->id} == "0" ||$request->{'jumlah_'.$value->id.'_'.$vd->id} == null){
+                        continue;   
+                    }else{
+                        //cari harga
+                        $barang = DB::table('m_barang')->where('id',$value->id)->first();
+                        DB::table('sl_quotation_kebutuhan_kaporlap')->insert([
+                            'quotation_kebutuhan_detail_id' => $vd->id,
+                            'quotation_kebutuhan_id' => $kebutuhan->id,
+                            'quotation_id' => $quotation->id,
+                            'barang_id' => $barang->id,
+                            'jumlah' => $request->{'jumlah_'.$value->id.'_'.$vd->id},
+                            'harga' => $barang->harga,
+                            'nama' => $barang->nama,
+                            'jenis_barang' => $barang->jenis_barang,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }
+                }
+            }
 
             $newStep = 8;
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
