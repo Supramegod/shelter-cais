@@ -129,11 +129,31 @@
                         </tr>
                         <tr>
                           <td>Kunjungan Operasional <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3"><input type="text" placeholder="" name="kunjungan_operasional" value="{{$quotation->kunjungan_operasional}}" id="kunjungan_operasional" class="form-control w-100"></td>
+                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_operasional" value="@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif" id="jumlah_kunjungan_operasional" class="form-control w-100"></td>
+                          <td>
+                            <select id="bulan_tahun_kunjungan_operasional" name="bulan_tahun_kunjungan_operasional" class="form-select w-100" data-allow-clear="true" tabindex="-1">
+                              <option value="" @if($quotation->kunjungan_operasional=='') selected @endif>- Pilih Data -</option>  
+                              <option value="Bulan" @if($quotation->kunjungan_operasional!=null)@if(explode(' ',$quotation->kunjungan_operasional)[1]=='Bulan') selected @endif @endif>Bulan</option>
+                              <option value="Tahun" @if($quotation->kunjungan_operasional!=null)@if(explode(' ',$quotation->kunjungan_operasional)[1]=='Tahun') selected @endif @endif>Tahun</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input type="text" placeholder="keterangan" name="keterangan_kunjungan_operasional" value="{{$quotation->keterangan_kunjungan_operasional}}" id="keterangan_kunjungan_operasional" class="form-control w-100">
+                          </td>
                         </tr>
                         <tr>
                           <td>Kunjungan Tim CRM <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3"><input type="text" placeholder="" name="kunjungan_tim_crm" value="{{$quotation->kunjungan_tim_crm}}" id="kunjungan_tim_crm" class="form-control w-100"></td>
+                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_tim_crm" value="@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif" id="jumlah_kunjungan_tim_crm" class="form-control w-100"></td>
+                          <td>
+                            <select id="bulan_tahun_kunjungan_tim_crm" name="bulan_tahun_kunjungan_tim_crm" class="form-select w-100" data-allow-clear="true" tabindex="-1">
+                              <option value="" @if($quotation->kunjungan_tim_crm=='') selected @endif>- Pilih Data -</option>  
+                              <option value="Bulan" @if($quotation->kunjungan_tim_crm!=null)@if(explode(' ',$quotation->kunjungan_tim_crm)[1]=='Bulan') selected @endif @endif>Bulan</option>
+                              <option value="Tahun" @if($quotation->kunjungan_tim_crm!=null)@if(explode(' ',$quotation->kunjungan_tim_crm)[1]=='Tahun') selected @endif @endif>Tahun</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input type="text" placeholder="keterangan" name="keterangan_kunjungan_tim_crm" value="{{$quotation->keterangan_kunjungan_tim_crm}}" id="keterangan_kunjungan_tim_crm" class="form-control w-100">
+                          </td>
                         </tr>
                         <tr>
                           <td>Training <span class="text-danger fw-bold">*</span></td>
@@ -152,6 +172,14 @@
                               <option value="1 Tahun 3 Kali" @if($quotation->training=='1 Tahun 3 Kali') selected @endif>1 Tahun 3 Kali</option>
                             </select>
                           </td>
+                        </tr>
+                        <tr id="list-training">
+                          <td>
+                            <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#basicModal">
+                              List Training
+                            </button>
+                          </td>
+                          <td colspan="3">@foreach($listTrainingQ as $training) {{$training->nama}} @if(!$loop->last), @endif @endforeach</td>
                         </tr>
                         <tr>
                           <td>Tunjangan Hari Raya (THR)</td>
@@ -387,12 +415,99 @@ Absensi dari System/Aplikasi.@endif</textarea>
   <hr class="container-m-nx mb-5" />
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel1">List Training</h4>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="quotation_id" value="{{$quotation->id}}" >
+        <table class="table table-stripped table-hover">
+          <thead>
+            <tr>
+              <td>No.</td>
+              <td>Jenis</td>
+              <td>Nama Training</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($listTraining as $tr)
+            <tr>
+              <td>{{$tr->id}}</td>
+              <td>{{$tr->jenis}}</td>
+              <td>{{$tr->nama}}</td>
+              <td><input class="form-check-input training-pilihan" type="checkbox" value="{{$tr->id}}" name="trainingList[]" @foreach($listTrainingQ as $trq) @if($trq->training_id==$tr->id) checked @endif @endforeach></td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" id="btn-simpan-training" class="btn btn-primary">Simpan Training</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!--/ Content -->
 @endsection
-
 @section('pageScript')
 <script>
   $(document).ready(function(){
+    $('#btn-simpan-training').on('click',function(){
+      var checkedValues = [];
+      $('.training-pilihan:checked').each(function() {
+          checkedValues.push($(this).val());
+      });
+
+      if(checkedValues.length==0){
+        Swal.fire({
+              title: "Pemberitahuan",
+              html: "Belum ada training yang dipilih",
+              icon: "warning",
+            });
+        return null;
+      };
+
+      let formData = {
+        "training_id":checkedValues.join(", "),
+        "quotation_id":$('#quotation_id').val(),
+        "_token": "{{ csrf_token() }}"
+      };
+
+      $.ajax({
+        type: "POST",
+        url: "{{route('quotation.add-quotation-training')}}",
+        data:formData,
+        success: function(response){
+          if(response=="Data Berhasil Ditambahkan"){
+            location.reload();
+          }else{
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: response,
+              icon: "warning",
+            });
+          }
+        },
+        error:function(error){
+          console.log(error);
+        }
+      });
+    });
+
+
     $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {               
         e.preventDefault();
@@ -425,12 +540,19 @@ Absensi dari System/Aplikasi.@endif</textarea>
       if(obj.materai==null || obj.materai==""){
         msg += "<b>Materai</b> belum dipilih </br>";
       }
-      if(obj.kunjungan_operasional==null || obj.kunjungan_operasional==""){
-        msg += "<b>Kunjungan Operasional</b> belum diisi </br>";
+      if(obj.jumlah_kunjungan_operasional==null || obj.jumlah_kunjungan_operasional==""){
+        msg += "<b>Jumlah Kunjungan Operasional</b> belum diisi </br>";
       }
-      if(obj.kunjungan_tim_crm==null || obj.kunjungan_tim_crm==""){
-        msg += "<b>Kunjungan Tim CRM</b> belum diisi </br>";
+      if(obj.bulan_tahun_kunjungan_operasional==null || obj.bulan_tahun_kunjungan_operasional==""){
+        msg += "<b>Bulan / Tahun Kunjungan Operasional</b> belum diisi </br>";
       }
+      if(obj.jumlah_kunjungan_tim_crm==null || obj.jumlah_kunjungan_tim_crm==""){
+        msg += "<b>Jumlah Kunjungan Tim CRM</b> belum diisi </br>";
+      }
+      if(obj.bulan_tahun_kunjungan_tim_crm==null || obj.bulan_tahun_kunjungan_tim_crm==""){
+        msg += "<b>Bulan / Tahun Kunjungan Tim CRM</b> belum diisi </br>";
+      }
+
       if(obj.ada_training==null || obj.ada_training==""){
         msg += "<b>Training</b> belum dipilih </br>";
       }else{
@@ -445,9 +567,6 @@ Absensi dari System/Aplikasi.@endif</textarea>
       }
       if(obj.syarat_invoice==null || obj.syarat_invoice==""){
         msg += "<b>Syarat Invoice</b> belum diisi </br>";
-      }
-      if(obj.lembur==null || obj.lembur==""){
-        msg += "<b>Lembur</b> belum dipilih </br>";
       }
       if(obj.alamat_penagihan_invoice==null || obj.alamat_penagihan_invoice==""){
         msg += "<b>Alamat Penagihan Invoice</b> belum diisi </br>";
@@ -499,8 +618,11 @@ Absensi dari System/Aplikasi.@endif</textarea>
     let selected = $("#ada_training option:selected").val();
       if (selected!="Ada") {
         $('#training').addClass('d-none');
+        $('#list-training').addClass('d-none');
+        
       }else{
         $('#training').removeClass('d-none');
+        $('#list-training').removeClass('d-none');
         if(first!=1){
           $("#training").val("").change();
         }

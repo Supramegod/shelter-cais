@@ -230,6 +230,8 @@ class QuotationController extends Controller
             $leads = null;
             $data = null;
             $daftarTunjangan = null;
+            $listTraining = [];
+            $listTrainingQ = [];
 
             if($request->step==11){
                 $daftarTunjangan = DB::select("SELECT DISTINCT tunjangan_id,nama FROM `m_kebutuhan_detail_tunjangan` WHERE deleted_at is null and kebutuhan_id =".$quotationKebutuhan[0]->kebutuhan_id);
@@ -381,6 +383,8 @@ class QuotationController extends Controller
             $salaryRuleQ = null;
 
             if($request->step==12){
+                $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$id)->whereNull('deleted_at')->get();
+                $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
                 $quotation->mulai_kontrak = Carbon::parse($quotation->mulai_kontrak)->format('d F Y');
                 $quotation->kontrak_selesai = Carbon::parse($quotation->kontrak_selesai)->format('d F Y');
                 $quotation->tgl_quotation = Carbon::parse($quotation->tgl_quotation)->format('d F Y');
@@ -425,7 +429,7 @@ class QuotationController extends Controller
             if(isset($request->edit)){
                 $isEdit = true;
             }
-            return view('sales.quotation.edit-'.$request->step,compact('daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            return view('sales.quotation.edit-'.$request->step,compact('listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1337,8 +1341,10 @@ class QuotationController extends Controller
                 'telp_pic_invoice' => $request->telp_pic_invoice ,
                 'email_pic_invoice' => $request->email_pic_invoice ,
                 'materai' => $request->materai ,
-                'kunjungan_operasional' => $request->kunjungan_operasional ,
-                'kunjungan_tim_crm' => $request->kunjungan_tim_crm ,
+                'kunjungan_operasional' => $request->jumlah_kunjungan_operasional." ".$request->bulan_tahun_kunjungan_operasional ,
+                'kunjungan_tim_crm' => $request->jumlah_kunjungan_tim_crm." ".$request->bulan_tahun_kunjungan_tim_crm ,
+                'keterangan_kunjungan_operasional' => $request->keterangan_kunjungan_operasional ,
+                'keterangan_kunjungan_tim_crm' => $request->keterangan_kunjungan_tim_crm ,
                 'training' => $request->training ,
                 'kompensasi' => $request->kompensasi ,
                 'joker_reliever' => $request->joker_reliever ,
@@ -1545,6 +1551,36 @@ class QuotationController extends Controller
                     }
                 }
             }            
+            return "Data Berhasil Ditambahkan";
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+            return "Data Gagal Ditambahkan";
+        }
+    }
+
+    public function addQuotationTraining(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation_training')->whereNull('deleted_at')->where('quotation_id',$request->quotation_id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            
+            $arrTrainingId = explode(",",$request->training_id);
+            foreach ($arrTrainingId as $key => $value) {
+                $dTraining = DB::table('m_training')->where('id',$value)->first();
+                DB::table('sl_quotation_training')->insert([
+                    'training_id' => $value,
+                    'quotation_id' =>$request->quotation_id,
+                    'nama' => $dTraining->nama,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
             return "Data Berhasil Ditambahkan";
         } catch (\Exception $e) {
             dd($e);
