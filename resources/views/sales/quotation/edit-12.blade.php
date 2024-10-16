@@ -111,26 +111,6 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>Hari Kerja dan Jam Kerja <span class="text-danger fw-bold">*</span></td>
-                          <td>
-                            <select id="shift_kerja" name="shift_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->shift_kerja=='') selected @endif>- Pilih Data -</option>  
-                              <option value="Non Shift" @if($quotation->shift_kerja=='Non Shift') selected @endif>Non Shift</option>  
-                              <option value="2 Shift" @if($quotation->shift_kerja=='2 Shift') selected @endif>2 Shift</option>  
-                              <option value="3 Shift" @if($quotation->shift_kerja=='3 Shift') selected @endif>3 Shift</option>  
-                            </select>
-                          </td>
-                          <td>
-                            <select id="jam_kerja" name="jam_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->jam_kerja=='') selected @endif>- Pilih Data -</option>  
-                              <option value="7 Jam Kerja" @if($quotation->jam_kerja=='7 Jam Kerja') selected @endif>7 Jam Kerja</option>  
-                              <option value="8 Jam Kerja" @if($quotation->jam_kerja=='8 Jam Kerja') selected @endif>8 Jam Kerja</option>  
-                              <option value="12 Jam Kerja" @if($quotation->jam_kerja=='12 Jam Kerja') selected @endif>12 Jam Kerja</option>  
-                            </select>
-                          </td>
-                          <td class="d-flex" style="align-items:center"><input type="time" name="mulai_kerja" value="{{$quotation->mulai_kerja}}" class="form-control w-50"> <span style="padding-left:5px;padding-right:5px">s/d</span> <input type="time" name="selesai_kerja" value="{{$quotation->selesai_kerja}}" class="form-control w-50"></td>
-                        </tr>
-                        <tr>
                           <td>System Kerja <span class="text-danger fw-bold">*</span></td>
                           <td colspan="3">
                             <select id="sistem_kerja" name="sistem_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
@@ -452,24 +432,6 @@ Absensi dari System/Aplikasi.@endif</textarea>
       }
       if(obj.materai==null || obj.materai==""){
         msg += "<b>Materai</b> belum dipilih </br>";
-      }
-      if(obj.shift_kerja==null || obj.shift_kerja==""){
-        msg += "<b>Shift Kerja</b> belum dipilih </br>";
-      }
-      if(obj.jam_kerja==null || obj.jam_kerja==""){
-        msg += "<b>Jam Kerja</b> belum dipilih </br>";
-      }
-      if(obj.mulai_kerja==null || obj.mulai_kerja==""){
-        msg += "<b>Mulai Kerja</b> belum diisi </br>";
-      }
-      if(obj.selesai_kerja==null || obj.selesai_kerja==""){
-        msg += "<b>Selesai Kerja</b> belum diisi </br>";
-      }
-      if(obj.sistem_kerja==null || obj.sistem_kerja==""){
-        msg += "<b>Sistem Kerja</b> belum dipilih </br>";
-      }
-      if(obj.cuti==null || obj.cuti==""){
-        msg += "<b>Cuti</b> belum dipilih </br>";
       }
       if(obj.kunjungan_operasional==null || obj.kunjungan_operasional==""){
         msg += "<b>Kunjungan Operasional</b> belum diisi </br>";
