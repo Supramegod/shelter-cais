@@ -132,6 +132,17 @@
                           </div>
                         </div>
                         <div class="row mb-3">
+                          <div class="col-sm-12">
+                            <label class="form-label" for="ppn_pph_dipotong">Hitungan PPn & PPh</label>
+                            <div class="input-group">
+                              <select id="ppn_pph_dipotong" name="ppn_pph_dipotong" class="form-select" data-allow-clear="true" tabindex="-1">
+                              <option value="Management Fee" @if($quotation->ppn_pph_dipotong==null || $quotation->ppn_pph_dipotong=="" ||$quotation->ppn_pph_dipotong=="Management Fee") selected @endif>Management Fee</option>  
+                              <option value="Total Invoice" @if($quotation->ppn_pph_dipotong=="Total Invoice") selected @endif>Total Invoice</option>  
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
                           <div class="col-sm-6">
                             <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
                               <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">

@@ -984,6 +984,7 @@ class QuotationController extends Controller
                 'thr' => $request->thr,
                 'kompensasi' => $request->kompensasi,
                 'lembur' => $request->lembur,
+                'ppn_pph_dipotong' => $request->ppn_pph_dipotong,
                 'tunjangan_holiday' => $request->tunjangan_holiday,
                 'nominal_lembur' => $request->nominal_lembur,
                 'updated_at' => $current_date_time,
