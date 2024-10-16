@@ -138,7 +138,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->select('sl_quotation_kebutuhan.penjamin','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -957,7 +957,17 @@ class QuotationController extends Controller
             foreach ($quotationKebutuhan as $key => $value) {
                 $jenisPerusahaanId = $request['jenis-perusahaan-'.$value->id];
                 $resiko = $request['resiko-'.$value->id];
+                $penjamin = $request['penjamin-'.$value->id];
                 $programBpjs = $request['program-bpjs-'.$value->id];
+                $nominalTakaful = $request['nominal-takaful-'.$value->id];
+
+                // jika penjamin takaful maka program bpjs == null
+                if($penjamin=="Takaful"){
+                    $programBpjs = null; 
+                    $nominalTakaful = str_replace(".","",$nominalTakaful);
+                }else{
+                    $nominalTakaful =null;
+                }
 
                 $jenisPerusahaan = null;
                 if($jenisPerusahaanId != null){
@@ -983,7 +993,9 @@ class QuotationController extends Controller
                     'jenis_perusahaan' => $jenisPerusahaan,
                     'resiko' => $resiko,
                     'is_aktif' => $isAktif,
+                    'penjamin' => $penjamin,
                     'program_bpjs' => $programBpjs,
+                    'nominal_takaful' => $nominalTakaful,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);

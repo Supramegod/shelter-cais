@@ -59,7 +59,17 @@
                         </div>
                       </div>
                       <div class="row mb-3">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
+                          <label class="form-label" for="penjamin-{{$value->id}}">Penjamin</label>
+                          <div class="input-group">
+                            <select id="penjamin-{{$value->id}}" name="penjamin-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
+                              <option value="">- Pilih data -</option>
+                              <option value="BPJS" @if($value->penjamin == 'BPJS') selected @elseif($value->penjamin ==null) selected @endif>BPJS</option>
+                              <option value="Takaful" @if($value->penjamin == 'Takaful') selected @endif>Takaful</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div id="d-bpjs-{{$value->id}}" class="col-sm-6 d-none">
                           <label class="form-label" for="program-bpjs-{{$value->id}}">Program BPJS</label>
                           <div class="input-group">
                             <select id="program-bpjs-{{$value->id}}" name="program-bpjs-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -70,6 +80,12 @@
                             </select>
                           </div>
                           <span class="text-warning">*Program BPJS selain 4 program membutuhkan persetujuan</span>
+                        </div>
+                        <div id="d-nominal-takaful-{{$value->id}}" class="col-sm-6 d-none">
+                          <label class="form-label" for="nominal-takaful-{{$value->id}}">Nominal takaful</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control mask-nominal text-end" id="nominal-takaful-{{$value->id}}" name="nominal-takaful-{{$value->id}}">
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -93,17 +109,67 @@
 @section('pageScript')
 <script>
   $(document).ready(function(){
+
+    let extra = 0;
+    $('.mask-nominal').on("keyup", function(event) {    
+      // When user select text in the document, also abort.
+      var selection = window.getSelection().toString();
+      if (selection !== '') {
+        return;
+      }
+
+      // When the arrow keys are pressed, abort.
+      if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+        if (event.keyCode == 38) {
+          extra = 1000;
+        } else if (event.keyCode == 40) {
+          extra = -1000;
+        } else {
+          return;
+        }
+
+      }
+
+      var $this = $(this);
+      // Get the value.
+      var input = $this.val();
+      var input = input.replace(/[\D\s\._\-]+/g, "");
+      input = input ? parseInt(input, 10) : 0;
+      input += extra;
+      extra = 0;
+      $this.val(function() {
+        return (input === 0) ? "" : input.toLocaleString("id-ID");
+      });
+    });
+    
     @foreach($quotationKebutuhan as $value)
     
     $(document).ready(function() {
       $('#jenis-perusahaan-{{$value->id}}').select2();
     });
-    
 
     $('#jenis-perusahaan-{{$value->id}}').on('change', function() {
       let id = '#resiko-{{$value->id}}';
       
       $(id).val($(this).find(':selected').data('resiko'));
+    });
+
+    showBpjs{{$value->id}}(1);
+
+    function showBpjs{{$value->id}}(first) {
+      let selected = $("#penjamin-{{$value->id}} option:selected").val();
+      console.log(selected);
+      
+      if (selected=="BPJS") {
+        $('#d-bpjs-{{$value->id}}').removeClass('d-none');
+        $('#d-nominal-takaful-{{$value->id}}').addClass('d-none');
+      }else{
+        $('#d-bpjs-{{$value->id}}').addClass('d-none');
+        $('#d-nominal-takaful-{{$value->id}}').removeClass('d-none');
+      }
+    }
+    $('#penjamin-{{$value->id}}').on('change', function() {
+      showBpjs{{$value->id}}(2);
     });
 
 
@@ -122,9 +188,18 @@
       if(obj['jenis-perusahaan-{{$value->id}}'] == null || obj['jenis-perusahaan-{{$value->id}}'] == ""){
         msg += "<b>Jenis Perusahaan</b> belum dipilih </br>";
       }
-      if(obj['program-bpjs-{{$value->id}}'] == null || obj['program-bpjs-{{$value->id}}'] == ""){
-        msg += "<b>Program BPJS </b> belum dipilih </br>";
+      if(obj['penjamin-{{$value->id}}'] == null || obj['penjamin-{{$value->id}}'] == ""){
+        msg += "<b>Penjamin </b> belum dipilih </br>";
+      }else if(obj['penjamin-{{$value->id}}'] == "BPJS" ){
+        if(obj['program-bpjs-{{$value->id}}'] == null || obj['program-bpjs-{{$value->id}}'] == ""){
+          msg += "<b>Program BPJS </b> belum dipilih </br>";
+        }
+      }else if(obj['penjamin-{{$value->id}}'] == "Takaful" ){
+        if(obj['nominal-takaful-{{$value->id}}'] == null || obj['nominal-takaful-{{$value->id}}'] == ""){
+          msg += "<b>Nominal Takaful </b> belum dipilih </br>";
+        }
       }
+      
 
       if(obj['resiko-{{$value->id}}'] == null || obj['resiko-{{$value->id}}'] == ""){
         msg += "<b>Resiko </b> belum dipilih </br>";
