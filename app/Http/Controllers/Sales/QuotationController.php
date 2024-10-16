@@ -1961,11 +1961,10 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             $data = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->get();
 
             foreach ($data as $key => $value) {
-                if($request['jumlah'.$value->id] !=null && $request['jumlah'.$value->id] !=""){
+                if($request->jumlah !=null && $request->jumlah !=""){
                     $dataExist = DB::table("sl_quotation_kebutuhan_ohc")
                     ->whereNull('deleted_at')
                     ->where('quotation_kebutuhan_id',$value->quotation_kebutuhan_id)
-                    ->where('quotation_kebutuhan_detail_id',$value->id)
                     ->where('barang_id',$request->barang)
                     ->first();
 
@@ -1977,7 +1976,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                             ->where('quotation_kebutuhan_id',$value->quotation_kebutuhan_id)
                             ->where('quotation_kebutuhan_detail_id',$value->id)
                             ->where('barang_id',$request->barang)->update([
-                                    'jumlah' => $dataExist->jumlah+(int)$request['jumlah'.$value->id],
+                                    'jumlah' => $dataExist->jumlah+(int)$request->jumlah,
                                     'harga' => $harga,
                                     'nama' => $barang->nama,
                                     'jenis_barang' => $barang->jenis_barang,
@@ -1990,7 +1989,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                             'quotation_kebutuhan_id' => $value->quotation_kebutuhan_id,
                             'quotation_id' => $value->quotation_id,
                             'barang_id' => $request->barang,
-                            'jumlah' => $request['jumlah'.$value->id],
+                            'jumlah' => $request->jumlah,
                             'harga' => $harga,
                             'nama' => $barang->nama,
                             'jenis_barang' => $barang->jenis_barang,
@@ -2012,7 +2011,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
     public function listOhc (Request $request){
         $raw = ['aksi'];
-        $data = DB::select("SELECT DISTINCT m_barang.jenis_barang_id,sl_quotation_kebutuhan_ohc.quotation_kebutuhan_id,sl_quotation_kebutuhan_ohc.barang_id,sl_quotation_kebutuhan_ohc.jenis_barang,sl_quotation_kebutuhan_ohc.nama,sl_quotation_kebutuhan_ohc.harga 
+        $data = DB::select("SELECT DISTINCT m_barang.jenis_barang_id,sl_quotation_kebutuhan_ohc.jumlah,sl_quotation_kebutuhan_ohc.quotation_kebutuhan_id,sl_quotation_kebutuhan_ohc.barang_id,sl_quotation_kebutuhan_ohc.jenis_barang,sl_quotation_kebutuhan_ohc.nama,sl_quotation_kebutuhan_ohc.harga 
 from sl_quotation_kebutuhan_ohc 
 INNER JOIN m_barang ON sl_quotation_kebutuhan_ohc.barang_id = m_barang.id
 WHERE sl_quotation_kebutuhan_ohc.deleted_at is null 
@@ -2025,6 +2024,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 'barang_id' => 0,
 'jenis_barang' => 'TOTAL',
 'nama' => '',
+'jumlah' => '',
 'harga' => $total];
 
         array_push($data,$objectTotal);
@@ -2040,19 +2040,6 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         $dt = $dt->editColumn('harga', function ($data){
             return "Rp ".number_format($data->harga,0,",",".");
         });
-
-        $dataDetail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$request->quotation_kebutuhan_id)->whereNull('deleted_at')->get();
-
-        foreach ($dataDetail as $key => $value) {
-            $dt = $dt->addColumn("data-$value->id", function ($data) use ($value) {
-                $dataD = DB::select("select jumlah from sl_quotation_kebutuhan_ohc WHERE deleted_at is null and quotation_kebutuhan_id = $data->quotation_kebutuhan_id and quotation_kebutuhan_detail_id = $value->id and barang_id = $data->barang_id");
-                if(count($dataD)>0){
-                    return $dataD[0]->jumlah;
-                }else{
-                    return "";
-                };
-            });
-        };
 
         $dt = $dt->rawColumns($raw);
         $dt = $dt->make(true);

@@ -45,12 +45,14 @@
                       <input type="text" class="form-control mask-nominal text-end" id="harga">
                     </div>
                   </div>
+                  @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
                   <div class="col-sm-2">
-                    <label class="form-label" for="jumlah">Jumlah</label>
+                    <label class="form-label" for="jumlah_{{$detailJabatan->id}}">{{$detailJabatan->jabatan_kebutuhan}}</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" id="jumlah">
+                      <input type="number" class="form-control" id="jumlah_{{$detailJabatan->id}}">
                     </div>
                   </div>
+                  @endforeach
                 </div>
                 <div class="row">
                   <div class="col-12 d-flex justify-content-center">
@@ -69,7 +71,9 @@
                                 <th class="text-center">Jenis</th>
                                 <th class="text-center">Nama Barang</th>
                                 <th class="text-center">Harga/Unit</th>
-                                <th class="text-center">Jumlah</th>
+                                @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                                  <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
+                                @endforeach
                                 <th></th>
                             </tr>
                         </thead>
@@ -155,12 +159,14 @@
           className:'text-end',
           orderable:false
       },
+      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
       {
-          data : 'jumlah',
-          name : 'jumlah',
+          data : 'data-{{$detailJabatan->id}}',
+          name : 'data-{{$detailJabatan->id}}',
           className:'text-center',
           orderable:false
       },
+      @endforeach
       {
           data : 'aksi',
           name : 'aksi',
@@ -175,7 +181,9 @@
     $('#btn-tambah-detail').on('click',function () {
       let barang = $('#barang').val();
       let harga = $('#harga').val();
-      let jumlah = $('#jumlah').val();
+      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+        let jumlah{{$detailJabatan->id}} = $('#jumlah_{{$detailJabatan->id}}').val();
+      @endforeach
 
       let msg="";
       if(barang ==""){
@@ -184,8 +192,16 @@
       if(harga ==""){
         msg += "Harga masih kosong <br />";
       }
-      if(jumlah ==""){
-        msg += "Jumlah masih kosong <br />";
+      
+      let isJumlahKeisi = false;
+      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+      if(jumlah{{$detailJabatan->id}} !=null && jumlah{{$detailJabatan->id}} !=""){
+        isJumlahKeisi = true;
+      }
+      @endforeach
+      
+      if(!isJumlahKeisi){
+        msg += "Masukkan salah satu jumlah <br />";
       }
 
       if(msg!=""){
@@ -198,7 +214,9 @@
         let formData = {
           "barang":barang,
           "harga":harga,
-          "jumlah":jumlah,
+          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+          "jumlah{{$detailJabatan->id}}":jumlah{{$detailJabatan->id}},
+          @endforeach
           "quotation_kebutuhan_id":{{$quotationKebutuhan[0]->id}},
           "_token": "{{ csrf_token() }}"
         };
@@ -212,7 +230,9 @@
               $('#table-data').DataTable().ajax.reload();
               $('#barang').val("").change();
               $('#harga').val("")
-              $('#jumlah').val("")
+              @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                $('#jumlah_{{$detailJabatan->id}}').val("");
+              @endforeach
             }else{
               Swal.fire({
                 title: "Pemberitahuan",
