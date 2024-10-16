@@ -207,6 +207,12 @@
                           </td>
                           @endif
                         </tr>
+                        @if($quotationKebutuhan[0]->penjamin=="Takaful")
+                        <tr>
+                          <td>Penjamin</td>
+                          <td colspan="3">{{$quotationKebutuhan[0]->penjamin}}</td>
+                        </tr>
+                        @else
                         <tr>
                           <td>BPJS Ketenagakerjaan</td>
                           <td colspan="3">
@@ -270,6 +276,8 @@
                             <i>*Base on UMK update</i>
                           </td>
                         </tr>
+                        @endif
+                        
                         <tr>
                           <td>Seragam</td>
                           <td colspan="3">detil terlampir</td>

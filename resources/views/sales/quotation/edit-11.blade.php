@@ -101,42 +101,49 @@
                         @endforeach
                       </tr>
                       @endif
-                      <tr class="">
-                        <td style="text-align:center">{{3+count($daftarTunjangan)}}</td>
-                        <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Kecelakaan Kerja</td>
-                        <td style="text-align:center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</td>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jkk,0,",",".")}}</td>
-                        @endforeach
-                      </tr>
-                      <tr class="">
-                        <td style="text-align:center"></td>
-                        <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Kematian</td>
-                        <td style="text-align:center">0,3 %</td>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jkm,0,",",".")}}</td>
-                        @endforeach
-                      </tr>
-                      @if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS")
-                      <tr class="">
-                        <td style="text-align:center"></td>
-                        <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Hari Tua</td>
-                        <td style="text-align:center">3,7 %</td>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jht,0,",",".")}}</td>
-                        @endforeach
-                      </tr>
-                      @endif
-                      @if($quotationKebutuhan[0]->program_bpjs=="4 BPJS")
-                      <tr class="">
-                        <td style="text-align:center"></td>
-                        <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Pensiun</td>
-                        <td style="text-align:center">2 %</td>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jp,0,",",".")}}</td>
-                        @endforeach
-                      </tr>
-                      @endif
+                      @php
+                      $nomorUrut = 0;
+                      @endphp
+                      @if($quotationKebutuhan[0]->penjamin=="BPJS")
+                      @php
+                      $nomorUrut = 5;
+                      @endphp
+                        <tr class="">
+                          <td style="text-align:center">{{3+count($daftarTunjangan)}}</td>
+                          <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Kecelakaan Kerja</td>
+                          <td style="text-align:center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</td>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jkk,0,",",".")}}</td>
+                          @endforeach
+                        </tr>
+                        <tr class="">
+                          <td style="text-align:center"></td>
+                          <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Kematian</td>
+                          <td style="text-align:center">0,3 %</td>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jkm,0,",",".")}}</td>
+                          @endforeach
+                        </tr>
+                        @if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                        <tr class="">
+                          <td style="text-align:center"></td>
+                          <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Hari Tua</td>
+                          <td style="text-align:center">3,7 %</td>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jht,0,",",".")}}</td>
+                          @endforeach
+                        </tr>
+                        @endif
+                        @if($quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                        <tr class="">
+                          <td style="text-align:center"></td>
+                          <td style="text-align:left" class="">BPJS Ketenagakerjaan J. Pensiun</td>
+                          <td style="text-align:center">2 %</td>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_jp,0,",",".")}}</td>
+                          @endforeach
+                        </tr>
+                        @endif
                       <tr class="">
                         <td style="text-align:center">{{4+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">BPJS Kesehatan </td>
@@ -145,8 +152,21 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_kes,0,",",".")}}</td>
                         @endforeach
                       </tr>
+                      @else
+                      @php
+                      $nomorUrut = 4;
+                      @endphp
                       <tr class="">
-                        <td style="text-align:center">{{5+count($daftarTunjangan)}}</td>
+                        <td style="text-align:center">{{3+count($daftarTunjangan)}}</td>
+                        <td style="text-align:left" class="">Takaful </td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->nominal_takaful,0,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      @endif
+                      <tr class="">
+                        <td style="text-align:center">{{$nomorUrut+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Provisi Seragam </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -154,7 +174,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:center">{{6+count($daftarTunjangan)}}</td>
+                        <td style="text-align:center">{{$nomorUrut+1+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Provisi Peralatan </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -162,7 +182,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:center">{{7+count($daftarTunjangan)}}</td>
+                        <td style="text-align:center">{{$nomorUrut+2+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Over Head Cost </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -170,7 +190,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:center">{{8+count($daftarTunjangan)}}</td>
+                        <td style="text-align:center">{{$nomorUrut+3+count($daftarTunjangan)}}</td>
                         <td style="text-align:left" class="">Chemical </td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
@@ -327,45 +347,55 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         @endforeach
                       </tr>
                       @endif
-                      <tr>
-                        <td>Premi BPJS TK J. Kecelakaan Kerja</th>
-                        <td class="text-center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</th>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jkk,0,",",".")}}</th>
-                        @endforeach
-                      </tr>
-                      <tr>
-                        <td>Premi BPJS TK J. Kematian</th>
-                        <td class="text-center">0,30 %</th>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jkm,0,",",".")}}</th>
-                        @endforeach
-                      </tr>
-                      @if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS")
-                      <tr>
-                        <td>Premi BPJS TK J. Hari Tua</th>
-                        <td class="text-center">3,7 %</th>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jht,0,",",".")}}</th>
-                        @endforeach
-                      </tr>
+                      @if($quotationKebutuhan[0]->penjamin=="BPJS")
+                        <tr>
+                          <td>Premi BPJS TK J. Kecelakaan Kerja</th>
+                          <td class="text-center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</th>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jkk,0,",",".")}}</th>
+                          @endforeach
+                        </tr>
+                        <tr>
+                          <td>Premi BPJS TK J. Kematian</th>
+                          <td class="text-center">0,30 %</th>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jkm,0,",",".")}}</th>
+                          @endforeach
+                        </tr>
+                        @if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                        <tr>
+                          <td>Premi BPJS TK J. Hari Tua</th>
+                          <td class="text-center">3,7 %</th>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jht,0,",",".")}}</th>
+                          @endforeach
+                        </tr>
+                        @endif
+                        @if($quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                        <tr>
+                          <td>Premi BPJS TK J. Pensiun</th>
+                          <td class="text-center">2 %</th>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jp,0,",",".")}}</th>
+                          @endforeach
+                        </tr>
+                        @endif
+                        <tr>
+                          <td>Premi BPJS Kesehatan</th>
+                          <td class="text-center">4 %</th>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_kes,0,",",".")}}</th>
+                          @endforeach
+                        </tr>
+                      @else
+                        <tr>
+                          <td>Takaful</th>
+                          <td class="text-center"></th>
+                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                          <td class="text-end">{{"Rp. ".number_format($detailJabatan->nominal_takaful,0,",",".")}}</th>
+                          @endforeach
+                        </tr>
                       @endif
-                      @if($quotationKebutuhan[0]->program_bpjs=="4 BPJS")
-                      <tr>
-                        <td>Premi BPJS TK J. Pensiun</th>
-                        <td class="text-center">2 %</th>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_jp,0,",",".")}}</th>
-                        @endforeach
-                      </tr>
-                      @endif
-                      <tr>
-                        <td>Premi BPJS Kesehatan</th>
-                        <td class="text-center">4 %</th>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_kes,0,",",".")}}</th>
-                        @endforeach
-                      </tr>
                       <tr>
                         <td>Provisi Seragam</th>
                         <td class="text-center"></th>
