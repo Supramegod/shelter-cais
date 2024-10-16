@@ -179,7 +179,7 @@
               <input type="text" value="{{$data->upah}}" class="form-control" readonly>
             </div>
             <div class="col-sm-6">
-              <label class="form-label">Nominal Upah</label>
+              <label class="form-label">Nominal Upah @if($data->nominal_upah<$data->umk)<span class="badge bg-label-warning rounded-pill">Butuh Approval</span>@endif</label>
               <input type="text" value="Rp {{number_format($data->nominal_upah,0,",",".")}}" class="form-control" readonly>
             </div>
           </div>

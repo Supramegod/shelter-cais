@@ -104,7 +104,7 @@
                               <input type="text" class="form-control mask-nominal" value="{{$value->nominal_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
                             </div>
                           </div>
-                          <span class="text-warning">*Gaji dibawah UMP membutuhkan persetujuan</span>
+                          <span class="text-warning">*Gaji dibawah UMK membutuhkan persetujuan</span>
                         </div>
                         <div class="row mb-3">
                           <div class="col-sm-6">

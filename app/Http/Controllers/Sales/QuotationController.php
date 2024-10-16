@@ -68,13 +68,14 @@ class QuotationController extends Controller
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             $quotationKebutuhan = 
-            DB::table("sl_quotation_kebutuhan")
+            DB::table("sl_quotation_kebutuhan") 
             ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
-            ->where('sl_quotation_kebutuhan.quotation_id',$id)
+            ->where('sl_quotation_kebutuhan.id',$id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
             ->select('sl_quotation_kebutuhan.quotation_id','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
+
             $quotation = DB::table("sl_quotation")->where('id',$quotationKebutuhan[0]->quotation_id)->first();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -423,9 +424,19 @@ class QuotationController extends Controller
             $data = DB::table('sl_quotation_kebutuhan')->where('id',$id)->first();
             $data->detail = DB::table('sl_quotation_kebutuhan_detail')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$id)->get();
             $data->totalHc = 0;
+            $data->umk = 0;
 
             foreach ($data->detail as $key => $value) {
                 $data->totalHc += $value->jumlah_hc;
+            }
+
+            //isi umk
+            if ($data->kota_id !=null) {
+                $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$data->kota_id)->first();
+
+                if($dataUmk!=null){
+                    $data->umk = $dataUmk->umk;
+                }
             }
             
             $master = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();

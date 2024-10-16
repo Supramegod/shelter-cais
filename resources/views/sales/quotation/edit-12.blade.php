@@ -73,17 +73,17 @@
                         </tr>
                         <tr>
                           <td>NPWP <span class="text-danger fw-bold">*</span> </td>
-                          <td colspan="3"><input type="text" name="npwp" id="npwp" class="form-control w-100"></td>
+                          <td colspan="3"><input type="text" value="{{$quotation->npwp}}" name="npwp" id="npwp" class="form-control w-100"></td>
                         </tr>
                         <tr>
                           <td>Alamat NPWP <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3"><input type="text" name="alamat_npwp" id="alamat_npwp" class="form-control w-100"></td>
+                          <td colspan="3"><input type="text" name="alamat_npwp" value="{{$quotation->alamat_npwp}}" id="alamat_npwp" class="form-control w-100"></td>
                         </tr>
                         <tr>
                           <td>PIC Invoice <span class="text-danger fw-bold">*</span></td>
-                          <td><input type="text" placeholder="Masukkan nama" name="pic_invoice" id="pic_invoice" class="form-control w-100"></td>
-                          <td><input type="text" placeholder="Masukkan No Telp" name="telp_pic_invoice" id="telp_pic_invoice" class="form-control w-100"></td>
-                          <td><input type="text" placeholder="Masukkan Email" name="email_pic_invoice" id="email_pic_invoice" class="form-control w-100"></td>
+                          <td><input type="text" placeholder="Masukkan nama" name="pic_invoice" value="{{$quotation->pic_invoice}}" id="pic_invoice" class="form-control w-100"></td>
+                          <td><input type="text" placeholder="Masukkan No Telp" name="telp_pic_invoice" value="{{$quotation->telp_pic_invoice}}" id="telp_pic_invoice" class="form-control w-100"></td>
+                          <td><input type="text" placeholder="Masukkan Email" name="email_pic_invoice" value="{{$quotation->email_pic_invoice}}" id="email_pic_invoice" class="form-control w-100"></td>
                         </tr>
                         <tr>
                           <td colspan="4" class="text-center fw-bold table-success">INFORMASI KERJASAMA</td>
@@ -128,7 +128,7 @@
                               <option value="12 Jam Kerja" @if($quotation->jam_kerja=='12 Jam Kerja') selected @endif>12 Jam Kerja</option>  
                             </select>
                           </td>
-                          <td class="d-flex" style="align-items:center"><input type="time" name="mulai_kerja" class="form-control w-50"> <span style="padding-left:5px;padding-right:5px">s/d</span> <input type="time" name="selesai_kerja" class="form-control w-50"></td>
+                          <td class="d-flex" style="align-items:center"><input type="time" name="mulai_kerja" value="{{$quotation->mulai_kerja}}" class="form-control w-50"> <span style="padding-left:5px;padding-right:5px">s/d</span> <input type="time" name="selesai_kerja" value="{{$quotation->selesai_kerja}}" class="form-control w-50"></td>
                         </tr>
                         <tr>
                           <td>System Kerja <span class="text-danger fw-bold">*</span></td>
@@ -151,11 +151,11 @@
                         </tr>
                         <tr>
                           <td>Kunjungan Operasional <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3"><input type="text" placeholder="" name="kunjungan_operasional" id="kunjungan_operasional" class="form-control w-100"></td>
+                          <td colspan="3"><input type="text" placeholder="" name="kunjungan_operasional" value="{{$quotation->kunjungan_operasional}}" id="kunjungan_operasional" class="form-control w-100"></td>
                         </tr>
                         <tr>
                           <td>Kunjungan Tim CRM <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3"><input type="text" placeholder="" name="kunjungan_tim_crm" id="kunjungan_tim_crm" class="form-control w-100"></td>
+                          <td colspan="3"><input type="text" placeholder="" name="kunjungan_tim_crm" value="{{$quotation->kunjungan_tim_crm}}" id="kunjungan_tim_crm" class="form-control w-100"></td>
                         </tr>
                         <tr>
                           <td>Training <span class="text-danger fw-bold">*</span></td>
@@ -289,7 +289,8 @@
                           <td colspan="3">
                             <select id="joker_reliever" name="joker_reliever" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                               <option value="" @if($quotation->joker_reliever=='') selected @endif>- Pilih Data -</option>  
-                              <option value="Prioritas backup oleh personil yang off" @if($quotation->joker_reliever=='Prioritas backup oleh personil yang off') selected @endif>Prioritas backup oleh personil yang off</option>
+                              <option value="Ada" @if($quotation->joker_reliever=='Ada') selected @endif>Ada</option>
+                              <option value="Tidak Ada" @if($quotation->joker_reliever=='Tidak Ada') selected @endif>Tidak Ada</option>
                             </select>
                           </td>
                         </tr>
@@ -298,7 +299,7 @@
                           <td colspan="3">
                             <textarea rows="7" name="syarat_invoice" id="syarat_invoice" class="form-control">
 @if($quotation->syarat_invoice!="" && $quotation->syarat_invoice !=null)
-
+{{$quotation->syarat_invoice}}
 @else
 Invoice;
 Faktur Pajak;
@@ -372,24 +373,24 @@ Absensi dari System/Aplikasi.@endif</textarea>
                         </tr>
                         <tr>
                           <td>Alamat Penagihan Invoice <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3"><input type="text" placeholder="" name="alamat_penagihan_invoice" id="alamat_penagihan_invoice" class="form-control w-100"></td>
+                          <td colspan="3"><input type="text" value="{{$quotation->alamat_penagihan_invoice}}" placeholder="" name="alamat_penagihan_invoice" id="alamat_penagihan_invoice" class="form-control w-100"></td>
                         </tr>
                         <tr>
                           <td>Catatan Site <span class="text-danger fw-bold">*</span></td>
                           <td colspan="3">
-                            <textarea rows="3" name="catatan_site" id="catatan_site" class="form-control"></textarea>
+                            <textarea rows="3" name="catatan_site" id="catatan_site" class="form-control">{{$quotation->catatan_site}}</textarea>
                           </td>
                         </tr>
                         <tr>
                           <td>Status Serikat <span class="text-danger fw-bold">*</span></td>
                           <td>
-                            <select id="status_serikat" name="status_serikat" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->status_serikat=='') selected @endif>- Pilih Data -</option>  
-                              <option value="Ada" @if($quotation->status_serikat=='Ada') selected @endif>Ada</option>
+                            <select id="ada_serikat" name="ada_serikat" class="form-select w-100" data-allow-clear="true" tabindex="-1">
+                              <option value="" @if($quotation->status_serikat=='' || $quotation->status_serikat==null) selected @endif>- Pilih Data -</option>  
+                              <option value="Ada" @if($quotation->status_serikat!='Tidak Ada' && $quotation->status_serikat!='' && $quotation->status_serikat!=null ) selected @endif>Ada</option>
                               <option value="Tidak Ada" @if($quotation->status_serikat=='Tidak Ada') selected @endif>Tidak Ada</option>
                             </select>
                           </td>
-                          <td colspan="2">Serikat Pekerja di dalam Perusahaan</td>
+                          <td colspan="2"><input type="text" placeholder="Nama Serikat" name="status_serikat" value="{{$quotation->status_serikat}}" id="status_serikat" class="form-control w-100 d-none"></td>
                         </tr>
                         <tr>
                           <td>Penempatan/serah terima</td>
@@ -500,8 +501,15 @@ Absensi dari System/Aplikasi.@endif</textarea>
       if(obj.catatan_site==null || obj.catatan_site==""){
         msg += "<b>Catatan Site</b> belum diisi </br>";
       }
-      if(obj.status_serikat==null || obj.status_serikat==""){
-        msg += "<b>Status Serikat</b> belum dipilih </br>";
+
+      if(obj.ada_serikat==null || obj.ada_serikat==""){
+        msg += "<b>Serikat</b> belum dipilih </br>";
+      }else{
+        if(obj.ada_serikat=="Ada"){
+          if(obj.status_serikat==null || obj.status_serikat==""){
+            msg += "<b>Serikat</b> belum diisi </br>";
+          }
+        }
       }
       
       if(msg == ""){
@@ -516,6 +524,22 @@ Absensi dari System/Aplikasi.@endif</textarea>
     });
   
     showTraining(1);
+    showSerikat(1);
+
+    function showSerikat(first) {
+    let selected = $("#ada_serikat option:selected").val();
+      if (selected!="Ada") {
+        $('#status_serikat').addClass('d-none');
+      }else{
+        $('#status_serikat').removeClass('d-none');
+        if(first!=1){
+          $("#status_serikat").val("").change();
+        }
+      }
+    }
+    $('#ada_serikat').on('change', function() {
+      showSerikat(2);
+    });
 
     function showTraining(first) {
     let selected = $("#ada_training option:selected").val();
