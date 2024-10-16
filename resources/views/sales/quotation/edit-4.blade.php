@@ -166,6 +166,23 @@
                           </div>
                         </div>
                         <div class="row mb-3">
+                          <div class="col-sm-6">
+                            <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Holiday</label>
+                              <select id="ada_tunjangan_holiday" name="ada_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
+                                <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>  
+                                <option value="Ada" @if($quotation->tunjangan_holiday!=null && $quotation->tunjangan_holiday!="" && $quotation->tunjangan_holiday!="Tidak Ada") selected @endif>Ada</option>  
+                                <option value="Tidak Ada" @if($quotation->tunjangan_holiday=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                              </select>
+                          </div>
+                          <div class="col-sm-6 ada_tunjangan_holiday">
+                            <label class="form-label" for="tunjangan_holiday">Provisi / Ditagihkan</label>
+                              <select id="tunjangan_holiday" name="tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
+                                <option value="Diprovisikan" @if($quotation->tunjangan_holiday=="Diprovisikan") selected @endif>Diprovisikan</option>  
+                                <option value="Ditagihkan" @if($quotation->tunjangan_holiday=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                              </select>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
                           <div class="col-sm-4">
                             <label class="form-label" for="ada_lembur">Lembur</label>
                               <select id="ada_lembur" name="ada_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -325,6 +342,16 @@
     }
   }
 
+  if(obj.ada_tunjangan_holiday==null || obj.ada_tunjangan_holiday==""){
+    msg += "<b>Tunjangan Holiday</b> belum dipilih </br>";
+  }else{
+    if(obj.ada_tunjangan_holiday=="Ada"){
+      if(obj.tunjangan_holiday==null || obj.tunjangan_holiday==""){
+        msg += "<b>Tunjangan Holiday</b> belum dipilih </br>";
+      }
+    }
+  }
+  
   if(obj.ada_lembur==null || obj.ada_lembur==""){
     msg += "<b>Lembur</b> belum dipilih </br>";
   }else{
@@ -465,6 +492,24 @@ function lemburFlat(first) {
 
 $('#lembur').on('change', function() {
   lemburFlat(2);
+});
+
+showTunjanganHoliday(1);
+function showTunjanganHoliday(first) {
+  let selected = $("#ada_tunjangan_holiday option:selected").val();
+  
+  if (selected!="Ada") {
+    $('.ada_tunjangan_holiday').addClass('d-none');
+  }else{
+    $('.ada_tunjangan_holiday').removeClass('d-none');
+    if(first!=1){
+      $("#tunjangan_holiday").val("").change();
+    }
+  }
+}
+
+$('#ada_tunjangan_holiday').on('change', function() {
+  showTunjanganHoliday(2);
 });
 
 </script>
