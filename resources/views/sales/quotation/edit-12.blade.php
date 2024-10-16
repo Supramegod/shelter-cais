@@ -141,13 +141,9 @@
                         </tr>
                         <tr>
                           <td>Kebijakan Cuti <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3">
-                            <select id="cuti" name="cuti" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->cuti=='') selected @endif>- Pilih Data -</option>  
-                              <option value="Ada" @if($quotation->cuti=='Ada') selected @endif>Ada</option>
-                              <option value="Tidak Ada" @if($quotation->cuti=='Tidak Ada') selected @endif>Tidak Ada</option>
-                            </select>
-                          </td>
+                          <td>{{$quotation->cuti}}</td>
+                          <td>{{$quotation->gaji_saat_cuti}}</td>
+                          <td>{{$quotation->prorate}} @if($quotation->prorate !=null) % @endif</td>
                         </tr>
                         <tr>
                           <td>Kunjungan Operasional <span class="text-danger fw-bold">*</span></td>

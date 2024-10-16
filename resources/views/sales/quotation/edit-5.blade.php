@@ -84,7 +84,7 @@
                         <div id="d-nominal-takaful-{{$value->id}}" class="col-sm-6 d-none">
                           <label class="form-label" for="nominal-takaful-{{$value->id}}">Nominal takaful</label>
                           <div class="input-group">
-                            <input type="text" class="form-control mask-nominal text-end" id="nominal-takaful-{{$value->id}}" name="nominal-takaful-{{$value->id}}">
+                            <input type="text" class="form-control mask-nominal text-end" value="{{$value->nominal_takaful}}" id="nominal-takaful-{{$value->id}}" name="nominal-takaful-{{$value->id}}">
                           </div>
                         </div>
                       </div>

@@ -206,20 +206,43 @@
                 <span class="text-warning mt-3">*TOP invoice lebih dari 7 hari membutuhkan approval dari direksi</span>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-6">
-                  <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
-                    <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->thr=="") selected @endif>- Pilih Data -</option>  
-                    <option value="Ada" @if($quotation->thr!="") selected @endif>Ada</option>  
-                    <option value="Tidak Ada" @if($quotation->thr=="" && $quotation->thr!=null) selected @endif>Tidak Ada</option>  
+                <div class="col-sm-2">
+                  <label class="form-label" for="ada">Cuti</label>
+                    <select id="ada_cuti" name="ada_cuti" class="form-select" data-allow-clear="true" tabindex="-1">
+                      <option value="" @if($quotation->cuti=="" || $quotation->cuti==null) selected @endif>- Pilih Data -</option>  
+                      <option value="Ada" @if($quotation->cuti!=null&&$quotation->cuti!=""&&$quotation->cuti!="Tidak Ada") selected @endif>Ada</option>  
+                      <option value="Tidak Ada" @if( $quotation->cuti=="Tidak Ada") selected @endif>Tidak Ada</option>  
                     </select>
                 </div>
-                <div class="col-sm-6 ada_thr">
-                  <label class="form-label" for="thr">Provisi / Ditagihkan</label>
-                    <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                    <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
-                    <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
-                    </select>
+                <div class="col-sm-4 ada_cuti">
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="Cuti Kematian" name="cuti[]" id="cuti-kematian" @if(str_contains($quotation->cuti,'Cuti Kematian')) checked @endif>
+                    <label class="form-check-label" for="cuti-kematian"> Cuti Kematian = 2 Hari </label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="Istri Melahirkan" name="cuti[]" id="istri-melahirkan" @if(str_contains($quotation->cuti,'Istri Melahirkan')) checked @endif>
+                    <label class="form-check-label" for="istri-melahirkan"> Istri Melahirkan = 2 Hari </label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="Cuti Menikah" name="cuti[]" id="cuti-menikah" @if(str_contains($quotation->cuti,'Cuti Menikah')) checked @endif>
+                    <label class="form-check-label" for="cuti-menikah"> Cuti Menikah = 2-3 Hari </label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="Cuti Melahirkan" name="cuti[]" id="cuti-melahirkan" @if(str_contains($quotation->cuti,'Cuti Melahirkan')) checked @endif>
+                    <label class="form-check-label" for="cuti-melahirkan"> Cuti Melahirkan </label>
+                  </div>
+                </div>
+                <div class="col-sm-3 d-jenis-pay">
+                  <label class="form-label" for="gaji_saat_cuti">Gaji Saat Cuti</label>
+                  <select id="gaji_saat_cuti" name="gaji_saat_cuti" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="" @if($quotation->gaji_saat_cuti=="") selected @endif>- Pilih Data -</option>  
+                    <option value="No Work No Pay" @if($quotation->gaji_saat_cuti=="No Work No Pay") selected @endif>No Work No Pay</option>  
+                    <option value="Prorate" @if($quotation->gaji_saat_cuti=="Prorate") selected @endif>Prorate</option>  
+                  </select>
+                </div>
+                <div class="col-sm-3 d-prorate">
+                  <label class="form-label" for="thr">Prorate</label>
+                  <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control" id="prorate">
                 </div>
               </div>
               @include('sales.quotation.action')
@@ -283,10 +306,26 @@ $('#btn-submit').on('click',function(e){
   if(obj.top == null || obj.top == ""){
     msg += "<b>TOP Invoice</b> belum dipilih </br>";
   }
-  if(obj.ada_thr == "Ada"){
-    if(obj.thr == null || obj.thr == ""){
-      msg += "<b>THR</b> belum dipilih </br>";
+  
+  if(obj.ada_cuti == null || obj.ada_cuti == ""){
+    msg += "<b>Jenis Cuti</b> belum dipilih </br>";
+  }else if(obj.ada_cuti == "Ada"){
+    if(obj['cuti[]'] == null){
+      msg += "<b>Macam Cuti</b> belum dipilih </br>";
+    }else{
+      obj.macam_cuti = obj['cuti[]'].toString();
+      if(obj['cuti[]'].includes("Cuti Melahirkan")){
+        if(obj.gaji_saat_cuti ==null ||obj.gaji_saat_cuti ==""){
+          msg += "<b>Gaji saat cuti</b> belum dipilih </br>";
+        }else if(obj.gaji_saat_cuti == "Prorate"){
+          if(obj.prorate ==null ||obj.prorate ==""){
+            msg += "<b>Prorate</b> belum diisi </br>";
+          }
+        }
+      }
     }
+  }else if(obj.ada_cuti == "Tidak Ada"){
+    obj.macam_cuti = "Tidak Ada";
   }
 
   if (obj.top != null && obj.top != "") {
@@ -301,6 +340,7 @@ $('#btn-submit').on('click',function(e){
     }
   }
 
+  console.log(obj);
   if(msg == ""){
     form.submit();
   }else{
@@ -437,30 +477,61 @@ function showDTipeHari(first) {
 }
 showDTop();
 showDTipeHari(1);
-showThr(1); 
 $('#top').on('change', function() {
   showDTop();
 });
+$('#jumlah_hari_invoice').on('change', function() {
+  showDTipeHari(2);
+});
 
-function showThr(first) {
-  let selected = $("#ada_thr option:selected").val();
+
+// script sendiri
+showCuti(1);
+gajiSaatCuti(1);
+showProrate(1);
+
+function showCuti(first) {
+  let selected = $("#ada_cuti option:selected").val();
   
   if (selected!="Ada") {
-    $('.ada_thr').addClass('d-none');
+    $('.ada_cuti').addClass('d-none');
   }else{
-    $('.ada_thr').removeClass('d-none');
+    $('.ada_cuti').removeClass('d-none');
     if(first!=1){
       $("#thr").val("").change();
     }
   }
 }
 
-$('#ada_thr').on('change', function() {
-  showThr(2);
+function showProrate(first) {
+  let selected = $("#gaji_saat_cuti option:selected").val();
+  
+  if (selected!="Prorate") {
+    $('.d-prorate').addClass('d-none');
+  }else{
+    $('.d-prorate').removeClass('d-none');
+  }
+}
+
+
+function gajiSaatCuti(first) {
+  if($('#cuti-melahirkan').is(':checked')){
+    $('.d-jenis-pay').removeClass('d-none');
+  }else{
+    $('.d-jenis-pay').addClass('d-none');
+  };
+}
+
+$('#ada_cuti').on('change', function() {
+  showCuti(2);
 });
 
-$('#jumlah_hari_invoice').on('change', function() {
-  showDTipeHari(2);
+$('#cuti-melahirkan').on('change', function() {
+  gajiSaatCuti(2);
+});
+
+$('#gaji_saat_cuti').on('change', function() {
+  showProrate(2);
 });
 
 </script>

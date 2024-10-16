@@ -131,6 +131,23 @@
                             @endif
                           </div>
                         </div>
+                        <div class="row mb-3">
+                          <div class="col-sm-6">
+                            <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
+                              <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">
+                              <option value="" @if($quotation->thr=="") selected @endif>- Pilih Data -</option>  
+                              <option value="Ada" @if($quotation->thr!="") selected @endif>Ada</option>  
+                              <option value="Tidak Ada" @if($quotation->thr=="" && $quotation->thr!=null) selected @endif>Tidak Ada</option>  
+                              </select>
+                          </div>
+                          <div class="col-sm-6 ada_thr">
+                            <label class="form-label" for="thr">Provisi / Ditagihkan</label>
+                              <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
+                              <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
+                              <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                              </select>
+                          </div>
+                        </div>
                       </div>
                     @endforeach
                   </div>
@@ -306,5 +323,24 @@
     });
   });
 
+
+// script sendiri
+showThr(1);
+function showThr(first) {
+  let selected = $("#ada_thr option:selected").val();
+  
+  if (selected!="Ada") {
+    $('.ada_thr').addClass('d-none');
+  }else{
+    $('.ada_thr').removeClass('d-none');
+    if(first!=1){
+      $("#thr").val("").change();
+    }
+  }
+}
+
+$('#ada_thr').on('change', function() {
+  showThr(2);
+});
 </script>
 @endsection

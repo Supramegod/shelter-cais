@@ -722,6 +722,22 @@ class QuotationController extends Controller
     }
 
     public function saveEdit2 (Request $request){
+        if($request->ada_cuti=="Tidak Ada"){
+            $request->macam_cuti = "Tidak Ada";
+            $request->gaji_saat_cuti =null;
+            $request->prorate =null;
+        }else{
+            $request->macam_cuti = implode(",",$request->cuti);
+            if(in_array("Cuti Melahirkan",$request->cuti)){
+                if($request->gaji_saat_cuti!="Prorate"){
+                    $request->prorate =null;
+                }
+            }else{
+                $request->gaji_saat_cuti =null;
+                $request->prorate =null;
+            }
+        }
+        
         try {
             $validator = Validator::make($request->all(), [
                 'kebutuhan' => 'required',
@@ -770,8 +786,10 @@ class QuotationController extends Controller
                     'durasi_kerjasama' => $request->durasi_kerjasama,
                     'durasi_karyawan' => $request->durasi_karyawan,
                     'evaluasi_karyawan' => $request->evaluasi_karyawan,
-                    'thr' => $request->thr,
                     'step' => 3,
+                    'cuti' => $request->macam_cuti,
+                    'gaji_saat_cuti' => $request->gaji_saat_cuti,
+                    'prorate' => $request->prorate,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
@@ -951,6 +969,7 @@ class QuotationController extends Controller
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
+                'thr' => $request->thr,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
