@@ -106,20 +106,27 @@
                           <td colspan="3">{{$quotation->sistem_kerja}}</td>
                         </tr>
                         <tr>
-                          <td>Kebijakan Cuti </td>
-                          <td colspan="3">{{$quotation->cuti}}</td>
+                          <td>Kebijakan Cuti</td>
+                          <td>{{$quotation->cuti}}</td>
+                          <td>{{$quotation->gaji_saat_cuti}}</td>
+                          <td>{{$quotation->prorate}} @if($quotation->prorate !=null) % @endif</td>
                         </tr>
                         <tr>
                           <td>Kunjungan Operasional </td>
-                          <td colspan="3">{{$quotation->kunjungan_operasional}}</td>
+                          <td>{{$quotation->kunjungan_operasional}}</td>
+                          <td colspan="2">{{$quotation->keterangan_kunjungan_operasional}}</td>
                         </tr>
                         <tr>
                           <td>Kunjungan Tim CRM </td>
-                          <td colspan="3">{{$quotation->kunjungan_tim_crm}}</td>
+                          <td>{{$quotation->kunjungan_tim_crm}}</td>
+                          <td colspan="2">{{$quotation->keterangan_kunjungan_tim_crm}}</td>
                         </tr>
                         <tr>
                           <td>Training </td>
-                          <td colspan="3">{{$quotation->tgl_quotation}}</td>
+                          <td colspan="3">{{$quotation->training}}</td>
+                        </tr>
+                        <tr id="list-training">
+                          <td colspan="4">@foreach($listTrainingQ as $training) {{$training->nama}} @if(!$loop->last), @endif @endforeach</td>
                         </tr>
                         <tr>
                           <td>Tunjangan Hari Raya (THR)</td>
@@ -153,10 +160,16 @@
                           </td>
                           @endif
                         </tr>
+                        @if($quotationKebutuhan[0]->penjamin=="Takaful")
+                        <tr>
+                          <td>Penjamin</td>
+                          <td colspan="3">{{$quotationKebutuhan[0]->penjamin}}</td>
+                        </tr>
+                        @else
                         <tr>
                           <td>BPJS Ketenagakerjaan</td>
                           <td colspan="3">
-                            <table class="table-bordered" style="width:95%;margin:5px">
+                            <table class="table table-bordered" style="width:100%">
                               <thead>
                                 <tr>
                                   <th class="text-center"><b>Deskripsi</b></th>
@@ -197,7 +210,7 @@
                         <tr>
                           <td>BPJS Kesehatan</td>
                           <td colspan="3">
-                            <table class="table-bordered" style="width:95%;margin:5px">
+                            <table class="table table-bordered" style="width:100%">
                               <thead>
                                 <tr>
                                   <th class="text-center"><b>Deskripsi</b></th>
@@ -216,13 +229,16 @@
                             <i>*Base on UMK update</i>
                           </td>
                         </tr>
+                        @endif
                         <tr>
                           <td>Seragam</td>
                           <td colspan="3">detil terlampir</td>
                         </tr>
                         <tr>
-                          <td>Kompensasi </td>
-                          <td colspan="3">{{$quotation->kompensasi}}</td>
+                          <td>Kompensasi</td>
+                          <td colspan="3">
+                            {{$quotation->kompensasi}}
+                          </td>
                         </tr>
                         <tr>
                           <td>Joker / Reliever </td>
@@ -299,8 +315,7 @@
                         </tr>
                         <tr>
                           <td>Status Serikat </td>
-                          <td>{{$quotation->status_serikat}}</td>
-                          <td colspan="2">Serikat Pekerja di dalam Perusahaan</td>
+                          <td colspan="3">{{$quotation->status_serikat}}</td>
                         </tr>
                         <tr>
                           <td>Penempatan/serah terima</td>

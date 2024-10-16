@@ -67,13 +67,15 @@ class QuotationController extends Controller
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
+            $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$id)->whereNull('deleted_at')->get();
+            $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
             $quotationKebutuhan = 
             DB::table("sl_quotation_kebutuhan") 
             ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.id',$id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.quotation_id','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->select('sl_quotation_kebutuhan.nominal_takaful','sl_quotation_kebutuhan.penjamin','sl_quotation_kebutuhan.quotation_id','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             $quotation = DB::table("sl_quotation")->where('id',$quotationKebutuhan[0]->quotation_id)->first();
@@ -119,7 +121,7 @@ class QuotationController extends Controller
                 $qk->jumlah_personel = $sPersonil;
 
             }
-            return view('sales.quotation.cetakan.checklist',compact('salaryRuleQ','salaryRule','leads','quotation','quotationKebutuhan','now'));
+            return view('sales.quotation.cetakan.checklist',compact('listTraining','listTrainingQ','salaryRuleQ','salaryRule','leads','quotation','quotationKebutuhan','now'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
