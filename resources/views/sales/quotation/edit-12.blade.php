@@ -111,16 +111,18 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>System Kerja <span class="text-danger fw-bold">*</span></td>
-                          <td colspan="3">
-                            <select id="sistem_kerja" name="sistem_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->sistem_kerja=='') selected @endif>- Pilih Data -</option>  
-                              <option value="No Work No Pay" @if($quotation->sistem_kerja=='No Work No Pay') selected @endif>No Work No Pay</option>  
-                            </select>
+                          <td>Hari Kerja dan Jam Kerja</td>
+                          <td>{{$quotation->shift_kerja}}</td>
+                          <td>{{$quotation->jam_kerja}}</td>
+                          <td>{{$quotation->mulai_kerja}} s/d {{$quotation->selesai_kerja}}</td>
+                        </tr>
+                        <tr>
+                          <td>System Kerja</td>
+                          <td colspan="3">{{$quotation->sistem_kerja}}
                           </td>
                         </tr>
                         <tr>
-                          <td>Kebijakan Cuti <span class="text-danger fw-bold">*</span></td>
+                          <td>Kebijakan Cuti</td>
                           <td>{{$quotation->cuti}}</td>
                           <td>{{$quotation->gaji_saat_cuti}}</td>
                           <td>{{$quotation->prorate}} @if($quotation->prorate !=null) % @endif</td>
