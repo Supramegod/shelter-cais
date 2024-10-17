@@ -137,6 +137,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/quotation/cetak-checklist/{id}', 'cetakChecklist')->name('quotation.cetak-checklist');
         Route::post('/sales/quotation/add-quotation-training', 'addQuotationTraining')->name('quotation.add-quotation-training');
+        Route::post('/sales/quotation/add-barang', 'addBarang')->name('quotation.add-barang');
 
     });
 

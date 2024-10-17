@@ -22,8 +22,14 @@
               </div>
               <div class="row mt-1">
                 <div class="row mb-3" style="display: flex;justify-content: center;">
+                  <div class="col-sm-1">
+                  <label class="form-label">&nbsp;</label>
+                    <button type="button" id="btn-tambah-item" class="btn btn-warning btn-back w-20 waves-effect waves-light"  data-bs-toggle="modal" data-bs-target="#basicModal" style="margin-right:10px">
+                      <i class="mdi mdi-plus"></i>
+                    </button>
+                  </div>
                   <div class="col-sm-3">
-                    <label class="form-label" for="barang">Nama Barang</label>
+                    <label class="form-label" for="barang">Nama Item</label>
                     <div class="input-group">
                       <select id="barang" name="barang" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
@@ -90,11 +96,112 @@
   <hr class="container-m-nx mb-5" />
 </div>
 
+<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel1">Tambah Item</h4>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <input type="text" id="nama-barang" class="form-control" placeholder="Masukkan Nama" />
+              <label for="nama-barang">Nama Item</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <div class="input-group">
+                <select id="jenis_barang" class="form-select">
+                  <option value="">- Pilih Jenis -</option>
+                  @foreach($listJenis as $jenis)
+                    <option value="{{$jenis->id}}">{{$jenis->nama}}</option> 
+                  @endforeach 
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" id="btn-save-tambah-item" class="btn btn-primary">Tambah Item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!--/ Content -->
 @endsection
 
 @section('pageScript')
 <script>
+  $('#btn-save-tambah-item').on('click',function(){
+      let msg="";
+      let barang = $('#nama-barang').val();
+      let jenis = $("#jenis_barang option:selected").val();
+
+      if(barang==null || barang==""){
+        msg += "<b>Barang</b> belum diisi </br>";
+      };
+
+      if(jenis==null || jenis==""){
+        msg += "<b>Jenis</b> belum dipilih </br>";
+      };
+
+      if(msg!=""){
+        Swal.fire({
+              title: "Pemberitahuan",
+              html: msg,
+              icon: "warning",
+            });
+        $('#nama-barang').val("");
+        $("#jenis_barang").val("").change();
+        $('#basicModal').modal('toggle');
+        return null;
+      };
+
+      let formData = {
+        "barang":barang,
+        "jenis":jenis,
+        "_token": "{{ csrf_token() }}"
+      };
+
+      $.ajax({
+        type: "POST",
+        url: "{{route('quotation.add-barang')}}",
+        data:formData,
+        success: function(response){
+          if(response=="Data Berhasil Ditambahkan"){
+            location.reload();
+          }else{
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: response,
+              icon: "warning",
+            });
+            $('#nama-barang').val("");
+            $("#jenis_barang").val("").change();
+          }
+        },
+        error:function(error){
+          console.log(error);
+          $('#nama-barang').val("");
+          $("#jenis_barang").val("").change();
+        }
+      });
+    });
+
   $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {               
         e.preventDefault();

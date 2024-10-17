@@ -1693,6 +1693,31 @@ class QuotationController extends Controller
         }
     }
 
+    public function addBarang(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $barang = $request->barang;
+            $jenis = $request->jenis;
+            $jenisBarang = DB::table('m_jenis_barang')->where('id',$jenis)->first();
+
+            DB::table('m_barang')->insert([
+                'nama' => $barang,
+                'jenis_barang_id' => $jenisBarang->id,
+                'jenis_barang' => $jenisBarang->nama,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            return "Data Berhasil Ditambahkan";
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+            return "Data Gagal Ditambahkan";
+        }
+    }
+
+
     public function deleteDetailHC(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
