@@ -177,7 +177,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <div class="col-sm-6">
+                          <div class="col-sm-4">
                             <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Holiday</label>
                               <select id="ada_tunjangan_holiday" name="ada_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
                                 <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>  
@@ -185,12 +185,16 @@
                                 <option value="Tidak Ada" @if($quotation->tunjangan_holiday=="Tidak Ada") selected @endif>Tidak Ada</option>  
                               </select>
                           </div>
-                          <div class="col-sm-6 ada_tunjangan_holiday">
-                            <label class="form-label" for="tunjangan_holiday">Provisi / Ditagihkan</label>
+                          <div class="col-sm-4 ada_tunjangan_holiday">
+                            <label class="form-label" for="tunjangan_holiday">Normatif / Flat</label>
                               <select id="tunjangan_holiday" name="tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="Diprovisikan" @if($quotation->tunjangan_holiday=="Diprovisikan") selected @endif>Diprovisikan</option>  
-                                <option value="Ditagihkan" @if($quotation->tunjangan_holiday=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                                <option value="Normatif" @if($quotation->tunjangan_holiday=="Normatif") selected @endif>Normatif</option>  
+                                <option value="Flat" @if($quotation->tunjangan_holiday=="Flat") selected @endif>Flat</option>  
                               </select>
+                          </div>
+                          <div class="col-sm-4 d-nominal-tunjangan-holiday">
+                            <label class="form-label" for="nominal_tunjangan_holiday">Nominal Tunjangan Holiday</label>
+                            <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_tunjangan_holiday}}" name="nominal_tunjangan_holiday" id="nominal_tunjangan_holiday">
                           </div>
                         </div>
                         <div class="row mb-3">
@@ -203,11 +207,11 @@
                               </select>
                           </div>
                           <div class="col-sm-4 ada_lembur">
-                            <label class="form-label" for="lembur">Flat / Tidak Flat</label>
+                            <label class="form-label" for="lembur">Normatif / Flat</label>
                               <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
                                 <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>  
+                                <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>  
                                 <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>  
-                                <option value="Tidak Flat" @if($quotation->lembur=="Tidak Flat") selected @endif>Tidak Flat</option>  
                               </select>
                           </div>
                           <div class="col-sm-4 d-nominal-lembur">
@@ -359,6 +363,12 @@
     if(obj.ada_tunjangan_holiday=="Ada"){
       if(obj.tunjangan_holiday==null || obj.tunjangan_holiday==""){
         msg += "<b>Tunjangan Holiday</b> belum dipilih </br>";
+      }
+    }else{
+      if(obj.tunjangan_holiday =="Flat"){
+        if(obj.nominal_tunjangan_holiday==null || obj.nominal_tunjangan_holiday==""){
+          msg += "<b>Nominal Tunjangan Holiday</b> belum diisi </br>";
+        }
       }
     }
   }
@@ -521,6 +531,21 @@ function showTunjanganHoliday(first) {
 
 $('#ada_tunjangan_holiday').on('change', function() {
   showTunjanganHoliday(2);
+});
+
+tunjanganHolidayFlat(1);
+function tunjanganHolidayFlat(first) {
+  let selected = $("#tunjangan_holiday option:selected").val();
+    
+  if (selected!="Flat") {
+    $('.d-nominal-tunjangan-holiday').addClass('d-none');
+  }else{
+    $('.d-nominal-tunjangan-holiday').removeClass('d-none');
+  }
+}
+
+$('#tunjangan_holiday').on('change', function() {
+  tunjanganHolidayFlat(2);
 });
 
 </script>

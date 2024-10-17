@@ -1002,6 +1002,12 @@ class QuotationController extends Controller
                 $request->nominal_lembur = str_replace(".","",$request->nominal_lembur);
             }
 
+            if($request->tunjangan_holiday!="Flat"){
+                $request->nominal_tunjangan_holiday = null;
+            }else{
+                $request->nominal_tunjangan_holiday = str_replace(".","",$request->nominal_tunjangan_holiday);
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
                 'thr' => $request->thr,
@@ -1010,6 +1016,7 @@ class QuotationController extends Controller
                 'ppn_pph_dipotong' => $request->ppn_pph_dipotong,
                 'tunjangan_holiday' => $request->tunjangan_holiday,
                 'nominal_lembur' => $request->nominal_lembur,
+                'nominal_tunjangan_holiday' => $request->nominal_tunjangan_holiday,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);

@@ -20,55 +20,67 @@
                 <h6 class="mb-3">KAPORLAP / SERAGAM</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
-              <div class="row mt-5">
-                <div class="table-responsive text-nowrap">
-                  <table class="table">
+              <div class="row">
+                <div class="col-md-12 mb-4 mb-md-0">
+                  <div class="accordion accordion-popout mt-3" id="accordionPopout">
                     @foreach($listJenis as $data)
-                    <thead class="text-center">
-                      <tr class="table-primary">
-                        <th>{{$data->nama}}</th>
-                        <th>Harga / Unit</th>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                          <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
-                        @endforeach
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach($listKaporlap as $detail)
-                      @if($detail->jenis_barang_id == $data->id)
-                        <tr>
-                          <td>{{$detail->nama}}</td>
-                          <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}<input type="hidden" name="barang[]" value="{{$detail->id}}">                          </td>
-                          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                          <td class="jumlah">
-                            <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
-                              <span class="mdi mdi-minus"></span> &nbsp;
-                            </button>
-                              <input type="number" class="input-jumlah text-center" name="jumlah_{{$detail->id}}_{{$detailJabatan->id}}" value="@php echo $detail->{'jumlah_'.$detailJabatan->id} @endphp" data-harga="{{$detail->harga}}" style="max-width:50px;margin-left:5px;margin-right:5px">
-                            <button type="button" type="button" class="add-jumlah btn rounded-pill btn-primary waves-effect waves-light">
-                              <span class="mdi mdi-plus"></span> &nbsp;
-                            </button>
-                          </td>
-                          @endforeach
-                        </tr>
-                      @endif
-                      @endforeach
-                    </tbody>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="heading-{{$data->id}}">
+                        <button type="button" class="accordion-button" style="background-color:#e0e2ff" data-bs-toggle="collapse" data-bs-target="#accordionPopout-{{$data->id}}" aria-expanded="false" aria-controls="accordionPopout-{{$data->id}}">
+                          {{$data->nama}}
+                        </button>
+                      </h2>
+
+                      <div id="accordionPopout-{{$data->id}}" class="accordion-collapse collapse" aria-labelledby="heading-{{$data->id}}" data-bs-parent="#accordionPopout" style="">
+                        <div class="accordion-body accordion-body table-responsive text-nowrap">
+                          <table class="table">
+                            <thead class="text-center">
+                              <tr class="table-primary">
+                                <th>{{$data->nama}}</th>
+                                <th>Harga / Unit</th>
+                                @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                                  <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
+                                @endforeach
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @foreach($listKaporlap as $detail)
+                              @if($detail->jenis_barang_id == $data->id)
+                                <tr>
+                                  <td>{{$detail->nama}}</td>
+                                  <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}<input type="hidden" name="barang[]" value="{{$detail->id}}">                          </td>
+                                  @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                                  <td class="jumlah">
+                                    <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
+                                      <span class="mdi mdi-minus"></span> &nbsp;
+                                    </button>
+                                      <input type="number" class="input-jumlah text-center" name="jumlah_{{$detail->id}}_{{$detailJabatan->id}}" value="@php echo $detail->{'jumlah_'.$detailJabatan->id} @endphp" data-harga="{{$detail->harga}}" style="max-width:50px;margin-left:5px;margin-right:5px">
+                                    <button type="button" type="button" class="add-jumlah btn rounded-pill btn-primary waves-effect waves-light">
+                                      <span class="mdi mdi-plus"></span> &nbsp;
+                                    </button>
+                                  </td>
+                                  @endforeach
+                                </tr>
+                              @endif
+                              @endforeach
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
                     @endforeach
-                    <tbody>
-                      <tr class="table-success">
-                        <td><b>TOTAL</b> </td>
-                        <td class="total-semua" style="text-align:right"></td>
-                        <td>
-  
-                        </td>
-                        <td>
-  
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  </div>
                 </div>
+              </div>
+              <div class="row mt-5">
+                <table class="table w-100">
+                  <tbody>
+                    <tr class="table-success">
+                      <td><b>TOTAL</b> </td>
+                      <td class="total-semua" style="text-align:right"></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
               @include('sales.quotation.action')
             </div>

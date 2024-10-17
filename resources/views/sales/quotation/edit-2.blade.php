@@ -246,26 +246,26 @@
                       <option value="Tidak Ada" @if( $quotation->cuti=="Tidak Ada") selected @endif>Tidak Ada</option>  
                     </select>
                 </div>
-                <div class="col-sm-4 ada_cuti">
-                  <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" value="Cuti Kematian" name="cuti[]" id="cuti-kematian" @if(str_contains($quotation->cuti,'Cuti Kematian')) checked @endif>
-                    <label class="form-check-label" for="cuti-kematian"> Cuti Kematian = 2 Hari </label>
-                  </div>
-                  <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" value="Istri Melahirkan" name="cuti[]" id="istri-melahirkan" @if(str_contains($quotation->cuti,'Istri Melahirkan')) checked @endif>
-                    <label class="form-check-label" for="istri-melahirkan"> Istri Melahirkan = 2 Hari </label>
-                  </div>
-                  <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" value="Cuti Menikah" name="cuti[]" id="cuti-menikah" @if(str_contains($quotation->cuti,'Cuti Menikah')) checked @endif>
-                    <label class="form-check-label" for="cuti-menikah"> Cuti Menikah = 2-3 Hari </label>
-                  </div>
+                <div class="col-sm-2 ada_cuti">
                   <div class="form-check mt-3">
                     <input class="form-check-input" type="checkbox" value="Cuti Melahirkan" name="cuti[]" id="cuti-melahirkan" @if(str_contains($quotation->cuti,'Cuti Melahirkan')) checked @endif>
                     <label class="form-check-label" for="cuti-melahirkan"> Cuti Melahirkan </label>
                   </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="Cuti Kematian" name="cuti[]" id="cuti-kematian" @if(str_contains($quotation->cuti,'Cuti Kematian')) checked @endif>
+                    <label class="form-check-label" for="cuti-kematian"> Cuti Kematian </label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="Istri Melahirkan" name="cuti[]" id="istri-melahirkan" @if(str_contains($quotation->cuti,'Istri Melahirkan')) checked @endif>
+                    <label class="form-check-label" for="istri-melahirkan"> Istri Melahirkan </label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="Cuti Menikah" name="cuti[]" id="cuti-menikah" @if(str_contains($quotation->cuti,'Cuti Menikah')) checked @endif>
+                    <label class="form-check-label" for="cuti-menikah"> Cuti Menikah</label>
+                  </div>
                 </div>
                 <div class="col-sm-3 d-jenis-pay">
-                  <label class="form-label" for="gaji_saat_cuti">Gaji Saat Cuti</label>
+                  <label class="form-label" for="gaji_saat_cuti">Gaji Saat Cuti Melahirkan</label>
                   <select id="gaji_saat_cuti" name="gaji_saat_cuti" class="form-select" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->gaji_saat_cuti=="") selected @endif>- Pilih Data -</option>  
                     <option value="No Work No Pay" @if($quotation->gaji_saat_cuti=="No Work No Pay") selected @endif>No Work No Pay</option>  
@@ -274,7 +274,10 @@
                 </div>
                 <div class="col-sm-3 d-prorate">
                   <label class="form-label" for="thr">Prorate</label>
-                  <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control" id="prorate">
+                  <div class="input-group"> 
+                    <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control" id="prorate">
+                    <span class="input-group-text" id="basic-addon41">%</span>
+                  </div>
                 </div>
               </div>
               @include('sales.quotation.action')
