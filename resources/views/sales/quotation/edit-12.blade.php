@@ -21,8 +21,8 @@
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
-                <div class="table-responsive overflow-hidden table-data">
-                  <table id="table-data" class="dt-column-search table table-hover" style="padding-right:0px !important">
+                <div class="table-responsive overflow-hidden">
+                  <table class="table table-hover" style="padding-right:0px !important">
                       <tbody>
                         <tr>
                           <td>No. Quotation</td>
@@ -60,18 +60,6 @@
                           <td colspan="3">{{$quotationKebutuhan[0]->jumlah_personel}}</td>
                         </tr>
                         <tr>
-                          <td>PIC</td>
-                          <td colspan="3">{{$leads->pic}}</td>
-                        </tr>
-                        <tr>
-                          <td>Jabatan PIC </td>
-                          <td colspan="3">{{$leads->jabatan}}</td>
-                        </tr>
-                        <tr>
-                          <td>No. Telp PIC </td>
-                          <td colspan="3">{{$leads->no_telp}}</td>
-                        </tr>
-                        <tr>
                           <td>NPWP <span class="text-danger fw-bold">*</span> </td>
                           <td colspan="3"><input type="text" value="{{$quotation->npwp}}" name="npwp" id="npwp" class="form-control w-100"></td>
                         </tr>
@@ -80,10 +68,30 @@
                           <td colspan="3"><input type="text" name="alamat_npwp" value="{{$quotation->alamat_npwp}}" id="alamat_npwp" class="form-control w-100"></td>
                         </tr>
                         <tr>
-                          <td>PIC Invoice <span class="text-danger fw-bold">*</span></td>
-                          <td><input type="text" placeholder="Masukkan nama" name="pic_invoice" value="{{$quotation->pic_invoice}}" id="pic_invoice" class="form-control w-100"></td>
-                          <td><input type="text" placeholder="Masukkan No Telp" name="telp_pic_invoice" value="{{$quotation->telp_pic_invoice}}" id="telp_pic_invoice" class="form-control w-100"></td>
-                          <td><input type="text" placeholder="Masukkan Email" name="email_pic_invoice" value="{{$quotation->email_pic_invoice}}" id="email_pic_invoice" class="form-control w-100"></td>
+                          <td class="text-center">List PIC<br><br>
+                          <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#tambahPic">
+                              Tambah
+                            </button> </td>
+                          <td colspan="3">
+                            <div class="table-responsive overflow-hidden table-data">
+                              <table id="table-data" class="dt-column-search table w-100" style="text-wrap: nowrap;">
+                                <thead>
+                                  <tr>
+                                    <th>ID</th>
+                                    <th>Nama</th>
+                                    <th>Jabatan</th>
+                                    <th>No. Telp</th>
+                                    <th>Email</th>
+                                    <th>Kuasa</th>
+                                    <th></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {{-- data table ajax --}}
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
                         </tr>
                         <tr>
                           <td colspan="4" class="text-center fw-bold table-success">INFORMASI KERJASAMA</td>
@@ -179,7 +187,7 @@
                               List Training
                             </button>
                           </td>
-                          <td colspan="3">@foreach($listTrainingQ as $training) {{$training->nama}} @if(!$loop->last), @endif @endforeach</td>
+                          <td colspan="3" id="data-list-training">@foreach($listTrainingQ as $training) {{$training->nama}} @if(!$loop->last), @endif @endforeach</td>
                         </tr>
                         <tr>
                           <td>Tunjangan Hari Raya (THR)</td>
@@ -460,6 +468,68 @@ Absensi dari System/Aplikasi.@endif</textarea>
   </div>
 </div>
 
+<div class="modal fade" id="tambahPic" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel1">Tambah PIC</h4>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <input type="text" id="nama_pic" class="form-control" placeholder="Masukkan Nama" />
+              <label for="nama_pic">Nama</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <div class="input-group">
+                <select id="jabatan_pic" class="form-select">
+                  <option value="">- Pilih Jabatan -</option>
+                  @foreach($listJabatanPic as $jabatanPic)
+                    <option value="{{$jabatanPic->id}}">{{$jabatanPic->nama}}</option> 
+                  @endforeach 
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <input type="number" id="no_telp_pic" class="form-control" placeholder="Masukkan No. Telp" />
+              <label for="no_telp_pic">No Telp</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <input type="text" id="email_pic" class="form-control" placeholder="Masukkan Email" />
+              <label for="email_pic">Email PIC</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" id="btn-tambah-pic" class="btn btn-primary">Tambah PIC</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!--/ Content -->
 @endsection
 @section('pageScript')
@@ -491,15 +561,8 @@ Absensi dari System/Aplikasi.@endif</textarea>
         url: "{{route('quotation.add-quotation-training')}}",
         data:formData,
         success: function(response){
-          if(response=="Data Berhasil Ditambahkan"){
-            location.reload();
-          }else{
-            Swal.fire({
-              title: "Pemberitahuan",
-              html: response,
-              icon: "warning",
-            });
-          }
+          $('#data-list-training').text(response);
+            $('#basicModal').modal('toggle');
         },
         error:function(error){
           console.log(error);
@@ -527,15 +590,6 @@ Absensi dari System/Aplikasi.@endif</textarea>
       }
       if(obj.alamat_npwp==null || obj.alamat_npwp==""){
         msg += "<b>Alamat NPWP</b> belum diisi </br>";
-      }
-      if(obj.pic_invoice==null || obj.pic_invoice==""){
-        msg += "<b>PIC Invoice</b> belum diisi </br>";
-      }
-      if(obj.telp_pic_invoice==null || obj.telp_pic_invoice==""){
-        msg += "<b>Telp. PIC Invoice</b> belum diisi </br>";
-      }
-      if(obj.email_pic_invoice==null || obj.email_pic_invoice==""){
-        msg += "<b>Email PIC Invoice</b> belum diisi </br>";
       }
       if(obj.materai==null || obj.materai==""){
         msg += "<b>Materai</b> belum dipilih </br>";
@@ -632,5 +686,184 @@ Absensi dari System/Aplikasi.@endif</textarea>
       showTraining(2);
     });
   });
+
+  let table = $('#table-data').DataTable({
+    scrollX: true,
+    "bPaginate": false,
+    "bLengthChange": false,
+    "bFilter": false,
+    "bInfo": false,
+    'processing': true,
+    'language': {
+        'loadingRecords': '&nbsp;',
+        'processing': 'Loading...'
+    },
+    ajax: {
+        url: "{{ route('quotation.list-detail-pic') }}",
+        data: function (d) {
+            d.quotation_id = {{$quotation->id}};
+        },
+    },   
+    "order":[
+        [1,'asc']
+    ],
+    columns:[{
+        data : 'id',
+        name : 'id',
+        visible: false,
+        searchable: false
+    },{
+        data : 'nama',
+        name : 'nama',
+    },{
+        data : 'jabatan',
+        name : 'jabatan',
+    },{
+        data : 'no_telp',
+        name : 'no_telp',
+    },{
+        data : 'email',
+        name : 'email',
+    },{
+        data : 'kuasa',
+        name : 'kuasa',
+        width: "10%",
+        orderable: false,
+        searchable: false,
+    },{
+        data : 'aksi',
+        name : 'aksi',
+        width: "10%",
+        orderable: false,
+        searchable: false,
+    }],
+    "language": datatableLang,
+  });
+  
+  $('body').on('click', '.btn-delete', function() {
+    let formData = {
+      "id":$(this).data('id'),
+      "_token": "{{ csrf_token() }}"
+    };
+
+    let table ='#table-data';
+    $.ajax({
+      type: "POST",
+      url: "{{route('quotation.delete-detail-pic')}}",
+      data:formData,
+      success: function(response){
+        $(table).DataTable().ajax.reload();
+      },
+      error:function(error){
+        console.log(error);
+      }
+    });
+  });
+
+  $('#btn-tambah-pic').on('click',function(){
+    let msg="";
+    let nama = $('#nama_pic').val();
+    let jabatan = $("#jabatan_pic option:selected").val();
+    let no_telp = $('#no_telp_pic').val();
+    let email = $('#email_pic').val();
+
+    if(nama==null || nama==""){
+      msg += "<b>Nama PIC</b> belum diisi </br>";
+    };
+    if(jabatan==null || jabatan==""){
+      msg += "<b>Jabatan PIC</b> belum dipilih </br>";
+    };
+    if(no_telp==null || no_telp==""){
+      msg += "<b>No. Telp.</b> belum diisi </br>";
+    };
+    if(email==null || email==""){
+      msg += "<b>Email</b> belum diisi </br>";
+    };
+
+
+    if(msg!=""){
+      Swal.fire({
+            title: "Pemberitahuan",
+            html: msg,
+            icon: "warning",
+          });
+      $('#nama_pic').val("");
+      $("#jabatan_pic").val("").change();
+      $('#no_telp_pic').val("");
+      $('#email_pic').val("");
+      $('#tambahPic').modal('toggle');
+      return null;
+    };
+
+    let formData = {
+      "nama":nama,
+      "jabatan":jabatan,
+      "no_telp":no_telp,
+      "email":email,
+      "quotation_id":$('#quotation_id').val(),
+      "_token": "{{ csrf_token() }}"
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "{{route('quotation.add-detail-pic')}}",
+      data:formData,
+      success: function(response){
+        if(response=="Data Berhasil Ditambahkan"){
+          let table ='#table-data';
+          $(table).DataTable().ajax.reload();
+          $('#tambahPic').modal('toggle');
+        }else{
+          Swal.fire({
+            title: "Pemberitahuan",
+            html: response,
+            icon: "warning",
+          });
+          $('#nama_pic').val("");
+          $("#jabatan_pic").val("").change();
+          $('#no_telp_pic').val("");
+          $('#email_pic').val("");
+        }
+      },
+      error:function(error){
+        console.log(error);
+        $('#nama_pic').val("");
+        $("#jabatan_pic").val("").change();
+        $('#no_telp_pic').val("");
+        $('#email_pic').val("");
+      }
+    });
+  });
+
+  $('body').on('change', '.set-is-kuasa', function() {
+      if ($(this).is(':checked')) {
+        let formData = {
+          "id":$(this).data('id'),
+          "quotation_id":$('#quotation_id').val(),
+          "_token": "{{ csrf_token() }}"
+        };
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.change-kuasa-pic')}}",
+          data:formData,
+          success: function(response){
+            if(response=="Data Berhasil Ditambahkan"){
+              let table ='#table-data';
+              $(table).DataTable().ajax.reload();
+            }else{
+              Swal.fire({
+                title: "Pemberitahuan",
+                html: response,
+                icon: "warning",
+              });
+            }
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      };
+  });
+    
 </script>
 @endsection

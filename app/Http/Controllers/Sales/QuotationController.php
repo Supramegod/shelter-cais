@@ -400,8 +400,10 @@ class QuotationController extends Controller
             }
 
             $salaryRuleQ = null;
+            $listJabatanPic = null;
 
             if($request->step==12){
+                $listJabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
                 $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$id)->whereNull('deleted_at')->get();
                 $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
                 $quotation->mulai_kontrak = Carbon::parse($quotation->mulai_kontrak)->format('d F Y');
@@ -448,7 +450,7 @@ class QuotationController extends Controller
             if(isset($request->edit)){
                 $isEdit = true;
             }
-            return view('sales.quotation.edit-'.$request->step,compact('listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
+            return view('sales.quotation.edit-'.$request->step,compact('listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1684,7 +1686,17 @@ class QuotationController extends Controller
                 ]);
             }
 
-            return "Data Berhasil Ditambahkan";
+            $listTrain = "";
+            $dataTraining = DB::table('sl_quotation_training')->whereNull('deleted_at')->where('quotation_id',$request->quotation_id)->get();
+            foreach ($dataTraining as $key => $value) {
+                if($key != 0){
+                    $listTrain .= ", ";
+                };
+                
+                $listTrain .= $value->nama;
+            }
+
+            return $listTrain;
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1717,6 +1729,38 @@ class QuotationController extends Controller
         }
     }
 
+    public function addDetailPic(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $nama = $request->nama;
+            $jabatan = $request->jabatan;
+            $no_telp = $request->no_telp;
+            $email = $request->email;
+            $quotation_id = $request->quotation_id;
+
+            $quotation = DB::table('sl_quotation')->where('id',$quotation_id)->first();
+            $jabatan = DB::table('m_jabatan_pic')->where('id',$jabatan)->first();
+
+            DB::table('sl_quotation_pic')->insert([
+                'quotation_id' => $quotation->id,
+                'leads_id' => $quotation->leads_id,
+                'nama' => $nama,
+                'jabatan_id' => $jabatan->id,
+                'jabatan' => $jabatan->nama,
+                'no_telp' => $no_telp,
+                'email' => $email,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            return "Data Berhasil Ditambahkan";
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+            return "Data Gagal Ditambahkan";
+        }
+    }
 
     public function deleteDetailHC(Request $request){
         try {
@@ -1751,6 +1795,81 @@ class QuotationController extends Controller
         ->make(true);
     }
     
+    public function listDetailPic (Request $request){
+        $quotation = DB::table('sl_quotation')->where('id',$request->quotation_id)->first();
+
+        $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)
+        ->select('id','pic as nama','jabatan','no_telp','email')
+        ->first();
+        $leads->id = 0;
+        $leads->is_kuasa = 0;
+        
+        $data = DB::table('sl_quotation_pic')
+        ->where('quotation_id',$request->quotation_id)
+        ->whereNull('deleted_at')
+        ->select('is_kuasa','id','nama','jabatan','no_telp','email')
+        ->get();
+
+        $data->push($leads);
+
+        return DataTables::of($data)
+        ->addColumn('aksi', function ($data) {
+            if ($data->id==0) {
+                return "";
+            }
+            return '<div class="justify-content-center d-flex">
+                        <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+                    </div>';
+        })
+        ->addColumn('kuasa', function ($data) {
+            if($data->id==0){
+                return "";
+            }
+
+            $checked = "";
+
+            if ($data->is_kuasa==1) {
+                $checked = "checked";
+            }
+            return '<input name="is_kuasa[]" class="form-check-input set-is-kuasa" type="radio" value="" data-id="'.$data->id.'" '.$checked.' >';
+        })
+        ->rawColumns(['aksi','kuasa'])
+        ->make(true);
+    }
+
+    public function changeKuasaPic(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_pic')->where('quotation_id',$request->quotation_id)->update([
+                'is_kuasa' => 0,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_pic')->where('id',$request->id)->update([
+                'is_kuasa' => 1,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            return "Data Berhasil Ditambahkan";
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+            return "Data Gagal Ditambahkan";
+        }
+    }
+
+    public function deleteDetailPic(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_pic')->where('id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function changeKota (Request $request){
         $data = DB::connection('mysqlhris')->table('m_city')->where('province_id',$request->province_id)->get();
         foreach ($data as $key => $value) {

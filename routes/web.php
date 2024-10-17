@@ -139,6 +139,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/add-quotation-training', 'addQuotationTraining')->name('quotation.add-quotation-training');
         Route::post('/sales/quotation/add-barang', 'addBarang')->name('quotation.add-barang');
 
+        //PIC
+        Route::get('/sales/quotation/list-detail-pic', 'listDetailPic')->name('quotation.list-detail-pic'); // ajax
+        Route::post('/sales/quotation/delete-detail-pic', 'deleteDetailPic')->name('quotation.delete-detail-pic');
+        Route::post('/sales/quotation/add-detail-pic', 'addDetailPic')->name('quotation.add-detail-pic');
+        Route::post('/sales/quotation/change-kuasa-pic', 'changeKuasaPic')->name('quotation.change-kuasa-pic');
+
     });
 
 
