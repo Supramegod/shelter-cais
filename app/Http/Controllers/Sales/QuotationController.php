@@ -265,6 +265,10 @@ class QuotationController extends Controller
             if($request->step==11){
                 $daftarTunjangan = DB::select("SELECT DISTINCT tunjangan_id,nama FROM `m_kebutuhan_detail_tunjangan` WHERE deleted_at is null and kebutuhan_id =".$quotationKebutuhan[0]->kebutuhan_id);
 
+                $jumlahHc = 0;
+                foreach ($quotationKebutuhan[0]->kebutuhan_detail as $jhc) {
+                    $jumlahHc += $jhc->jumlah_hc;
+                }
                 foreach ($quotationKebutuhan[0]->kebutuhan_detail as $ikbd => $kbd) {
                     // $kbd->daftar_tunjangan = [];
                     $totalTunjangan = 0;
@@ -328,7 +332,18 @@ class QuotationController extends Controller
                         $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/12;
                     }
 
+                    $kbd->kompensasi = 0;
+                    if($quotation->kompensasi=="Diprovisikan"){
+                        $kbd->kompensasi = $quotationKebutuhan[0]->nominal_upah/12;
+                    }
                     
+                    $kbd->tunjangan_holiday = 0;
+                    if($quotation->kompensasi=="Flat"){
+                        $kbd->tunjangan_holiday = $quotation[0]->nominal_tunjangan_holiday;
+                    }else{
+                        $kbd->tunjangan_holiday = ($quotationKebutuhan[0]->nominal_upah/173*(14))*15/12;
+                    }
+
                     $personilKaporlap = 0;
                     $kbdkaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                     foreach ($kbdkaporlap as $ikdbkap => $kdbkap) {
@@ -346,9 +361,9 @@ class QuotationController extends Controller
                     $kbd->personil_devices = $personilDevices;
 
                     $personilOhc = 0;
-                    $kbdOhc = DB::table('sl_quotation_kebutuhan_ohc')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
+                    $kbdOhc = DB::table('sl_quotation_kebutuhan_ohc')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
                     foreach ($kbdOhc as $ikdbohc => $kdbohc) {
-                        $personilOhc += ($kdbohc->harga*$kdbohc->jumlah);
+                        $personilOhc += ($kdbohc->harga*$kdbohc->jumlah)/$jumlahHc;
                     };
 
                     $kbd->personil_ohc = $personilOhc;
@@ -361,7 +376,7 @@ class QuotationController extends Controller
 
                     $kbd->personil_chemical = $personilChemical;
 
-                    $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                    $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
@@ -369,17 +384,24 @@ class QuotationController extends Controller
 
                     $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee;
 
-                    $kbd->ppn = $kbd->management_fee*11/100;
-
-                    $kbd->pph = $kbd->management_fee*(-2/100);
-
+                    $kbd->ppn = 0;
+                    $kbd->pph = 0;
+                    if ($quotation->ppn_pph_dipotong=="Management Fee") {
+                        $kbd->ppn = $kbd->management_fee*11/100;
+                        $kbd->pph = $kbd->management_fee*(-2/100);
+                    }
                     $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
+
+                    if ($quotation->ppn_pph_dipotong=="Total Invoice") {
+                        $kbd->ppn = $kbd->total_invoice*11/100;
+                        $kbd->pph = $kbd->total_invoice*(-2/100);
+                    }
 
                     $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
                     // COST STRUCTURE
                     $kbd->total_base_manpower = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan;
-                    $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
+                    $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
 
                     $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
 
@@ -388,13 +410,21 @@ class QuotationController extends Controller
                     $kbd->management_fee_coss = $kbd->sub_total_personil_coss*$quotationKebutuhan[0]->persentase/100;
 
                     $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss;
-
-                    $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
-
-                    $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+                    
+                    $kbd->ppn_coss = 0;
+                    $kbd->pph_coss = 0;
+                    if($quotation->ppn_pph_dipotong =="Management Fee"){
+                        $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
+                        $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+                    }
 
                     $kbd->total_invoice_coss = $kbd->grand_total_coss + $kbd->ppn_coss + $kbd->pph_coss;
 
+                    if($quotation->ppn_pph_dipotong =="Total Invoice"){
+                        $kbd->ppn_coss = $kbd->total_invoice_coss*11/100;
+                        $kbd->pph_coss = $kbd->total_invoice_coss*(-2/100);
+                    }
+                    
                     $kbd->pembulatan_coss = ceil($kbd->total_invoice_coss / 1000) * 1000;
 
                 };
