@@ -215,20 +215,30 @@ class QuotationController extends Controller
             //step 9 - devices
             $listDevices = null;
             if($request->step==9){
-                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[9,10,11,12])->get();
+                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[9,10,11,12,17])->get();
                 $listDevices = DB::table('m_barang')
                                     ->whereNull('deleted_at')
-                                    ->whereIn('jenis_barang_id',[8,9,10,11,12])
+                                    ->whereIn('jenis_barang_id',[8,9,10,11,12,17])
                                     ->get();
 
                 foreach ($listDevices as $key => $devices) {
-                    foreach ($quotationKebutuhan[0]->kebutuhan_detail as $kKd => $vKd) {
-                        $devices->{'jumlah_'.$vKd->id} = 0;
-                        $kebkap = DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('barang_id',$devices->id)->where('quotation_kebutuhan_detail_id',$vKd->id)->first();
-                        if($kebkap !=null){
-                            $devices->{'jumlah_'.$vKd->id} = $kebkap->jumlah;
+                    if($devices->jenis_barang_id==17){
+                        $cekExist = DB::table('sl_quotation_kebutuhan_aplikasi')->whereNull('deleted_at')->where('aplikasi_pendukung',$devices->nama)->where('quotation_id',$id)->first();
+                        if($cekExist != null){
+                            $devices->{'jumlah'} = 1;
+                        }else{
+                            $devices->{'jumlah'} = 0;
+                        }
+                    }else{
+                        foreach ($quotationKebutuhan[0]->kebutuhan_detail as $kKd => $vKd) {
+                            $devices->{'jumlah_'.$vKd->id} = 0;
+                            $kebkap = DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('barang_id',$devices->id)->where('quotation_kebutuhan_detail_id',$vKd->id)->first();
+                            if($kebkap !=null){
+                                $devices->{'jumlah_'.$vKd->id} = $kebkap->jumlah;
+                            }
                         }
                     }
+                    
                 }
             }
 
@@ -688,6 +698,20 @@ class QuotationController extends Controller
                     'leads_id' => $request->leads_id,
                     'nama_perusahaan' => $request->leads,
                     'step' => 1,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+
+                $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
+
+                DB::table('sl_quotation_pic')->insert([
+                    'quotation_id' => $newId,
+                    'leads_id' => $request->leads_id,
+                    'nama' => $leads->pic,
+                    'jabatan_id' => $leads->jabatan_id,
+                    'jabatan' => $leads->jabatan,
+                    'no_telp' => $leads->no_telp,
+                    'email' => $leads->email,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
@@ -1809,20 +1833,12 @@ class QuotationController extends Controller
     
     public function listDetailPic (Request $request){
         $quotation = DB::table('sl_quotation')->where('id',$request->quotation_id)->first();
-
-        $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)
-        ->select('id','pic as nama','jabatan','no_telp','email')
-        ->first();
-        $leads->id = 0;
-        $leads->is_kuasa = 0;
         
         $data = DB::table('sl_quotation_pic')
         ->where('quotation_id',$request->quotation_id)
         ->whereNull('deleted_at')
         ->select('is_kuasa','id','nama','jabatan','no_telp','email')
         ->get();
-
-        $data->push($leads);
 
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {

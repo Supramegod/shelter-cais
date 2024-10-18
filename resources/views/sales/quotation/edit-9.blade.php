@@ -45,7 +45,15 @@
                             </thead>
                             <tbody>
                               @foreach($listDevices as $detail)
-                              @if($detail->jenis_barang_id == $data->id)
+                              @if($detail->jenis_barang_id == 17)
+                                @if($detail->jumlah==1)
+                                <tr>
+                                  <td>{{$detail->nama}}</td>
+                                  <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}<input type="hidden" name="barang[]" value="{{$detail->id}}">                          </td>
+                                  <td class="text-center" colspan="{{count($quotationKebutuhan[0]->kebutuhan_detail)}}">1</td>
+                                </tr>
+                                @endif
+                              @elseif($detail->jenis_barang_id == $data->id)
                                 <tr>
                                   <td>{{$detail->nama}}</td>
                                   <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}<input type="hidden" name="barang[]" value="{{$detail->id}}">                          </td>
@@ -127,10 +135,22 @@
 
   function hitungJumlah() {
     let jumlah =0;    
+    let jumlahAplikasi =0;
+
     $('.input-jumlah').each(function( index ) {
       let harga = parseInt($(this).val())*parseInt($(this).data('harga'));
       jumlah = jumlah+parseInt(harga);
     });
+
+    @foreach($listDevices as $detail)
+      @if($detail->jenis_barang_id == 17)
+        @if($detail->jumlah==1)
+          jumlahAplikasi += {{$detail->harga}};
+        @endif
+      @endif
+    @endforeach
+
+    jumlah += jumlahAplikasi;
     $('.total-semua').text("Rp "+jumlah.toLocaleString('id-ID'));
   }
 
