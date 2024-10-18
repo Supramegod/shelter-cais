@@ -761,6 +761,15 @@ class QuotationController extends Controller
                 $request->gaji_saat_cuti =null;
                 $request->prorate =null;
             }
+            if(!in_array("Cuti Kematian",$request->cuti)){
+                $request->hari_cuti_kematian =null;
+            }
+            if(!in_array("Istri Melahirkan",$request->cuti)){
+                $request->hari_istri_melahirkan =null;
+            }
+            if(!in_array("Cuti Menikah",$request->cuti)){
+                $request->hari_cuti_menikah =null;
+            }
         }
         
         try {
@@ -813,13 +822,16 @@ class QuotationController extends Controller
                     'evaluasi_karyawan' => $request->evaluasi_karyawan,
                     'step' => 3,
                     'cuti' => $request->macam_cuti,
+                    'hari_cuti_kematian' => $request->hari_cuti_kematian,
+                    'hari_istri_melahirkan' => $request->hari_istri_melahirkan,
+                    'hari_cuti_menikah' => $request->hari_cuti_menikah,
                     'gaji_saat_cuti' => $request->gaji_saat_cuti,
                     'prorate' => $request->prorate,
                     'shift_kerja' => $request->shift_kerja ,
                     'jam_kerja' => $request->jam_kerja ,
                     'mulai_kerja' => $request->mulai_kerja ,
                     'selesai_kerja' => $request->selesai_kerja ,
-                    'sistem_kerja' => $request->sistem_kerja ,
+                    // 'sistem_kerja' => $request->sistem_kerja ,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);

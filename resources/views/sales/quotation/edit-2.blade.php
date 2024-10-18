@@ -190,7 +190,7 @@
                   <input type="time" name="mulai_kerja" value="{{$quotation->mulai_kerja}}" class="form-control w-50" style="height:40px"> <span style="padding-left:5px;padding-right:5px">s/d</span> <input type="time" name="selesai_kerja" value="{{$quotation->selesai_kerja}}" class="form-control w-50" style="height:40px">
                 </div>
               </div>
-              <div class="row mb-3">
+              <!-- <div class="row mb-3">
                 <div class="col-sm-12">
                   <label class="form-label" for="sistem_kerja">Sistem Kerja</label>
                   <select id="sistem_kerja" name="sistem_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
@@ -198,7 +198,7 @@
                     <option value="No Work No Pay" @if($quotation->sistem_kerja=='No Work No Pay') selected @endif>No Work No Pay</option>  
                   </select>
                 </div>
-              </div>
+              </div> -->
               <div class="row mb-3">
                 <div class="col-sm-4">
                   <label class="form-label" for="basic-default-password42">TOP Invoice</label>
@@ -246,39 +246,86 @@
                       <option value="Tidak Ada" @if( $quotation->cuti=="Tidak Ada") selected @endif>Tidak Ada</option>  
                     </select>
                 </div>
-                <div class="col-sm-2 ada_cuti">
-                  <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" value="Cuti Melahirkan" name="cuti[]" id="cuti-melahirkan" @if(str_contains($quotation->cuti,'Cuti Melahirkan')) checked @endif>
-                    <label class="form-check-label" for="cuti-melahirkan"> Cuti Melahirkan </label>
-                  </div>
-                  <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" value="Cuti Kematian" name="cuti[]" id="cuti-kematian" @if(str_contains($quotation->cuti,'Cuti Kematian')) checked @endif>
-                    <label class="form-check-label" for="cuti-kematian"> Cuti Kematian </label>
-                  </div>
-                  <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" value="Istri Melahirkan" name="cuti[]" id="istri-melahirkan" @if(str_contains($quotation->cuti,'Istri Melahirkan')) checked @endif>
-                    <label class="form-check-label" for="istri-melahirkan"> Istri Melahirkan </label>
-                  </div>
-                  <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" value="Cuti Menikah" name="cuti[]" id="cuti-menikah" @if(str_contains($quotation->cuti,'Cuti Menikah')) checked @endif>
-                    <label class="form-check-label" for="cuti-menikah"> Cuti Menikah</label>
-                  </div>
+                <div class="col-sm-10 ada_cuti">
+                  <table style="width:100%">
+                    <tbody>
+                      <tr>
+                        <td style="width:33%">
+                          <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="Cuti Melahirkan" name="cuti[]" id="cuti-melahirkan" @if(str_contains($quotation->cuti,'Cuti Melahirkan')) checked @endif>
+                            <label class="form-check-label" for="cuti-melahirkan"> Cuti Melahirkan </label>
+                          </div>
+                        </td>
+                        <td style="width:33%">
+                          <div class="d-jenis-pay">
+                            <label class="form-label" for="gaji_saat_cuti">Gaji Saat Cuti Melahirkan</label>
+                            <select id="gaji_saat_cuti" name="gaji_saat_cuti" class="form-select" data-allow-clear="true" tabindex="-1">
+                              <option value="" @if($quotation->gaji_saat_cuti=="") selected @endif>- Pilih Data -</option>  
+                              <option value="No Work No Pay" @if($quotation->gaji_saat_cuti=="No Work No Pay") selected @endif>No Work No Pay</option>  
+                              <option value="Prorate" @if($quotation->gaji_saat_cuti=="Prorate") selected @endif>Prorate</option>  
+                            </select>
+                          </div>
+                        </td>
+                        <td style="width:33%">
+                          <div class="d-prorate">
+                            <label class="form-label" for="thr">Prorate</label>
+                            <div class="input-group"> 
+                              <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control" id="prorate">
+                              <span class="input-group-text" id="basic-addon41">%</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="Cuti Kematian" name="cuti[]" id="cuti-kematian" @if(str_contains($quotation->cuti,'Cuti Kematian')) checked @endif>
+                            <label class="form-check-label" for="cuti-kematian"> Cuti Kematian </label>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="input-group d-hari-cuti-kematian">
+                            <input type="number" min="0" max="100" name="hari_cuti_kematian" value="{{$quotation->hari_cuti_kematian}}" class="form-control" id="hari_cuti_kematian">
+                            <span class="input-group-text" id="basic-addon41">Hari</span>
+                          </div>
+                        </td>
+                        <td>&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="Istri Melahirkan" name="cuti[]" id="istri-melahirkan" @if(str_contains($quotation->cuti,'Istri Melahirkan')) checked @endif>
+                            <label class="form-check-label" for="istri-melahirkan"> Istri Melahirkan </label>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="input-group d-hari-istri-melahirkan">
+                            <input type="number" min="0" max="100" name="hari_istri_melahirkan" value="{{$quotation->hari_istri_melahirkan}}" class="form-control" id="hari_istri_melahirkan">
+                            <span class="input-group-text" id="basic-addon41">Hari</span>
+                          </div>
+                        </td>
+                        <td>&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="Cuti Menikah" name="cuti[]" id="cuti-menikah" @if(str_contains($quotation->cuti,'Cuti Menikah')) checked @endif>
+                            <label class="form-check-label" for="cuti-menikah"> Cuti Menikah</label>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="input-group d-hari-cuti-menikah">
+                            <input type="number" min="0" max="100" name="hari_cuti_menikah" value="{{$quotation->hari_cuti_menikah}}" class="form-control" id="hari_cuti_menikah">
+                            <span class="input-group-text" id="basic-addon41">Hari</span>
+                          </div>
+                        </td>
+                        <td>&nbsp;</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <div class="col-sm-3 d-jenis-pay">
-                  <label class="form-label" for="gaji_saat_cuti">Gaji Saat Cuti Melahirkan</label>
-                  <select id="gaji_saat_cuti" name="gaji_saat_cuti" class="form-select" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->gaji_saat_cuti=="") selected @endif>- Pilih Data -</option>  
-                    <option value="No Work No Pay" @if($quotation->gaji_saat_cuti=="No Work No Pay") selected @endif>No Work No Pay</option>  
-                    <option value="Prorate" @if($quotation->gaji_saat_cuti=="Prorate") selected @endif>Prorate</option>  
-                  </select>
-                </div>
-                <div class="col-sm-3 d-prorate">
-                  <label class="form-label" for="thr">Prorate</label>
-                  <div class="input-group"> 
-                    <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control" id="prorate">
-                    <span class="input-group-text" id="basic-addon41">%</span>
-                  </div>
-                </div>
+                
+                
               </div>
               @include('sales.quotation.action')
             </div>
@@ -353,9 +400,9 @@ $('#btn-submit').on('click',function(e){
   if(obj.selesai_kerja==null || obj.selesai_kerja==""){
     msg += "<b>Selesai Kerja</b> belum diisi </br>";
   }
-  if(obj.sistem_kerja==null || obj.sistem_kerja==""){
-    msg += "<b>Sistem Kerja</b> belum dipilih </br>";
-  }
+  // if(obj.sistem_kerja==null || obj.sistem_kerja==""){
+  //   msg += "<b>Sistem Kerja</b> belum dipilih </br>";
+  // }
   
   if(obj.ada_cuti == null || obj.ada_cuti == ""){
     msg += "<b>Jenis Cuti</b> belum dipilih </br>";
@@ -371,6 +418,21 @@ $('#btn-submit').on('click',function(e){
           if(obj.prorate ==null ||obj.prorate ==""){
             msg += "<b>Prorate</b> belum diisi </br>";
           }
+        }
+      }
+      if(obj['cuti[]'].includes("Cuti Kematian")){
+        if (obj.hari_cuti_kematian =="") {
+          msg += "<b>Hari Cuti Kematian</b> belum diisi </br>";
+        }
+      }
+      if(obj['cuti[]'].includes("Istri Melahirkan")){
+        if (obj.hari_istri_melahirkan =="") {
+          msg += "<b>Hari Istri Melahirkan</b> belum diisi </br>";
+        }
+      }
+      if(obj['cuti[]'].includes("Cuti Menikah")){
+        if (obj.hari_cuti_menikah =="") {
+          msg += "<b>Hari Cuti Menikah</b> belum diisi </br>";
         }
       }
     }
