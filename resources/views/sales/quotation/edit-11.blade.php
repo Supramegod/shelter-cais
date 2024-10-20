@@ -292,8 +292,7 @@
                 </div>
                 <div class="mt-3" style="padding-left:40px">
                   <p><b><i>Note :</i></b>	<br>
-Tunjangan hari raya (gaji pokok dibagi 12).		<br>
-Tunjangan overtime flat		<br>
+Tunjangan hari raya (gaji pokok dibagi {{$quotation->provisi}}).		<br>
 <i>Cover</i> 
 @if($quotationKebutuhan[0]->program_bpjs=="2 BPJS")
 BPJS Ketenagakerjaan 2 Program (JKK, JKM). 

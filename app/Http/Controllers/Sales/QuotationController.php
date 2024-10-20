@@ -992,10 +992,10 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             $newStep = 4;
-                $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
-                if($dataQuotation->step>$newStep){
-                    $newStep = $dataQuotation->step;
-                }
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
                 'updated_at' => $current_date_time,
@@ -1075,7 +1075,6 @@ class QuotationController extends Controller
             if($dataQuotation->step>$newStep){
                 $newStep = $dataQuotation->step;
             }
-
 
             if($request->lembur!="Flat"){
                 $request->nominal_lembur = null;
