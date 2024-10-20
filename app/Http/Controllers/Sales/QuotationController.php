@@ -389,13 +389,14 @@ class QuotationController extends Controller
                     if ($quotation->ppn_pph_dipotong=="Management Fee") {
                         $kbd->ppn = $kbd->management_fee*11/100;
                         $kbd->pph = $kbd->management_fee*(-2/100);
+                    }else if ($quotation->ppn_pph_dipotong=="Total Invoice") {
+                        $kbd->ppn = $kbd->grand_total*11/100;
+                        $kbd->pph = $kbd->grand_total*(-2/100);
                     }
+                    
                     $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
 
-                    if ($quotation->ppn_pph_dipotong=="Total Invoice") {
-                        $kbd->ppn = $kbd->total_invoice*11/100;
-                        $kbd->pph = $kbd->total_invoice*(-2/100);
-                    }
+                    
 
                     $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
@@ -416,15 +417,13 @@ class QuotationController extends Controller
                     if($quotation->ppn_pph_dipotong =="Management Fee"){
                         $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
                         $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+                    }else  if($quotation->ppn_pph_dipotong =="Total Invoice"){
+                        $kbd->ppn_coss = $kbd->grand_total_coss*11/100;
+                        $kbd->pph_coss = $kbd->grand_total_coss*(-2/100);
                     }
 
                     $kbd->total_invoice_coss = $kbd->grand_total_coss + $kbd->ppn_coss + $kbd->pph_coss;
 
-                    if($quotation->ppn_pph_dipotong =="Total Invoice"){
-                        $kbd->ppn_coss = $kbd->total_invoice_coss*11/100;
-                        $kbd->pph_coss = $kbd->total_invoice_coss*(-2/100);
-                    }
-                    
                     $kbd->pembulatan_coss = ceil($kbd->total_invoice_coss / 1000) * 1000;
 
                 };

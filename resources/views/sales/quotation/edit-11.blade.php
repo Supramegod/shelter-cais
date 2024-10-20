@@ -248,7 +248,6 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->grand_total,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      @if($quotation->ppn_pph_dipotong=="Management Fee")
                       <tr class="">
                         <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari management fee</span></td>
                         <td style="text-align:center">11 %</td>
@@ -263,7 +262,6 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pph,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      @endif
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
                         <td style="text-align:center"></td>
@@ -271,22 +269,6 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->total_invoice,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      @if($quotation->ppn_pph_dipotong=="Total Invoice")
-                      <tr class="">
-                        <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari total invoice</span></td>
-                        <td style="text-align:center">11 %</td>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->ppn,2,",",".")}}</td>
-                        @endforeach
-                      </tr>
-                      <tr class="">
-                        <td colspan="2" style="text-align:right" class="fw-bold">PPh <span class='text-danger'>*dari total invoice</span></td>
-                        <td style="text-align:center">-2 %</td>
-                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pph,2,",",".")}}</td>
-                        @endforeach
-                      </tr>
-                      @endif
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">PEMBULATAN</td>
                         <td style="text-align:center"></td>
@@ -541,7 +523,6 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->grand_total_coss,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      @if($quotation->ppn_pph_dipotong=="Management Fee")
                         <tr class="">
                           <td style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari management fee</span></td>
                           <td style="text-align:center">11 %</td>
@@ -556,7 +537,6 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                           <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pph_coss,2,",",".")}}</td>
                           @endforeach
                         </tr>
-                      @endif
                       <tr class="table-success">
                         <td style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
                         <td style="text-align:center"></td>
@@ -564,22 +544,6 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->total_invoice_coss,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      @if($quotation->ppn_pph_dipotong=="Total Invoice")
-                        <tr class="">
-                            <td style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari Total Invoice</span></td>
-                            <td style="text-align:center">11 %</td>
-                            @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                            <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->ppn_coss,2,",",".")}}</td>
-                            @endforeach
-                          </tr>
-                          <tr class="">
-                            <td style="text-align:right" class="fw-bold">PPh <span class='text-danger'>*dari Total Invoice</span></td>
-                            <td style="text-align:center">-2 %</td>
-                            @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                            <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pph_coss,2,",",".")}}</td>
-                            @endforeach
-                          </tr>
-                      @endif
                       <tr class="table-success">
                         <td style="text-align:right" class="fw-bold">PEMBULATAN</td>
                         <td style="text-align:center"></td>
@@ -620,7 +584,8 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                         <th>HPP</th>
                         <th>Harga Jual</th>
                       </tr>
-                    </thead>              
+                    </thead>
+                    @if($quotation->ppn_pph_dipotong=="Management Fee")
                     <tbody>
                       <tr>
                         <td style="text-align:left">Nominal</td>
@@ -649,19 +614,28 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                         @php
                           $ppn = 0;
                           foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
-                            $ppn += $detailJabatan->ppn;
-                          }
+                                $ppn += $detailJabatan->ppn;
+                            }
                           @endphp
-                          {{"Rp. ".number_format($ppn,2,",",".")}}
+                          @if($ppn==0)
+                          <b>PPN Ditanggung Customer</b>
+                          @else
+                            {{"Rp. ".number_format($ppn,2,",",".")}}
+                          @endif
                         </td>
                         <td style="text-align:right">
                         @php
                           $ppnCoss = 0;
                           foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
-                            $ppnCoss += $detailJabatan->ppn_coss;
-                          }
+                                $ppnCoss += $detailJabatan->ppn_coss;
+                              }
                           @endphp
-                          {{"Rp. ".number_format($ppnCoss,2,",",".")}}
+                          
+                          @if($ppnCoss==0)
+                          <b>PPN Ditanggung Customer</b>
+                          @else
+                            {{"Rp. ".number_format($ppnCoss,2,",",".")}}
+                          @endif
                         </td>
                       </tr>
                       <tr>
@@ -706,16 +680,114 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                           @php
                             $gpm = ($margin/$totalBiaya)*100;
                           @endphp
-                          {{$gpm}} %
+                          {{number_format($gpm,2,",",".")}} %
                         </td>
                         <td class="fw-bold" style="text-align:right">
                         @php
                             $gpmCoss = ($marginCoss/$totalBiayaCoss)*100;
                           @endphp
-                          {{$gpmCoss}} %
+                          {{number_format($gpmCoss,2,",",".")}} %
                         </td>
                       </tr>
                     </tbody>
+                    @else
+                    <tbody>
+                      <tr>
+                        <td style="text-align:left">Nominal</td>
+                        <td style="text-align:right">
+                          @php
+                          $grandTotal = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $grandTotal += $detailJabatan->grand_total;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($grandTotal,2,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                          $grandTotalCoss = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $grandTotalCoss += $detailJabatan->grand_total_coss;
+                          }
+                        @endphp
+                          {{"Rp. ".number_format($grandTotalCoss,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">PPH</td>
+                        <td style="text-align:right">
+                        @php
+                          $pph = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                                $pph += abs($detailJabatan->pph);
+                            }
+                          @endphp
+                          {{"Rp. ".number_format($pph,2,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                          $pphCoss = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                                $pphCoss += abs($detailJabatan->pph_coss);
+                              }
+                          @endphp
+                          {{"Rp. ".number_format($pphCoss,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Total Biaya</td>
+                        <td style="text-align:right">
+                        @php
+                          $totalBiaya = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $totalBiaya += $detailJabatan->sub_total_personil;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($totalBiaya,2,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                          $totalBiayaCoss = 0;
+                          foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan){
+                            $totalBiayaCoss += $detailJabatan->sub_total_personil_coss;
+                          }
+                          @endphp
+                          {{"Rp. ".number_format($totalBiayaCoss,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Margin</td>
+                        <td style="text-align:right">
+                          @php
+                            $margin = $grandTotal-$pph-$totalBiaya;
+                          @endphp
+                          {{"Rp. ".number_format($margin,2,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        @php
+                            $marginCoss = $grandTotalCoss-$pphCoss-$totalBiayaCoss;
+                          @endphp
+                          {{"Rp. ".number_format($marginCoss,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold" style="text-align:left">GPM</td>
+                        <td class="fw-bold" style="text-align:right">
+                          @php
+                            $gpm = ($margin/$totalBiaya)*100;
+                          @endphp
+                          {{number_format($gpm,2,",",".")}} %
+                        </td>
+                        <td class="fw-bold" style="text-align:right">
+                        @php
+                            $gpmCoss = ($marginCoss/$totalBiayaCoss)*100;
+                          @endphp
+                          {{number_format($gpmCoss,2,",",".")}} %
+                        </td>
+                      </tr>
+                    </tbody>
+                    @endif
+                    
                   </table>
                 </div>
               </div>
