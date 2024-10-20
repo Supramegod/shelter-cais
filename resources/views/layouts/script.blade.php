@@ -92,22 +92,28 @@
         // });
         
         $.fn.serializeObject = function() {
-        var o = {};
-        var a = this.serializeArray();
-        $.each(a, function() {
-            if (o[this.name]) {
-                if (!o[this.name].push) {
-                    o[this.name] = [o[this.name]];
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
                 }
-                o[this.name].push(this.value || '');
-            } else {
-                o[this.name] = this.value || '';
+            });
+            return o;
+        };
+
+        $('.minimal').on('input', function() {
+            var value = $(this).val();
+            if (value === "" || value <= 0) {
+                // Jika kosong, biarkan tetap kosong
+                $(this).val("");
             }
         });
-        return o;
-    };
-
-    
     </script>
     <!-- Custom script -->
     @yield('pageScript')

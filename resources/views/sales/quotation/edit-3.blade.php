@@ -54,7 +54,7 @@
                         <div class="col-sm-6">
                           <label class="form-label" for="jumlah_hc_{{$value->id}}">Jumlah Headcount</label>
                           <div class="input-group">
-                            <input type="number" class="form-control" id="jumlah_hc_{{$value->id}}">
+                            <input type="number" class="form-control minimal" id="jumlah_hc_{{$value->id}}">
                           </div>
                         </div>
                       </div>

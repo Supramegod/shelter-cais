@@ -55,7 +55,7 @@
                         <th colspan="{{3+count($quotationKebutuhan[0]->kebutuhan_detail)}}" style="vertical-align: middle;">HARGA POKOK BIAYA</th>
                       </tr>
                       <tr class="table-success">
-                        <th colspan="{{3+count($quotationKebutuhan[0]->kebutuhan_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}</th>
+                        <th colspan="{{3+count($quotationKebutuhan[0]->kebutuhan_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}} ( Provisi = {{$quotation->provisi}} )</th>
                       </tr>
                       <tr class="table-success">
                         <th rowspan="2" style="vertical-align: middle;">No.</th>
@@ -123,6 +123,17 @@
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
                         <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif"){{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}}@elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($quotation->nominal_tunjangan_holiday,2,",",".")}} @endif</td>
+                        @endforeach
+                      </tr>
+                      @php $nomorUrut++; @endphp
+                      @endif
+                      @if($quotation->lembur=="Normatif" || $quotation->lembur=="Flat")
+                      <tr class="">
+                        <td style="text-align:center">{{$nomorUrut}}</td>
+                        <td style="text-align:left" class="">Lembur <b>( {{$quotation->lembur}} )</b></td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td style="text-align:right" class="">@if($quotation->lembur=="Normatif") Normatif @elseif($quotation->lembur=="Flat") {{"Rp. ".number_format($quotation->nominal_lembur,2,",",".")}} @endif</td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
@@ -306,7 +317,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <th colspan="{{3+count($quotationKebutuhan[0]->kebutuhan_detail)}}" style="vertical-align: middle;">COST STRUCTURE {{$data->kebutuhan}}</th>
                       </tr>
                       <tr class="table-success">
-                        <th colspan="{{3+count($quotationKebutuhan[0]->kebutuhan_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}</th>
+                        <th colspan="{{3+count($quotationKebutuhan[0]->kebutuhan_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}  ( Provisi = {{$quotation->provisi}} )</th>
                       </tr>
                     </thead>              
                     <tbody>
@@ -385,6 +396,15 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="text-center"></th>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
                         <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}}</th>
+                        @endforeach
+                      </tr>
+                      @endif
+                      @if($quotation->lembur=="Flat" || $quotation->lembur=="Normatif")
+                      <tr>
+                        <td>Lembur</th>
+                        <td class="text-center"></th>
+                        @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                        <td class="text-end">@if($quotation->lembur=="Normatif") <b>Normatif</b> @else {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif</th>
                         @endforeach
                       </tr>
                       @endif

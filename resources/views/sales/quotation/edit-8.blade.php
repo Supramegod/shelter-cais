@@ -54,7 +54,7 @@
                   <div class="col-sm-2">
                     <label class="form-label" for="jumlah">Jumlah</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" id="jumlah">
+                      <input type="number" class="form-control minimal" id="jumlah">
                     </div>
                   </div>
                 </div>

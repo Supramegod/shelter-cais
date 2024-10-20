@@ -270,7 +270,7 @@
                           <div class="d-prorate">
                             <label class="form-label" for="thr">Prorate</label>
                             <div class="input-group"> 
-                              <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control" id="prorate">
+                              <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control minimal" id="prorate">
                               <span class="input-group-text" id="basic-addon41">%</span>
                             </div>
                           </div>
@@ -285,7 +285,7 @@
                         </td>
                         <td>
                           <div class="input-group d-hari-cuti-kematian">
-                            <input type="number" min="0" max="100" name="hari_cuti_kematian" value="{{$quotation->hari_cuti_kematian}}" class="form-control" id="hari_cuti_kematian">
+                            <input type="number" min="0" max="100" name="hari_cuti_kematian" value="{{$quotation->hari_cuti_kematian}}" class="form-control  minimal" id="hari_cuti_kematian">
                             <span class="input-group-text" id="basic-addon41">Hari</span>
                           </div>
                         </td>
@@ -300,7 +300,7 @@
                         </td>
                         <td>
                           <div class="input-group d-hari-istri-melahirkan">
-                            <input type="number" min="0" max="100" name="hari_istri_melahirkan" value="{{$quotation->hari_istri_melahirkan}}" class="form-control" id="hari_istri_melahirkan">
+                            <input type="number" min="0" max="100" name="hari_istri_melahirkan" value="{{$quotation->hari_istri_melahirkan}}" class="form-control  minimal" id="hari_istri_melahirkan">
                             <span class="input-group-text" id="basic-addon41">Hari</span>
                           </div>
                         </td>
@@ -315,7 +315,7 @@
                         </td>
                         <td>
                           <div class="input-group d-hari-cuti-menikah">
-                            <input type="number" min="0" max="100" name="hari_cuti_menikah" value="{{$quotation->hari_cuti_menikah}}" class="form-control" id="hari_cuti_menikah">
+                            <input type="number" min="0" max="100" name="hari_cuti_menikah" value="{{$quotation->hari_cuti_menikah}}" class="form-control  minimal" id="hari_cuti_menikah">
                             <span class="input-group-text" id="basic-addon41">Hari</span>
                           </div>
                         </td>
@@ -417,6 +417,8 @@ $('#btn-submit').on('click',function(e){
         }else if(obj.gaji_saat_cuti == "Prorate"){
           if(obj.prorate ==null ||obj.prorate ==""){
             msg += "<b>Prorate</b> belum diisi </br>";
+          }else if(obj.prorate <=0 ||obj.prorate > 100){
+            msg += "isikan <b>Prorate</b> antara 1-100 </br>";
           }
         }
       }

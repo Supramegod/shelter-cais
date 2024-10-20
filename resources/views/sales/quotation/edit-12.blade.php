@@ -126,7 +126,7 @@
                         </tr>
                         <tr>
                           <td>System Kerja</td>
-                          <td colspan="3">{{$quotation->sistem_kerja}}
+                          <td colspan="3">@if($quotation->lembur=="Tidak Ada") No Work No Pay @elseif($quotation->lembur!="") Ada Lembur @endif
                           </td>
                         </tr>
                         <tr>
@@ -137,7 +137,7 @@
                         </tr>
                         <tr>
                           <td>Kunjungan Operasional <span class="text-danger fw-bold">*</span></td>
-                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_operasional" value="@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif" id="jumlah_kunjungan_operasional" class="form-control w-100"></td>
+                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_operasional" value="@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif" id="jumlah_kunjungan_operasional" class="form-control w-100 minimal"></td>
                           <td>
                             <select id="bulan_tahun_kunjungan_operasional" name="bulan_tahun_kunjungan_operasional" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                               <option value="" @if($quotation->kunjungan_operasional=='') selected @endif>- Pilih Data -</option>  
@@ -151,7 +151,7 @@
                         </tr>
                         <tr>
                           <td>Kunjungan Tim CRM <span class="text-danger fw-bold">*</span></td>
-                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_tim_crm" value="@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif" id="jumlah_kunjungan_tim_crm" class="form-control w-100"></td>
+                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_tim_crm" value="@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif" id="jumlah_kunjungan_tim_crm" class="form-control w-100 minimal"></td>
                           <td>
                             <select id="bulan_tahun_kunjungan_tim_crm" name="bulan_tahun_kunjungan_tim_crm" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                               <option value="" @if($quotation->kunjungan_tim_crm=='') selected @endif>- Pilih Data -</option>  
@@ -167,18 +167,16 @@
                           <td>Training <span class="text-danger fw-bold">*</span></td>
                           <td>
                             <select id="ada_training" name="ada_training" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->training=='') selected @endif>- Pilih Data -</option>  
-                              <option value="Ada" @if($quotation->training!='Tidak Ada' && $quotation->training!='') selected @endif>Ada</option>
-                              <option value="Tidak Ada" @if($quotation->training=='Tidak Ada') selected @endif>Tidak Ada</option>
+                              <option value="" @if($quotation->training=='' || $quotation->training==null) selected @endif>- Pilih Data -</option>  
+                              <option value="Ada" @if($quotation->training!='0' && $quotation->training!='' && $quotation->training!=null) selected @endif>Ada</option>
+                              <option value="Tidak Ada" @if($quotation->training=='0') selected @endif>Tidak Ada</option>
                             </select>
                           </td>
                           <td colspan="2">
-                            <select id="training" name="training" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->training=='') selected @endif>- Pilih Data -</option>  
-                              <option value="1 Tahun 1 Kali" @if($quotation->training=='1 Tahun 1 Kali') selected @endif>1 Tahun 1 Kali</option>
-                              <option value="1 Tahun 2 Kali" @if($quotation->training=='1 Tahun 2 Kali') selected @endif>1 Tahun 2 Kali</option>
-                              <option value="1 Tahun 3 Kali" @if($quotation->training=='1 Tahun 3 Kali') selected @endif>1 Tahun 3 Kali</option>
-                            </select>
+                            <div class="input-group d-training" id="d-training"> 
+                              <input type="number" min="0" max="100" name="training" placeholder="masukkan jumlah dalam 1 tahun" value="{{$quotation->training}}" class="form-control minimal" id="training">
+                              <span class="input-group-text" id="basic-addon41">Kali Dalam 1 Tahun</span>
+                            </div>
                           </td>
                         </tr>
                         <tr id="list-training">
@@ -328,7 +326,7 @@ Absensi dari System/Aplikasi.@endif</textarea>
                         </tr>
                         <tr>
                           <td><i>Term of Payment</i>&nbsp;<b>(TOP)</b></td>
-                          <td colspan="3"><b>Talangan @if($quotation->top=="Lebih Dari 7 Hari"){{$quotation->jumlah_hari_invoice}} hari {{$quotation->tipe_hari_invoice}} @else $quotation->top @endif setelah invoice & lampiran diterima</b></td>
+                          <td colspan="3"><b>Talangan @if($quotation->top=="Lebih Dari 7 Hari"){{$quotation->jumlah_hari_invoice}} hari {{$quotation->tipe_hari_invoice}} @else {{$quotation->top}} @endif setelah invoice & lampiran diterima</b></td>
                         </tr>
                         <tr>
                           <td>Skema Cut Off, Invoice,Payroll dan Pembayaran
@@ -536,6 +534,31 @@ Absensi dari System/Aplikasi.@endif</textarea>
 <script>
   $(document).ready(function(){
     $('#btn-simpan-training').on('click',function(){
+      var checkedCount = $('.training-pilihan:checked').length;
+      var jumlahTraining = $('#training').val();
+
+      if(jumlahTraining==""){
+        Swal.fire({
+              title: "Pemberitahuan",
+              html: "Belum memasukkan jumlah training per tahun",
+              icon: "warning",
+            });
+            $('#basicModal').modal('toggle');
+
+        return null;
+      }
+
+      if (jumlahTraining<checkedCount) {
+        Swal.fire({
+              title: "Pemberitahuan",
+              html: "Training yang dipilih lebih dari jumlah training dalam 1 tahun",
+              icon: "warning",
+            });
+            $('#basicModal').modal('toggle');
+
+        return null;
+      }
+      
       var checkedValues = [];
       $('.training-pilihan:checked').each(function() {
           checkedValues.push($(this).val());
@@ -671,14 +694,14 @@ Absensi dari System/Aplikasi.@endif</textarea>
     function showTraining(first) {
     let selected = $("#ada_training option:selected").val();
       if (selected!="Ada") {
-        $('#training').addClass('d-none');
+        $('#d-training').addClass('d-none');
         $('#list-training').addClass('d-none');
         
       }else{
-        $('#training').removeClass('d-none');
+        $('#d-training').removeClass('d-none');
         $('#list-training').removeClass('d-none');
         if(first!=1){
-          $("#training").val("").change();
+          $("#d-training").val("");
         }
       }
     }
