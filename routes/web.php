@@ -21,6 +21,7 @@ use App\Http\Controllers\Master\StatusLeadsController;
 use App\Http\Controllers\Master\TunjanganController;
 use App\Http\Controllers\Master\TunjanganJabatanController;
 use App\Http\Controllers\Master\BarangController;
+use App\Http\Controllers\Master\KebutuhanController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -273,5 +274,22 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/barang/delete', 'delete')->name('barang.delete');
 
         Route::get('/master/barang/list', 'list')->name('barang.list'); // ajax
+    });
+    
+    Route::controller(KebutuhanController::class)->group(function() {
+        Route::get('/master/kebutuhan', 'index')->name('kebutuhan');
+        Route::get('/master/kebutuhan/view/{id}', 'view')->name('kebutuhan.view');
+
+        Route::get('/master/kebutuhan/list', 'list')->name('kebutuhan.list'); // ajax
+        
+        Route::post('/master/kebutuhan/add-detail', 'addDetail')->name('kebutuhan.add-detail');
+
+        Route::get('/master/kebutuhan/list-detail-tunjangan', 'listDetailTunjangan')->name('kebutuhan.list-detail-tunjangan'); // ajax
+        Route::post('/master/kebutuhan/delete-detail-tunjangan', 'deleteDetailTunjangan')->name('kebutuhan.delete-detail-tunjangan');
+        Route::post('/master/kebutuhan/add-detail-tunjangan', 'addDetailTunjangan')->name('kebutuhan.add-detail-tunjangan');
+
+        Route::get('/master/kebutuhan/list-detail-requirement', 'listDetailRequirement')->name('kebutuhan.list-detail-requirement'); // ajax
+        Route::post('/master/kebutuhan/delete-detail-requirement', 'deleteDetailRequirement')->name('kebutuhan.delete-detail-requirement');
+        Route::post('/master/kebutuhan/add-detail-requirement', 'addDetailrequiRement')->name('kebutuhan.add-detail-requirement');
     });
 });
