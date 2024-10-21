@@ -545,6 +545,7 @@ class QuotationController extends Controller
             $master->skontrak_selesai = Carbon::createFromFormat('Y-m-d',$master->kontrak_selesai)->isoFormat('D MMMM Y');
             $master->stgl_penempatan = Carbon::createFromFormat('Y-m-d',$master->tgl_penempatan)->isoFormat('D MMMM Y');
             $master->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$master->created_at)->isoFormat('D MMMM Y');
+            $master->stgl_quotation = Carbon::createFromFormat('Y-m-d',$master->tgl_quotation)->isoFormat('D MMMM Y');
 
             $master->salary_rule = "";
             $salaryRuleList = DB::table('m_salary_rule')->where('id',$master->salary_rule_id)->first();
@@ -711,7 +712,14 @@ class QuotationController extends Controller
 
             };
             
-            return view('sales.quotation.view',compact('daftarTunjangan','quotationKebutuhan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','data','master','leads','aplikasiPendukung'));
+            $listPic = DB::table('sl_quotation_pic')->where('quotation_id',$master->id)->whereNull('deleted_at')->get();
+            $kebutuhanDetail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$data->id)->whereNull('deleted_at')->get();
+            foreach ($kebutuhanDetail as $kkd => $vkd) {
+                $vkd->requirement = DB::table('sl_quotation_kebutuhan_detail_requirement')->where('quotation_kebutuhan_detail_id',$vkd->id)->whereNull('deleted_at')->get();
+            }
+            $salaryRuleQ = DB::table('m_salary_rule')->where('id',$master->salary_rule_id)->first();
+
+            return view('sales.quotation.view',compact('salaryRuleQ','kebutuhanDetail','listPic','daftarTunjangan','quotationKebutuhan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','data','master','leads','aplikasiPendukung'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -2569,6 +2577,66 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         return $nomor;
     }
 
+    public function listDetailRequirement (Request $request){        
+        $data = DB::table('sl_quotation_kebutuhan_detail_requirement')
+        ->where('quotation_kebutuhan_detail_id',$request->quotation_kebutuhan_detail_id)
+        ->whereNull('deleted_at')
+        ->get();
+
+        foreach ($data as $key => $value) {
+            $value->nomor = $key+1;
+        }
+
+        return DataTables::of($data)
+        ->addColumn('aksi', function ($data) {
+            if ($data->id==0) {
+                return "";
+            }
+            return '<div class="justify-content-center d-flex">
+                        <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-detail="'.$data->quotation_kebutuhan_detail_id.'" data-id="'.$data->id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+                    </div>';
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+    }
+
+    public function deleteDetailRequirement(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kebutuhan_detail_requirement')->where('id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function addDetailRequirement(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $requirement = $request->requirement;
+            $quotationKebutuhanDetailId = $request->quotation_kebutuhan_detail_id;
+
+            $data = DB::table('sl_quotation_kebutuhan_detail')->where('id',$quotationKebutuhanDetailId)->first();
+            DB::table('sl_quotation_kebutuhan_detail_requirement')->insert([
+                'quotation_id' => $data->quotation_id,
+                'quotation_kebutuhan_id' => $data->quotation_kebutuhan_id,
+                'quotation_kebutuhan_detail_id' => $data->id,
+                'requirement' => $requirement,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            return "Data Berhasil Ditambahkan";
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+            return "Data Gagal Ditambahkan";
+        }
+    }
     // public function perhitunganHPP ($quotationKebutuhanId){
     //     try {
     //         $quotationKebutuhanData = DB::table('sl_quotation_kebutuhan')->whereNull("deleted_at")->first();

@@ -2,6 +2,11 @@
 @section('title','Quotation')
 @section('content')
 <!--/ Content -->
+<style>
+  .dataTables_scrollHeadInner {
+    width: 100% !important;
+  }
+</style>
 <div class="container-fluid flex-grow-1 container-p-y"> 
   <div class="col-12 col-lg-12">
     <div class="card mb-2">
@@ -18,6 +23,7 @@
                 <span class="badge bg-label-warning rounded-pill">Data Belum Terisi Lengkap</span>
                @endif
             </h5>
+            <p class="mt-0"> Tanggal Quotation : {{$master->stgl_quotation}}</p>
             <p class="text-body">{{$master->nama_perusahaan}}</p>
             <p class="text-body">Revisi Ke : {{$master->revisi}}</p>
             <div class="mt-2 mb-3">
@@ -68,7 +74,7 @@
   <!-- Order Details Table -->
 
   <div class="row">
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-lg-7">
       <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title m-0">Quotation Info</h5>
@@ -77,71 +83,54 @@
           @endif
         </div>
         <div class="card-body">
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Dibuat Oleh</label>
-              <input type="text" value="{{$master->created_by}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Dibuat Tanggal</label>
-              <input type="text" value="{{$master->screated_at}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Jumlah Site</label>
-              <input type="text" value="{{$master->jumlah_site}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Jenis Kontrak</label>
-              <input type="text" value="{{$master->jenis_kontrak}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Mulai Kontrak</label>
-              <input type="text" value="{{$master->smulai_kontrak}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Kontrak Selesai</label>
-              <input type="text" value="{{$master->skontrak_selesai}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Tanggal Penempatan</label>
-              <input type="text" value="{{$master->stgl_penempatan}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Salary Rule</label>
-              <input type="text" value="{{$master->salary_rule}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Durasi Karyawan</label>
-              <input type="text" value="{{$master->durasi_karyawan}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Evaluasi Karyawan</label>
-              <input type="text" value="{{$master->evaluasi_karyawan}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">TOP Invoice @if($master->top=="Lebih Dari 7 Hari")<span class="badge bg-label-warning rounded-pill">Butuh Approval Direksi</span>@endif</label>
-              <input type="text" value="{{$master->top}}" class="form-control" readonly>
-            </div>
-            @if($master->top=="Lebih Dari 7 Hari")
-            <div class="col-sm-3">
-              <label class="form-label">&nbsp;</label>
-              <input type="text" value="{{$master->jumlah_hari_invoice}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-3">
-              <label class="form-label">&nbsp;</label>
-              <input type="text" value="Hari {{$master->tipe_hari_invoice}}" class="form-control" readonly>
-            </div>
-            @endif
+          <div class="text-nowrap">
+            <table class="table">
+              <tr>
+                <td>Dibuat Oleh</td>
+                <td>: {{$master->created_by}}</td>
+                <td>Dibuat Tanggal</td>
+                <td>: {{$master->screated_at}}</td>
+              </tr>
+              <tr>
+                <td>Jumlah Site</td>
+                <td>: {{$master->jumlah_site}}</td>
+                <td>Jenis Kontrak</td>
+                <td>: {{$master->jenis_kontrak}}</td>
+              </tr>
+              <tr>
+                <td>Mulai Kontrak</td>
+                <td>: {{$master->smulai_kontrak}}</td>
+                <td>Kontrak Selesai</td>
+                <td>: {{$master->skontrak_selesai}}</td>
+              </tr>
+              <tr>
+                <td>Durasi Kerjasama</td>
+                <td>: {{$master->durasi_kerjasama}}</td>
+                <td>Evaluasi Kontrak</td>
+                <td>: {{$master->evaluasi_kontrak}}</td>
+              </tr>
+              <tr>
+                <td>Durasi Karyawan</td>
+                <td>: {{$master->durasi_karyawan}}</td>
+                <td>Evaluasi Karyawan</td>
+                <td>: {{$master->evaluasi_karyawan}}</td>
+              </tr>
+              <tr>
+                <td>Tanggal Penempatan</td>
+                <td>: {{$master->stgl_penempatan}}</td>
+                <td>Salary Rule</td>
+                <td>: {{$master->salary_rule}}</td>
+              </tr>
+              <tr>
+                <td>TOP Invoice @if($master->top=="Lebih Dari 7 Hari")<span class="badge bg-label-warning rounded-pill">Butuh Approval Direksi</span>@endif</td>
+                <td>: {{$master->top}}</td>
+                @if($master->top=="Lebih Dari 7 Hari")
+                <td colspan="2">( {{$master->jumlah_hari_invoice}} Hari {{$master->tipe_hari_invoice}} )</td>
+                @else
+                <td colspan="2">&nbsp;</td>
+                @endif
+              </tr>
+            </table>
           </div>
         </div>
       </div>
@@ -153,96 +142,142 @@
           @endif
         </div>
         <div class="card-body">
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Kebutuhan</label>
-              <input type="text" value="{{$data->kebutuhan}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Entitas</label>
-              <input type="text" value="{{$data->company}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Provinsi</label>
-              <input type="text" value="{{$data->provinsi}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Kabupaten / Kota</label>
-              <input type="text" value="{{$data->kota}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Upah</label>
-              <input type="text" value="{{$data->upah}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Nominal Upah @if($data->nominal_upah<$data->umk)<span class="badge bg-label-warning rounded-pill">Butuh Approval</span>@endif</label>
-              <input type="text" value="Rp {{number_format($data->nominal_upah,0,",",".")}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Manajemen Fee</label>
-              <input type="text" value="{{$data->manajemen_fee}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Persentase @if($data->persentase<7) <span class="badge bg-label-warning rounded-pill">Butuh Approval</span> @endif</label>
-              <input type="text" value="{{$data->persentase}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">Jenis Perusahaan</label>
-              <input type="text" value="{{$data->jenis_perusahaan}}" class="form-control" readonly>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label">Resiko</label>
-              <input type="text" value="{{$data->resiko}}" class="form-control" readonly>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label class="form-label">BPJS @if($data->program_bpjs!="4 BPJS") <span class="badge bg-label-warning rounded-pill">Butuh Approval</span> @endif</label>
-              <input type="text" value="{{$data->program_bpjs}}" class="form-control" readonly>
-            </div>
+          <div class="table-responsive">
+            <table class="table">
+              <tr>
+                <td>Kebutuhan</td>
+                <td>: {{$data->kebutuhan}}</td>
+                <td>Entitas</td>
+                <td>: {{$data->company}}</td>
+              </tr>
+              <tr>
+                <td>Provinsi</td>
+                <td>: {{$data->provinsi}}</td>
+                <td>Kabupaten / Kota</td>
+                <td>: {{$data->kota}}</td>
+              </tr>
+              <tr>
+                <td>Upah</td>
+                <td>: {{$data->upah}}</td>
+                <td>Nominal Upah @if($data->nominal_upah<$data->umk)<span class="badge bg-label-warning rounded-pill">Butuh Approval</span>@endif</td>
+                <td>: Rp {{number_format($data->nominal_upah,0,",",".")}}</td>
+              </tr>
+              <tr>
+                <td>Manajemen Fee</td>
+                <td>: {{$data->manajemen_fee}}</td>
+                <td>Persentase @if($data->persentase<7) <span class="badge bg-label-warning rounded-pill">Butuh Approval</span> @endif</td>
+                <td>: {{$data->persentase}} %</td>
+              </tr>
+              <tr>
+                <td>Jenis Perusahaan</td>
+                <td>: {{$data->jenis_perusahaan}}</td>
+                <td>Resiko</td>
+                <td>: {{$data->resiko}}</td>
+              </tr>
+              <tr>
+                <td>Penjamin</td>
+                <td>: {{$data->penjamin}}</td>
+                @if($data->penjamin =="BPJS")
+                <td>Jenis</td>
+                <td>: {{$data->program_bpjs}}</td>
+                @else
+                <td>Nominal</td>
+                <td colspan="2">: Rp {{number_format($data->nominal_takaful,0,",",".")}}</td>                
+                @endif
+              </tr>
+              @if($data->penjamin =="BPJS")
+              <tr>
+                <td>Macam BPJS</td>
+                <td colspan="3">: BPJS JKK , BPJS JKM @if($data->program_bpjs=="3 BPJS" || $data->program_bpjs=="4 BPJS") , BPJS JHT @endif @if($data->program_bpjs=="4 BPJS") , BPJS JP @endif</td>
+              </tr>
+              @endif
+              <tr>
+                <td>Hari/Jam Kerja</td>
+                <td colspan="3">: {{$master->shift_kerja}} {{$master->jam_kerja}} {{$master->mulai_kerja}} s/d {{$master->selesai_kerja}}</td>
+              </tr>
+              <tr>
+                <td>Cuti</td>
+                <td colspan="3">: {{$master->cuti}}</td>
+              </tr>
+              <tr>
+                <td>THR</td>
+                <td>{{$master->thr}}</td>
+                <td>Kompensasi</td>
+                <td>{{$master->kompensasi}}</td>
+              </tr>
+              <tr>
+                <td>Tunjangan Holiday</td>
+                <td>{{$master->tunjangan_holiday}}</td>
+                <td>Lembur</td>
+                <td>{{$master->lembur}}</td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title m-0">Quotation details</h5>
+          <h5 class="card-title m-0">{{$data->kebutuhan}} Details ( Total Headcount : {{$data->totalHc}} )</h5>
           @if($master->step == 100 && $data->is_aktif == 0)
           <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'3','edit'=>1])}}">Edit</a></h6>
           @endif
         </div>
-        <div class="table-responsive overflow-hidden table-data card-datatable table-responsive">
-          <table id="table-data" class="dt-column-search table w-100 table-hover datatables-quotation-details" style="text-wrap: nowrap;">
-            <thead class="table-light">
-                <tr>
-                    <th class="text-center">ID</th>
-                    <th class="text-center">Kebutuhan</th>
-                    <th class="text-center">Nama Posisi/Jabatan</th>
-                    <th class="text-center">Jumlah Headcount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{-- data table ajax --}}
-            </tbody>
-          </table>
+        <div class="card-body">
+          <div class="card-header p-0">
+            <div class="nav-align-top">
+              <ul class="nav nav-tabs nav-fill" role="tablist">
+                @foreach($kebutuhanDetail as $kkd => $detail)
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-{{$detail->id}}" aria-controls="navs-top-{{$detail->id}}" aria-selected="true">
+                    {{$detail->jabatan_kebutuhan}} ( {{$detail->jumlah_hc}} )
+                  </button>
+                </li>
+                @endforeach
+                <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span>
+              </ul>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tab-content p-0">
+              @foreach($kebutuhanDetail as $kkd => $detail)
+              <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-top-{{$detail->id}}" role="tabpanel">
+                <table class="w-100 mb-3">
+                  <tr>
+                    <td style="display:flex;justify-content:end">
+                      <button class="btn btn-primary btn-input-requirement" id="btn-input-requirement-{{$detail->id}}" data-id="{{$detail->id}}"><i class="mdi mdi-pen"></i>&nbsp; Input Requirement</button>
+                    </td>
+                  </tr>
+                </table>
+                <div class="table-responsive overflow-hidden table-data-requirement-{{$detail->id}}">
+                  <table id="table-data-requirement-{{$detail->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                      <thead>
+                          <tr>
+                              <th class="text-center">ID</th>
+                              <th class="text-center">No.</th>
+                              <th class="text-center">Requirement</th>
+                              <th class="text-center">Aksi</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {{-- data table ajax --}}
+                      </tbody>
+                  </table>
+                </div>
+              </div>
+              @endforeach
+            </div>
+          </div>
         </div>
         <div class="d-flex justify-content-end align-items-center m-3 p-1">
           <div class="order-calculations">
             <div class="d-flex justify-content-between mb-2">
-              <span class="text-heading">Total Headcount : {{$data->totalHc}}</span>
+              <span class="text-heading"></span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-12 col-lg-4">
+    <div class="col-12 col-lg-5">
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Customer details</h5>
@@ -259,14 +294,14 @@
               <small>Customer ID: {{$leads->nomor}}</small>
             </div>
           </div>
-          <div class="d-flex justify-content-between">
+          <!-- <div class="d-flex justify-content-between">
             <h6 class="mb-2">PIC info</h6>
           </div>
           <p class="mb-0">PIC : {{$leads->pic}}</p>
           <p class="mb-0">Jabatan : {{$leads->jabatan}}</p>
           <p class="mb-0">No. Telp : {{$leads->no_telp}}</p>
           <p class="mb-0">Email : {{$leads->email}}</p>
-          
+           -->
           <div class="mt-3 d-flex justify-content-between">
             <h6 class="mb-2">CRM / RO info</h6>
           </div>
@@ -306,6 +341,35 @@
                   <td class="text-center">@if($data->ot3 !=null)<i class="mdi mdi-check-circle text-success"></i>@else &nbsp; @endif</td>
                 </tr>
                 @endif
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <h6 class="card-title m-0">Informasi PIC</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive text-nowrap">
+            <table class="table table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Jabatan</th>
+                  <th>No. Telp</th>
+                  <th>Kuasa</th>
+                </tr>
+              </thead>
+              <tbody class="">
+                @foreach($listPic as $key => $pic)
+                <tr>
+                  <td>{{$pic->nama}}</td>
+                  <td>{{$pic->jabatan}}</td>
+                  <td>{{$pic->no_telp}}</td>
+                  <td>@if($pic->is_kuasa ==1)<i class="mdi mdi-check-circle text-success"></i>@else &nbsp; @endif</td>
+                </tr>
+                @endforeach
               </tbody>
             </table>
           </div>
@@ -941,249 +1005,249 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
       </div>
       <div class="card mb-4">
         <div class="card-header">
-          <h5 class="card-title m-0">Cost Structure</h5>
+          <h5 class="card-title m-0">Detail Cost Structure</h5>
         </div>
         <div class="card-body">
-        <div class="card-header p-0">
-          <div class="nav-align-top">
-            <ul class="nav nav-tabs nav-fill" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-kaporlap" aria-controls="navs-top-kaporlap" aria-selected="true">
-                  Kaporlap
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-ohc" aria-controls="navs-top-ohc" aria-selected="false" tabindex="-1">
-                  OHC
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-devices" aria-controls="navs-top-devices" aria-selected="false" tabindex="-1">
-                  Devices
-                </button>
-              </li>
-              @if($data->kebutuhan_id != 2)
-              <li class="nav-item" role="presentation">
-                <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-chemical" aria-controls="navs-top-chemical" aria-selected="false" tabindex="-1">
-                  Chemical
-                </button>
-              </li>
-              @endif
-              <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span>
-            </ul>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="tab-content p-0">
-            <div class="tab-pane fade active show" id="navs-top-kaporlap" role="tabpanel">
-              <div class="row mb-5">
-              @if($master->step == 100 && $data->is_aktif == 0)
-              <div class="col-12 d-flex justify-content-between">
-                <div></div>
-                <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'7','edit'=>1])}}" class="btn btn-primary btn-next w-20">
-                    <span class="align-middle me-sm-1">Edit</span>
-                </a>
-              </div>
-              @endif
-              </div>
-              <div class="row">
-                <div class="table-responsive text-nowrap">
-                  <table class="table" >
-                    @php
-                    $totalKaporlap = 0;
-                    @endphp
-                    @foreach($listJenisKaporlap as $jenisKaporlap)
-                    <thead class="text-center">
-                      <tr class="table-primary">
-                        <th>{{$jenisKaporlap->jenis_barang}}</th>
-                        <th>Harga / Unit</th>
-                        <th>Jumlah</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach($listKaporlap as $kaporlap)
-                      @if($kaporlap->jenis_barang == $jenisKaporlap->jenis_barang)
-                        <tr>
-                          <td>{{$kaporlap->nama}}</td>
-                          <td style="text-align:right">Rp {{number_format($kaporlap->harga,0,",",".")}}</td>
-                          <td style="text-align:center">{{$kaporlap->jumlah}}</td>
-                        </tr>
-
-                        @php
-                          $totalKaporlap += ($kaporlap->jumlah*$kaporlap->harga);
-                        @endphp
-                      @endif
-                      @endforeach
-                    </tbody>
-                    @endforeach
-                    <tbody>
-                    <tr class="table-success">
-                      <td><b>TOTAL</b> </td>
-                      <td style="text-align:right">Rp {{number_format($totalKaporlap,0,",",".")}}</td>
-                      <td class="total-semua" style="text-align:right"></td>
-                    </tr>
-                  </tbody>
-                  </table>
-                </div>
-              </div>
+          <div class="card-header p-0">
+            <div class="nav-align-top">
+              <ul class="nav nav-tabs nav-fill" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-kaporlap" aria-controls="navs-top-kaporlap" aria-selected="true">
+                    Kaporlap
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-ohc" aria-controls="navs-top-ohc" aria-selected="false" tabindex="-1">
+                    OHC
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-devices" aria-controls="navs-top-devices" aria-selected="false" tabindex="-1">
+                    Devices
+                  </button>
+                </li>
+                @if($data->kebutuhan_id != 2)
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-chemical" aria-controls="navs-top-chemical" aria-selected="false" tabindex="-1">
+                    Chemical
+                  </button>
+                </li>
+                @endif
+                <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span>
+              </ul>
             </div>
-            <div class="tab-pane fade" id="navs-top-ohc" role="tabpanel">
-              <div class="row mb-5">
-              @if($master->step == 100 && $data->is_aktif == 0)
+          </div>
+          <div class="card-body">
+            <div class="tab-content p-0">
+              <div class="tab-pane fade active show" id="navs-top-kaporlap" role="tabpanel">
+                <div class="row mb-5">
+                @if($master->step == 100 && $data->is_aktif == 0)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
-                  <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'8','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                  <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'7','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                       <span class="align-middle me-sm-1">Edit</span>
                   </a>
                 </div>
                 @endif
-              </div>
-              <div class="row">
-                <div class="table-responsive text-nowrap">
-                  <table class="table" >
-                    @php
-                      $totalOhc = 0;
-                    @endphp
-                    @foreach($listJenisOhc as $jenisOhc)
-                    <thead class="text-center">
-                      <tr class="table-primary">
-                        <th style="vertical-align: middle;">{{$jenisOhc->jenis_barang}}</th>
-                        <th style="vertical-align: middle;">Harga / Unit</th>
-                        <th>Jumlah</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach($listOhc as $ohc)
-                      @if($ohc->jenis_barang == $jenisOhc->jenis_barang)
-                        <tr>
-                          <td>{{$ohc->nama}}</td>
-                          <td style="text-align:right">Rp {{number_format($ohc->harga,0,",",".")}}</td>
-                          <td style="text-align:center">{{$ohc->jumlah}}</td>
+                </div>
+                <div class="row">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table" >
+                      @php
+                      $totalKaporlap = 0;
+                      @endphp
+                      @foreach($listJenisKaporlap as $jenisKaporlap)
+                      <thead class="text-center">
+                        <tr class="table-primary">
+                          <th>{{$jenisKaporlap->jenis_barang}}</th>
+                          <th>Harga / Unit</th>
+                          <th>Jumlah</th>
                         </tr>
-                        @php
-                          $totalOhc += ($ohc->jumlah*$ohc->harga);
-                        @endphp
-                      @endif
+                      </thead>
+                      <tbody>
+                        @foreach($listKaporlap as $kaporlap)
+                        @if($kaporlap->jenis_barang == $jenisKaporlap->jenis_barang)
+                          <tr>
+                            <td>{{$kaporlap->nama}}</td>
+                            <td style="text-align:right">Rp {{number_format($kaporlap->harga,0,",",".")}}</td>
+                            <td style="text-align:center">{{$kaporlap->jumlah}}</td>
+                          </tr>
+
+                          @php
+                            $totalKaporlap += ($kaporlap->jumlah*$kaporlap->harga);
+                          @endphp
+                        @endif
+                        @endforeach
+                      </tbody>
                       @endforeach
+                      <tbody>
+                      <tr class="table-success">
+                        <td><b>TOTAL</b> </td>
+                        <td style="text-align:right">Rp {{number_format($totalKaporlap,0,",",".")}}</td>
+                        <td class="total-semua" style="text-align:right"></td>
+                      </tr>
                     </tbody>
-                    @endforeach
-                    <tbody>
-                    <tr class="table-success">
-                      <td><b>TOTAL</b> </td>
-                      <td style="text-align:right">Rp {{number_format($totalOhc,0,",",".")}}</td>
-                      <td class="total-semua" style="text-align:right"></td>
-                    </tr>
-                  </tbody>
-                  </table>
+                    </table>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="tab-pane fade" id="navs-top-devices" role="tabpanel">
-              <div class="row mb-5">
-              @if($master->step == 100 && $data->is_aktif == 0)
-                <div class="col-12 d-flex justify-content-between">
-                  <div></div>
-                  <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'9','edit'=>1])}}" class="btn btn-primary btn-next w-20">
-                      <span class="align-middle me-sm-1">Edit Devices</span>
-                  </a>
+              <div class="tab-pane fade" id="navs-top-ohc" role="tabpanel">
+                <div class="row mb-5">
+                @if($master->step == 100 && $data->is_aktif == 0)
+                  <div class="col-12 d-flex justify-content-between">
+                    <div></div>
+                    <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'8','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                        <span class="align-middle me-sm-1">Edit</span>
+                    </a>
+                  </div>
+                  @endif
                 </div>
+                <div class="row">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table" >
+                      @php
+                        $totalOhc = 0;
+                      @endphp
+                      @foreach($listJenisOhc as $jenisOhc)
+                      <thead class="text-center">
+                        <tr class="table-primary">
+                          <th style="vertical-align: middle;">{{$jenisOhc->jenis_barang}}</th>
+                          <th style="vertical-align: middle;">Harga / Unit</th>
+                          <th>Jumlah</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach($listOhc as $ohc)
+                        @if($ohc->jenis_barang == $jenisOhc->jenis_barang)
+                          <tr>
+                            <td>{{$ohc->nama}}</td>
+                            <td style="text-align:right">Rp {{number_format($ohc->harga,0,",",".")}}</td>
+                            <td style="text-align:center">{{$ohc->jumlah}}</td>
+                          </tr>
+                          @php
+                            $totalOhc += ($ohc->jumlah*$ohc->harga);
+                          @endphp
+                        @endif
+                        @endforeach
+                      </tbody>
+                      @endforeach
+                      <tbody>
+                      <tr class="table-success">
+                        <td><b>TOTAL</b> </td>
+                        <td style="text-align:right">Rp {{number_format($totalOhc,0,",",".")}}</td>
+                        <td class="total-semua" style="text-align:right"></td>
+                      </tr>
+                    </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="navs-top-devices" role="tabpanel">
+                <div class="row mb-5">
+                @if($master->step == 100 && $data->is_aktif == 0)
+                  <div class="col-12 d-flex justify-content-between">
+                    <div></div>
+                    <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'9','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                        <span class="align-middle me-sm-1">Edit Devices</span>
+                    </a>
+                  </div>
+                @endif
+                </div>
+                <div class="row">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table" >
+                      @php
+                        $totalDevices = 0;
+                      @endphp
+                      @foreach($listJenisDevices as $jenisDevices)
+                      <thead class="text-center">
+                        <tr class="table-primary">
+                          <th style="vertical-align: middle;">{{$jenisDevices->jenis_barang}}</th>
+                          <th style="vertical-align: middle;">Harga / Unit</th>
+                          <th>Jumlah</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach($listDevices as $devices)
+                        @if($devices->jenis_barang == $jenisDevices->jenis_barang)
+                          <tr>
+                            <td>{{$devices->nama}}</td>
+                            <td style="text-align:right">Rp {{number_format($devices->harga,0,",",".")}}</td>
+                            <td style="text-align:center">{{$devices->jumlah}}</td>
+                          </tr>
+                          @php
+                            $totalDevices += ($devices->jumlah*$devices->harga);
+                          @endphp
+                        @endif
+                        @endforeach
+                      </tbody>
+                      @endforeach
+                      <tbody>
+                      <tr class="table-success">
+                        <td><b>TOTAL</b> </td>
+                        <td style="text-align:right">Rp {{number_format($totalDevices,0,",",".")}}</td>
+                        <td class="total-semua" style="text-align:right"></td>
+                      </tr>
+                    </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              @if($data->kebutuhan_id == 3)
+              <div class="tab-pane fade" id="navs-top-chemical" role="tabpanel">
+                <div class="row mb-5">
+                @if($master->step == 100 && $data->is_aktif == 0)
+                  <div class="col-12 d-flex justify-content-between">
+                    <div></div>
+                    <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'10','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                        <span class="align-middle me-sm-1">Edit</span>
+                    </a>
+                  </div>
+                @endif
+                </div>
+                <div class="row">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table" >
+                      @php
+                        $totalChemical = 0;
+                      @endphp
+                      @foreach($listJenisChemical as $jenisChemical)
+                      <thead class="text-center">
+                        <tr class="table-primary">
+                          <th style="vertical-align: middle;">{{$jenisChemical->jenis_barang}}</th>
+                          <th style="vertical-align: middle;">Harga / Unit</th>
+                          <th>Jumlah</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach($listChemical as $chemical)
+                        @if($chemical->jenis_barang == $jenisChemical->jenis_barang)
+                          <tr>
+                            <td>{{$chemical->nama}}</td>
+                            <td style="text-align:right">Rp {{number_format($chemical->harga,0,",",".")}}</td>
+                            <td style="text-align:center">{{$chemical->jumlah}}</td>
+                          </tr>
+                          @php
+                            $totalChemical += ($chemical->jumlah*$chemical->harga);
+                          @endphp
+                        @endif
+                        @endforeach
+                      </tbody>
+                      @endforeach
+                      <tbody>
+                      <tr class="table-success">
+                        <td><b>TOTAL</b> </td>
+                        <td style="text-align:right">Rp {{number_format($totalChemical,0,",",".")}}</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
               @endif
-              </div>
-              <div class="row">
-                <div class="table-responsive text-nowrap">
-                  <table class="table" >
-                    @php
-                      $totalDevices = 0;
-                    @endphp
-                    @foreach($listJenisDevices as $jenisDevices)
-                    <thead class="text-center">
-                      <tr class="table-primary">
-                        <th style="vertical-align: middle;">{{$jenisDevices->jenis_barang}}</th>
-                        <th style="vertical-align: middle;">Harga / Unit</th>
-                        <th>Jumlah</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach($listDevices as $devices)
-                      @if($devices->jenis_barang == $jenisDevices->jenis_barang)
-                        <tr>
-                          <td>{{$devices->nama}}</td>
-                          <td style="text-align:right">Rp {{number_format($devices->harga,0,",",".")}}</td>
-                          <td style="text-align:center">{{$devices->jumlah}}</td>
-                        </tr>
-                        @php
-                          $totalDevices += ($devices->jumlah*$devices->harga);
-                        @endphp
-                      @endif
-                      @endforeach
-                    </tbody>
-                    @endforeach
-                    <tbody>
-                    <tr class="table-success">
-                      <td><b>TOTAL</b> </td>
-                      <td style="text-align:right">Rp {{number_format($totalDevices,0,",",".")}}</td>
-                      <td class="total-semua" style="text-align:right"></td>
-                    </tr>
-                  </tbody>
-                  </table>
-                </div>
-              </div>
             </div>
-            @if($data->kebutuhan_id == 3)
-            <div class="tab-pane fade" id="navs-top-chemical" role="tabpanel">
-              <div class="row mb-5">
-              @if($master->step == 100 && $data->is_aktif == 0)
-                <div class="col-12 d-flex justify-content-between">
-                  <div></div>
-                  <a href="{{route('quotation.step',['id'=>$data->id,'step'=>'10','edit'=>1])}}" class="btn btn-primary btn-next w-20">
-                      <span class="align-middle me-sm-1">Edit</span>
-                  </a>
-                </div>
-              @endif
-              </div>
-              <div class="row">
-                <div class="table-responsive text-nowrap">
-                  <table class="table" >
-                    @php
-                      $totalChemical = 0;
-                    @endphp
-                    @foreach($listJenisChemical as $jenisChemical)
-                    <thead class="text-center">
-                      <tr class="table-primary">
-                        <th style="vertical-align: middle;">{{$jenisChemical->jenis_barang}}</th>
-                        <th style="vertical-align: middle;">Harga / Unit</th>
-                        <th>Jumlah</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach($listChemical as $chemical)
-                      @if($chemical->jenis_barang == $jenisChemical->jenis_barang)
-                        <tr>
-                          <td>{{$chemical->nama}}</td>
-                          <td style="text-align:right">Rp {{number_format($chemical->harga,0,",",".")}}</td>
-                          <td style="text-align:center">{{$chemical->jumlah}}</td>
-                        </tr>
-                        @php
-                          $totalChemical += ($chemical->jumlah*$chemical->harga);
-                        @endphp
-                      @endif
-                      @endforeach
-                    </tbody>
-                    @endforeach
-                    <tbody>
-                    <tr class="table-success">
-                      <td><b>TOTAL</b> </td>
-                      <td style="text-align:right">Rp {{number_format($totalChemical,0,",",".")}}</td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            @endif
           </div>
-        </div>
         </div>
       </div>
       <div class="col-12 col-lg-12">
@@ -1191,7 +1255,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
           <div class="card-header d-flex justify-content-between align-items-center pb-0">
           <h5 class="card-title m-0">Perjanjian Kerjasama</h5>
           @if($master->step == 100 && $data->is_aktif == 0)
-          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'12','edit'=>1])}}">Edit</a></h6>
+          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'13','edit'=>1])}}">Edit</a></h6>
             @endif
           </div>
           <div class="card-body pt-0">
@@ -1207,6 +1271,311 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                     </thead>
                     <tbody>
                         {{-- data table ajax --}}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center pb-0">
+          <h5 class="card-title m-0">Cheklist Quotation</h5>
+          @if($master->step == 100 && $data->is_aktif == 0)
+          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'12','edit'=>1])}}">Edit</a></h6>
+            @endif
+          </div>
+          <div class="card-body pt-0">
+            <div class="row mt-5">
+              <div class="table-responsive overflow-hidden">
+                <table class="table table-hover" style="padding-right:0px !important">
+                    <tbody>
+                      <tr>
+                        <td colspan="4" class="text-center fw-bold table-success">PERSONAL INFORMASI</td>
+                      </tr>
+                      <tr>
+                        <td>Pengusul Kerjasama</td>
+                        <td colspan="3" class="fw-bold">{{$master->nama_perusahaan}}</td>
+                      </tr>
+                      <tr>
+                        <td>Alamat Pengusul Kerjasama</td>
+                        <td colspan="3">{{$leads->alamat}}</td>
+                      </tr>
+                      <tr>
+                        <td>No. Telp Perusahaan</td>
+                        <td colspan="3">@if($leads->telp_perusahaan!=null) {{$leads->telp_perusahaan}} @else - @endif</td>
+                      </tr>
+                      <tr>
+                        <td>Penerima Kerjasama</td>
+                        <td colspan="3" class="fw-bold">{{$quotationKebutuhan[0]->company}}</td>
+                      </tr>
+                      <tr>
+                        <td>Hal Kerjasama</td>
+                        <td colspan="3">PERJANJIAN KERJASAMA ALIH DAYA JASA {{strtoupper($data->kebutuhan)}}</td>
+                      </tr>
+                      <tr>
+                        <td>Jumlah Personel</td>
+                        <td colspan="3">{{$data->totalHc}}</td>
+                      </tr>
+                      <tr>
+                        <td>NPWP  </td>
+                        <td colspan="3">{{$master->npwp}}</td>
+                      </tr>
+                      <tr>
+                        <td>Alamat NPWP </td>
+                        <td colspan="3">{{$master->alamat_npwp}}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="4" class="text-center fw-bold table-success">INFORMASI KERJASAMA</td>
+                      </tr>
+                      <tr>
+                        <td>Durasi Kerjasama</td>
+                        <td>{{$master->durasi_kerjasama}}</td>
+                        <td>Evaluasi {{$master->evaluasi_kontrak}}</td>
+                        <td>{{$master->mulai_kontrak}} - {{$master->kontrak_selesai}}</td>
+                      </tr>
+                      <tr>
+                        <td>Kontrak Karyawan</td>
+                        <td>{{$master->jenis_kontrak}} {{$master->durasi_karyawan}}</td>
+                        <td>Evaluasi {{$master->evaluasi_karyawan}}</td>
+                        <td>Start {{$master->tgl_penempatan}}</td>
+                      </tr>
+                      <tr>
+                        <td>Materai </td>
+                        <td colspan="3">
+                        {{$master->materai}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Hari Kerja dan Jam Kerja</td>
+                        <td>{{$master->shift_kerja}}</td>
+                        <td>{{$master->jam_kerja}}</td>
+                        <td>{{$master->mulai_kerja}} s/d {{$master->selesai_kerja}}</td>
+                      </tr>
+                      <tr>
+                        <td>System Kerja</td>
+                        <td colspan="3">@if($master->lembur=="Tidak Ada") No Work No Pay @elseif($master->lembur!="") Ada Lembur @endif
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Kebijakan Cuti</td>
+                        <td>{{$master->cuti}}</td>
+                        <td>{{$master->gaji_saat_cuti}}</td>
+                        <td>{{$master->prorate}} @if($master->prorate !=null) % @endif</td>
+                      </tr>
+                      <tr>
+                        <td>Kunjungan Operasional </td>
+                        <td colspan="2">{{$master->kunjungan_operasional}}</td>
+                        <td>
+                        {{$master->keterangan_kunjungan_operasional}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Kunjungan Tim CRM </td>
+                        <td colspan="2">{{$master->kunjungan_tim_crm}}</td>
+                        <td>
+                        {{$master->keterangan_kunjungan_tim_crm}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Training </td>
+                        <td colspan="3">{{$master->training}}</td>
+                      </tr>
+                      <tr>
+                        <td>Tunjangan Hari Raya (THR)</td>
+                        <td colspan="3">
+                        @if($master->thr=="Tidak Ada")
+                        <b>Tidak Ada</b>
+                        @else
+                          <b>{{$master->thr}}</b> terpisah H-45 hari raya base on upah pokok
+                          <table class="table table-bordered" style="width:100%">
+                            <tr>
+                              <td class="text-center"><b>No.</b></td>
+                              <td class="text-center"><b>Schedule Plan</b></td>
+                              <td class="text-center"><b>Time</b></td>
+                            </tr>
+                            <tr>
+                              <td class="text-center">1</td>
+                              <td>Penagihan Invoice THR </td>
+                              <td>ditagihkan H-45</td>
+                            </tr>
+                            <tr>
+                              <td class="text-center">2</td>
+                              <td>Pembayaran Invoice THR</td>
+                              <td>Maksimal h-14 hari raya</td>
+                            </tr>
+                            <tr>
+                              <td class="text-center">3</td>
+                              <td>Rilis THR</td>
+                              <td>Maksimal h-7 Hari Raya</td>
+                            </tr>
+                          </table>
+                        </td>
+                        @endif
+                      </tr>
+                      @if($data->penjamin=="Takaful")
+                      <tr>
+                        <td>Penjamin</td>
+                        <td colspan="3">{{$data->penjamin}}</td>
+                      </tr>
+                      @else
+                      <tr>
+                        <td>BPJS Ketenagakerjaan</td>
+                        <td colspan="3">
+                          <table class="table table-bordered" style="width:100%">
+                            <thead>
+                              <tr>
+                                <th class="text-center"><b>Deskripsi</b></th>
+                                <th class="text-center"><b>Perusahaan</b></th>
+                                <th class="text-center"><b>Tenaga Kerja</b></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class="text-center">JKK</td>
+                                <td class="text-center">@if($data->resiko=="Sangat Rendah") 0,24 @elseif($data->resiko=="Rendah") 0,54 @elseif($data->resiko=="Sedang") 0,89 @elseif($data->resiko=="Tinggi") 1,27 @elseif($data->resiko=="Sangat Tinggi") 1,74 @endif %</td>
+                                <td class="text-center">&nbsp;</td>
+                              </tr>
+                              <tr>
+                                <td class="text-center">JKM</td>
+                                <td class="text-center">0,3 %</td>
+                                <td class="text-center">&nbsp;</td>
+                              </tr>
+                              @if($data->program_bpjs=="3 BPJS" || $data->program_bpjs=="4 BPJS")
+                              <tr>
+                                <td class="text-center">JHT</td>
+                                <td class="text-center">3,7 %</td>
+                                <td class="text-center">2%</td>
+                              </tr>
+                              @endif
+                              @if($data->program_bpjs=="4 BPJS")
+                              <tr>
+                                <td class="text-center">JP</td>
+                                <td class="text-center">2 %</td>
+                                <td class="text-center">1 %</td>
+                              </tr>
+                              @endif
+                            </tbody>
+                          </table>
+                          <i>*base on Upah Pokok</i>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>BPJS Kesehatan</td>
+                        <td colspan="3">
+                          <table class="table table-bordered" style="width:100%">
+                            <thead>
+                              <tr>
+                                <th class="text-center"><b>Deskripsi</b></th>
+                                <th class="text-center"><b>Perusahaan</b></th>
+                                <th class="text-center"><b>Tenaga Kerja</b></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class="text-center">Kesehatan</td>
+                                <td class="text-center">4 %</td>
+                                <td class="text-center">1 %</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <i>*Base on UMK update</i>
+                        </td>
+                      </tr>
+                      @endif
+                      
+                      <tr>
+                        <td>Seragam</td>
+                        <td colspan="3">detil terlampir</td>
+                      </tr>
+                      <tr>
+                        <td>Kompensasi</td>
+                        <td colspan="3">
+                          {{$master->kompensasi}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Joker / Reliever </td>
+                        <td colspan="3">{{$master->joker_reliever}}</td>
+                      </tr>
+                      <tr>
+                        <td>Syarat Invoice </td>
+                        <td colspan="3">{{$master->syarat_invoice}}</td>
+                      </tr>
+                      <tr>
+                        <td><i>Term of Payment</i>&nbsp;<b>(TOP)</b></td>
+                        <td colspan="3"><b>Talangan @if($master->top=="Lebih Dari 7 Hari"){{$master->jumlah_hari_invoice}} hari {{$master->tipe_hari_invoice}} @else {{$master->top}} @endif setelah invoice & lampiran diterima</b></td>
+                      </tr>
+                      <tr>
+                        <td>Skema Cut Off, Invoice,Payroll dan Pembayaran
+  <br><br>
+                        <i>(Wajib dilampirkan di dalam PKS)</i>
+                        </td>
+                        <td colspan="3">
+                          <table class="table table-bordered" style="width:100%">
+                            <thead>
+                              <tr>
+                                <th class="text-center"><b>No.</b></th>
+                                <th class="text-center"><b>Schedule Plan</b></th>
+                                <th class="text-center"><b>Periode</b></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class="text-center">1</td>
+                                <td>Cut Off</td>
+                                <td>{{$salaryRuleQ->cutoff}}</td>
+                              </tr>
+                              <tr>
+                                <td class="text-center">2</td>
+                                <td>Crosscheck Absensi</td>
+                                <td>{{$salaryRuleQ->crosscheck_absen}}</td>
+                              </tr>
+                              <tr>
+                                <td class="text-center">3</td>
+                                <td>Pengiriman <i>Invoice</i></td>
+                                <td>{{$salaryRuleQ->pengiriman_invoice}}</td>
+                              </tr>
+                              <tr>
+                                <td class="text-center">4</td>
+                                <td>Perkiraan <i>Invoice</i> Diterima Pelanggan</td>
+                                <td>{{$salaryRuleQ->perkiraan_invoice_diterima}}</td>
+                              </tr>
+                              <tr>
+                                <td class="text-center">5</td>
+                                <td>Pembayaran <i>Invoice</i></td>
+                                <td>{{$salaryRuleQ->pembayaran_invoice}}</td>
+                              </tr>
+                              <tr>
+                                <td class="text-center">6</td>
+                                <td>Rilis <i>Payroll</i> / Gaji</td>
+                                <td>{{$salaryRuleQ->rilis_payroll}}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Lembur</td>
+                        <td colspan="3">{{$master->lembur}}</td>
+                      </tr>
+                      <tr>
+                        <td>Alamat Penagihan Invoice </td>
+                        <td colspan="3">{{$master->alamat_penagihan_invoice}}</td>
+                      </tr>
+                      <tr>
+                        <td>Catatan Site </td>
+                        <td colspan="3">{{$master->catatan_site}}</td>
+                      </tr>
+                      <tr>
+                        <td>Status Serikat </td>
+                        <td colspan="3">{{$master->status_serikat}}</td>
+                      </tr>
+                      <tr>
+                        <td>Penempatan/serah terima</td>
+                        <td colspan="3">Start serah terima tanggal {{$master->tgl_penempatan}}</td>
+                      </tr>
                     </tbody>
                 </table>
               </div>
@@ -1416,5 +1785,114 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
       "language": datatableLang,
     });
   
+    @foreach($kebutuhanDetail as $kkd => $detail)
+      let tableRequirement{{$detail->id}} = $('#table-data-requirement-{{$detail->id}}').DataTable({
+        scrollX: true,
+        "bPaginate": false,
+      "bLengthChange": false,
+      "sScrollXInner": "100%",
+      "bFilter": false,
+      "bInfo": false,
+        'processing': true,
+        'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': 'Loading...'
+        },
+        ajax: {
+            url: "{{ route('quotation.list-detail-requirement') }}",
+            data: function (d) {
+                d.quotation_kebutuhan_detail_id = {{$detail->id}};
+            },
+        },   
+        "order":[
+            [0,'asc']
+        ],
+        columns:[{
+            data : 'id',
+            name : 'id',
+            visible: false,
+            searchable: false
+        },{
+            data : 'nomor',
+            name : 'nomor',
+            className:'text-center',
+            width: "10%",
+        },{
+            data : 'requirement',
+            name : 'requirement',
+            className:'text-center'
+        },{
+            data : 'aksi',
+            name : 'aksi',
+            width: "10%",
+            orderable: false,
+            searchable: false,
+        }],
+        "language": datatableLang,
+      });
+
+      $('#btn-input-requirement-{{$detail->id}}').on('click', function() {
+        Swal.fire({
+            title: 'requirement',
+            html: '<textarea id="textareaInput" class="swal2-textarea" placeholder="Masukkan requirement" style="height: 100px;"></textarea>',
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            preConfirm: () => {
+                const text = $('#textareaInput').val();
+                if (!text) {
+                    Swal.showValidationMessage('Requirement Harus Diisi !');
+                }
+                return text;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                type: "POST",
+                url: "{{route('quotation.add-detail-requirement')}}",
+                data: { 
+                  "_token": "{{ csrf_token() }}",
+                  requirement: result.value,
+                  quotation_kebutuhan_detail_id:{{$detail->id}}
+                },
+                success: function(response){
+                  if(response=="Data Berhasil Ditambahkan"){
+                    $('#table-data-requirement-{{$detail->id}}').DataTable().ajax.reload();
+                  }else{
+                    Swal.fire({
+                      title: "Pemberitahuan",
+                      html: response,
+                      icon: "warning",
+                    });
+                  }
+                },
+                error:function(error){
+                  console.log(error);
+                }
+              });
+            }
+          });
+      });
+    @endforeach
+
+    $('body').on('click', '.btn-delete', function() {
+      let formData = {
+        "id":$(this).data('id'),
+        "_token": "{{ csrf_token() }}"
+      };
+
+      let table ='#table-data-requirement-'+$(this).data('detail');
+      $.ajax({
+        type: "POST",
+        url: "{{route('quotation.delete-detail-requirement')}}",
+        data:formData,
+        success: function(response){
+          $(table).DataTable().ajax.reload();
+        },
+        error:function(error){
+          console.log(error);
+        }
+      });
+    });
+    
 </script>
 @endsection
