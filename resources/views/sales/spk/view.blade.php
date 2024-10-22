@@ -83,6 +83,16 @@
                 <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
               </button>
             </div>
+            <br>
+            <hr>
+            @if($data->status_spk_id == 1)
+            <div class="col-12 text-center mt-2">
+              <button id="btn-ajukan-ulang" class="btn btn-danger w-100 waves-effect waves-light">
+                <span class="me-1">Ajukan Ulang Quotation</span>
+                <i class="mdi mdi-reload scaleX-n1-rtl"></i>
+              </button>
+            </div>
+            @endif
           </div>
         </div>
       </div>
@@ -115,6 +125,10 @@
   
   $('#btn-lihat-spk').on('click',function () {
     alert('SPK Terlihat');
+  });
+  
+  $('#btn-ajukan-ulang').on('click',function () {
+    alert('Diajukan Ulang');
   });
   
 
