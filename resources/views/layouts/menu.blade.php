@@ -37,6 +37,18 @@
             <div data-i18n="Quotation">Quotation</div>
             </a>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
+            <a href="{{route('spk')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
+            <div data-i18n="SPK">SPK</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
+            <a href="{{route('spk')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
+            <div data-i18n="PKS">PKS</div>
+            </a>
+        </li>
         <!-- RO , SPV Operational , Man Operational -->
         @elseif(in_array(Auth::user()->role_id,[4,5,6,8]))
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">

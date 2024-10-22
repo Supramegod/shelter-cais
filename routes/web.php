@@ -9,6 +9,7 @@ use App\Http\Controllers\Fitur\ContactController;
 use App\Http\Controllers\Sales\LeadsController;
 use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Http\Controllers\Sales\QuotationController;
+use App\Http\Controllers\Sales\SpkController;
 
 use App\Http\Controllers\Master\PlatformController;
 use App\Http\Controllers\Master\AplikasiPendukungController;
@@ -75,6 +76,18 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/customer-activity/list', 'list')->name('customer-activity.list'); // ajax
         Route::get('/sales/customer-activity/member-tim-sales', 'memberTimSales')->name('customer-activity.member-tim-sales'); // ajax
+    });
+
+    
+    Route::controller(SpkController::class)->group(function() {
+        Route::get('/sales/spk', 'index')->name('spk');
+        Route::get('/sales/spk/add', 'add')->name('spk.add');
+
+        Route::get('/sales/spk/list', 'list')->name('spk.list'); // ajax
+        Route::get('/sales/spk/available-quotation', 'availableQuotation')->name('spk.available-quotation'); // ajax
+        Route::post('/sales/spk/save', 'save')->name('spk.save');
+        Route::get('/sales/spk/view/{id}', 'view')->name('spk.view');
+        Route::post('/sales/spk/upload-spk', 'uploadSPk')->name('quotation.upload-spk');
     });
 
     Route::controller(QuotationController::class)->group(function() {
