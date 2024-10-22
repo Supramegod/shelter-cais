@@ -486,7 +486,7 @@ function validasiKontrak() {
       var mulai = $('#mulai-kontrak').val();
       var selesai = $('#kontrak-selesai').val();
 
-      if (mulai && selesai) {
+      if (mulai && selesai) {        
           // Konversi nilai input menjadi objek Date
           var mulaiDate = new Date(mulai);
           var selesaiDate = new Date(selesai);
@@ -516,6 +516,9 @@ function validasiKontrak() {
                   hasil += ', ';
               }
               hasil += bulan + ' bulan';
+          }          
+          if(hasil==""){
+            hasil ="1 bulan";
           }
 
           // Tampilkan hasil

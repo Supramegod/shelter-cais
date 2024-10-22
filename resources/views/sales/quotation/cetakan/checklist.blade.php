@@ -72,9 +72,30 @@
                         </tr>
                         <tr>
                           <td>PIC Invoice </td>
-                          <td>{{$quotation->pic_invoice}}</td>
-                          <td>{{$quotation->telp_pic_invoice}}</td>
-                          <td>{{$quotation->email_pic_invoice}}</td>
+                          <td colspan="3">
+                            <table class="table-bordered" style="width:80%;margin:5px">
+                              <thead>
+                                <tr>
+                                  <th>Nama</th>
+                                  <th>Jabatan</th>
+                                  <th>No. Telp</th>
+                                  <th>Email</th>
+                                  <th>Kuasa</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @foreach($listPic as $kpic => $pic)
+                                <tr>
+                                  <td>{{$pic->nama}}</td>
+                                  <td>{{$pic->jabatan}}</td>
+                                  <td>{{$pic->no_telp}}</td>
+                                  <td>{{$pic->email}}</td>
+                                  <td>@if($pic->is_kuasa==1) {{$pic->kuasa}} @endif</td>
+                                </tr>
+                                @endforeach
+                              </tbody>
+                            </table>
+                          </td>
                         </tr>
                         <tr>
                           <td colspan="4" class="text-center fw-bold ">INFORMASI KERJASAMA</td>
@@ -103,7 +124,7 @@
                         </tr>
                         <tr>
                           <td>System Kerja </td>
-                          <td colspan="3">{{$quotation->sistem_kerja}}</td>
+                          <td colspan="3">@if($quotation->lembur=="Tidak Ada") No Work No Pay @elseif($quotation->lembur!="") Ada Lembur @endif
                         </tr>
                         <tr>
                           <td>Kebijakan Cuti</td>

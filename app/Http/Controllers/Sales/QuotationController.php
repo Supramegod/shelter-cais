@@ -67,7 +67,6 @@ class QuotationController extends Controller
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
-            $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$id)->whereNull('deleted_at')->get();
             $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
             $quotationKebutuhan = 
             DB::table("sl_quotation_kebutuhan") 
@@ -121,7 +120,10 @@ class QuotationController extends Controller
                 $qk->jumlah_personel = $sPersonil;
 
             }
-            return view('sales.quotation.cetakan.checklist',compact('listTraining','listTrainingQ','salaryRuleQ','salaryRule','leads','quotation','quotationKebutuhan','now'));
+            $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+
+            $listPic = DB::table('sl_quotation_pic')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
+            return view('sales.quotation.cetakan.checklist',compact('listPic','listTraining','listTrainingQ','salaryRuleQ','salaryRule','leads','quotation','quotationKebutuhan','now'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -346,7 +348,7 @@ class QuotationController extends Controller
                     
                     $kbd->tunjangan_holiday = 0;
                     if($quotation->tunjangan_holiday=="Flat"){
-                        $kbd->tunjangan_holiday = $quotation[0]->nominal_tunjangan_holiday;
+                        $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
                     }else{
                         $kbd->tunjangan_holiday = ($quotationKebutuhan[0]->nominal_upah/173*(14))*15/$provisi;
                     }
@@ -1537,10 +1539,8 @@ class QuotationController extends Controller
                 'keterangan_kunjungan_operasional' => $request->keterangan_kunjungan_operasional ,
                 'keterangan_kunjungan_tim_crm' => $request->keterangan_kunjungan_tim_crm ,
                 'training' => $request->training ,
-                'kompensasi' => $request->kompensasi ,
                 'joker_reliever' => $request->joker_reliever ,
                 'syarat_invoice' => $request->syarat_invoice ,
-                'lembur' => $request->lembur ,
                 'alamat_penagihan_invoice' => $request->alamat_penagihan_invoice ,
                 'catatan_site' => $request->catatan_site ,
                 'status_serikat' => $request->status_serikat ,
@@ -1574,7 +1574,21 @@ class QuotationController extends Controller
             
             $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
-            // $this->perhitunganHPPSecurity($data->id);
+            //Masukkan Requirement
+            $detail = DB::table('sl_quotation_kebutuhan_detail')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$data->id)->get();
+            foreach ($detail as $key => $value) {
+                $requirement = DB::table('m_kebutuhan_detail_requirement')->whereNull('deleted_at')->where('kebutuhan_detail_id',$value->kebutuhan_detail_id)->get();
+                foreach ($requirement as $kreq => $req) {
+                    DB::table('sl_quotation_kebutuhan_detail_requirement')->insert([
+                        'quotation_id' => $data->quotation_id,
+                        'quotation_kebutuhan_id' => $data->id,
+                        'quotation_kebutuhan_detail_id' => $value->id,
+                        'requirement' => $req->requirement,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+                }
+            }
 
             return redirect()->route('quotation.view',$data->id);
         } catch (\Exception $e) {
