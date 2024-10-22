@@ -519,6 +519,7 @@ class QuotationController extends Controller
             $data->detail = DB::table('sl_quotation_kebutuhan_detail')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$id)->get();
             $data->totalHc = 0;
             $data->umk = 0;
+            $data->spk = DB::table('sl_spk')->whereNull('deleted_at')->where('quotation_id',$data->quotation_id)->first();
 
             foreach ($data->detail as $key => $value) {
                 $data->totalHc += $value->jumlah_hc;

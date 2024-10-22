@@ -24,12 +24,14 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Quotation <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="hidden" id="quotation_id" name="quotation_id" value="{{old('quotation_id')}}" class="form-control">
+                <input type="hidden" id="quotation_id" name="quotation_id" value="@if($data !=null) {{$data->id}} @endif" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="quotation" name="quotation" value="{{old('quotation')}}" class="form-control @if ($errors->any()) @if($errors->has('quotation')) is-invalid @else   @endif @endif" readonly>
-                  <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-quotation"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Quotation</button>
-                  @if($errors->has('quotation'))
-                    <div class="invalid-feedback">{{$errors->first('quotation')}}</div>
+                  <input type="text" id="quotation" name="quotation" value="@if($data !=null) {{$data->nomor}} @endif" class="form-control" readonly>
+                  @if($data ==null)
+                    <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-quotation"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Quotation</button>
+                    @if($errors->has('quotation'))
+                      <div class="invalid-feedback">{{$errors->first('quotation')}}</div>
+                    @endif
                   @endif
                 </div>
               </div>
@@ -37,11 +39,11 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
               <div class="col-sm-4">
-                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{old('nama_perusahaan')}}" class="form-control" readonly>
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($data !=null) {{$quotation->nama_perusahaan}} @endif" class="form-control" readonly>
               </div>
               <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
               <div class="col-sm-4">
-                <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('kebutuhan')}}" class="form-control" readonly>
+                <input type="text" id="kebutuhan" name="kebutuhan" value="@if($data !=null) {{$data->kebutuhan}} @endif" class="form-control" readonly>
               </div>
             </div>
             <div class="row">
@@ -124,7 +126,6 @@
       columns:[{
                 data : 'id',
                 name : 'id',
-                visible: false,
                 searchable: false
             },{
                 data : 'nomor',

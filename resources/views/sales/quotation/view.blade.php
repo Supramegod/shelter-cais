@@ -54,6 +54,13 @@
               @elseif(Auth::user()->role_id==99 && $master->step == 100 && $data->is_aktif==0 && $data->ot2 != null && $data->ot1 != null && $data->ot3 == null && $master->top=="Lebih Dari 7 Hari")
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
               @endif
+              @if($data->is_aktif==1)
+                @if($data->spk==null)
+                <a href="{{route('spk.add',['id'=> $data->id])}}" class="btn btn-info"><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</a>
+                @else
+                <a href="{{route('spk.view',$data->spk->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat SPK</a>
+                @endif
+              @endif
               <div class="btn-group" role="group">
               <button id="btncetak" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" @if($data->is_aktif!=1) disabled @endif>
                 Cetak Dokumen

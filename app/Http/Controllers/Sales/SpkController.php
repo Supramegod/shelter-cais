@@ -54,8 +54,15 @@ class SpkController extends Controller
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
 
-            return view('sales.spk.add',compact('now'));
+            $data=null;
+            $quotation =null;
+            if($request->id!=null){
+                $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('id',$request->id)->first();
+                $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$data->id)->first();
+            }
+            return view('sales.spk.add',compact('now','data','quotation'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -115,10 +122,12 @@ class SpkController extends Controller
     public function save(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $quotation = DB::table('sl_quotation')->where('id',$request->quotation_id)->first();
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$request->quotation_id)->first();
+            $quotation = DB::table('sl_quotation')->where('id',$quotationKebutuhan->quotation_id)->first();
 
             DB::table('sl_spk')->insert([
                 'quotation_id' => $quotation->id,
+                'quotation_kebutuhan_id' => $quotationKebutuhan->id,
                 'leads_id' => $quotation->leads_id,
                 'nomor' => $this->generateNomor($quotation->leads_id,$quotation->company_id),
                 'tgl_spk' => $current_date_time,
@@ -172,7 +181,7 @@ class SpkController extends Controller
             $data->stgl_spk = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_spk)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
             $quotation = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
-            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$data->quotation_id)->first();
+            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$data->quotation_kebutuhan_id)->first();
             $data->status = DB::table('m_status_spk')->where('id',$data->status_spk_id)->first()->nama;
 
             return view('sales.spk.view',compact('data','quotation','quotationKebutuhan'));
