@@ -138,6 +138,12 @@ class SpkController extends Controller
                 'created_by' => Auth::user()->full_name
             ]);
 
+            DB::table('sl_quotation')->where('id',$quotation->id)->update([
+                'status_quotation_id' => 4,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
             return redirect()->route('spk');
         } catch (\Exception $e) {
             dd($e);

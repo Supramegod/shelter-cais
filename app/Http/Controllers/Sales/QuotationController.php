@@ -752,6 +752,7 @@ class QuotationController extends Controller
                     'leads_id' => $request->leads_id,
                     'nama_perusahaan' => $request->leads,
                     'step' => 1,
+                    'status_quotation_id' =>1,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
@@ -1097,6 +1098,19 @@ class QuotationController extends Controller
                 $request->nominal_tunjangan_holiday = null;
             }else{
                 $request->nominal_tunjangan_holiday = str_replace(".","",$request->nominal_tunjangan_holiday);
+            }
+
+            if($request->ada_lembur=="Tidak Ada"){
+                $request->lembur ="Tidak Ada";
+            }
+            if($request->ada_kompensasi=="Tidak Ada"){
+                $request->kompensasi ="Tidak Ada";
+            }
+            if($request->ada_thr=="Tidak Ada"){
+                $request->thr ="Tidak Ada";
+            }
+            if($request->ada_tunjangan_holiday=="Tidak Ada"){
+                $request->tunjangan_holiday ="Tidak Ada";
             }
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
@@ -1566,28 +1580,59 @@ class QuotationController extends Controller
     public function saveEdit13 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
+            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->id)->first();
+            $umk = DB::table('m_umk')->where('city_id',$data->kota_id)->whereNull('deleted_at')->first();
+            $isAktif = 1;
+            $statusQuotation = 3;
+
+            //jika top lebih dari 7 hari
+            if($quotation->top=="Lebih Dari 7 Hari"){
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
+            // jika nominal kurang dari umk
+            if ($data->nominal_upah<$umk->umk) {
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
+
+            // jika persentasi mf kurang dari 7
+            if ($data->persentase < 7) {
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => 100,
+                'status_quotation_id' =>$statusQuotation,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
+            DB::table('sl_quotation_kebutuhan')->where('id',$data->id)->update([
+                'is_aktif' => $isAktif,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
 
             //Masukkan Requirement
             $detail = DB::table('sl_quotation_kebutuhan_detail')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$data->id)->get();
             foreach ($detail as $key => $value) {
-                $requirement = DB::table('m_kebutuhan_detail_requirement')->whereNull('deleted_at')->where('kebutuhan_detail_id',$value->kebutuhan_detail_id)->get();
-                foreach ($requirement as $kreq => $req) {
-                    DB::table('sl_quotation_kebutuhan_detail_requirement')->insert([
-                        'quotation_id' => $data->quotation_id,
-                        'quotation_kebutuhan_id' => $data->id,
-                        'quotation_kebutuhan_detail_id' => $value->id,
-                        'requirement' => $req->requirement,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->full_name
-                    ]);
+                //cari apakah ada requirement
+                $existData= DB::table('sl_quotation_kebutuhan_detail_requirement')->where('quotation_kebutuhan_detail_id',$value->id)->whereNull('deleted_at')->get();
+
+                if(count($existData)==0){
+                    $requirement = DB::table('m_kebutuhan_detail_requirement')->whereNull('deleted_at')->where('kebutuhan_detail_id',$value->kebutuhan_detail_id)->get();
+                    foreach ($requirement as $kreq => $req) {
+                        DB::table('sl_quotation_kebutuhan_detail_requirement')->insert([
+                            'quotation_id' => $data->quotation_id,
+                            'quotation_kebutuhan_id' => $data->id,
+                            'quotation_kebutuhan_detail_id' => $value->id,
+                            'requirement' => $req->requirement,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }
                 }
             }
 
@@ -1608,8 +1653,9 @@ class QuotationController extends Controller
         $data = DB::table('sl_quotation')
                     ->leftJoin('sl_quotation_kebutuhan','sl_quotation.id','sl_quotation_kebutuhan.quotation_id')
                     ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
+                    ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('sl_quotation_kebutuhan.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->select('m_status_quotation.nama as status','sl_quotation_kebutuhan.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
                     ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation_kebutuhan.deleted_at');
 
             if(!empty($request->tgl_dari)){
@@ -2049,6 +2095,12 @@ class QuotationController extends Controller
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
                     ]);
+
+                    DB::table('sl_quotation')->where('id',$data->quotation_id)->update([
+                        'status_quotation_id' => 3,
+                        'updated_at' => $current_date_time,
+                        'updated_by' => Auth::user()->full_name
+                    ]);
                 }
             }else if(in_array(Auth::user()->role_id,[97])){
                 DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
@@ -2060,6 +2112,12 @@ class QuotationController extends Controller
                 DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
                     'ot3' => Auth::user()->full_name,
                     'is_aktif' => 1,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+
+                DB::table('sl_quotation')->where('id',$data->quotation_id)->update([
+                    'status_quotation_id' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);

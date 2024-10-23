@@ -22,7 +22,7 @@
               </div>
               <div class="row mt-1">
                 <div class="row mb-3" style="display: flex;justify-content: center;">
-                  <div class="col-sm-3">
+                  <div class="col-sm-6">
                     <label class="form-label" for="barang">Nama Barang</label>
                     <div class="input-group">
                       <select id="barang" name="barang" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -31,7 +31,7 @@
                           <optgroup label="{{$jenis->nama}}">
                           @foreach($listChemical as $chemical)
                             @if($chemical->jenis_barang_id == $jenis->id)
-                            <option value="{{$chemical->id}}">{{$chemical->nama}}</option>  
+                            <option value="{{$chemical->id}}" data-harga="{{$chemical->harga}}">{{$chemical->nama}} | Harga : {{$chemical->harga}}</option>  
                             @endif
                           @endforeach  
                         @endforeach
@@ -39,9 +39,15 @@
                       </select>
                     </div>
                   </div>
+                  <div class="col-sm-3">
+                    <label class="form-label" for="harga">Harga</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="harga" readonly>
+                    </div>
+                  </div>
                   @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                  <div class="col-sm-2">
-                    <label class="form-label" for="jumlah_{{$detailJabatan->id}}">{{$detailJabatan->jabatan_kebutuhan}}</label>
+                  <div class="col-sm-3">
+                    <label class="form-label" for="jumlah_{{$detailJabatan->id}}">Jumlah</label>
                     <div class="input-group">
                       <input type="number" class="form-control" id="jumlah_{{$detailJabatan->id}}">
                     </div>
@@ -66,7 +72,7 @@
                                 <th class="text-center">Nama Barang</th>
                                 <th class="text-center">Harga/Unit</th>
                                 @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                                  <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
+                                  <th class="text-center">Jumlah</th>
                                 @endforeach
                                 <th></th>
                             </tr>
@@ -259,6 +265,11 @@
 
   $(document).ready(function() {
     $('#barang').select2();
+    
+    $('#barang').on('change', function() {
+                var harga = $(this).find(':selected').data('harga');
+                $('#harga').val(harga);
+            });
   });
 
 </script>

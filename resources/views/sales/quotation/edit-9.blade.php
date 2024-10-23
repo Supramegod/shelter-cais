@@ -45,7 +45,7 @@
                             </thead>
                             <tbody>
                               @foreach($listDevices as $detail)
-                              @if($detail->jenis_barang_id == 17)
+                              @if($detail->jenis_barang_id == 17 && $data->id ==17)
                                 @if($detail->jumlah==1)
                                 <tr>
                                   <td>{{$detail->nama}}</td>
