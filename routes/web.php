@@ -24,6 +24,7 @@ use App\Http\Controllers\Master\TunjanganJabatanController;
 use App\Http\Controllers\Master\BarangController;
 use App\Http\Controllers\Master\KebutuhanController;
 use App\Http\Controllers\Master\TimSalesController;
+use App\Http\Controllers\Master\TrainingController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -321,5 +322,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/tim-sales/delete-detail-sales', 'deleteDetailSales')->name('tim-sales.delete-detail-sales');
 
         Route::get('/master/tim-sales/list', 'list')->name('tim-sales.list'); // ajax
+    });
+
+    
+    Route::controller(TrainingController::class)->group(function() {
+        Route::get('/master/training', 'index')->name('training');
+        Route::get('/master/training/add', 'add')->name('training.add');
+        Route::get('/master/training/view/{id}', 'view')->name('training.view');
+        Route::post('/master/training/save', 'save')->name('training.save');
+        
+        Route::post('/master/training/delete', 'delete')->name('training.delete');
+
+        Route::get('/master/training/list', 'list')->name('training.list'); // ajax
     });
 });

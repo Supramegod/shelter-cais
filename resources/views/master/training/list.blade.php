@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','Tim Sales')
+@section('title','Training')
 @section('pageStyle')
 <style>
     .dt-buttons {width: 100%;}
@@ -14,10 +14,10 @@
             <div class="card">
                 <div class="card-header d-flex" style="padding-bottom: 0px !important;">
                     <div class="col-md-6 text-left col-12 my-auto">
-                        <h3 class="page-title">Tim Sales</h3>
+                        <h3 class="page-title">Training</h3>
                         <ol class="breadcrumb" style="background-color:white !important;padding:0 !important">
 							<li class="breadcrumb-item"><a href="javascript:void(0);">Master</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Tim Sales</li>
+							<li class="breadcrumb-item active" aria-current="page">Training</li>
 						</ol>
                     </div>
                 </div>
@@ -27,9 +27,11 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
+                                    <th class="text-center">Jenis</th>
                                     <th class="text-center">Nama</th>
-                                    <th class="text-center">Branch</th>
-                                    <th class="text-center">Jumlah Sales</th>
+                                    <th class="text-center">JP</th>
+                                    <th class="text-center">Menit</th>
+                                    <th class="text-center">Total</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
                                     <th class="text-center">Aksi</th>
@@ -86,7 +88,7 @@
             'processing': 'Loading...'
         },
                 ajax: {
-                    url: "{{ route('tim-sales.list') }}",
+                    url: "{{ route('training.list') }}",
                     data: function (d) {
                         
                     },
@@ -100,16 +102,24 @@
                     visible: false,
                     searchable: false
                 },{
+                    data : 'jenis',
+                    name : 'jenis',
+                    className:'text-center'
+                },{
                     data : 'nama',
                     name : 'nama',
                     className:'text-center'
                 },{
-                    data : 'branch',
-                    name : 'branch',
+                    data : 'jp',
+                    name : 'jp',
                     className:'text-center'
                 },{
-                    data : 'jumlah',
-                    name : 'jumlah',
+                    data : 'menit',
+                    name : 'menit',
+                    className:'text-center'
+                },{
+                    data : 'total',
+                    name : 'total',
                     className:'text-center'
                 },{
                     data : 'created_at',
@@ -128,38 +138,16 @@
                 dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
                 buttons: [
                     {
-                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Tim Sales</span>',
+                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Training</span>',
                     className: 'create-new btn btn-label-primary waves-effect waves-light',
                     action: function (e, dt, node, config)
                         {
                             //This will send the page to the location specified
-                            window.location.href = '{{route("tim-sales.add")}}';
+                            window.location.href = '{{route("training.add")}}';
                         }
                     }
                 ],
             });
-        
-        
-        // $('body').on('click', '.btn-delete', function() {
-    //     let formData = {
-        //         "id":$(this).data('id'),
-        //         "_token": "{{ csrf_token() }}"
-        //     };
-
-        //     let table ='#table-data';
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "{{route('tim-sales.delete')}}",
-        //         data:formData,
-        //         success: function(response){
-        //             $(table).DataTable().ajax.reload();
-        //         },
-        //         error:function(error){
-        //             console.log(error);
-        //         }
-        //     });
-        // });
-
         
         $('body').on('click', '.btn-delete', function() {
             let id = $(this).data('id');
@@ -182,7 +170,7 @@
                     let table ='#table-data';
                     $.ajax({
                         type: "POST",
-                        url: "{{route('tim-sales.delete')}}",
+                        url: "{{route('training.delete')}}",
                         data:formData,
                         success: function(response){
                             console.log(response)
