@@ -59,6 +59,12 @@
                 </tbody>
             </table>
           </div>
+          <div class="d-flex flex-column justify-content-center align-items-center mt-5">
+            <button id="btn-kembali" class="btn btn-secondary waves-effect waves-light">
+              <span class="me-1">Kembali</span>
+              <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
+            </button>
+          </div>
           <div class="pt-4">
           </div>
         </div>
@@ -290,6 +296,10 @@
         console.log(error);
       }
     });
+  });
+
+  $('#btn-kembali').on('click',function () {
+    window.location.replace("{{route('tim-sales')}}");
   });
 
 </script>

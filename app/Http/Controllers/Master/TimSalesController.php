@@ -20,7 +20,12 @@ class TimSalesController extends Controller
 
     public function list(Request $request){
         try {
-            $data = DB::table('m_tim_sales')->whereNull('deleted_at')->get();
+            // $data = DB::table('m_tim_sales')->whereNull('deleted_at')->get();
+            $data = DB::select('select m.id, m.nama, m.branch, m.branch_id, m.created_at, m.created_by, COUNT(d.id) AS jumlah
+                    from m_tim_sales m
+                    left join m_tim_sales_d d ON m.id = d.tim_sales_id
+                    where d.deleted_at is null
+                    group by m.id');
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
                 return '<div class="justify-content-center d-flex">

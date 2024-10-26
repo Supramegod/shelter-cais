@@ -29,6 +29,7 @@
                                     <th class="text-center">ID</th>
                                     <th class="text-center">Nama</th>
                                     <th class="text-center">Branch</th>
+                                    <th class="text-center">Jumlah Sales</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
                                     <th class="text-center">Aksi</th>
@@ -105,6 +106,10 @@
                 },{
                     data : 'branch',
                     name : 'branch',
+                    className:'text-center'
+                },{
+                    data : 'jumlah',
+                    name : 'jumlah',
                     className:'text-center'
                 },{
                     data : 'created_at',
