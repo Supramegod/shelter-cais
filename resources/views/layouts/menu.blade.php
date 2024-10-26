@@ -180,6 +180,12 @@
                         <div data-i18n="Kebutuhan">Kebutuhan</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('tim-sales'))) active @endif">
+                    <a href="{{route('tim-sales')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Tim Sales">Tim Sales</div>
+                    </a>
+                </li>
             </ul>
         </li> 
         @endif
