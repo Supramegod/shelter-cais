@@ -31,8 +31,7 @@
                                     <th class="text-center">Resiko</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
-                                    <th class="text-center">Diedit Tanggal</th>
-                                    <th class="text-center">Diedit Oleh</th>
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -116,12 +115,8 @@
                     name : 'created_by',
                     className:'text-center'
                 },{
-                    data : 'updated_at',
-                    name : 'updated_at',
-                    className:'text-center'
-                },{
-                    data : 'updated_by',
-                    name : 'updated_by',
+                    data : 'aksi',
+                    name : 'aksi',
                     className:'text-center'
                 }],
                 "language": datatableLang,
@@ -138,5 +133,61 @@
                     }
                 ],
             });
+
+        $('body').on('click', '.btn-delete', function() {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah anda ingin hapus data ini ?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: 'primary',
+                cancelButtonColor: 'warning',
+                confirmButtonText: 'Hapus'
+            }).then(function (result) {
+                console.log(result)
+                if (result.isConfirmed) {
+                    let formData = {
+                        "id":id,
+                        "_token": "{{ csrf_token() }}"
+                    };
+
+                    let table ='#table-data';
+                    $.ajax({
+                        type: "POST",
+                        url: "{{route('perusahaan.delete')}}",
+                        data:formData,
+                        success: function(response){
+                            console.log(response)
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Pemberitahuan',
+                                    text: response.message,
+                                    icon: 'success',
+                                    timer: 1000,
+                                    timerProgressBar: true,
+                                    willClose: () => {
+                                        $(table).DataTable().ajax.reload();
+                                    }
+                                })
+                            } else {
+                                Swal.fire({
+                                    title: 'Pemberitahuan',
+                                    text: response.message,
+                                    icon: 'error'
+                                })
+                            }
+                        },
+                        error:function(error){
+                            Swal.fire({
+                                title: 'Pemberitahuan',
+                                text: error,
+                                icon: 'error'
+                            })
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @endsection

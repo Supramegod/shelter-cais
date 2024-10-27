@@ -30,8 +30,7 @@
                                     <th class="text-center">Nama</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
-                                    <th class="text-center">Diedit Tanggal</th>
-                                    <th class="text-center">Diedit Oleh</th>
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -111,12 +110,8 @@
                     name : 'created_by',
                     className:'text-center'
                 },{
-                    data : 'updated_at',
-                    name : 'updated_at',
-                    className:'text-center'
-                },{
-                    data : 'updated_by',
-                    name : 'updated_by',
+                    data : 'aksi',
+                    name : 'aksi',
                     className:'text-center'
                 }],
                 "language": datatableLang,

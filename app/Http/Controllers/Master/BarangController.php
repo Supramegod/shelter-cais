@@ -26,10 +26,13 @@ class BarangController extends Controller
                     ->whereNull('m_barang.deleted_at')
                     ->get();
             return DataTables::of($data)
-                ->editColumn('nama', function ($data) {
-                    return '<a href="'.route('barang.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama.'</a>';
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <a href="'.route('barang.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                    </div>';
                 })
-                ->rawColumns(['nama'])
+                ->rawColumns(['aksi'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -117,18 +120,17 @@ class BarangController extends Controller
 
     public function delete(Request $request){
         try {
-            DB::beginTransaction();
-
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('m_barang')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
-                'deleted_by' => Auth::user()->name
+                'deleted_by' => Auth::user()->full_name
             ]);
 
-            $msgSave = 'Barang '.$request->nama.' berhasil dihapus.';
-            
-            DB::commit();
-            return redirect()->route('barang')->with('success', $msgSave);
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);

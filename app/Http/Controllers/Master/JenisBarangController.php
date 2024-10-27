@@ -22,10 +22,12 @@ class JenisBarangController extends Controller
         try {
             $data = DB::table('m_jenis_barang')->whereNull('deleted_at')->get();
             return DataTables::of($data)
-                ->editColumn('nama', function ($data) {
-                    return '<a href="'.route('jenis-barang.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama.'</a>';
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <a href="'.route('jenis-barang.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                    </div>';
                 })
-                ->rawColumns(['nama'])
+                ->rawColumns(['aksi'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
