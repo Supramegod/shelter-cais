@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title','SPK')
+@section('title','PKS')
 @section('content')
 <!--/ Content -->
 <div class="container-fluid flex-grow-1 container-p-y">
-  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Sales/ </span> Lihat SPK</h4>
+  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Sales/ </span> Lihat PKS</h4>
   <!-- Multi Column with Form Separator -->
   <div class="row">
     <!-- Form Label Alignment -->
@@ -11,14 +11,14 @@
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
-            <span>Form SPK <span class="badge @if($data->status_spk_id==1 ) bg-label-warning @elseif($data->status_spk_id==2 ) bg-label-info @elseif($data->status_spk_id==3 ) bg-label-success @endif rounded-pill mt-1">{{$data->status}}</span></span>
-            <span style="font-weight:bold;color:#000">{{$data->nomor}} - {{$data->stgl_spk}}</span>
+            <span>Form PKS <span class="badge @if($data->status_pks_id==1 ) bg-label-warning @elseif($data->status_pks_id==2 ) bg-label-info @elseif($data->status_pks_id==3 ) bg-label-success @endif rounded-pill mt-1">{{$data->status}}</span></span>
+            <span style="font-weight:bold;color:#000">{{$data->nomor}} - {{$data->stgl_pks}}</span>
           </div>
         </h5>
         <form class="card-body overflow-hidden" action="{{route('leads.save')}}" method="POST">
           @csrf
           <input type="hidden" name="id" value="{{$data->id}}">
-          <h6>1. Informasi SPK</h6>
+          <h6>1. Informasi PKS</h6>
           <div class="row mb-3">
             <div class="table-responsive">
               <table class="table">
@@ -50,29 +50,29 @@
             </div>
           </div>
           <div class="card-body">
-            @if($data->status_spk_id == 1)
+            @if($data->status_pks_id == 1)
             <div class="col-12 text-center mt-2">
-              <button id="btn-download-spk" class="btn btn-warning w-100 waves-effect waves-light">
-                <span class="me-1">Download Template SPK</span>
+              <button id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Download Template PKS</span>
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
               </button>
             </div>
             <div class="col-12 text-center mt-2">
-              <button id="btn-upload-spk" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Upload SPK</span>
+              <button id="btn-upload-pks" class="btn btn-info w-100 waves-effect waves-light">
+                <span class="me-1">Upload PKS</span>
                 <i class="mdi mdi-upload scaleX-n1-rtl"></i>
               </button>
             </div>
-            @elseif($data->status_spk_id == 2)
+            @elseif($data->status_pks_id == 2)
             <div class="col-12 text-center mt-2">
-              <button id="btn-lihat-spk" class="btn btn-success w-100 waves-effect waves-light">
-                <span class="me-1">Lihat SPK</span>
+              <button id="btn-lihat-pks" class="btn btn-success w-100 waves-effect waves-light">
+                <span class="me-1">Lihat PKS</span>
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
               </button>
             </div>
             <div class="col-12 text-center mt-2">
               <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Create PKS</span>
+                <span class="me-1">Sync Ke HRIS & Accurate</span>
                 <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
               </button>
             </div>
@@ -85,7 +85,7 @@
             </div>
             <br>
             <hr>
-            @if($data->status_spk_id == 1)
+            @if($data->status_pks_id == 1)
             <div class="col-12 text-center mt-2">
               <button id="btn-ajukan-ulang" class="btn btn-danger w-100 waves-effect waves-light">
                 <span class="me-1">Ajukan Ulang Quotation</span>
@@ -116,15 +116,15 @@
     });
   @endif
   $('#btn-kembali').on('click',function () {
-    window.location.replace("{{route('spk')}}");
+    window.location.replace("{{route('pks')}}");
   });
 
-  $('#btn-download-spk').on('click',function () {
-    alert('Template SPK Terdownload');
+  $('#btn-download-pks').on('click',function () {
+    alert('Template PKS Terdownload');
   });
   
-  $('#btn-lihat-spk').on('click',function () {
-    alert('SPK Terlihat');
+  $('#btn-lihat-pks').on('click',function () {
+    alert('PKS Terlihat');
   });
   
   $('#btn-ajukan-ulang').on('click',function () {
@@ -132,7 +132,7 @@
   });
   
 
-  $('#btn-upload-spk').on('click', function() {
+  $('#btn-upload-pks').on('click', function() {
         // Menampilkan SweetAlert dengan form upload
         Swal.fire({
             title: 'Upload File',
@@ -162,7 +162,7 @@
 
                 // Kirim file menggunakan AJAX
                 $.ajax({
-                    url: '{{route("spk.upload-spk")}}',  // URL untuk upload di Laravel
+                    url: '{{route("pks.upload-pks")}}',  // URL untuk upload di Laravel
                     type: 'POST',
                     data: formData,
                     contentType: false,  // Jangan menetapkan tipe konten

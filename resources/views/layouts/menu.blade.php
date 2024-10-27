@@ -43,8 +43,8 @@
             <div data-i18n="SPK">SPK</div>
             </a>
         </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
-            <a href="{{route('spk')}}" class="menu-link">
+        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
+            <a href="{{route('pks')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
             <div data-i18n="PKS">PKS</div>
             </a>
