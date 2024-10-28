@@ -123,6 +123,10 @@
                 <td>: {{$master->evaluasi_karyawan}}</td>
               </tr>
               <tr>
+                <td>Penempatan</td>
+                <td colspan="3">: {{$master->penempatan}}</td>
+              </tr>
+              <tr>
                 <td>Tanggal Penempatan</td>
                 <td>: {{$master->stgl_penempatan}}</td>
                 <td>Salary Rule</td>

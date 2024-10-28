@@ -52,10 +52,10 @@
           <div class="card-body">
             @if($data->status_spk_id == 1)
             <div class="col-12 text-center mt-2">
-              <button id="btn-download-spk" class="btn btn-warning w-100 waves-effect waves-light">
+              <a onclick="window.open('{{route('spk.cetak-spk',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-spk" class="btn btn-warning w-100 waves-effect waves-light">
                 <span class="me-1">Download Template SPK</span>
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
-              </button>
+              </a>
             </div>
             <div class="col-12 text-center mt-2">
               <button id="btn-upload-spk" class="btn btn-info w-100 waves-effect waves-light">
@@ -118,10 +118,6 @@
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('spk')}}");
   });
-
-  $('#btn-download-spk').on('click',function () {
-    alert('Template SPK Terdownload');
-  });
   
   $('#btn-lihat-spk').on('click',function () {
     alert('SPK Terlihat');
@@ -131,7 +127,6 @@
     alert('Diajukan Ulang');
   });
   
-
   $('#btn-upload-spk').on('click', function() {
         // Menampilkan SweetAlert dengan form upload
         Swal.fire({

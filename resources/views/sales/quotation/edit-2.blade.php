@@ -120,6 +120,15 @@
                 </div>
               </div>
               <div class="row mb-3">
+                <div class="col-sm-12">
+                  <label class="form-label" for="penempatan">Tanggal Penempatan</label>
+                  <input type="text" name="penempatan" value="{{$quotation->penempatan}}" class="form-control @if($errors->has('penempatan')) is-invalid @endif" id="penempatan">
+                  @if($errors->has('penempatan'))
+                    <span class="text-danger">{{$errors->first('penempatan')}}</span>
+                  @endif
+                </div>
+              </div>
+              <div class="row mb-3">
                 <div class="col-sm-6">
                   <label class="form-label" for="tgl_penempatan">Tanggal Penempatan</label>
                   <input type="date" name="tgl_penempatan" value="{{$quotation->tgl_penempatan}}" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl-penempatan">
@@ -372,6 +381,9 @@ $('#btn-submit').on('click',function(e){
 
   if(obj.evaluasi_kontrak == null || obj.evaluasi_kontrak == ""){
     msg += "<b>Evaluasi Kontrak</b> belum dipilih </br>";
+  }
+  if(obj.penempatan == null || obj.penempatan == ""){
+    msg += "<b>Penempatan</b> belum diisi </br>";
   }
   if(obj.tgl_penempatan == null || obj.tgl_penempatan == ""){
     msg += "<b>Tanggal Penempatan</b> belum dipilih </br>";

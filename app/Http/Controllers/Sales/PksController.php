@@ -118,7 +118,7 @@ class PksController extends Controller
             $dataSpk = DB::table('sl_spk')->where('id',$request->spk_id)->first();
             $quotation = DB::table('sl_quotation')->where('id',$dataSpk->quotation_id)->first();
 
-            DB::table('sl_pks')->insert([
+            $newId = DB::table('sl_pks')->insertGetId([
                 'quotation_id' => $dataSpk->quotation_id,
                 'quotation_kebutuhan_id' => $dataSpk->quotation_kebutuhan_id,
                 'spk_id' => $dataSpk->id,
@@ -144,7 +144,7 @@ class PksController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('pks');
+            return redirect()->route('pks.view',$newId);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

@@ -125,7 +125,7 @@ class SpkController extends Controller
             $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$request->quotation_id)->first();
             $quotation = DB::table('sl_quotation')->where('id',$quotationKebutuhan->quotation_id)->first();
 
-            DB::table('sl_spk')->insert([
+            $newId = DB::table('sl_spk')->insertGetId([
                 'quotation_id' => $quotation->id,
                 'quotation_kebutuhan_id' => $quotationKebutuhan->id,
                 'leads_id' => $quotation->leads_id,
@@ -145,7 +145,7 @@ class SpkController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('spk');
+            return redirect()->route('spk.view',$newId);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -200,7 +200,33 @@ class SpkController extends Controller
         
     }
 
+    public function cetakSpk (Request $request,$id){
+        try {
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $data = DB::table("sl_spk")->where("id",$id)->first();
+            $quotation = DB::table("sl_quotation")->where("id",$data->quotation_id)->first();
+            $quotationKebutuhan = DB::table("sl_quotation_kebutuhan")->where("quotation_id",$quotation->id)->first();
+            $leads = DB::table("sl_leads")->where("id",$data->leads_id)->first();
+            $quotation->tgl_penempatan = Carbon::createFromFormat('Y-m-d',$quotation->tgl_penempatan)->isoFormat('D MMMM Y');
+            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotationKebutuhan->company_id)->first();
+
+            $quotationKebutuhanDetail = DB::table("sl_quotation_kebutuhan_detail")->whereNull('deleted_at')->where("quotation_id",$quotation->id)->get();
+            $totalhc = 0;
+            foreach ($quotationKebutuhanDetail as $key => $value) {
+                $totalhc+=$value->jumlah_hc;
+            }
+
+            $quotation->total_hc = $totalhc;
+            return view('sales.spk.cetakan.spk',compact('company','now','data','quotation','quotationKebutuhan','leads'));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function uploadSPk (Request $request) {
+        dd($request->file('file'));
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('sl_spk')->where('id',$request->id)->update([

@@ -89,6 +89,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/spk/save', 'save')->name('spk.save');
         Route::get('/sales/spk/view/{id}', 'view')->name('spk.view');
         Route::post('/sales/spk/upload-spk', 'uploadSPK')->name('spk.upload-spk');
+        Route::get('/sales/spk/cetak-spk/{id}', 'cetakSpk')->name('spk.cetak-spk');
+
     });
 
     Route::controller(PksController::class)->group(function() {
