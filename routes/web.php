@@ -164,6 +164,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/add-biaya-monitoring', 'addBiayaMonitoring')->name('quotation.add-biaya-monitoring');
 
         Route::get('/sales/quotation/cetak-checklist/{id}', 'cetakChecklist')->name('quotation.cetak-checklist');
+        Route::get('/sales/quotation/cetak-coss/{id}', 'cetakCoss')->name('quotation.cetak-coss');
+        Route::get('/sales/quotation/cetak-quotation/{id}', 'cetakQuotation')->name('quotation.cetak-quotation');
         Route::post('/sales/quotation/add-quotation-training', 'addQuotationTraining')->name('quotation.add-quotation-training');
         Route::post('/sales/quotation/add-barang', 'addBarang')->name('quotation.add-barang');
 

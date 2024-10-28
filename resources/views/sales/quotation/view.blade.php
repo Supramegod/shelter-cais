@@ -67,7 +67,8 @@
               </button>
               <ul class="dropdown-menu" aria-labelledby="btncetak">
                 <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Checklist</a></li>
-                <li><a class="dropdown-item" href="#">Cetak Quotation</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-coss',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Cost Structure</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-quotation',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Quotation</a></li>
               </ul>
             </div>
             @endif
@@ -444,7 +445,7 @@
         <div class="card-body">
           <div class="tab-content p-0">
             <div class="tab-pane fade active show" id="navs-top-hpp" role="tabpanel">
-            <div class="row">
+              <div class="row">
                 <div class="table-responsive text-nowrap">
                   <table class="table" >
                     <thead class="text-center">
@@ -652,7 +653,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
               </div>
             </div>
             <div class="tab-pane fade" id="navs-top-coss" role="tabpanel">
-            <div class="row">
+              <div class="row">
                 <div class="table-responsive text-nowrap">
                   <table class="table" >
                     <thead class="text-center">
@@ -901,7 +902,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
               </div>
             </div>
             <div class="tab-pane fade" id="navs-top-gpm" role="tabpanel">
-            <div class="row">
+              <div class="row">
                 <div class="table-responsive text-nowrap">
                   <table class="table" >
                     <thead class="text-center">
@@ -1741,20 +1742,6 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
             console.log(error);
           }
         });
-      }
-    });
-  });
-  $('body').on('click', '#cetak-quotation', function() {
-    Swal.fire({
-      icon: "question",
-      title: "Apakah anda yakin ingin mencetak dokumen ini ?",
-      showCancelButton: true,
-      confirmButtonText: "Cetak",
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isConfirmed) {
-        alert("berhasil mencetak");
-        location("reload");
       }
     });
   });
