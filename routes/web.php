@@ -24,6 +24,8 @@ use App\Http\Controllers\Master\TunjanganController;
 use App\Http\Controllers\Master\TunjanganJabatanController;
 use App\Http\Controllers\Master\BarangController;
 use App\Http\Controllers\Master\KebutuhanController;
+use App\Http\Controllers\Master\TimSalesController;
+use App\Http\Controllers\Master\TrainingController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -320,5 +322,33 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/kebutuhan/list-detail-requirement', 'listDetailRequirement')->name('kebutuhan.list-detail-requirement'); // ajax
         Route::post('/master/kebutuhan/delete-detail-requirement', 'deleteDetailRequirement')->name('kebutuhan.delete-detail-requirement');
         Route::post('/master/kebutuhan/add-detail-requirement', 'addDetailrequiRement')->name('kebutuhan.add-detail-requirement');
+    });
+    
+    Route::controller(TimSalesController::class)->group(function() {
+        Route::get('/master/tim-sales', 'index')->name('tim-sales');
+        Route::get('/master/tim-sales/add', 'add')->name('tim-sales.add');
+        Route::get('/master/tim-sales/view/{id}', 'view')->name('tim-sales.view');
+        Route::post('/master/tim-sales/save', 'save')->name('tim-sales.save');
+        
+        Route::post('/master/tim-sales/delete', 'delete')->name('tim-sales.delete');
+
+        Route::post('/master/tim-sales/add-detail-sales', 'addDetailSales')->name('tim-sales.add-detail-sales');
+        Route::get('/master/tim-sales/list-detail-sales', 'listDetailSales')->name('tim-sales.list-detail-sales'); // ajax
+        Route::post('/master/tim-sales/change-is-leader', 'changeIsLeader')->name('tim-sales.change-is-leader');
+        Route::post('/master/tim-sales/delete-detail-sales', 'deleteDetailSales')->name('tim-sales.delete-detail-sales');
+
+        Route::get('/master/tim-sales/list', 'list')->name('tim-sales.list'); // ajax
+    });
+
+    
+    Route::controller(TrainingController::class)->group(function() {
+        Route::get('/master/training', 'index')->name('training');
+        Route::get('/master/training/add', 'add')->name('training.add');
+        Route::get('/master/training/view/{id}', 'view')->name('training.view');
+        Route::post('/master/training/save', 'save')->name('training.save');
+        
+        Route::post('/master/training/delete', 'delete')->name('training.delete');
+
+        Route::get('/master/training/list', 'list')->name('training.list'); // ajax
     });
 });

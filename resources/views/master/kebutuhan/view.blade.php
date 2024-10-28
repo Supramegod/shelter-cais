@@ -21,7 +21,7 @@
                     <button class="btn btn-primary btn-tambah-detail" id="btn-tambah-detail"><i class="mdi mdi-plus"></i>&nbsp; Tambah Detail</button>
                   </td>
                 </tr>
-              </table>
+            </table>
             <div class="nav-align-top">
                 <ul class="nav nav-tabs nav-fill" role="tablist">
                     @foreach($detailKebutuhan as $kkd => $detail)
@@ -39,58 +39,54 @@
             <div class="tab-content p-0">
                 @foreach($detailKebutuhan as $kkd => $detail)
                 <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-top-{{$detail->id}}" role="tabpanel">
-                  <table class="w-100 mb-3">
-                    <tr>
-                      <td style="display:flex;justify-content:space-between">
-                        <h4>Tunjangan</h4>
-                        <button class="btn btn-secondary btn-input-tunjangan" id="btn-input-tunjangan-{{$detail->id}}" data-id="{{$detail->id}}"><i class="mdi mdi-plus"></i>&nbsp; Tambah Tunjangan</button>
-                      </td>
-                    </tr>
-                  </table>
-                  <div class="table-responsive overflow-hidden table-data-tunjangan-{{$detail->id}}">
-                    <table id="table-data-tunjangan-{{$detail->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                        <thead>
-                            <tr>
-                                <th class="text-center">ID</th>
-                                <th class="text-center">Nama Tunjangan</th>
-                                <th class="text-center">Nominal</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{-- data table ajax --}}
-                        </tbody>
+                  <div class="mb-3">
+                    <table class="w-100 mb-3">
+                      <tr>
+                        <td style="display:flex;justify-content:space-between">
+                          <h4>Tunjangan</h4>
+                          <button class="btn btn-secondary btn-input-tunjangan" id="btn-input-tunjangan-{{$detail->id}}" data-id="{{$detail->id}}"><i class="mdi mdi-plus"></i>&nbsp; Tambah Tunjangan</button>
+                        </td>
+                      </tr>
                     </table>
+                    <div class="table-responsive overflow-hidden table-data-tunjangan-{{$detail->id}}">
+                      <table id="table-data-tunjangan-{{$detail->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                          <thead>
+                              <tr>
+                                  <th class="text-center">ID</th>
+                                  <th class="text-center">Nama Tunjangan</th>
+                                  <th class="text-center">Nominal</th>
+                                  <th class="text-center">Aksi</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {{-- data table ajax --}}
+                          </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="tab-content p-0">
-                @foreach($detailKebutuhan as $kkd => $detail)
-                <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-top-{{$detail->id}}" role="tabpanel">
-                  <table class="w-100 mb-3">
-                    <tr>
-                      <td style="display:flex;justify-content:space-between">
-                        <h4>Requirement</h4>
-                        <button class="btn btn-secondary btn-input-requirement" id="btn-input-requirement-{{$detail->id}}" data-id="{{$detail->id}}"><i class="mdi mdi-plus"></i>&nbsp; Tambah Requirement</button>
-                      </td>
-                    </tr>
-                  </table>
-                  <div class="table-responsive overflow-hidden table-data-requirement-{{$detail->id}}">
-                    <table id="table-data-requirement-{{$detail->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                        <thead>
-                            <tr>
-                                <th class="text-center">ID</th>
-                                <th class="text-center">Requirement</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{-- data table ajax --}}
-                        </tbody>
+                  <div class="mt-5">
+                    <table class="w-100 mb-3">
+                      <tr>
+                        <td style="display:flex;justify-content:space-between">
+                          <h4>Requirement</h4>
+                          <button class="btn btn-secondary btn-input-requirement" id="btn-input-requirement-{{$detail->id}}" data-id="{{$detail->id}}"><i class="mdi mdi-plus"></i>&nbsp; Tambah Requirement</button>
+                        </td>
+                      </tr>
                     </table>
+                    <div class="table-responsive overflow-hidden table-data-requirement-{{$detail->id}}">
+                      <table id="table-data-requirement-{{$detail->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                          <thead>
+                              <tr>
+                                  <th class="text-center">ID</th>
+                                  <th class="text-center">Requirement</th>
+                                  <th class="text-center">Aksi</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {{-- data table ajax --}}
+                          </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
                 @endforeach

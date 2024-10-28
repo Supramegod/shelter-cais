@@ -31,10 +31,13 @@ class AplikasiPendukungController extends Controller
                                 <a target="_blank" href="'.$data->link_icon.'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-image"></i></a> &nbsp;
                             </div>';
                 })
-                ->editColumn('nama', function ($data) {
-                    return '<a href="'.route('aplikasi-pendukung.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama.'</a>';
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <a href="'.route('aplikasi-pendukung.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                    </div>';
                 })
-                ->rawColumns(['nama', 'link_icon'])
+                ->rawColumns(['aksi', 'link_icon'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -113,18 +116,17 @@ class AplikasiPendukungController extends Controller
 
     public function delete(Request $request){
         try {
-            DB::beginTransaction();
-
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('m_aplikasi_pendukung')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
-                'deleted_by' => Auth::user()->name
+                'deleted_by' => Auth::user()->full_name
             ]);
-
-            $msgSave = 'Aplikasi Pendukung '.$request->nama.' berhasil dihapus.';
             
-            DB::commit();
-            return redirect()->route('aplikasi-pendukung')->with('success', $msgSave);
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);

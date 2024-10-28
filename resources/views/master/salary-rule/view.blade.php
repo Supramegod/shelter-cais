@@ -105,13 +105,6 @@
                 <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
               </button>
             </div>
-            <hr class="my-4 mx-4">
-            <div class="col-12 text-center mt-2">
-              <button id="btn-delete" class="btn btn-danger w-100 waves-effect waves-light">
-                <span class="me-1">Delete Salary Rule</span>
-                <i class="mdi mdi-trash-can scaleX-n1-rtl"></i>
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -136,11 +129,6 @@
   @endif
 
   $('#btn-update').on('click',function () {
-    $('form').submit();
-  });
-  
-  $('#btn-delete').on('click',function () {
-    $('form').attr('action', '{{route("salary-rule.delete")}}');
     $('form').submit();
   });
   

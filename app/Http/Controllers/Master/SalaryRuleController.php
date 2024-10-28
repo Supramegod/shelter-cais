@@ -22,10 +22,13 @@ class SalaryRuleController extends Controller
         try {
             $data = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             return DataTables::of($data)
-                ->editColumn('nama_salary_rule', function ($data) {
-                    return '<a href="'.route('salary-rule.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_salary_rule.'</a>';
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <a href="'.route('salary-rule.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                    </div>';
                 })
-                ->rawColumns(['nama_salary_rule'])
+                ->rawColumns(['aksi'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -111,18 +114,17 @@ class SalaryRuleController extends Controller
 
     public function delete(Request $request){
         try {
-            DB::beginTransaction();
-
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('m_salary_rule')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
-                'deleted_by' => Auth::user()->name
+                'deleted_by' => Auth::user()->full_name
             ]);
 
-            $msgSave = 'Salary Rule '.$request->nama_salary_rule.' berhasil dihapus.';
-            
-            DB::commit();
-            return redirect()->route('salary-rule')->with('success', $msgSave);
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
