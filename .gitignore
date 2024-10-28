@@ -3,6 +3,8 @@
 /public/build
 /public/hot
 /public/storage
+/public/spk
+/public/pks
 /storage/*.key
 /vendor
 .env
