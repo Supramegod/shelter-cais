@@ -65,10 +65,10 @@
             </div>
             @elseif($data->status_pks_id == 2)
             <div class="col-12 text-center mt-2">
-              <button id="btn-lihat-pks" class="btn btn-success w-100 waves-effect waves-light">
+              <a target="_blank" href="{{$data->link_pks_disetujui}}" id="btn-lihat-pks" class="btn btn-success w-100 waves-effect waves-light">
                 <span class="me-1">Lihat PKS</span>
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
-              </button>
+              </a>
             </div>
             <div class="col-12 text-center mt-2">
               <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
@@ -121,10 +121,6 @@
 
   $('#btn-download-pks').on('click',function () {
     alert('Template PKS Terdownload');
-  });
-  
-  $('#btn-lihat-pks').on('click',function () {
-    alert('PKS Terlihat');
   });
   
   $('#btn-ajukan-ulang').on('click',function () {

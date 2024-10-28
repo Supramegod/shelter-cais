@@ -226,11 +226,17 @@ class SpkController extends Controller
     }
 
     public function uploadSPk (Request $request) {
-        dd($request->file('file'));
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
+            $fileExtension = $request->file('file')->getClientOriginalExtension();
+            $originalFileName = pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME);
+            $originalName = $originalFileName.date("YmdHis").rand(10000,99999).".".$fileExtension;
+
+            Storage::disk('spk')->put($originalName, file_get_contents($request->file('file')));
+            
             DB::table('sl_spk')->where('id',$request->id)->update([
                 'status_spk_id' => 2,
+                'link_spk_disetujui' =>env('APP_URL')."/public/spk/".$originalName,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);

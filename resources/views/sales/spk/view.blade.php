@@ -65,10 +65,10 @@
             </div>
             @elseif($data->status_spk_id == 2)
             <div class="col-12 text-center mt-2">
-              <button id="btn-lihat-spk" class="btn btn-success w-100 waves-effect waves-light">
+              <a target="_blank" href="{{$data->link_spk_disetujui}}" id="btn-lihat-spk" class="btn btn-success w-100 waves-effect waves-light">
                 <span class="me-1">Lihat SPK</span>
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
-              </button>
+              </a>
             </div>
             <div class="col-12 text-center mt-2">
               <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
@@ -117,10 +117,6 @@
   @endif
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('spk')}}");
-  });
-  
-  $('#btn-lihat-spk').on('click',function () {
-    alert('SPK Terlihat');
   });
   
   $('#btn-ajukan-ulang').on('click',function () {

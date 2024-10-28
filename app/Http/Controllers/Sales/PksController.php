@@ -202,12 +202,18 @@ class PksController extends Controller
     public function uploadPks (Request $request) {
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
+            $fileExtension = $request->file('file')->getClientOriginalExtension();
+            $originalFileName = pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME);
+            $originalName = $originalFileName.date("YmdHis").rand(10000,99999).".".$fileExtension;
+
+            Storage::disk('pks')->put($originalName, file_get_contents($request->file('file')));
+            
             DB::table('sl_pks')->where('id',$request->id)->update([
                 'status_pks_id' => 2,
+                'link_pks_disetujui' =>env('APP_URL')."/public/pks/".$originalName,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            return "success";
         } catch (\Throwable $th) {
             //throw $th;
         };

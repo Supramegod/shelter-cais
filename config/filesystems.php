@@ -50,6 +50,20 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'spk' => [
+            'driver' => 'local',
+            'root' => public_path(). '/spk',
+            'url' => env('APP_URL').'/public/spk',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'pks' => [
+            'driver' => 'local',
+            'root' => public_path(). '/pks',
+            'url' => env('APP_URL').'/public/pks',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
