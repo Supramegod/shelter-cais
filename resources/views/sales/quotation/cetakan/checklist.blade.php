@@ -80,7 +80,6 @@
                                   <th>Jabatan</th>
                                   <th>No. Telp</th>
                                   <th>Email</th>
-                                  <th>Kuasa</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -90,7 +89,6 @@
                                   <td>{{$pic->jabatan}}</td>
                                   <td>{{$pic->no_telp}}</td>
                                   <td>{{$pic->email}}</td>
-                                  <td>@if($pic->is_kuasa==1) {{$pic->kuasa}} @endif</td>
                                 </tr>
                                 @endforeach
                               </tbody>
@@ -134,12 +132,12 @@
                         </tr>
                         <tr>
                           <td>Kunjungan Operasional </td>
-                          <td>{{$quotation->kunjungan_operasional}}</td>
+                          <td>{{explode(" ",$quotation->kunjungan_operasional)[0]}} Kali dalam 1 {{explode(" ",$quotation->kunjungan_operasional)[1]}}</td>
                           <td colspan="2">{{$quotation->keterangan_kunjungan_operasional}}</td>
                         </tr>
                         <tr>
                           <td>Kunjungan Tim CRM </td>
-                          <td>{{$quotation->kunjungan_tim_crm}}</td>
+                          <td>{{explode(" ",$quotation->kunjungan_tim_crm)[0]}} Kali dalam 1 {{explode(" ",$quotation->kunjungan_tim_crm)[1]}}</td>
                           <td colspan="2">{{$quotation->keterangan_kunjungan_tim_crm}}</td>
                         </tr>
                         <tr>

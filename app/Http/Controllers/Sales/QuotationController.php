@@ -735,7 +735,8 @@ class QuotationController extends Controller
             DB::beginTransaction();
 
             $validator = Validator::make($request->all(), [
-                'leads' => 'required'
+                'leads' => 'required',
+                'jumlah_site' => 'required'
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
                 'max' => 'Masukkan :attribute maksimal :max',
@@ -750,6 +751,7 @@ class QuotationController extends Controller
                 $newId = DB::table('sl_quotation')->insertGetId([
                     'tgl_quotation' => $current_date,
                     'leads_id' => $request->leads_id,
+                    'jumlah_site' =>  $request->jumlah_site,
                     'nama_perusahaan' => $request->leads,
                     'step' => 1,
                     'status_quotation_id' =>1,
@@ -787,7 +789,7 @@ class QuotationController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
-                'jumlah_site' => 'required',
+                'nama_site' => 'required',
                 'jenis_kontrak' => 'required'
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
@@ -807,7 +809,7 @@ class QuotationController extends Controller
                     $newStep = $dataQuotation->step;
                 }
                 DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'jumlah_site' =>  $request->jumlah_site,
+                    'nama_site' =>  $request->nama_site,
                     'jenis_kontrak' => $request->jenis_kontrak,
                     'step' => $newStep,
                     'updated_at' => $current_date_time,

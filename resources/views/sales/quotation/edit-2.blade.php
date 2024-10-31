@@ -121,7 +121,7 @@
               </div>
               <div class="row mb-3">
                 <div class="col-sm-12">
-                  <label class="form-label" for="penempatan">Tanggal Penempatan</label>
+                  <label class="form-label" for="penempatan">Penempatan</label>
                   <input type="text" name="penempatan" value="{{$quotation->penempatan}}" class="form-control @if($errors->has('penempatan')) is-invalid @endif" id="penempatan">
                   @if($errors->has('penempatan'))
                     <span class="text-danger">{{$errors->first('penempatan')}}</span>

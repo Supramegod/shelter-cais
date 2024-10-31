@@ -137,7 +137,12 @@
                         </tr>
                         <tr>
                           <td>Kunjungan Operasional <span class="text-danger fw-bold">*</span></td>
-                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_operasional" value="@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif" id="jumlah_kunjungan_operasional" class="form-control w-100 minimal"></td>
+                          <td>
+                            <div class="input-group"> 
+                              <input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_operasional" value="@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif" id="jumlah_kunjungan_operasional" class="form-control minimal">
+                              <span class="input-group-text" id="basic-addon41">Kali Dalam 1</span>
+                            </div>
+                          </td>
                           <td>
                             <select id="bulan_tahun_kunjungan_operasional" name="bulan_tahun_kunjungan_operasional" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                               <option value="" @if($quotation->kunjungan_operasional=='') selected @endif>- Pilih Data -</option>  
@@ -151,7 +156,12 @@
                         </tr>
                         <tr>
                           <td>Kunjungan Tim CRM <span class="text-danger fw-bold">*</span></td>
-                          <td><input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_tim_crm" value="@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif" id="jumlah_kunjungan_tim_crm" class="form-control w-100 minimal"></td>
+                          <td>
+                            <div class="input-group"> 
+                            <input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_tim_crm" value="@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif" id="jumlah_kunjungan_tim_crm" class="form-control minimal">
+                              <span class="input-group-text" id="basic-addon41">Kali Dalam 1</span>
+                            </div>
+                          </td>
                           <td>
                             <select id="bulan_tahun_kunjungan_tim_crm" name="bulan_tahun_kunjungan_tim_crm" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                               <option value="" @if($quotation->kunjungan_tim_crm=='') selected @endif>- Pilih Data -</option>  

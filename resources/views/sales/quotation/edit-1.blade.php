@@ -21,40 +21,12 @@
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
-              <div class="row mb-2">
-                <h6 class="text-center">Jumlah Site</h6>
-              </div>
               <div class="row mb-3">
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon @if($quotation->jumlah_site=='Single Site') checked @endif">
-                    <label class="form-check-label custom-option-content" for="single_site">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-map-marker-outline"></i>
-                        <span class="custom-option-title">Single Site</span>
-                      </span>
-                      <input name="jumlah_site" class="form-check-input" type="radio" value="Single Site" id="single_site" @if($quotation->jumlah_site=='Single Site') checked @endif>
-                    </label>
-                  </div>
+                <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-10">
+                  <input type="text" id="nama_site" name="nama_site" value="{{$quotation->nama_site}}" class="form-control">
                 </div>
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon @if($quotation->jumlah_site=='Multi Site') checked @endif">
-                    <label class="form-check-label custom-option-content" for="multi_site">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-map-marker-multiple-outline"></i>
-                        <span class="custom-option-title">Multi Site</span>
-                      </span>
-                      <input name="jumlah_site" class="form-check-input" type="radio" value="Multi Site" id="multi_site" @if($quotation->jumlah_site=='Multi Site') checked @endif>
-                    </label>
-                  </div>
-                </div>
-                @if($errors->has('jumlah_site'))
-                  <span class="text-danger">{{$errors->first('jumlah_site')}}</span>
-                @endif
               </div>
-              <hr style="margin-top: 1rem;
-  margin-bottom: 1rem;
-  border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);"/>
               <div class="row mb-2 mt-5">
                 <h6 class="text-center">Jenis Kontrak</h6>
               </div>
@@ -246,8 +218,8 @@ $('#btn-submit').on('click',function(e){
     msg += "<b>Jenis kontrak</b> belum dipilih </br>";
   };
 
-  if(obj.jumlah_site == null || obj.jumlah_site == ""){
-    msg += "<b>Jumlah site</b> belum dipilih </br>";
+  if(obj.nama_site == null || obj.nama_site == ""){
+    msg += "<b>Nama Site</b> belum dipilih </br>";
   }
 
   if(msg == ""){

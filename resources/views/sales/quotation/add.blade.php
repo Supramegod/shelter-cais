@@ -22,6 +22,32 @@
               <h4 class="mb-0">LEADS</h4>
               <h4>Pilih Leads Untuk Quotation</h4>
             </div>
+            <div class="row mb-2">
+              <div class="row mb-3">
+                <div class="col-md mb-md-0 mb-2">
+                  <div class="form-check custom-option custom-option-icon">
+                    <label class="form-check-label custom-option-content" for="single_site">
+                      <span class="custom-option-body">
+                        <i class="mdi mdi-map-marker-outline"></i>
+                        <span class="custom-option-title">Single Site</span>
+                      </span>
+                      <input name="jumlah_site" class="form-check-input" type="radio" value="Single Site" id="single_site">
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md mb-md-0 mb-2">
+                  <div class="form-check custom-option custom-option-icon">
+                    <label class="form-check-label custom-option-content" for="multi_site">
+                      <span class="custom-option-body">
+                        <i class="mdi mdi-map-marker-multiple-outline"></i>
+                        <span class="custom-option-title">Multi Site</span>
+                      </span>
+                      <input name="jumlah_site" class="form-check-input" type="radio" value="Multi Site" id="multi_site">
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Leads / customer <span class="text-danger">*</span></label>
               <div class="col-sm-10">
@@ -67,7 +93,7 @@
             </div>
             <div class="row">
               <div class="col-12 d-flex flex-row-reverse">
-                <button type="submit" class="btn btn-primary btn-next w-20" style="color:white">
+                <button type="button" id="btn-submit" class="btn btn-primary btn-next w-20" style="color:white">
                   <span class="align-middle d-sm-inline-block d-none me-sm-1">Buat Quotation</span>
                   <i class="mdi mdi-arrow-right"></i>
                 </button>
@@ -203,6 +229,37 @@
         }
       }
     });
+
+    $('form').bind("keypress", function(e) {
+    if (e.keyCode == 13) {               
+      e.preventDefault();
+      return false;
+    }
+  });
+$('#btn-submit').on('click',function(e){
+  e.preventDefault();
+  var form = $(this).parents('form');
+  let msg = "";
+  let obj = $("form").serializeObject();
+
+  if(obj.leads_id == null || obj.leads_id == "" ){
+    msg += "<b>Leads</b> belum dipilih </br>";
+  };
+
+ if(obj.jumlah_site == null || obj.jumlah_site == "" ){
+    msg += "<b>Nama Site</b> belum dipilih </br>";
+  }; 
+
+  if(msg == ""){
+    form.submit();
+  }else{
+    Swal.fire({
+      title: "Pemberitahuan",
+      html: msg,
+      icon: "warning"
+    });
+  }
+});
 
 </script>
 @endsection

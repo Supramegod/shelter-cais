@@ -24,7 +24,7 @@
                @endif
             </h5>
             <p class="mt-0"> Tanggal Quotation : {{$master->stgl_quotation}}</p>
-            <p class="text-body">{{$master->nama_perusahaan}}</p>
+            <p class="text-body">{{$master->nama_perusahaan}} - {{$master->nama_site}}</p>
             <p class="text-body">Revisi Ke : {{$master->revisi}}</p>
             <div class="mt-2 mb-3">
               @if($data->is_aktif==1)
@@ -1378,14 +1378,14 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                       </tr>
                       <tr>
                         <td>Kunjungan Operasional </td>
-                        <td colspan="2">{{$master->kunjungan_operasional}}</td>
+                        <td colspan="2">{{explode(" ",$master->kunjungan_operasional)[0]}} Kali dalam 1 {{explode(" ",$master->kunjungan_operasional)[1]}}</td>
                         <td>
                         {{$master->keterangan_kunjungan_operasional}}
                         </td>
                       </tr>
                       <tr>
                         <td>Kunjungan Tim CRM </td>
-                        <td colspan="2">{{$master->kunjungan_tim_crm}}</td>
+                        <td colspan="2">{{explode(" ",$master->kunjungan_tim_crm)[0]}} Kali dalam 1 {{explode(" ",$master->kunjungan_tim_crm)[1]}}</td>
                         <td>
                         {{$master->keterangan_kunjungan_tim_crm}}
                         </td>

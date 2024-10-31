@@ -72,7 +72,7 @@
             </div>
             <div class="col-12 text-center mt-2">
               <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Sync Ke HRIS & Accurate</span>
+                <span class="me-1">Aktifkan Site</span>
                 <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
               </button>
             </div>
