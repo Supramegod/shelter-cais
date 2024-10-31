@@ -142,7 +142,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.quotation_id',$request->id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.nominal_takaful','sl_quotation_kebutuhan.penjamin','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->select('sl_quotation_kebutuhan.is_aktif','sl_quotation_kebutuhan.nominal_takaful','sl_quotation_kebutuhan.penjamin','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -179,7 +179,7 @@ class QuotationController extends Controller
             $listJenis = [];
             if($request->step==7){
                 $arrKaporlap = [1,2,3,4,5];
-                if($quotationKebutuhan[0]->kebutuhan_id != 2){
+                if($quotationKebutuhan[0]->kebutuhan_id != 1){
                     $arrKaporlap = [5];
                 }
 
@@ -493,11 +493,8 @@ class QuotationController extends Controller
                     }else{
                         $sPersonil = "-";
                     }
-
                     $qk->jumlah_personel = $sPersonil;
-
                 }
-                
             }
 
             $isEdit = false;
@@ -818,7 +815,11 @@ class QuotationController extends Controller
 
                 DB::commit();
                 
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'2']);
+                if($request->edit==0){
+                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'2']);
+                }else{
+                    return redirect()->route('quotation.view',$data->id);
+                }
             }
         } catch (\Exception $e) {
             dd($e);
@@ -971,29 +972,11 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->full_name
                 ]);
 
-                //hapus dulu perjanjian yg lama atau kalau ada
-                DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->id)->whereNull('deleted_at')->update([
-                    'deleted_at' => $current_date_time,
-                    'deleted_by' => Auth::user()->full_name
-                ]);
-
-                //buat perjanjian
-                $arrPerjanjian = [
-                    "Penawaran harga ini berlaku 30 hari sejak tanggal diterbitkan.",
-                    "Akan dilakukan <i>survey</i> area untuk kebutuhan ".$kebutuhanPerjanjian." sebagai tahapan <i>assesment</i> area untuk memastikan efektifitas pekerjaan.",
-                    "Komponen dan nilai dalam penawaran harga ini berdasarkan kesepakatan para pihak dalam pengajuan harga awal, apabila ada perubahan, pengurangan maupun penambahan pada komponen dan nilai pada penawaran, maka <b>para pihak</b> sepakat akan melanjutkan ke tahap negosiasi selanjutnya.",
-                ];
-
-                foreach ($arrPerjanjian as $key => $value) {
-                    DB::table('sl_quotation_kerjasama')->insert([
-                        'quotation_id' => $request->id,
-                        'perjanjian' => $value,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->full_name
-                    ]);
+                if($request->edit==0){
+                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
+                }else{
+                    return redirect()->route('quotation.view',$data->id);
                 }
-
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -1016,7 +999,11 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1128,7 +1115,11 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);
@@ -1199,7 +1190,11 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);
@@ -1303,7 +1298,11 @@ class QuotationController extends Controller
 
             DB::commit();
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -1370,8 +1369,11 @@ class QuotationController extends Controller
             $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
             // $this->perhitunganHPPSecurity($data->id);
-            
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);
@@ -1399,7 +1401,11 @@ class QuotationController extends Controller
 
             // $this->perhitunganHPPSecurity($data->id);
             
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'9']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'9']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);
@@ -1470,7 +1476,11 @@ class QuotationController extends Controller
            
             // $this->perhitunganHPPSecurity($data->id);
             
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>$newStep]);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>$newStep]);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);
@@ -1498,7 +1508,11 @@ class QuotationController extends Controller
 
             // $this->perhitunganHPP($data->id);
             
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);
@@ -1526,7 +1540,11 @@ class QuotationController extends Controller
 
             // $this->perhitunganHPPSecurity($data->id);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'12']);
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'12']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);
@@ -1544,6 +1562,11 @@ class QuotationController extends Controller
             if($dataQuotation->step>$newStep){
                 $newStep = $dataQuotation->step;
             }
+
+            if($request->ada_training=="Tidak Ada"){
+                $request->training ="0";
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'npwp' => $request->npwp ,
                 'alamat_npwp' => $request->alamat_npwp,
@@ -1568,9 +1591,44 @@ class QuotationController extends Controller
             
             $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
-            // $this->perhitunganHPPSecurity($data->id);
+            //tamba perjanjian
+            //hapus dulu perjanjian yg lama atau kalau ada
+            DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->id)->whereNull('deleted_at')->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
 
-            return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'13']);
+            $kebutuhanPerjanjian = "<b>".$data->kebutuhan."</b>";
+            //buat perjanjian
+            $arrPerjanjian = [
+                "Penawaran harga ini berlaku 30 hari sejak tanggal diterbitkan.",
+                "Akan dilakukan <i>survey</i> area untuk kebutuhan ".$kebutuhanPerjanjian." sebagai tahapan <i>assesment</i> area untuk memastikan efektifitas pekerjaan.",
+                "Komponen dan nilai dalam penawaran harga ini berdasarkan kesepakatan para pihak dalam pengajuan harga awal, apabila ada perubahan, pengurangan maupun penambahan pada komponen dan nilai pada penawaran, maka <b>para pihak</b> sepakat akan melanjutkan ke tahap negosiasi selanjutnya.",
+                "Skema cut-off, pengiriman invoice, pembayaran invoice dan penggajian adalah TOP/talangan maksimal 30 hari kalender dengan skema sebagai berikut:",
+                "Kunjungan tim operasional 1 (satu) bulan sekali, untuk monitoring dan supervisi dengan karyawan dan wajib bertemu dengan pic Pihak Pertama untuk koordinasi.",
+                "Tim operasional bersifat <i>on call</i> apabila terjadi <i>case</i> atau insiden yang terjadi yang mengharuskan untuk datang ke lokasi kerja Pihak Pertama.",
+                "Pemenuhan kandidat dilakukan dengan 2 tahap <i>screening</i> :
+                    a. Tahap ke -1 : dilakukan oleh tim rekrutmen <b>Pihak Kedua</b> untuk memastikan
+                    bahwa kandidat sudah sesuai dengan kualifikasi <b>dari Pihak Pertama</b>.
+                    b. Tahap ke -2 : dilakukan oleh user <b>Pihak Pertama</b>, dan dijadwalkan setelah
+                    adanya <i>report</i> hasil <i>screening</i> dari <b>Pihak Kedua</b>.",
+                "<i>Support</i> aplikasi digital : <b>HadirQU, CleaningQu dan PatrolQu</b>."
+            ];
+
+            foreach ($arrPerjanjian as $key => $value) {
+                DB::table('sl_quotation_kerjasama')->insert([
+                    'quotation_id' => $request->id,
+                    'perjanjian' => $value,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'13']);
+            }else{
+                return redirect()->route('quotation.view',$data->id);
+            }
 
         } catch (\Exception $e) {
             dd($e);

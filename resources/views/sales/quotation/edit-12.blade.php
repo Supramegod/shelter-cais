@@ -9,7 +9,9 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @include('sales.quotation.step')
+        @if($quotationKebutuhan[0]->is_aktif==0)
+          @include('sales.quotation.step')
+        @endif
         <div class="bs-stepper-content">
           <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-12')}}" method="POST" enctype="multipart/form-data">        
             @csrf
@@ -178,7 +180,7 @@
                           <td>
                             <select id="ada_training" name="ada_training" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                               <option value="" @if($quotation->training=='' || $quotation->training==null) selected @endif>- Pilih Data -</option>  
-                              <option value="Ada" @if($quotation->training!='0' && $quotation->training!='' && $quotation->training!=null) selected @endif>Ada</option>
+                              <option value="Ada" @if($quotation->training!='' && $quotation->training!=null && $quotation->training!='0') selected @endif>Ada</option>
                               <option value="Tidak Ada" @if($quotation->training=='0') selected @endif>Tidak Ada</option>
                             </select>
                           </td>
@@ -421,7 +423,7 @@ Absensi dari System/Aplikasi.@endif</textarea>
                   Note : <span class="text-danger fw-b">*</span> Perlu diisi
                 </div>
               </div>
-              @include('sales.quotation.action')
+                @include('sales.quotation.action')
             </div>
           </form>
         </div>

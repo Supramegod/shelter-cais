@@ -197,11 +197,11 @@ class ContactController extends Controller
                 $nomor = $this->generateNomor();
                 $kebutuhanId = null;
                 if($kebutuhan=='securityservice'){
-                    $kebutuhanId = 2;
+                    $kebutuhanId = 1;
                 }else if($kebutuhan=='cleaning_service'){
                     $kebutuhanId = 3;
                 }else if($kebutuhan=='labour_supply'){
-                    $kebutuhanId = 1;
+                    $kebutuhanId = 2;
                 }else if($kebutuhan=='Logistic'){
                     $kebutuhanId = 4;
                 }else{

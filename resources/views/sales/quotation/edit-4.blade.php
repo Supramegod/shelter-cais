@@ -124,7 +124,7 @@
                               <input type="number" class="form-control" name="persentase_{{$value->id}}" value="{{$value->persentase}}">
                               <span class="input-group-text">%</span>
                             </div>
-                            @if($value->kebutuhan=="Security")
+                            @if($value->kebutuhan=="SECURITY")
                               <span class="text-warning">*MF dibawah 7% membutuhkan persetujuan</span>
                             @else
                             <span class="text-warning">*MF dibawah 6% membutuhkan persetujuan</span>

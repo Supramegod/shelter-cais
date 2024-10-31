@@ -655,9 +655,9 @@ class CustomerActivityController extends Controller
 
         $dataLeads = DB::table('sl_leads')->where('id',$leadsId)->first();
         if($dataLeads != null){
-            if($dataLeads->kebutuhan_id==1){
+            if($dataLeads->kebutuhan_id==2){
                 $nomor = $nomor."LS/";
-            } else if($dataLeads->kebutuhan_id==2){
+            } else if($dataLeads->kebutuhan_id==1){
                 $nomor = $nomor."SG/";
             } else if($dataLeads->kebutuhan_id==3){
                 $nomor = $nomor."CS/";

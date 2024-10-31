@@ -230,7 +230,7 @@ class LeadsController extends Controller
                     $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
                 }else{
                     $nomor = $this->generateNomor();
-                    DB::table('sl_leads')->insert([
+                    $newId = DB::table('sl_leads')->insertGetId([
                         'nomor' =>  $nomor,
                         'tgl_leads' => $current_date_time,
                         'nama_perusahaan' => $request->nama_perusahaan,
@@ -249,6 +249,17 @@ class LeadsController extends Controller
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
+
+                    if (Auth::user()->role_id==29) {
+                        //cari tim sales
+                        $timSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+                        if($timSalesD != null){
+                            DB::table('sl_leads')->where('id',$newId)->update([
+                                'tim_sales_id' => $timSalesD->tim_sales_id,
+                                'tim_sales_d_id' =>$timSalesD->id
+                            ]);
+                        }
+                    }
                     $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan dengan nomor : '.$nomor.' !';
                 }
             }
@@ -606,6 +617,7 @@ class LeadsController extends Controller
             return DataTables::of($data)
             ->make(true);
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

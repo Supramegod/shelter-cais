@@ -26,23 +26,23 @@
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
                   <div class="form-check custom-option custom-option-icon @if(str_contains($quotation->kebutuhan_id, '1')) checked @endif">
-                    <label class="form-check-label custom-option-content" for="direct_labour">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-account-hard-hat-outline"></i>
-                        <span class="custom-option-title">Direct Labour</span>
-                      </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="1" id="direct_labour" @if(str_contains($quotation->kebutuhan_id, '1')) checked @endif>
-                    </label>
-                  </div>
-                </div>
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif">
                     <label class="form-check-label custom-option-content" for="security">
                       <span class="custom-option-body">
                         <i class="mdi mdi-security"></i>
                         <span class="custom-option-title">Security</span>
                       </span>
-                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="2" id="security" @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif>
+                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="1" id="security" @if(str_contains($quotation->kebutuhan_id, '1')) checked @endif>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md mb-md-0 mb-2">
+                  <div class="form-check custom-option custom-option-icon @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif">
+                    <label class="form-check-label custom-option-content" for="direct_labour">
+                      <span class="custom-option-body">
+                        <i class="mdi mdi-account-hard-hat-outline"></i>
+                        <span class="custom-option-title">Direct Labour</span>
+                      </span>
+                      <input name="kebutuhan[]" class="form-check-input" type="radio" value="2" id="direct_labour" @if(str_contains($quotation->kebutuhan_id, '2')) checked @endif>
                     </label>
                   </div>
                 </div>

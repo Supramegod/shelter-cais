@@ -49,6 +49,101 @@
             <div data-i18n="PKS">PKS</div>
             </a>
         </li>
+        @if(in_array(Auth::user()->role_id,[30]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-database-outline"></i>
+                <div data-i18n="Master Data">Master Data</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('kebutuhan'))) active @endif">
+                    <a href="{{route('kebutuhan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Kebutuhan">Kebutuhan</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('tim-sales'))) active @endif">
+                    <a href="{{route('tim-sales')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Tim Sales">Tim Sales</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training'))) active @endif">
+                    <a href="{{route('training')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training">Training</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('platform'))) active @endif">
+                    <a href="{{route('platform')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Sumber Leads">Sumber Leads</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('aplikasi-pendukung'))) active @endif">
+                    <a href="{{route('aplikasi-pendukung')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Aplikasi Pendukung">Aplikasi Pendukung</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('barang'))) active @endif">
+                    <a href="{{route('barang')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Barang">Barang</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
+                    <a href="{{route('jenis-barang')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Jenis Barang">Jenis Barang</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('jabatan'))) active @endif">
+                    <a href="{{route('jabatan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Jabatan PIC">Jabatan PIC</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('perusahaan'))) active @endif">
+                    <a href="{{route('perusahaan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Jenis Perusahaan">Jenis Perusahaan</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('management-fee'))) active @endif">
+                    <a href="{{route('management-fee')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Management Fee">Management Fee</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('salary-rule'))) active @endif">
+                    <a href="{{route('salary-rule')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Salary Rule">Salary Rule</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('status-leads'))) active @endif">
+                    <a href="{{route('status-leads')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Status Leads">Status Leads</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('tunjangan'))) active @endif">
+                    <a href="{{route('tunjangan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Tunjangan">Tunjangan</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('tunjangan-jabatan'))) active @endif">
+                    <a href="{{route('tunjangan-jabatan')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Tunjangan Jabatan">Tunjangan Jabatan</div>
+                    </a>
+                </li>
+                
+            </ul>
+        </li> 
+        @endif
         <!-- RO , SPV Operational , Man Operational -->
         @elseif(in_array(Auth::user()->role_id,[4,5,6,8]))
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
@@ -108,7 +203,7 @@
                 <div data-i18n="Master Data">Master Data</div>
             </a>
             <ul class="menu-sub">
-            <li class="menu-item @if(str_contains(Request::url(), route('kebutuhan'))) active @endif">
+                <li class="menu-item @if(str_contains(Request::url(), route('kebutuhan'))) active @endif">
                     <a href="{{route('kebutuhan')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Kebutuhan">Kebutuhan</div>

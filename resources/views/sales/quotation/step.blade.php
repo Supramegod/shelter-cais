@@ -15,7 +15,6 @@
         [ 'stepno' => 13 ,'step' => 'Perjanjian', 'info' => 'Informasi Perjanjian' ]
     ];
 @endphp
-
 <div class="bs-stepper-header gap-lg-3 pt-5"  style="border-right:1px solid rgba(0, 0, 0, 0.1);">
     @php
     $no = 1;
@@ -28,11 +27,11 @@
                     continue;
                 }
             }else{
-                if($quotationKebutuhan[0]->kebutuhan_id==1){
+                if($quotationKebutuhan[0]->kebutuhan_id==2){
                     if(in_array($data['stepno'],[10])){
                         continue;
                     }
-                }else if($quotationKebutuhan[0]->kebutuhan_id==2){
+                }else if($quotationKebutuhan[0]->kebutuhan_id==1){
                     if(in_array($data['stepno'],[10])){
                         continue;
                     }

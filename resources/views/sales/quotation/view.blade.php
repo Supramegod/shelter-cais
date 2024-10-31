@@ -46,6 +46,8 @@
             @if($master->step != 100)
             <a href="{{route('quotation.step',['id'=>$master->id,'step'=>$master->step])}}" class="btn btn-primary"><i class="mdi mdi-list-box-outline"></i>&nbsp; Lanjutkan Pengisian</a>
             @else
+              <a href="{{route('quotation.step',['id'=>$master->id,'step'=>12])}}" class="btn btn-warning"><i class="mdi mdi-pencil"></i>&nbsp;  Ubah Checklist</a>
+
             <!-- <button class="btn btn-warning" @if($data->is_aktif==1) disabled @endif><i class="mdi mdi-file-refresh"></i>&nbsp; Ajukan Ulang ( Ubah )</button> -->
               @if(Auth::user()->role_id==96 && $master->step == 100 && $data->is_aktif==0 && $data->ot1 == null)
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
