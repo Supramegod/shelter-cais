@@ -19,6 +19,7 @@
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">KAPORLAP / SERAGAM</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
+                <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
               </div>
               <div class="row">
                 <div class="col-md-12 mb-4 mb-md-0">
@@ -38,7 +39,7 @@
                               <tr class="table-primary">
                                 <th>{{$data->nama}}</th>
                                 <th>Harga / Unit</th>
-                                @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                                @foreach($quotation->quotation_detail as $detailJabatan)
                                   <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
                                 @endforeach
                               </tr>
@@ -49,7 +50,7 @@
                                 <tr>
                                   <td>{{$detail->nama}}</td>
                                   <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}<input type="hidden" name="barang[]" value="{{$detail->id}}">                          </td>
-                                  @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
+                                  @foreach($quotation->quotation_detail as $detailJabatan)
                                   <td class="jumlah">
                                     <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
                                       <span class="mdi mdi-minus"></span> &nbsp;
