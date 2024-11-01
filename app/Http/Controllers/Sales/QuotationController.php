@@ -893,47 +893,30 @@ class QuotationController extends Controller
         try {
             DB::beginTransaction();
 
-            $validator = Validator::make($request->all(), [
-                'id' => 'required',
-                'nama_site' => 'required',
-                'jenis_kontrak' => 'required'
-            ], [
-                'min' => 'Masukkan :attribute minimal :min',
-                'max' => 'Masukkan :attribute maksimal :max',
-                'required' => ':attribute harus di isi',
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $current_date = Carbon::now()->toDateString();
+
+            $newStep = 2;
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            if($dataQuotation->step>$newStep){
+                $newStep = $dataQuotation->step;
+            }
+            if($request->edit==1){
+                $newStep = $dataQuotation->step;
+            }
+            
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'jenis_kontrak' => $request->jenis_kontrak,
+                'step' => $newStep,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
             ]);
-    
-            if ($validator->fails()) {
-                return back()->withErrors($validator->errors())->withInput();
+
+            DB::commit();
+            if($request->edit==0){
+                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'2']);
             }else{
-                $current_date_time = Carbon::now()->toDateTimeString();
-                $current_date = Carbon::now()->toDateString();
-
-                $newStep = 2;
-                $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
-                if($dataQuotation->step>$newStep){
-                    $newStep = $dataQuotation->step;
-                }
-                if($request->edit==1){
-                    $newStep = $dataQuotation->step;
-                }
-                
-                DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'nama_site' =>  $request->nama_site,
-                    'jenis_kontrak' => $request->jenis_kontrak,
-                    'step' => $newStep,
-                    'updated_at' => $current_date_time,
-                    'updated_by' => Auth::user()->full_name
-                ]);
-
-                DB::commit();
-                $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-
-                if($request->edit==0){
-                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'2']);
-                }else{
-                    return redirect()->route('quotation.view',$data->id);
-                }
+                return redirect()->route('quotation.view',$request->id);
             }
         } catch (\Exception $e) {
             dd($e);

@@ -17,15 +17,10 @@
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">SITE & JENIS KONTRAK</h6>
+                <h6 class="mb-3">JENIS KONTRAK</h6>
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
-              </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-10">
-                  <input type="text" id="nama_site" name="nama_site" value="{{$quotation->nama_site}}" class="form-control">
-                </div>
+                <h6>Site : {{$quotation->nama_site}}</h6>
               </div>
               <div class="row mb-2 mt-5">
                 <h6 class="text-center">Jenis Kontrak</h6>
@@ -217,11 +212,6 @@ $('#btn-submit').on('click',function(e){
   if(obj.jenis_kontrak == null || obj.jenis_kontrak == "" ){
     msg += "<b>Jenis kontrak</b> belum dipilih </br>";
   };
-
-  if(obj.nama_site == null || obj.nama_site == ""){
-    msg += "<b>Nama Site</b> belum dipilih </br>";
-  }
-
   if(msg == ""){
     form.submit();
   }else{
