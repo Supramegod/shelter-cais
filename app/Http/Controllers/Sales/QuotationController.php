@@ -239,16 +239,16 @@ class QuotationController extends Controller
 
                 foreach ($listDevices as $key => $devices) {
                     if($devices->jenis_barang_id==17){
-                        $cekExist = DB::table('sl_quotation_kebutuhan_aplikasi')->whereNull('deleted_at')->where('aplikasi_pendukung',$devices->nama)->where('quotation_id',$id)->first();
+                        $cekExist = DB::table('sl_quotation_aplikasi')->whereNull('deleted_at')->where('aplikasi_pendukung',$devices->nama)->where('quotation_id',$id)->first();
                         if($cekExist != null){
                             $devices->{'jumlah'} = 1;
                         }else{
                             $devices->{'jumlah'} = 0;
                         }
                     }else{
-                        foreach ($quotation->kebutuhan_detail as $kKd => $vKd) {
+                        foreach ($quotation->quotation_detail as $kKd => $vKd) {
                             $devices->{'jumlah_'.$vKd->id} = 0;
-                            $kebkap = DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('barang_id',$devices->id)->where('quotation_kebutuhan_detail_id',$vKd->id)->first();
+                            $kebkap = DB::table('sl_quotation_devices')->whereNull('deleted_at')->where('barang_id',$devices->id)->where('quotation_detail_id',$vKd->id)->first();
                             if($kebkap !=null){
                                 $devices->{'jumlah_'.$vKd->id} = $kebkap->jumlah;
                             }
@@ -1486,8 +1486,7 @@ class QuotationController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
 
             $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->first();
-            $kebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->first();
-            $detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$kebutuhan->id)->whereNull('deleted_at')->get();
+            $detail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
 
             $listDevices = DB::table('m_barang')
                                 ->whereNull('deleted_at')
@@ -1495,7 +1494,7 @@ class QuotationController extends Controller
                                 ->get();
             
             //hapus dulu data existing 
-            DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$kebutuhan->id)->update([
+            DB::table('sl_quotation_devices')->whereNotIn('barang_id',[192,194,195,196])->whereNull('deleted_at')->where('quotation_id',$request->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
@@ -1503,17 +1502,16 @@ class QuotationController extends Controller
             foreach ($listDevices as $key => $value) {
                 foreach ($detail as $kd => $vd) {
                     //cek apakah 0 jika 0 skip
-                    if($request->{'jumlah'.'_'.$vd->id} == "0" ||$request->{'jumlah'.'_'.$vd->id} == null){
+                    if($request->{'jumlah'.'_'.$value->id.'_'.$vd->id} == "0" ||$request->{'jumlah'.'_'.$value->id.'_'.$vd->id} == null){
                         continue;   
                     }else{
                         //cari harga
                         $barang = DB::table('m_barang')->where('id',$value->id)->first();
-                        DB::table('sl_quotation_kebutuhan_devices')->insert([
-                            'quotation_kebutuhan_detail_id' => $vd->id,
-                            'quotation_kebutuhan_id' => $kebutuhan->id,
+                        DB::table('sl_quotation_devices')->insert([
+                            'quotation_detail_id' => $vd->id,
                             'quotation_id' => $quotation->id,
                             'barang_id' => $barang->id,
-                            'jumlah' => $request->{'jumlah'.'_'.$vd->id},
+                            'jumlah' => $request->{'jumlah'.'_'.$value->id.'_'.$vd->id},
                             'harga' => $barang->harga,
                             'nama' => $barang->nama,
                             'jenis_barang' => $barang->jenis_barang,
@@ -1527,12 +1525,11 @@ class QuotationController extends Controller
             $newStep = 10;
             $dataStep = 10;
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
             if($dataQuotation->step>$newStep){
                 $dataStep = $dataQuotation->step;
             }
-            if($data->kebutuhan_id==2||$data->kebutuhan_id==1||$data->kebutuhan_id==4){
+            if($quotation->kebutuhan_id==2||$quotation->kebutuhan_id==1||$quotation->kebutuhan_id==4){
                 $newStep=11;
             }
             if($request->edit==1){
@@ -1544,13 +1541,11 @@ class QuotationController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-           
-            // $this->perhitunganHPPSecurity($data->id);
-            
+                       
             if($request->edit==0){
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>$newStep]);
             }else{
-                return redirect()->route('quotation.view',$data->id);
+                return redirect()->route('quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
