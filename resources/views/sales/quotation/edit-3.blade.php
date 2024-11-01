@@ -20,73 +20,51 @@
                 <h6 class="mb-3">HEADCOUNT</h6>
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
+                <h6>Site : {{$quotation->nama_site}}</h6>
               </div>
-              <div class="row mb-3">
-                <div class="col-xl-12">
-                  <div class="nav-align-top">
-                    <ul class="nav nav-fill nav-tabs" role="tablist" >
-                      @foreach($quotationKebutuhan as $value)
-                        <li class="nav-item" role="presentation">
-                          <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-{{$value->id}}" aria-controls="navs-justified-{{$value->id}}" aria-selected="true">
-                            <i class="tf-icons {{$value->icon}} me-1"></i> 
-                            {{$value->kebutuhan}}
-                          </button>
-                        </li>
-                      @endforeach
-                      <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span>
-                    </ul>
+              <div class="row mb-3 mt-3">
+                <div class="col-sm-6">
+                  <label class="form-label" for="jabatan_detail">Nama Posisi/Jabatan</label>
+                  <div class="input-group">
+                    <select id="jabatan_detail" name="nama_jabatan" class="form-select select2" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($quotation->detail as $detail)
+                        <option value="{{$detail->id}}">{{$detail->name}}</option>  
+                      @endforeach  
+                    </select>
                   </div>
-                  <div class="tab-content p-0">
-                    @foreach($quotationKebutuhan as $value)
-                    <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-justified-{{$value->id}}" role="tabpanel">
-                      <div class="row mb-3 mt-3">
-                        <div class="col-sm-6">
-                          <label class="form-label" for="jabatan_detail_{{$value->id}}">Nama Posisi/Jabatan</label>
-                          <div class="input-group">
-                            <select id="jabatan_detail_{{$value->id}}" name="nama_jabatan" class="form-select select2" data-allow-clear="true" tabindex="-1">
-                              <option value="">- Pilih data -</option>
-                              @foreach($value->detail as $detail)
-                                <option value="{{$detail->id}}">{{$detail->name}}</option>  
-                              @endforeach  
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="form-label" for="jumlah_hc_{{$value->id}}">Jumlah Headcount</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control minimal" id="jumlah_hc_{{$value->id}}">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-12 d-flex justify-content-center">
-                          <button type="button" data-qbutuhid="{{$value->id}}" id="btn-tambah-detail-{{$value->id}}" class="btn btn-info btn-back w-20">
-                            <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
-                            <i class="mdi mdi-plus"></i>
-                          </button>
-                        </div>
-                      </div>
-                      <div class="row mt-5">
-                        <div class="">
-                          <table id="table-data-{{$value->id}}" class="dt-column-search table w-100 table-hover">
-                              <thead>
-                                  <tr>
-                                      <th class="text-center">ID</th>
-                                      <th class="text-center">Kebutuhan</th>
-                                      <th class="text-center">Nama Posisi/Jabatan</th>
-                                      <th class="text-center">Jumlah Headcount</th>
-                                      <th class="text-center">Aksi</th>
-                                  </tr>
-                              </thead>
-                              <tbody>
-                                  {{-- data table ajax --}}
-                              </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                    @endforeach
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label" for="jumlah_hc">Jumlah Headcount</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control minimal" id="jumlah_hc">
                   </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                  <button type="button" data-qbutuhid="" id="btn-tambah-detail" class="btn btn-info btn-back w-20">
+                    <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Data</span>
+                    <i class="mdi mdi-plus"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="row mt-5">
+                <div class="">
+                  <table id="table-data" class="dt-column-search table w-100 table-hover">
+                      <thead>
+                          <tr>
+                              <th class="text-center">ID</th>
+                              <th class="text-center">Kebutuhan</th>
+                              <th class="text-center">Nama Posisi/Jabatan</th>
+                              <th class="text-center">Jumlah Headcount</th>
+                              <th class="text-center">Aksi</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {{-- data table ajax --}}
+                      </tbody>
+                  </table>
                 </div>
               </div>
               @include('sales.quotation.action')
@@ -104,8 +82,7 @@
 
 @section('pageScript')
 <script>
-  @foreach($quotationKebutuhan as $value)
-    let table = $('#table-data-{{$value->id}}').DataTable({
+let table = $('#table-data').DataTable({
       scrollX: true,
       "bPaginate": false,
     "bLengthChange": false,
@@ -119,7 +96,7 @@
       ajax: {
           url: "{{ route('quotation.list-detail-hc') }}",
           data: function (d) {
-              d.quotation_kebutuhan_id = {{$value->id}};
+              d.quotation_id = {{$quotation->id}};
           },
       },   
       "order":[
@@ -153,12 +130,12 @@
     });
 
     $(document).ready(function() {
-    $('#jabatan_detail_{{$value->id}}').select2();
+    $('#jabatan_detail').select2();
   });
 
-    $('#btn-tambah-detail-{{$value->id}}').on('click',function () {
-      let jabatanDetailId = $('#jabatan_detail_{{$value->id}}').val();
-      let jumlahHc = $('#jumlah_hc_{{$value->id}}').val();
+    $('#btn-tambah-detail').on('click',function () {
+      let jabatanDetailId = $('#jabatan_detail').val();
+      let jumlahHc = $('#jumlah_hc').val();
 
       let msg="";
       if(jabatanDetailId ==""){
@@ -176,9 +153,9 @@
         });
       }else{
         let formData = {
-          "jabatan_detail_id":jabatanDetailId,
+          "position_id":jabatanDetailId,
           "jumlah_hc":jumlahHc,
-          "quotation_kebutuhan_id":{{$value->id}},
+          "quotation_id":{{$quotation->id}},
           "_token": "{{ csrf_token() }}"
         };
 
@@ -188,9 +165,9 @@
           data:formData,
           success: function(response){
             if(response=="Data Berhasil Ditambahkan"){
-              $('#table-data-{{$value->id}}').DataTable().ajax.reload();
-              $('#jabatan_detail_{{$value->id}}').val("");
-              $('#jumlah_hc_{{$value->id}}').val("");
+              $('#table-data').DataTable().ajax.reload();
+              $('#jabatan_detail').val("");
+              $('#jumlah_hc').val("");
             }else{
               Swal.fire({
                 title: "Pemberitahuan",
@@ -232,7 +209,6 @@
       }
     });
 
-  @endforeach
 
   $('body').on('click', '.btn-delete', function() {
     let formData = {
@@ -240,7 +216,7 @@
       "_token": "{{ csrf_token() }}"
     };
 
-    let table ='#table-data-'+$(this).data('kebutuhan');
+    let table ='#table-data';
     $.ajax({
       type: "POST",
       url: "{{route('quotation.delete-detail-hc')}}",
@@ -253,10 +229,6 @@
       }
     });
   });
-
-  @foreach($quotationKebutuhan as $value)
-    
-  @endforeach
 
 </script>
 @endsection

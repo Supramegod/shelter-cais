@@ -137,6 +137,15 @@ class QuotationController extends Controller
             $quotation = DB::table("sl_quotation")->where('id',$id)->first();
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
+            $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
+
+            
+            
+            
+            
+            
+            
+            
             $quotationKebutuhan = 
             DB::table("sl_quotation_kebutuhan")
             ->join('m_kebutuhan','m_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id')
@@ -1963,44 +1972,39 @@ class QuotationController extends Controller
     
     public function addDetailHC(Request $request){
         try {
+            DB::beginTransaction();
+
             $current_date_time = Carbon::now()->toDateTimeString();
-            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$request->quotation_kebutuhan_id)->first();
-            $kebutuhan = DB::table('m_kebutuhan')->where('id',$quotationKebutuhan->kebutuhan_id)->first();
-            $kebutuhanD = DB::connection('mysqlhris')->table('m_position')->where('id',$request->jabatan_detail_id)->first();
-            $quotation = DB::table('sl_quotation')->where('id',$quotationKebutuhan->quotation_id)->first();
+            $position = DB::connection('mysqlhris')->table('m_position')->where('id',$request->position_id)->first();
+            $quotation = DB::table('sl_quotation')->where('id',$request->quotation_id)->first();
 
             // cek apakah data sudah ada
-            $checkExist = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$quotationKebutuhan->id)->where('kebutuhan_detail_id',$request->jabatan_detail_id)->whereNull('deleted_at')->get();
-            if(count($checkExist)>0){
-                DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$quotationKebutuhan->id)->where('kebutuhan_detail_id',$request->jabatan_detail_id)->whereNull('deleted_at')->update([
-                    'jumlah_hc' => $checkExist[0]->jumlah_hc+$request->jumlah_hc,
+            $checkExist = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->where('position_id',$request->position_id)->whereNull('deleted_at')->first();
+            if($checkExist !=null){
+                DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->where('position_id',$request->position_id)->whereNull('deleted_at')->update([
+                    'jumlah_hc' => $checkExist->jumlah_hc+$request->jumlah_hc,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
-                return "Data Berhasil Ditambahkan";
             }else{
-                $detailIdBaru = DB::table('sl_quotation_kebutuhan_detail')->insertGetId([
-                    'quotation_id' => $quotationKebutuhan->quotation_id,
-                    'quotation_kebutuhan_id' => $quotationKebutuhan->id,
-                    'kebutuhan_detail_id' => $request->jabatan_detail_id,
-                    'kebutuhan' => $kebutuhan->nama,
-                    'jabatan_kebutuhan' => $kebutuhanD->name,
+                $detailIdBaru = DB::table('sl_quotation_detail')->insertGetId([
+                    'quotation_id' => $quotation->id,
+                    'position_id' => $request->position_id,
+                    'kebutuhan' => $quotation->kebutuhan,
+                    'jabatan_kebutuhan' => $position->name,
                     'jumlah_hc' => $request->jumlah_hc,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
 
                 //masukkan tunjangan
-                $listTunjangan = DB::table('m_kebutuhan_detail_tunjangan')->whereNull('deleted_at')->where('kebutuhan_detail_id',$request->jabatan_detail_id)->get();
-                //apabila ada THR masukkan THR
-
+                $listTunjangan = DB::table('m_tunjangan_posisi')->whereNull('deleted_at')->where('position_id',$request->position_id)->get();
                 if (count($listTunjangan)>0) {
                     foreach ($listTunjangan as $key => $tunjangan) {
-                        DB::table('sl_quotation_kebutuhan_detail_tunjangan')->insert([
-                            'quotation_id' => $quotationKebutuhan->quotation_id,
-                            'quotation_kebutuhan_id' => $quotationKebutuhan->id,
-                            'quotation_kebutuhan_detail_id' => $detailIdBaru,
-                            'tunjangan_id' =>$tunjangan->tunjangan_id,
+                        DB::table('sl_quotation_detail_tunjangan')->insert([
+                            'quotation_id' => $quotation->id,
+                            'quotation_detail_id' => $detailIdBaru,
+                            'tunjangan_id' =>$tunjangan->id,
                             'nama_tunjangan' => $tunjangan->nama,
                             'nominal' => $tunjangan->nominal,
                             'created_at' => $current_date_time,
@@ -2008,7 +2012,8 @@ class QuotationController extends Controller
                         ]);
                     }
                 }
-            }            
+            }
+            DB::commit(); 
             return "Data Berhasil Ditambahkan";
         } catch (\Exception $e) {
             dd($e);
@@ -2149,12 +2154,12 @@ class QuotationController extends Controller
     public function deleteDetailHC(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            DB::table('sl_quotation_kebutuhan_detail')->where('id',$request->id)->update([
+            DB::table('sl_quotation_detail')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
 
-            DB::table('sl_quotation_kebutuhan_detail_tunjangan')->where('quotation_kebutuhan_detail_id',$request->id)->update([
+            DB::table('sl_quotation_detail_tunjangan')->where('quotation_id',$request->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
@@ -2181,13 +2186,13 @@ class QuotationController extends Controller
     }
 
     public function listDetailHC (Request $request){
-        $data = DB::table('sl_quotation_kebutuhan_detail')
-        ->where('sl_quotation_kebutuhan_detail.quotation_kebutuhan_id',$request->quotation_kebutuhan_id)
-        ->whereNull('sl_quotation_kebutuhan_detail.deleted_at')->get();
+        $data = DB::table('sl_quotation_detail')
+        ->where('sl_quotation_detail.quotation_id',$request->quotation_id)
+        ->whereNull('sl_quotation_detail.deleted_at')->get();
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
             return '<div class="justify-content-center d-flex">
-                        <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'" data-kebutuhan="'.$data->quotation_kebutuhan_id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+                        <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'" data-kebutuhan="'.$data->quotation_id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
                     </div>';
         })
         ->rawColumns(['aksi'])
