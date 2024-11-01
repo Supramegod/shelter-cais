@@ -217,7 +217,9 @@ class SpkController extends Controller
             }
 
             $quotation->total_hc = $totalhc;
-            return view('sales.spk.cetakan.spk',compact('company','now','data','quotation','quotationKebutuhan','leads'));
+
+            $pic = DB::table("sl_quotation_pic")->whereNull('deleted_at')->where('is_kuasa',1)->first();
+            return view('sales.spk.cetakan.spk',compact('pic','company','now','data','quotation','quotationKebutuhan','leads'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

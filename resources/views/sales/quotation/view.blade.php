@@ -18,7 +18,7 @@
         class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
           <div class="d-flex flex-column justify-content-center">
             <h5 class="mb-1 mt-3">
-              {{$data->nomor}}
+              {{$data->nomor}} <span class="badge bg-label-info rounded-pill mt-1">{{$master->status}}</span>
                @if($master->step != 100)
                 <span class="badge bg-label-warning rounded-pill">Data Belum Terisi Lengkap</span>
                @endif
@@ -29,6 +29,16 @@
             <div class="mt-2 mb-3">
               @if($data->is_aktif==1)
               <span class="badge bg-label-success rounded-pill mt-1">Quotation Telah Aktif</span>
+              <div class="d-flex align-content-center flex-wrap gap-2 mt-3">
+                @if($data->is_aktif==1)
+                  @if($data->spk!=null)
+                  <a href="{{route('spk.view',$data->spk->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat SPK</a>
+                  @endif
+                  @if($data->pks!=null)
+                  <a href="{{route('pks.view',$data->pks->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat PKS</a>
+                  @endif
+                @endif
+              </div>
               @else
                 @if($master->step == 100 && $data->ot1 == null)
                 <span class="badge bg-label-warning rounded-pill mt-1">Membutuhkan Approval Direktur Sales</span>
@@ -59,8 +69,6 @@
               @if($data->is_aktif==1)
                 @if($data->spk==null)
                 <a href="{{route('spk.add',['id'=> $data->id])}}" class="btn btn-info"><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</a>
-                @else
-                <a href="{{route('spk.view',$data->spk->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat SPK</a>
                 @endif
               @endif
               <div class="btn-group" role="group">

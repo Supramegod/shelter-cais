@@ -53,11 +53,11 @@
             <table>
                 <tr>
                     <td class="label">Nama</td>
-                    <td>: ....................................................</td>
+                    <td>: @if($pic!=null){{$pic->nama}}@endif</td>
                 </tr>
                 <tr>
                     <td>Jabatan</td>
-                    <td>: ....................................................</td>
+                    <td>: @if($pic!=null){{$pic->jabatan}}@endif</td>
                 </tr>
                 <tr>
                     <td>Nama Perusahaan</td>
@@ -95,7 +95,7 @@
             <div class="signature">
                 <p>Surabaya, {{$now}}</p>
                 <br><br><br>
-                <p>..............................................</p>
+                <p>@if($pic!=null){{$pic->nama}}@else ............................... @endif</p>
                 <p>{{$data->nama_perusahaan}}</p>
             </div>
         </div>
