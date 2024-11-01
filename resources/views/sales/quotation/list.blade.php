@@ -314,5 +314,11 @@
                     }
                 ],
             });
+
+
+            $('body').on('click', '.copy-quotation', function() {
+            alert($(this).data('id'));
+            });
+            
     </script>
 @endsection
