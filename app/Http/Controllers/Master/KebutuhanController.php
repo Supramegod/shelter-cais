@@ -145,7 +145,7 @@ class KebutuhanController extends Controller
     // DETAIL REQUIREMENT
     public function listDetailRequirement (Request $request){        
         $data = DB::table('m_kebutuhan_detail_requirement')
-        ->where('kebutuhan_detail_id',$request->kebutuhan_detail_id)
+        ->where('position_id',$request->kebutuhan_detail_id)
         ->whereNull('deleted_at')
         ->get();
 
@@ -175,7 +175,7 @@ class KebutuhanController extends Controller
             $data = DB::table('m_kebutuhan_detail')->where('id',$kebutuhanDetailId)->first();
             DB::table('m_kebutuhan_detail_requirement')->insert([
                 'kebutuhan_id' => $data->kebutuhan_id,
-                'kebutuhan_detail_id' => $data->id,
+                'position_id' => $data->id,
                 'requirement' => $requirement,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name

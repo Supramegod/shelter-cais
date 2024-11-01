@@ -536,6 +536,7 @@ class QuotationController extends Controller
             }
             
             $master = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
+            $quotation = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
             $leads = DB::table('sl_leads')->where('id',$master->leads_id)->first();
             $jabatanPic = DB::table('m_jabatan_pic')->where('id',$leads->jabatan)->first();
             if($jabatanPic!=null){
@@ -586,7 +587,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.id',$id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->select('sl_quotation_kebutuhan.is_aktif','sl_quotation_kebutuhan.nominal_takaful','sl_quotation_kebutuhan.penjamin','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -594,7 +595,18 @@ class QuotationController extends Controller
                 $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
             }
 
-            $daftarTunjangan = DB::select("SELECT DISTINCT tunjangan_id,nama FROM `m_kebutuhan_detail_tunjangan` WHERE deleted_at is null and kebutuhan_id =".$quotationKebutuhan[0]->kebutuhan_id);
+            $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama,nominal FROM `sl_quotation_kebutuhan_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
+
+            $jumlahHc = 0;
+            foreach ($quotationKebutuhan[0]->kebutuhan_detail as $jhc) {
+                $jumlahHc += $jhc->jumlah_hc;
+            }
+
+            $provisi = 12;
+            if(!strpos($quotation->durasi_kerjasama, 'tahun')){
+                $provisi = (int)str_replace(" bulan", "", $quotation->durasi_kerjasama);
+            }
+            $quotation->provisi = $provisi;
 
             foreach ($quotationKebutuhan[0]->kebutuhan_detail as $ikbd => $kbd) {
                 // $kbd->daftar_tunjangan = [];
@@ -602,54 +614,86 @@ class QuotationController extends Controller
                 foreach ($daftarTunjangan as $idt => $tunjangan) {
                     $kbd->{$tunjangan->nama} = 0;
                     //cari data tunjangan
-                    $dtTunjangan = DB::table('sl_quotation_kebutuhan_detail_tunjangan')->whereNull('deleted_at')->where('quotation_kebutuhan_detail_id',$kbd->id)->where('tunjangan_id',$tunjangan->tunjangan_id)->first();
+                    $dtTunjangan = DB::table('sl_quotation_kebutuhan_detail_tunjangan')->whereNull('deleted_at')->where('quotation_kebutuhan_detail_id',$kbd->id)->where('nama_tunjangan',$tunjangan->nama)->first();
                     if($dtTunjangan != null){
                         $kbd->{$tunjangan->nama} = $dtTunjangan->nominal;
 
                         $totalTunjangan += $dtTunjangan->nominal;
                     }
                 }
-                $kbd->tunjangan_hari_raya = 0;
-                if($master->thr=="Diprovisikan"){
-                    $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/12;
+
+                $kbd->nominal_takaful = 0;
+                $kbd->bpjs_jkm = 0;
+                $kbd->bpjs_jkk = 0;
+                $kbd->bpjs_jht = 0;
+                $kbd->bpjs_jp = 0;
+                $kbd->bpjs_kes = 0;
+
+                if($quotationKebutuhan[0]->penjamin=="Takaful"){
+                    $kbd->nominal_takaful = $quotationKebutuhan[0]->nominal_takaful;
+                }else{
+                    // hitung JKK
+                    if($quotationKebutuhan[0]->resiko=="Sangat Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.24/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.54/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sedang"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.89/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.27/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sangat Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.74/100;
+                    };
+
+                    //hitung JKM
+                    $kbd->bpjs_jkm = $quotationKebutuhan[0]->nominal_upah*0.3/100;
+
+                    //Hitung JHT
+                    if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jht = $quotationKebutuhan[0]->nominal_upah*3.7/100;
+                    }else{
+                        $kbd->bpjs_jht = 0;
+                    }
+
+                    //Hitung JP
+                    if($quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jp = $quotationKebutuhan[0]->nominal_upah*2/100;
+                    }else {
+                        $kbd->bpjs_jp = 0;
+                    }
+
+                    $kbd->bpjs_kes = $quotationKebutuhan[0]->nominal_upah*4/100;
+
                 }
 
-                // hitung JKK
-                if($quotationKebutuhan[0]->resiko=="Sangat Rendah"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.24/100;
-                }else if($quotationKebutuhan[0]->resiko=="Rendah"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.54/100;
-                }else if($quotationKebutuhan[0]->resiko=="Sedang"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.89/100;
-                }else if($quotationKebutuhan[0]->resiko=="Tinggi"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.27/100;
-                }else if($quotationKebutuhan[0]->resiko=="Sangat Tinggi"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.74/100;
-                };
+                $kbd->tunjangan_hari_raya = 0;
+                if($quotation->thr=="Diprovisikan"){
+                    $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/$provisi;
+                }
 
-                //hitung JKM
-                $kbd->bpjs_jkm = $quotationKebutuhan[0]->nominal_upah*0.3/100;
-
-                //Hitung JHT
-                if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
-                    $kbd->bpjs_jht = $quotationKebutuhan[0]->nominal_upah*3.7/100;
-                }else{
-                    $kbd->bpjs_jht = 0;
+                $kbd->kompensasi = 0;
+                if($quotation->kompensasi=="Diprovisikan"){
+                    $kbd->kompensasi = $quotationKebutuhan[0]->nominal_upah/$provisi;
                 }
                 
-                //Hitung JP
-                if($quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
-                    $kbd->bpjs_jp = $quotationKebutuhan[0]->nominal_upah*2/100;
-                }else {
-                    $kbd->bpjs_jp = 0;
+                $kbd->tunjangan_holiday = 0;
+                if($quotation->tunjangan_holiday=="Flat"){
+                    $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
+                }else{
+                    $kbd->tunjangan_holiday = ($quotationKebutuhan[0]->nominal_upah/173*(14))*15/$provisi;
                 }
 
-                $kbd->bpjs_kes = $quotationKebutuhan[0]->nominal_upah*4/100;
+                $kbd->lembur = 0;
+                if($quotation->lembur=="Flat"){
+                    $kbd->lembur = $quotation->nominal_lembur;
+                }else{
+                    $kbd->lembur = 0;
+                }
 
                 $personilKaporlap = 0;
                 $kbdkaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                 foreach ($kbdkaporlap as $ikdbkap => $kdbkap) {
-                    $personilKaporlap += ($kdbkap->harga*$kdbkap->jumlah);
+                    $personilKaporlap += ($kdbkap->harga*$kdbkap->jumlah)/$provisi;
                 };
 
                 $kbd->personil_kaporlap = $personilKaporlap;
@@ -657,15 +701,19 @@ class QuotationController extends Controller
                 $personilDevices = 0;
                 $kbddevices = DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                 foreach ($kbddevices as $ikdbdev => $kdbdev) {
-                    $personilDevices += ($kdbdev->harga*$kdbdev->jumlah);
+                    $personilDevices += ($kdbdev->harga*$kdbdev->jumlah)/$provisi;
                 };
+                $appPendukung = DB::table('sl_quotation_kebutuhan_aplikasi')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
+                foreach ($appPendukung as $kapp => $app) {
+                    $personilDevices += ($app->harga*1)/$provisi;
+                }
 
                 $kbd->personil_devices = $personilDevices;
 
                 $personilOhc = 0;
-                $kbdOhc = DB::table('sl_quotation_kebutuhan_ohc')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
+                $kbdOhc = DB::table('sl_quotation_kebutuhan_ohc')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
                 foreach ($kbdOhc as $ikdbohc => $kdbohc) {
-                    $personilOhc += ($kdbohc->harga*$kdbohc->jumlah);
+                    $personilOhc += ($kdbohc->harga*$kdbohc->jumlah/$jumlahHc)/$provisi;
                 };
 
                 $kbd->personil_ohc = $personilOhc;
@@ -673,12 +721,13 @@ class QuotationController extends Controller
                 $personilChemical = 0;
                 $kbdChemical = DB::table('sl_quotation_kebutuhan_chemical')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                 foreach ($kbdChemical as $ikdbchemical => $kdbchemical) {
-                    $personilChemical += ($kdbchemical->harga*$kdbchemical->jumlah);
+                    $personilChemical += ($kdbchemical->harga*$kdbchemical->jumlah)/$provisi;
                 };
 
                 $kbd->personil_chemical = $personilChemical;
 
-                $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                // dd($kbd->personil_kaporlap);
+                $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
@@ -686,17 +735,25 @@ class QuotationController extends Controller
 
                 $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee;
 
-                $kbd->ppn = $kbd->management_fee*11/100;
-
-                $kbd->pph = $kbd->management_fee*(-2/100);
-
+                $kbd->ppn = 0;
+                $kbd->pph = 0;
+                if ($quotation->ppn_pph_dipotong=="Management Fee") {
+                    $kbd->ppn = $kbd->management_fee*11/100;
+                    $kbd->pph = $kbd->management_fee*(-2/100);
+                }else if ($quotation->ppn_pph_dipotong=="Total Invoice") {
+                    $kbd->ppn = $kbd->grand_total*11/100;
+                    $kbd->pph = $kbd->grand_total*(-2/100);
+                }
+                
                 $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
+
+                
 
                 $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
                 // COST STRUCTURE
                 $kbd->total_base_manpower = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan;
-                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
+                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
 
                 $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
 
@@ -705,10 +762,16 @@ class QuotationController extends Controller
                 $kbd->management_fee_coss = $kbd->sub_total_personil_coss*$quotationKebutuhan[0]->persentase/100;
 
                 $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss;
-
-                $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
-
-                $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+                
+                $kbd->ppn_coss = 0;
+                $kbd->pph_coss = 0;
+                if($quotation->ppn_pph_dipotong =="Management Fee"){
+                    $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
+                    $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+                }else  if($quotation->ppn_pph_dipotong =="Total Invoice"){
+                    $kbd->ppn_coss = $kbd->grand_total_coss*11/100;
+                    $kbd->pph_coss = $kbd->grand_total_coss*(-2/100);
+                }
 
                 $kbd->total_invoice_coss = $kbd->grand_total_coss + $kbd->ppn_coss + $kbd->pph_coss;
 
@@ -723,7 +786,7 @@ class QuotationController extends Controller
             }
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$master->salary_rule_id)->first();
 
-            return view('sales.quotation.view',compact('salaryRuleQ','kebutuhanDetail','listPic','daftarTunjangan','quotationKebutuhan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','data','master','leads','aplikasiPendukung'));
+            return view('sales.quotation.view',compact('quotation','salaryRuleQ','kebutuhanDetail','listPic','daftarTunjangan','quotationKebutuhan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','data','master','leads','aplikasiPendukung'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1716,7 +1779,7 @@ class QuotationController extends Controller
                 "Penawaran harga ini berlaku 30 hari sejak tanggal diterbitkan.",
                 "Akan dilakukan <i>survey</i> area untuk kebutuhan ".$kebutuhanPerjanjian." sebagai tahapan <i>assesment</i> area untuk memastikan efektifitas pekerjaan.",
                 "Komponen dan nilai dalam penawaran harga ini berdasarkan kesepakatan para pihak dalam pengajuan harga awal, apabila ada perubahan, pengurangan maupun penambahan pada komponen dan nilai pada penawaran, maka <b>para pihak</b> sepakat akan melanjutkan ke tahap negosiasi selanjutnya.",
-                "Skema cut-off, pengiriman <i>invoice</i>, pembayaran <i>invoice</i> dan penggajian adalah <b>TOP/talangan</b> maksimal 30 hari kalender dengan skema sebagai berikut: <br>".$tableSalary,
+                "Skema cut-off, pengiriman <i>invoice</i>, pembayaran <i>invoice</i> dan penggajian adalah <b>TOP/talangan</b> maksimal 30 hari kalender dengan skema sebagai berikut: <br>".$tableSalary."<i><br>*Rilis gaji adalah talangan.<br>*Maksimal pembayaran invoice 30 hari kalender setelah invoice</i>",
                 "Kunjungan tim operasional ".$kunjunganOperasional.", untuk monitoring dan supervisi dengan karyawan dan wajib bertemu dengan pic <b>Pihak Pertama</b> untuk koordinasi.",
                 "Tim operasional bersifat <i>on call</i> apabila terjadi <i>case</i> atau insiden yang terjadi yang mengharuskan untuk datang ke lokasi kerja Pihak Pertama.",
                 "Pemenuhan kandidat dilakukan dengan 2 tahap <i>screening</i> :<br>
@@ -1792,7 +1855,7 @@ class QuotationController extends Controller
                 $existData= DB::table('sl_quotation_kebutuhan_detail_requirement')->where('quotation_kebutuhan_detail_id',$value->id)->whereNull('deleted_at')->get();
 
                 if(count($existData)==0){
-                    $requirement = DB::table('m_kebutuhan_detail_requirement')->whereNull('deleted_at')->where('kebutuhan_detail_id',$value->kebutuhan_detail_id)->get();
+                    $requirement = DB::table('m_kebutuhan_detail_requirement')->whereNull('deleted_at')->where('position_id',$value->kebutuhan_detail_id)->get();
                     foreach ($requirement as $kreq => $req) {
                         DB::table('sl_quotation_kebutuhan_detail_requirement')->insert([
                             'quotation_id' => $data->quotation_id,
@@ -2949,6 +3012,8 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             }
             
             $master = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
+            $quotation = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
+
             $leads = DB::table('sl_leads')->where('id',$master->leads_id)->first();
             $jabatanPic = DB::table('m_jabatan_pic')->where('id',$leads->jabatan)->first();
             if($jabatanPic!=null){
@@ -2999,7 +3064,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             ->whereNull('sl_quotation_kebutuhan.deleted_at')
             ->where('sl_quotation_kebutuhan.id',$id)
             ->orderBy('sl_quotation_kebutuhan.kebutuhan_id','ASC')
-            ->select('sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
+            ->select('sl_quotation_kebutuhan.is_aktif','sl_quotation_kebutuhan.nominal_takaful','sl_quotation_kebutuhan.penjamin','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.nomor','sl_quotation_kebutuhan.jenis_perusahaan_id','sl_quotation_kebutuhan.resiko','sl_quotation_kebutuhan.program_bpjs','sl_quotation_kebutuhan.nominal_upah','sl_quotation_kebutuhan.persentase','sl_quotation_kebutuhan.management_fee_id','sl_quotation_kebutuhan.upah','sl_quotation_kebutuhan.kota_id','sl_quotation_kebutuhan.provinsi_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.kebutuhan_id','m_kebutuhan.icon','sl_quotation_kebutuhan.kebutuhan')
             ->get();
 
             foreach ($quotationKebutuhan as $key => $value) {
@@ -3007,7 +3072,18 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
             }
 
-            $daftarTunjangan = DB::select("SELECT DISTINCT tunjangan_id,nama FROM `m_kebutuhan_detail_tunjangan` WHERE deleted_at is null and kebutuhan_id =".$quotationKebutuhan[0]->kebutuhan_id);
+            $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama,nominal FROM `sl_quotation_kebutuhan_detail_tunjangan` WHERE deleted_at is null and quotation_id = $master->id");
+
+            $jumlahHc = 0;
+            foreach ($quotationKebutuhan[0]->kebutuhan_detail as $jhc) {
+                $jumlahHc += $jhc->jumlah_hc;
+            }
+
+            $provisi = 12;
+            if(!strpos($master->durasi_kerjasama, 'tahun')){
+                $provisi = (int)str_replace(" bulan", "", $master->durasi_kerjasama);
+            }
+            $master->provisi = $provisi;
 
             foreach ($quotationKebutuhan[0]->kebutuhan_detail as $ikbd => $kbd) {
                 // $kbd->daftar_tunjangan = [];
@@ -3015,54 +3091,86 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 foreach ($daftarTunjangan as $idt => $tunjangan) {
                     $kbd->{$tunjangan->nama} = 0;
                     //cari data tunjangan
-                    $dtTunjangan = DB::table('sl_quotation_kebutuhan_detail_tunjangan')->whereNull('deleted_at')->where('quotation_kebutuhan_detail_id',$kbd->id)->where('tunjangan_id',$tunjangan->tunjangan_id)->first();
+                    $dtTunjangan = DB::table('sl_quotation_kebutuhan_detail_tunjangan')->whereNull('deleted_at')->where('quotation_kebutuhan_detail_id',$kbd->id)->where('nama_tunjangan',$tunjangan->nama)->first();
                     if($dtTunjangan != null){
                         $kbd->{$tunjangan->nama} = $dtTunjangan->nominal;
 
                         $totalTunjangan += $dtTunjangan->nominal;
                     }
                 }
+
+                $kbd->nominal_takaful = 0;
+                $kbd->bpjs_jkm = 0;
+                $kbd->bpjs_jkk = 0;
+                $kbd->bpjs_jht = 0;
+                $kbd->bpjs_jp = 0;
+                $kbd->bpjs_kes = 0;
+
+                if($quotationKebutuhan[0]->penjamin=="Takaful"){
+                    $kbd->nominal_takaful = $quotationKebutuhan[0]->nominal_takaful;
+                }else{
+                    // hitung JKK
+                    if($quotationKebutuhan[0]->resiko=="Sangat Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.24/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Rendah"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.54/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sedang"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.89/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.27/100;
+                    }else if($quotationKebutuhan[0]->resiko=="Sangat Tinggi"){
+                        $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.74/100;
+                    };
+
+                    //hitung JKM
+                    $kbd->bpjs_jkm = $quotationKebutuhan[0]->nominal_upah*0.3/100;
+
+                    //Hitung JHT
+                    if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jht = $quotationKebutuhan[0]->nominal_upah*3.7/100;
+                    }else{
+                        $kbd->bpjs_jht = 0;
+                    }
+
+                    //Hitung JP
+                    if($quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
+                        $kbd->bpjs_jp = $quotationKebutuhan[0]->nominal_upah*2/100;
+                    }else {
+                        $kbd->bpjs_jp = 0;
+                    }
+
+                    $kbd->bpjs_kes = $quotationKebutuhan[0]->nominal_upah*4/100;
+
+                }
+
                 $kbd->tunjangan_hari_raya = 0;
                 if($master->thr=="Diprovisikan"){
-                    $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/12;
+                    $kbd->tunjangan_hari_raya = $quotationKebutuhan[0]->nominal_upah/$provisi;
                 }
 
-                // hitung JKK
-                if($quotationKebutuhan[0]->resiko=="Sangat Rendah"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.24/100;
-                }else if($quotationKebutuhan[0]->resiko=="Rendah"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.54/100;
-                }else if($quotationKebutuhan[0]->resiko=="Sedang"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*0.89/100;
-                }else if($quotationKebutuhan[0]->resiko=="Tinggi"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.27/100;
-                }else if($quotationKebutuhan[0]->resiko=="Sangat Tinggi"){
-                    $kbd->bpjs_jkk = $quotationKebutuhan[0]->nominal_upah*1.74/100;
-                };
-
-                //hitung JKM
-                $kbd->bpjs_jkm = $quotationKebutuhan[0]->nominal_upah*0.3/100;
-
-                //Hitung JHT
-                if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
-                    $kbd->bpjs_jht = $quotationKebutuhan[0]->nominal_upah*3.7/100;
-                }else{
-                    $kbd->bpjs_jht = 0;
+                $kbd->kompensasi = 0;
+                if($master->kompensasi=="Diprovisikan"){
+                    $kbd->kompensasi = $quotationKebutuhan[0]->nominal_upah/$provisi;
                 }
                 
-                //Hitung JP
-                if($quotationKebutuhan[0]->program_bpjs=="4 BPJS" ){
-                    $kbd->bpjs_jp = $quotationKebutuhan[0]->nominal_upah*2/100;
-                }else {
-                    $kbd->bpjs_jp = 0;
+                $kbd->tunjangan_holiday = 0;
+                if($master->tunjangan_holiday=="Flat"){
+                    $kbd->tunjangan_holiday = $master->nominal_tunjangan_holiday;
+                }else{
+                    $kbd->tunjangan_holiday = ($quotationKebutuhan[0]->nominal_upah/173*(14))*15/$provisi;
                 }
 
-                $kbd->bpjs_kes = $quotationKebutuhan[0]->nominal_upah*4/100;
+                $kbd->lembur = 0;
+                if($master->lembur=="Flat"){
+                    $kbd->lembur = $master->nominal_lembur;
+                }else{
+                    $kbd->lembur = 0;
+                }
 
                 $personilKaporlap = 0;
                 $kbdkaporlap = DB::table('sl_quotation_kebutuhan_kaporlap')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                 foreach ($kbdkaporlap as $ikdbkap => $kdbkap) {
-                    $personilKaporlap += ($kdbkap->harga*$kdbkap->jumlah);
+                    $personilKaporlap += ($kdbkap->harga*$kdbkap->jumlah)/$provisi;
                 };
 
                 $kbd->personil_kaporlap = $personilKaporlap;
@@ -3070,15 +3178,19 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $personilDevices = 0;
                 $kbddevices = DB::table('sl_quotation_kebutuhan_devices')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                 foreach ($kbddevices as $ikdbdev => $kdbdev) {
-                    $personilDevices += ($kdbdev->harga*$kdbdev->jumlah);
+                    $personilDevices += ($kdbdev->harga*$kdbdev->jumlah)/$provisi;
                 };
+                $appPendukung = DB::table('sl_quotation_kebutuhan_aplikasi')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
+                foreach ($appPendukung as $kapp => $app) {
+                    $personilDevices += ($app->harga*1)/$provisi;
+                }
 
                 $kbd->personil_devices = $personilDevices;
 
                 $personilOhc = 0;
-                $kbdOhc = DB::table('sl_quotation_kebutuhan_ohc')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
+                $kbdOhc = DB::table('sl_quotation_kebutuhan_ohc')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->get();
                 foreach ($kbdOhc as $ikdbohc => $kdbohc) {
-                    $personilOhc += ($kdbohc->harga*$kdbohc->jumlah);
+                    $personilOhc += ($kdbohc->harga*$kdbohc->jumlah/$jumlahHc)/$provisi;
                 };
 
                 $kbd->personil_ohc = $personilOhc;
@@ -3086,12 +3198,13 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $personilChemical = 0;
                 $kbdChemical = DB::table('sl_quotation_kebutuhan_chemical')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$quotationKebutuhan[0]->id)->where('quotation_kebutuhan_detail_id',$kbd->id)->get();
                 foreach ($kbdChemical as $ikdbchemical => $kdbchemical) {
-                    $personilChemical += ($kdbchemical->harga*$kdbchemical->jumlah);
+                    $personilChemical += ($kdbchemical->harga*$kdbchemical->jumlah)/$provisi;
                 };
 
                 $kbd->personil_chemical = $personilChemical;
 
-                $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                // dd($kbd->personil_kaporlap);
+                $kbd->total_personil = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
@@ -3099,17 +3212,25 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
                 $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee;
 
-                $kbd->ppn = $kbd->management_fee*11/100;
-
-                $kbd->pph = $kbd->management_fee*(-2/100);
-
+                $kbd->ppn = 0;
+                $kbd->pph = 0;
+                if ($master->ppn_pph_dipotong=="Management Fee") {
+                    $kbd->ppn = $kbd->management_fee*11/100;
+                    $kbd->pph = $kbd->management_fee*(-2/100);
+                }else if ($master->ppn_pph_dipotong=="Total Invoice") {
+                    $kbd->ppn = $kbd->grand_total*11/100;
+                    $kbd->pph = $kbd->grand_total*(-2/100);
+                }
+                
                 $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
+
+                
 
                 $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
                 // COST STRUCTURE
                 $kbd->total_base_manpower = $quotationKebutuhan[0]->nominal_upah+$totalTunjangan;
-                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
+                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
 
                 $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
 
@@ -3118,10 +3239,16 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->management_fee_coss = $kbd->sub_total_personil_coss*$quotationKebutuhan[0]->persentase/100;
 
                 $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss;
-
-                $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
-
-                $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+                
+                $kbd->ppn_coss = 0;
+                $kbd->pph_coss = 0;
+                if($master->ppn_pph_dipotong =="Management Fee"){
+                    $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
+                    $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
+                }else  if($master->ppn_pph_dipotong =="Total Invoice"){
+                    $kbd->ppn_coss = $kbd->grand_total_coss*11/100;
+                    $kbd->pph_coss = $kbd->grand_total_coss*(-2/100);
+                }
 
                 $kbd->total_invoice_coss = $kbd->grand_total_coss + $kbd->ppn_coss + $kbd->pph_coss;
 
@@ -3136,7 +3263,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             }
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$master->salary_rule_id)->first();
 
-            return view('sales.quotation.cetakan.coss',compact('salaryRuleQ','kebutuhanDetail','listPic','daftarTunjangan','quotationKebutuhan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','data','master','leads','aplikasiPendukung'));
+            return view('sales.quotation.cetakan.coss',compact('quotation','salaryRuleQ','kebutuhanDetail','listPic','daftarTunjangan','quotationKebutuhan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','data','master','leads','aplikasiPendukung'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

@@ -1,7 +1,44 @@
-@extends('layouts.master-print')
-@section('title','Quotation')
-@section('content')
-<!--/ Content -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHECKLIST - {{$leads->nama_perusahaan}}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            font-size:11pt;
+            text-align: justify;
+            margin-right:20px;
+        }
+        @media print {
+            .page-break-before { 
+                page-break-before: always; 
+            }
+            .page-break-after { 
+                page-break-after: always; 
+            }
+            .avoid-page-break-inside { 
+                page-break-inside: avoid; 
+            }
+            table{
+              width: 100%;
+            }
+            table>*>*>* {
+              padding-top:0px !important;
+              padding-bottom:0px !important;
+              padding-left:10px !important;
+              border:1px solid black;
+            }
+
+        }
+    </style>
+</head>
+<body>
 <div class="container-fluid flex-grow-1 container-p-y" style="background-color:white">
 <form class="overflow-hidden" action="{{route('quotation.save-edit-12')}}" method="POST" enctype="multipart/form-data">        
             @csrf
@@ -9,8 +46,8 @@
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="row">
-                <div class="table-responsive overflow-hidden table-data">
-                  <table id="table-data" class="table-bordered" style="padding-right:0px !important">
+                <div>
+                  <table>
                       <tbody>
                         <tr>
                         <td colspan="4" class="text-center fw-bold" style="background-color:'#e8e8e8'">FORM <i>CHECKLIST</i> NEW SITE & PERJANJIAN KERJA SAMA</td>
@@ -20,7 +57,7 @@
                           <td colspan="3">{{$quotationKebutuhan[0]->nomor}}</td>
                         </tr>
                         <tr>
-                          <td style="width:35%">Tgl. Pengajuan Kerjasama</td>
+                          <td style="width:30%">Tgl. Pengajuan Kerjasama</td>
                           <td colspan="3">{{$quotation->tgl_quotation}}</td>
                         </tr>
                         <tr>
@@ -118,7 +155,7 @@
                           <td>Hari Kerja dan Jam Kerja </td>
                           <td>{{$quotation->shift_kerja}}</td>
                           <td>{{$quotation->jam_kerja}}</td>
-                          <td class="d-flex" style="align-items:center">{{$quotation->mulai_kerja}} <span style="padding-left:5px;padding-right:5px">s/d</span> {{$quotation->selesai_kerja}}</td>
+                          <td>{{$quotation->mulai_kerja}} s/d {{$quotation->selesai_kerja}}</td>
                         </tr>
                         <tr>
                           <td>System Kerja </td>
@@ -378,11 +415,20 @@
           </div>
 </div>
 
-<!--/ Content -->
-@endsection
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-@section('pageScript')
-<script>
-  window.print();
-</script>
-@endsection
+    <!-- Custom JavaScript (optional) -->
+    <script>
+        $(document).ready(function() {
+            console.log("jQuery is ready!");
+        });
+    </script>
+    <script>
+        window.print();
+    </script>
+</body>
+</html>
