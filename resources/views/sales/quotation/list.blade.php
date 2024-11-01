@@ -98,7 +98,6 @@
                                     <th class="text-center">Site</th>
                                     <th class="text-center">Kebutuhan</th>
                                     <th class="text-center">Status</th>
-                                    <th class="text-center">Jenis Kontrak</th>
                                     <th class="text-center">Entitas</th>
                                     <th class="text-center">Created By</th>
                                     <th class="text-center">Aksi</th>
@@ -215,10 +214,6 @@
                 },{
                     data : 'status',
                     name : 'status',
-                    className:'text-center'
-                },{
-                    data : 'jenis_kontrak',
-                    name : 'jenis_kontrak',
                     className:'text-center'
                 },{
                     data : 'company',

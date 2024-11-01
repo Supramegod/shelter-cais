@@ -953,8 +953,6 @@ class QuotationController extends Controller
         
         try {
             $validator = Validator::make($request->all(), [
-                'kebutuhan' => 'required',
-                'entitas' => 'required',
                 'mulai_kontrak' => 'required',
                 'kontrak_selesai' => 'required',
                 'tgl_penempatan' => 'required',
@@ -986,10 +984,9 @@ class QuotationController extends Controller
                 $quotation = DB::table('sl_quotation')->where('id',$request->id)->first();
                 $salaryRule = DB::table('m_salary_rule')->where('id',$request->salary_rule)->first();
                 DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'kebutuhan_id' =>  implode(",",$request->kebutuhan),
-                    'company_id' => $request->entitas,
                     'mulai_kontrak' => $request->mulai_kontrak,
                     'kontrak_selesai' => $request->kontrak_selesai,
+                    'penempatan' => $request->penempatan,
                     'tgl_penempatan' => $request->tgl_penempatan,
                     'salary_rule_id' => $request->salary_rule,
                     'top' => $request->top,
@@ -1015,48 +1012,6 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->full_name
                 ]);
 
-                $kebutuhanPerjanjian ="";
-                foreach ($request->kebutuhan as $key => $value) {
-                    $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
-                    $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')
-                                            ->whereNull('deleted_at')
-                                            ->where('quotation_id',$request->id)
-                                            ->where('kebutuhan_id',$value)->first();
-                    $kebutuhan = DB::table('m_kebutuhan')->where('id',$value)->first();
-
-                    $kebutuhanPerjanjian = "<b>".$kebutuhan->nama."</b>";
-                    
-                    if($quotationKebutuhan == null){
-                        DB::table('sl_quotation_kebutuhan')->insert([
-                            'nomor' => $this->generateNomor($quotation->leads_id,$request->entitas),
-                            'quotation_id' => $request->id,
-                            'leads_id' => $quotation->leads_id,
-                            'kebutuhan_id' => $value,
-                            'kebutuhan' => $kebutuhan->nama,
-                            'company_id' => $request->entitas,
-                            'company' => $company->name,
-                            'created_at' => $current_date_time,
-                            'created_by' => Auth::user()->full_name
-                        ]);
-                    }else{
-                        DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->where('kebutuhan_id',$value)->update([
-                            'quotation_id' => $request->id,
-                            'leads_id' => $quotation->leads_id,
-                            'kebutuhan_id' => $value,
-                            'kebutuhan' => $kebutuhan->nama,
-                            'company_id' => $request->entitas,
-                            'company' => $company->name,
-                            'updated_at' => $current_date_time,
-                            'updated_by' => Auth::user()->full_name
-                        ]);
-                    }
-                };
-
-                DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNotIn('kebutuhan_id', $request->kebutuhan)->update([
-                    'deleted_at' => $current_date_time,
-                    'deleted_by' => Auth::user()->full_name
-                ]);
-
                 $newStep = 3;
                 $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
                 if($dataQuotation->step>$newStep){
@@ -1071,12 +1026,11 @@ class QuotationController extends Controller
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
-                $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
                 if($request->edit==0){
                     return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
                 }else{
-                    return redirect()->route('quotation.view',$data->id);
+                    return redirect()->route('quotation.view',$request->id);
                 }
             }
         } catch (\Exception $e) {
@@ -1984,26 +1938,20 @@ class QuotationController extends Controller
 
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
-                $id = null;
-                if($data->id == null){
-                    $id = $data->quotation_id;
-                }
-                if($data->step != 100){
-                    return '<div class="justify-content-center d-flex">
-                                <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
-                    </div>';
-                }else{
-                    return '<div class="justify-content-center d-flex">
+                return '<div class="justify-content-center d-flex">
                                 <a href="'.route('quotation.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
                     </div>';
-                }
-                
             })
             ->editColumn('nomor', function ($data) {
-                if($data->id != null){
-                    return '<a href="'.route('quotation.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+                $ref = "";
+
+                if($data->step != 100){
+                    $ref = "#";
+                }else{
+                    $ref = route('quotation.view',$data->id);
                 }
-                return "";
+                return '<a href="'.$ref.'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+
             })
             ->editColumn('nama_perusahaan', function ($data) {
                 return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';

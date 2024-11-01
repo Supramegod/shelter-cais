@@ -19,6 +19,7 @@
                 <h6 class="mb-3">DETAIL KONTRAK</h6>
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
+                <h6>Site : {{$quotation->nama_site}}</h6>
               </div>
               <div class="row mb-3">
                 <div class="col-sm-6">
@@ -297,14 +298,6 @@ $('#btn-submit').on('click',function(e){
   let msg = "";
   let obj = $("form").serializeObject();
     
-  if(obj['kebutuhan[]'] == null || obj['kebutuhan[]'] == "" ){
-    msg += "<b>Kebutuhan</b> belum dipilih </br>";
-  };
-
-  if(obj.entitas == null || obj.entitas == "" ){
-    msg += "<b>Entitas</b> belum dipilih </br>";
-  };
-
   if(obj.mulai_kontrak == null || obj.mulai_kontrak == ""){
     msg += "<b>Mulai Kontrak</b> belum dipilih </br>";
   }
