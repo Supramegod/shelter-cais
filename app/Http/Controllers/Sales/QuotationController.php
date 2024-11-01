@@ -1083,63 +1083,47 @@ class QuotationController extends Controller
     public function saveEdit4 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
-            foreach ($quotationKebutuhan as $key => $value) {
-                $provinsiId = $request['provinsi-'.$value->id];
-                $kotaId = $request['kota-'.$value->id];
-                $upah = $request['upah-'.$value->id];
-                $manfee = $request['manajemen_fee_'.$value->id];
-                $presentase = $request['persentase_'.$value->id];
+            $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->get();
+            $provinsiId = $request['provinsi'];
+            $kotaId = $request['kota'];
+            $upah = $request['upah'];
+            $manfee = $request['manajemen_fee'];
+            $presentase = $request['persentase'];
 
-                $provinsi = null;
-                if($provinsiId != null){
-                    $provinceList = DB::connection('mysqlhris')->table('m_province')->where('id',$provinsiId)->first();
-                    if($provinceList != null){
-                        $provinsi = $provinceList->name;
-                    }
+            $provinsi = null;
+            if($provinsiId != null){
+                $provinceList = DB::connection('mysqlhris')->table('m_province')->where('id',$provinsiId)->first();
+                if($provinceList != null){
+                    $provinsi = $provinceList->name;
                 }
-
-                $kota = null;
-                if($kotaId != null){
-                    $kotaList = DB::connection('mysqlhris')->table('m_city')->where('id',$kotaId)->first();
-                    if($kotaList != null){
-                        $kota = $kotaList->name;
-                    }
-                }
-
-                $customUpah = 0;
-                if($upah == "Custom"){
-                    $customUpah = str_replace(".","",$request['custom-upah-'.$value->id]);
-                }else{
-                    //cari ump / umk
-                    if($upah =="UMP"){
-                        $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$provinsiId)->first();
-                        if($dataUmp !=null){
-                            $customUpah = $dataUmp->ump;
-                        }
-                    }else if ($upah =="UMK") {
-                        $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$kotaId)->first();
-                        if($dataUmk !=null){
-                            $customUpah = $dataUmk->umk;
-                        }
-                    }
-                }
-                
-                DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
-                    'provinsi_id' => $provinsiId,
-                    'provinsi' => $provinsi,
-                    'kota_id' => $kotaId,
-                    'kota' => $kota,
-                    'upah' => $upah,
-                    'nominal_upah' => $customUpah,
-                    'management_fee_id' => $manfee,
-                    'is_aktif' => 0,
-                    'persentase' => $presentase,
-                    'updated_at' => $current_date_time,
-                    'updated_by' => Auth::user()->full_name
-                ]);
             }
 
+            $kota = null;
+            if($kotaId != null){
+                $kotaList = DB::connection('mysqlhris')->table('m_city')->where('id',$kotaId)->first();
+                if($kotaList != null){
+                    $kota = $kotaList->name;
+                }
+            }
+
+            $customUpah = 0;
+            if($upah == "Custom"){
+                $customUpah = str_replace(".","",$request['custom-upah']);
+            }else{
+                //cari ump / umk
+                if($upah =="UMP"){
+                    $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$provinsiId)->first();
+                    if($dataUmp !=null){
+                        $customUpah = $dataUmp->ump;
+                    }
+                }else if ($upah =="UMK") {
+                    $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$kotaId)->first();
+                    if($dataUmk !=null){
+                        $customUpah = $dataUmk->umk;
+                    }
+                }
+            }
+            
             $newStep = 5;
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
             if($dataQuotation->step>$newStep){
@@ -1175,6 +1159,15 @@ class QuotationController extends Controller
             }
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
+                'provinsi_id' => $provinsiId,
+                'provinsi' => $provinsi,
+                'kota_id' => $kotaId,
+                'kota' => $kota,
+                'upah' => $upah,
+                'nominal_upah' => $customUpah,
+                'management_fee_id' => $manfee,
+                'is_aktif' => 0,
+                'persentase' => $presentase,
                 'step' => $newStep,
                 'thr' => $request->thr,
                 'kompensasi' => $request->kompensasi,
@@ -1186,12 +1179,11 @@ class QuotationController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
             if($request->edit==0){
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
             }else{
-                return redirect()->route('quotation.view',$data->id);
+                return redirect()->route('quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1206,11 +1198,11 @@ class QuotationController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             foreach ($quotationKebutuhan as $key => $value) {
-                $jenisPerusahaanId = $request['jenis-perusahaan-'.$value->id];
-                $resiko = $request['resiko-'.$value->id];
-                $penjamin = $request['penjamin-'.$value->id];
-                $programBpjs = $request['program-bpjs-'.$value->id];
-                $nominalTakaful = $request['nominal-takaful-'.$value->id];
+                $jenisPerusahaanId = $request['jenis-perusahaan'];
+                $resiko = $request['resiko'];
+                $penjamin = $request['penjamin'];
+                $programBpjs = $request['program-bpjs'];
+                $nominalTakaful = $request['nominal-takaful'];
 
                 // jika penjamin takaful maka program bpjs == null
                 if($penjamin=="Takaful"){
@@ -1416,7 +1408,7 @@ class QuotationController extends Controller
             foreach ($listKaporlap as $key => $value) {
                 foreach ($detail as $kd => $vd) {
                     //cek apakah 0 jika 0 skip
-                    if($request->{'jumlah_'.$value->id.'_'.$vd->id} == "0" ||$request->{'jumlah_'.$value->id.'_'.$vd->id} == null){
+                    if($request->{'jumlah'.'_'.$vd->id} == "0" ||$request->{'jumlah'.'_'.$vd->id} == null){
                         continue;   
                     }else{
                         //cari harga
@@ -1426,7 +1418,7 @@ class QuotationController extends Controller
                             'quotation_kebutuhan_id' => $kebutuhan->id,
                             'quotation_id' => $quotation->id,
                             'barang_id' => $barang->id,
-                            'jumlah' => $request->{'jumlah_'.$value->id.'_'.$vd->id},
+                            'jumlah' => $request->{'jumlah'.'_'.$vd->id},
                             'harga' => $barang->harga,
                             'nama' => $barang->nama,
                             'jenis_barang' => $barang->jenis_barang,
@@ -1526,7 +1518,7 @@ class QuotationController extends Controller
             foreach ($listDevices as $key => $value) {
                 foreach ($detail as $kd => $vd) {
                     //cek apakah 0 jika 0 skip
-                    if($request->{'jumlah_'.$value->id.'_'.$vd->id} == "0" ||$request->{'jumlah_'.$value->id.'_'.$vd->id} == null){
+                    if($request->{'jumlah'.'_'.$vd->id} == "0" ||$request->{'jumlah'.'_'.$vd->id} == null){
                         continue;   
                     }else{
                         //cari harga
@@ -1536,7 +1528,7 @@ class QuotationController extends Controller
                             'quotation_kebutuhan_id' => $kebutuhan->id,
                             'quotation_id' => $quotation->id,
                             'barang_id' => $barang->id,
-                            'jumlah' => $request->{'jumlah_'.$value->id.'_'.$vd->id},
+                            'jumlah' => $request->{'jumlah'.'_'.$vd->id},
                             'harga' => $barang->harga,
                             'nama' => $barang->nama,
                             'jenis_barang' => $barang->jenis_barang,

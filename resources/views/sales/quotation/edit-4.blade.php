@@ -18,209 +18,188 @@
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">UPAH DAN MANAGEMENT FEE</h6>
-                <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
+                <h6>Site : {{$quotation->nama_site}}</h6>
               </div>
               <div class="row mb-3">
-                <div class="col-xl-12">
-                  <div class="nav-align-top">
-                    <ul class="nav nav-fill nav-tabs" role="tablist" >
-                      @foreach($quotationKebutuhan as $value)
-                        <li class="nav-item" role="presentation">
-                          <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-{{$value->id}}" aria-controls="navs-justified-{{$value->id}}" aria-selected="true">
-                            <i class="tf-icons {{$value->icon}} me-1"></i> 
-                            {{$value->kebutuhan}}
-                          </button>
-                        </li>
-                      @endforeach
-                      <span class="tab-slider" style="left: 0px; width: 226.484px; bottom: 0px;"></span>
-                    </ul>
+                <div class="row mb-3 mt-3">
+                  <div class="col-sm-6">
+                    <label class="form-label" for="provinsi">Provinsi</label>
+                    <div class="input-group">
+                      <select id="provinsi" name="provinsi" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($province as $data)
+                          <option value="{{$data->id}}" data-ump="{{$data->ump}}" @if($quotation->provinsi_id == $data->id) selected @endif>{{$data->name}}</option>  
+                        @endforeach
+                      </select>
+                    </div>
                   </div>
-                  <div class="tab-content p-0">
-                    @foreach($quotationKebutuhan as $value)
-                      <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-justified-{{$value->id}}" role="tabpanel">
-                        <div class="row mb-3 mt-3">
-                          <div class="col-sm-6">
-                            <label class="form-label" for="provinsi-{{$value->id}}">Provinsi</label>
-                            <div class="input-group">
-                              <select id="provinsi-{{$value->id}}" name="provinsi-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="">- Pilih data -</option>
-                                @foreach($province as $data)
-                                  <option value="{{$data->id}}" data-ump="{{$data->ump}}" @if($value->provinsi_id == $data->id) selected @endif>{{$data->name}}</option>  
-                                @endforeach
-                              </select>
-                            </div>
-                          </div>
-                          <div class="col-sm-6">
-                            <label class="form-label" for="kota-{{$value->id}}">Kabupaten / Kota</label>
-                            <div class="input-group">
-                              <select id="kota-{{$value->id}}" name="kota-{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row mb-2">
-                          <h4 class="text-center">Upah</h4>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-md mb-md-0 mb-2">
-                            <div class="form-check custom-option custom-option-icon hide-custom-{{$value->id}} @if($value->upah == 'UMP') checked @endif">
-                              <label class="form-check-label custom-option-content" for="ump">
-                                <span class="custom-option-body">
-                                  <span class="custom-option-title">UMP</span>
-                                  <span id="label-provinsi">&nbsp;</span>
-                                </span>
-                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMP" id="ump-{{$value->id}}" @if($value->upah == 'UMP') checked @endif>
-                              </label>
-                            </div>
-                          </div>
-                          <div class="col-md mb-md-0 mb-2">
-                            <div class="form-check custom-option custom-option-icon hide-custom-{{$value->id}} @if($value->upah == 'UMK') checked @endif">
-                              <label class="form-check-label custom-option-content" for="umk">
-                                <span class="custom-option-body">
-                                  <span class="custom-option-title">UMK</span>
-                                  <span id="label-kota">&nbsp;</span>
-                                </span>
-                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="UMK" id="umk-{{$value->id}}" @if($value->upah == 'UMK') checked @endif>
-                              </label>
-                            </div>
-                          </div>
-                          <div class="col-md mb-md-0 mb-2">
-                            <div class="form-check custom-option custom-option-icon show-custom-{{$value->id}} @if($value->upah == 'Custom') checked @endif">
-                              <label class="form-check-label custom-option-content" for="custom">
-                                <span class="custom-option-body">
-                                  <span class="custom-option-title">Custom</span>
-                                  <span>&nbsp;</span>
-                                </span>
-                                <input name="upah-{{$value->id}}" class="form-check-input" type="radio" value="Custom" id="custom-{{$value->id}}" @if($value->upah == 'Custom') checked @endif>
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row mb-3 d-none" id="d-custom-upah-{{$value->id}}">
-                          <div class="col-sm-12">
-                            <label class="form-label" for="custom-upah-{{$value->id}}">Masukkan Upah</label>
-                            <div class="input-group">
-                              <input type="text" class="form-control mask-nominal" value="{{$value->nominal_upah}}" name="custom-upah-{{$value->id}}" id="custom-upah-{{$value->id}}">
-                            </div>
-                          </div>
-                          <span class="text-warning">*Gaji dibawah UMK membutuhkan persetujuan</span>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-sm-6">
-                            <label class="form-label" for="manajemen_fee_{{$value->id}}">Manajemen Fee</label>
-                            <div class="input-group">
-                              <select id="manajemen_fee_{{$value->id}}" name="manajemen_fee_{{$value->id}}" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="">- Pilih data -</option>
-                                @foreach($manfee as $data)
-                                  <option value="{{$data->id}}" @if($value->management_fee_id == $data->id) selected @endif>{{$data->nama}}</option>  
-                                @endforeach
-                              </select>
-                            </div>
-                          </div>
-                          <div class="col-sm-6">
-                            <label class="form-label" for="persentase_{{$value->id}}">Persentase</label>
-                            <div class="input-group">
-                              <input type="number" class="form-control" name="persentase_{{$value->id}}" value="{{$value->persentase}}">
-                              <span class="input-group-text">%</span>
-                            </div>
-                            @if($value->kebutuhan=="SECURITY")
-                              <span class="text-warning">*MF dibawah 7% membutuhkan persetujuan</span>
-                            @else
-                            <span class="text-warning">*MF dibawah 6% membutuhkan persetujuan</span>
-                            @endif
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-sm-12">
-                            <label class="form-label" for="ppn_pph_dipotong">Hitungan PPn & PPh</label>
-                            <div class="input-group">
-                              <select id="ppn_pph_dipotong" name="ppn_pph_dipotong" class="form-select" data-allow-clear="true" tabindex="-1">
-                              <option value="Management Fee" @if($quotation->ppn_pph_dipotong==null || $quotation->ppn_pph_dipotong=="" ||$quotation->ppn_pph_dipotong=="Management Fee") selected @endif>Management Fee</option>  
-                              <option value="Total Invoice" @if($quotation->ppn_pph_dipotong=="Total Invoice") selected @endif>Total Invoice</option>  
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-sm-6">
-                            <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
-                              <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->thr=="") selected @endif>- Pilih Data -</option>  
-                              <option value="Ada" @if($quotation->thr!="" && $quotation->thr!="Tidak Ada") selected @endif>Ada</option>  
-                              <option value="Tidak Ada" @if($quotation->thr=="Tidak Ada") selected @endif>Tidak Ada</option>  
-                              </select>
-                          </div>
-                          <div class="col-sm-6 ada_thr">
-                            <label class="form-label" for="thr">Provisi / Ditagihkan</label>
-                              <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
-                                <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
-                              </select>
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-sm-6">
-                            <label class="form-label" for="ada_kompensasi">Kompensasi</label>
-                              <select id="ada_kompensasi" name="ada_kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="" @if($quotation->kompensasi=="" || $quotation->kompensasi==null) selected @endif>- Pilih Data -</option>  
-                                <option value="Ada" @if($quotation->kompensasi!=null && $quotation->kompensasi!="" && $quotation->kompensasi!="Tidak Ada") selected @endif>Ada</option>  
-                                <option value="Tidak Ada" @if($quotation->kompensasi=="Tidak Ada") selected @endif>Tidak Ada</option>  
-                              </select>
-                          </div>
-                          <div class="col-sm-6 ada_kompensasi">
-                            <label class="form-label" for="kompensasi">Provisi / Ditagihkan</label>
-                              <select id="kompensasi" name="kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="Diprovisikan" @if($quotation->kompensasi=="Diprovisikan") selected @endif>Diprovisikan</option>  
-                                <option value="Ditagihkan" @if($quotation->kompensasi=="Ditagihkan") selected @endif>Ditagihkan</option>  
-                              </select>
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-sm-4">
-                            <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Holiday</label>
-                              <select id="ada_tunjangan_holiday" name="ada_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>  
-                                <option value="Ada" @if($quotation->tunjangan_holiday!=null && $quotation->tunjangan_holiday!="" && $quotation->tunjangan_holiday!="Tidak Ada") selected @endif>Ada</option>  
-                                <option value="Tidak Ada" @if($quotation->tunjangan_holiday=="Tidak Ada") selected @endif>Tidak Ada</option>  
-                              </select>
-                          </div>
-                          <div class="col-sm-4 ada_tunjangan_holiday">
-                            <label class="form-label" for="tunjangan_holiday">Normatif / Flat</label>
-                              <select id="tunjangan_holiday" name="tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="Normatif" @if($quotation->tunjangan_holiday=="Normatif") selected @endif>Normatif</option>  
-                                <option value="Flat" @if($quotation->tunjangan_holiday=="Flat") selected @endif>Flat</option>  
-                              </select>
-                          </div>
-                          <div class="col-sm-4 d-nominal-tunjangan-holiday">
-                            <label class="form-label" for="nominal_tunjangan_holiday">Nominal Tunjangan Holiday</label>
-                            <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_tunjangan_holiday}}" name="nominal_tunjangan_holiday" id="nominal_tunjangan_holiday">
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-sm-4">
-                            <label class="form-label" for="ada_lembur">Lembur</label>
-                              <select id="ada_lembur" name="ada_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="" @if($quotation->lembur=="" || $quotation->lembur==null) selected @endif>- Pilih Data -</option>  
-                                <option value="Ada" @if($quotation->lembur!=null && $quotation->lembur!="" && $quotation->lembur!="Tidak Ada") selected @endif>Ada</option>  
-                                <option value="Tidak Ada" @if($quotation->lembur=="Tidak Ada") selected @endif>Tidak Ada</option>  
-                              </select>
-                          </div>
-                          <div class="col-sm-4 ada_lembur">
-                            <label class="form-label" for="lembur">Normatif / Flat</label>
-                              <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
-                                <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>  
-                                <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>  
-                                <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>  
-                              </select>
-                          </div>
-                          <div class="col-sm-4 d-nominal-lembur">
-                            <label class="form-label" for="nominal_lembur">Nominal Lembur</label>
-                            <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_lembur}}" name="nominal_lembur" id="nominal_lembur">
-                          </div>
-                        </div>
-                      </div>
-                    @endforeach
+                  <div class="col-sm-6">
+                    <label class="form-label" for="kota">Kabupaten / Kota</label>
+                    <div class="input-group">
+                      <select id="kota" name="kota" class="form-select" data-allow-clear="true" tabindex="-1">
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <h4 class="text-center">Upah</h4>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md mb-md-0 mb-2">
+                    <div class="form-check custom-option custom-option-icon hide-custom @if($quotation->upah == 'UMP') checked @endif">
+                      <label class="form-check-label custom-option-content" for="ump">
+                        <span class="custom-option-body">
+                          <span class="custom-option-title">UMP</span>
+                          <span id="label-provinsi">&nbsp;</span>
+                        </span>
+                        <input name="upah" class="form-check-input" type="radio" value="UMP" id="ump" @if($quotation->upah == 'UMP') checked @endif>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md mb-md-0 mb-2">
+                    <div class="form-check custom-option custom-option-icon hide-custom @if($quotation->upah == 'UMK') checked @endif">
+                      <label class="form-check-label custom-option-content" for="umk">
+                        <span class="custom-option-body">
+                          <span class="custom-option-title">UMK</span>
+                          <span id="label-kota">&nbsp;</span>
+                        </span>
+                        <input name="upah" class="form-check-input" type="radio" value="UMK" id="umk" @if($quotation->upah == 'UMK') checked @endif>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md mb-md-0 mb-2">
+                    <div class="form-check custom-option custom-option-icon show-custom @if($quotation->upah == 'Custom') checked @endif">
+                      <label class="form-check-label custom-option-content" for="custom">
+                        <span class="custom-option-body">
+                          <span class="custom-option-title">Custom</span>
+                          <span>&nbsp;</span>
+                        </span>
+                        <input name="upah" class="form-check-input" type="radio" value="Custom" id="custom" @if($quotation->upah == 'Custom') checked @endif>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3 d-none" id="d-custom-upah">
+                  <div class="col-sm-12">
+                    <label class="form-label" for="custom-upah">Masukkan Upah</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_upah}}" name="custom-upah" id="custom-upah">
+                    </div>
+                  </div>
+                  <span class="text-warning">*Gaji dibawah UMK membutuhkan persetujuan</span>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-6">
+                    <label class="form-label" for="manajemen_fee">Manajemen Fee</label>
+                    <div class="input-group">
+                      <select id="manajemen_fee" name="manajemen_fee" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($manfee as $data)
+                          <option value="{{$data->id}}" @if($quotation->management_fee_id == $data->id) selected @endif>{{$data->nama}}</option>  
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="persentase">Persentase</label>
+                    <div class="input-group">
+                      <input type="number" class="form-control" name="persentase" value="{{$quotation->persentase}}">
+                      <span class="input-group-text">%</span>
+                    </div>
+                    @if($quotation->kebutuhan=="SECURITY")
+                      <span class="text-warning">*MF dibawah 7% membutuhkan persetujuan</span>
+                    @else
+                    <span class="text-warning">*MF dibawah 6% membutuhkan persetujuan</span>
+                    @endif
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-12">
+                    <label class="form-label" for="ppn_pph_dipotong">Hitungan PPn & PPh</label>
+                    <div class="input-group">
+                      <select id="ppn_pph_dipotong" name="ppn_pph_dipotong" class="form-select" data-allow-clear="true" tabindex="-1">
+                      <option value="Management Fee" @if($quotation->ppn_pph_dipotong==null || $quotation->ppn_pph_dipotong=="" ||$quotation->ppn_pph_dipotong=="Management Fee") selected @endif>Management Fee</option>  
+                      <option value="Total Invoice" @if($quotation->ppn_pph_dipotong=="Total Invoice") selected @endif>Total Invoice</option>  
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-6">
+                    <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
+                      <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">
+                      <option value="" @if($quotation->thr=="") selected @endif>- Pilih Data -</option>  
+                      <option value="Ada" @if($quotation->thr!="" && $quotation->thr!="Tidak Ada") selected @endif>Ada</option>  
+                      <option value="Tidak Ada" @if($quotation->thr=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                      </select>
+                  </div>
+                  <div class="col-sm-6 ada_thr">
+                    <label class="form-label" for="thr">Provisi / Ditagihkan</label>
+                      <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
+                        <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                      </select>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-6">
+                    <label class="form-label" for="ada_kompensasi">Kompensasi</label>
+                      <select id="ada_kompensasi" name="ada_kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="" @if($quotation->kompensasi=="" || $quotation->kompensasi==null) selected @endif>- Pilih Data -</option>  
+                        <option value="Ada" @if($quotation->kompensasi!=null && $quotation->kompensasi!="" && $quotation->kompensasi!="Tidak Ada") selected @endif>Ada</option>  
+                        <option value="Tidak Ada" @if($quotation->kompensasi=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                      </select>
+                  </div>
+                  <div class="col-sm-6 ada_kompensasi">
+                    <label class="form-label" for="kompensasi">Provisi / Ditagihkan</label>
+                      <select id="kompensasi" name="kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="Diprovisikan" @if($quotation->kompensasi=="Diprovisikan") selected @endif>Diprovisikan</option>  
+                        <option value="Ditagihkan" @if($quotation->kompensasi=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                      </select>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4">
+                    <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Holiday</label>
+                      <select id="ada_tunjangan_holiday" name="ada_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>  
+                        <option value="Ada" @if($quotation->tunjangan_holiday!=null && $quotation->tunjangan_holiday!="" && $quotation->tunjangan_holiday!="Tidak Ada") selected @endif>Ada</option>  
+                        <option value="Tidak Ada" @if($quotation->tunjangan_holiday=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                      </select>
+                  </div>
+                  <div class="col-sm-4 ada_tunjangan_holiday">
+                    <label class="form-label" for="tunjangan_holiday">Normatif / Flat</label>
+                      <select id="tunjangan_holiday" name="tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="Normatif" @if($quotation->tunjangan_holiday=="Normatif") selected @endif>Normatif</option>  
+                        <option value="Flat" @if($quotation->tunjangan_holiday=="Flat") selected @endif>Flat</option>  
+                      </select>
+                  </div>
+                  <div class="col-sm-4 d-nominal-tunjangan-holiday">
+                    <label class="form-label" for="nominal_tunjangan_holiday">Nominal Tunjangan Holiday</label>
+                    <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_tunjangan_holiday}}" name="nominal_tunjangan_holiday" id="nominal_tunjangan_holiday">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4">
+                    <label class="form-label" for="ada_lembur">Lembur</label>
+                      <select id="ada_lembur" name="ada_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="" @if($quotation->lembur=="" || $quotation->lembur==null) selected @endif>- Pilih Data -</option>  
+                        <option value="Ada" @if($quotation->lembur!=null && $quotation->lembur!="" && $quotation->lembur!="Tidak Ada") selected @endif>Ada</option>  
+                        <option value="Tidak Ada" @if($quotation->lembur=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                      </select>
+                  </div>
+                  <div class="col-sm-4 ada_lembur">
+                    <label class="form-label" for="lembur">Normatif / Flat</label>
+                      <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>  
+                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>  
+                        <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>  
+                      </select>
+                  </div>
+                  <div class="col-sm-4 d-nominal-lembur">
+                    <label class="form-label" for="nominal_lembur">Nominal Lembur</label>
+                    <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_lembur}}" name="nominal_lembur" id="nominal_lembur">
                   </div>
                 </div>
               </div>
@@ -239,24 +218,23 @@
 
 @section('pageScript')
 <script>
-@foreach($quotationKebutuhan as $value)
-  $('.show-custom-{{$value->id}}').on('click',function(){
-    $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
-    $('#custom-upah-{{$value->id}}').val('');
+$('.show-custom').on('click',function(){
+    $('#d-custom-upah').removeClass('d-none');
+    $('#custom-upah').val('');
   });
 
-  $('.hide-custom-{{$value->id}}').on('click',function(){
-    $('#d-custom-upah-{{$value->id}}').addClass('d-none');
+  $('.hide-custom').on('click',function(){
+    $('#d-custom-upah').addClass('d-none');
   });
 
-  $('#kota-{{$value->id}}').on('change', function() {
-    $('#label-kota').html($('#kota-{{$value->id}} option:selected').text()+" : "+$('#kota-{{$value->id}} option:selected').data("umk"));
+  $('#kota').on('change', function() {
+    $('#label-kota').html($('#kota option:selected').text()+" : "+$('#kota option:selected').data("umk"));
   });
 
-  $('#provinsi-{{$value->id}}').on('change', function() {
-    $('#kota-{{$value->id}}').find('option').remove();
-    $('#kota-{{$value->id}}').append('<option value="">- Pilih data -</option>');
-    $('#label-provinsi').html($('#provinsi-{{$value->id}} option:selected').text()+" : "+$('#provinsi-{{$value->id}} option:selected').data("ump"));
+  $('#provinsi').on('change', function() {
+    $('#kota').find('option').remove();
+    $('#kota').append('<option value="">- Pilih data -</option>');
+    $('#label-provinsi').html($('#provinsi option:selected').text()+" : "+$('#provinsi option:selected').data("ump"));
     if(this.value!=""){
       var param = "province_id="+this.value;
       $.ajax({
@@ -266,18 +244,18 @@
         success: function(res) {
           res.forEach(element => {
             let selected = "";
-            $('#kota-{{$value->id}}').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+            $('#kota').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
           });
         }
       });
     }
   });
 
-  @if($value->provinsi_id != null)
+  @if($quotation->provinsi_id != null)
 
-  $('#label-provinsi').html($('#provinsi-{{$value->id}} option:selected').text()+" : "+$('#provinsi-{{$value->id}} option:selected').data("ump"));
+  $('#label-provinsi').html($('#provinsi option:selected').text()+" : "+$('#provinsi option:selected').data("ump"));
 
-    var param = "province_id="+{{$value->provinsi_id}};
+    var param = "province_id="+{{$quotation->provinsi_id}};
       $.ajax({
         url: "{{route('quotation.change-kota')}}",
         type: 'GET',
@@ -285,21 +263,21 @@
         success: function(res) {
           res.forEach(element => {
             let selected = "";
-            if(element.id == {{$value->kota_id}}){
+            if(element.id == {{$quotation->kota_id}}){
               selected = "selected";
               $('#label-kota').html(element.name+" : "+element.umk);
             };
 
-            $('#kota-{{$value->id}}').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+            $('#kota').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
           });
         }
       });
   @endif
 
-  @if($value->upah=="Custom")
-    $('#d-custom-upah-{{$value->id}}').removeClass('d-none');
+  @if($quotation->upah=="Custom")
+    $('#d-custom-upah').removeClass('d-none');
 
-    var $this = $('#custom-upah-{{$value->id}}');
+    var $this = $('#custom-upah');
     // Get the value.
     var input = $this.val();
     var input = input.replace(/[\D\s\._\-]+/g, "");
@@ -317,25 +295,25 @@
   let msg = "";
   let obj = $("form").serializeObject();
 
-  if(obj['provinsi-{{$value->id}}'] == null || obj['provinsi-{{$value->id}}'] == ""){
+  if(obj['provinsi'] == null || obj['provinsi'] == ""){
     msg += "<b>Provinsi</b> belum dipilih </br>";
   }
-  if(obj['kota-{{$value->id}}'] == null || obj['kota-{{$value->id}}'] == ""){
+  if(obj['kota'] == null || obj['kota'] == ""){
     msg += "<b>Kabupaten / Kota </b> belum dipilih </br>";
   }
 
-  if(obj['upah-{{$value->id}}'] == null || obj['upah-{{$value->id}}'] == ""){
+  if(obj['upah'] == null || obj['upah'] == ""){
     msg += "<b>Jenis Upah</b> belum dipilih </br>";
   }
-  if(obj['upah-{{$value->id}}'] =="Custom"){
-    if(obj['custom-upah-{{$value->id}}'] == null || obj['custom-upah-{{$value->id}}'] == ""){
+  if(obj['upah'] =="Custom"){
+    if(obj['custom-upah'] == null || obj['custom-upah'] == ""){
       msg += "<b>Costum Upah</b> belum dipilih </br>";
     }
   }
-  if(obj['manajemen_fee_{{$value->id}}'] == null || obj['manajemen_fee_{{$value->id}}'] == ""){
+  if(obj['manajemen_fee'] == null || obj['manajemen_fee'] == ""){
     msg += "<b>Manajemen Fee </b> belum dipilih </br>";
   }
-  if(obj['persentase_{{$value->id}}'] == null || obj['persentase_{{$value->id}}'] == ""){
+  if(obj['persentase'] == null || obj['persentase'] == ""){
     msg += "<b>Persentase </b> belum diisi </br>";
   }
   if(obj.ada_thr==null || obj.ada_thr==""){
@@ -401,7 +379,6 @@
   }
 });
 
-@endforeach
 
  // validasi input
 
