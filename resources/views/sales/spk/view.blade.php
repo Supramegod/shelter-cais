@@ -71,10 +71,7 @@
               </a>
             </div>
             <div class="col-12 text-center mt-2">
-              <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Create PKS</span>
-                <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
-              </button>
+            <a href="{{route('pks.add',['id'=> $data->id])}}" class="btn btn-info w-100 waves-effect waves-light"><i class="mdi mdi-arrow-right"></i>&nbsp;  Create PKS</a>
             </div>
             @endif
             <div class="col-12 text-center mt-2">

@@ -11,23 +11,22 @@
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
             <span class="text-center">Form PKS Baru</span>
-            <span class="text-center"><button class="btn btn-secondary waves-effect @if(old('leads_id')==null) d-none @endif" type="button" id="btn-lihat-spk"><span class="tf-icons mdi mdi-arrow-right-circle-outline me-1"></span>&nbsp; Lihat Spk</button>&nbsp;&nbsp;&nbsp;&nbsp; <span>{{$now}}</span></span>
           </div>
         </h5>
         <form class="card-body overflow-hidden" action="{{route('pks.save')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
           @csrf
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
-              <h4 class="mb-0">QUOTATION</h4>
-              <h4>Pilih Spk Untuk Dijadikan PKS</h4>
+              <h4 class="mb-0">PKS</h4>
+              <h4>Pilih SPK Untuk Dijadikan PKS</h4>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Spk <span class="text-danger">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">SPK <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="hidden" id="spk_id" name="spk_id" value="@if($data !=null) {{$data->id}} @endif" class="form-control">
+                <input type="hidden" id="spk_id" name="spk_id" value="@if($spk !=null) {{$spk->id}} @endif" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="spk" name="spk" value="@if($data !=null) {{$data->nomor}} @endif" class="form-control" readonly>
-                  @if($data ==null)
+                  <input type="text" id="spk" name="spk" value="@if($spk !=null) {{$spk->nomor}} @endif" class="form-control" readonly>
+                  @if($spk ==null)
                     <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-spk"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Spk</button>
                     @if($errors->has('spk'))
                       <div class="invalid-feedback">{{$errors->first('spk')}}</div>
@@ -39,11 +38,11 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
               <div class="col-sm-4">
-                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($data !=null) {{$spk->nama_perusahaan}} @endif" class="form-control" readonly>
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($spk !=null) {{$spk->nama_perusahaan}} @endif" class="form-control" readonly>
               </div>
               <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
               <div class="col-sm-4">
-                <input type="text" id="kebutuhan" name="kebutuhan" value="@if($data !=null) {{$data->kebutuhan}} @endif" class="form-control" readonly>
+                <input type="text" id="kebutuhan" name="kebutuhan" value="@if($spk !=null) {{$spk->kebutuhan}} @endif" class="form-control" readonly>
               </div>
             </div>
             <div class="row">

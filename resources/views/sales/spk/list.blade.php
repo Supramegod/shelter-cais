@@ -305,7 +305,7 @@
                     ]
                     },
                     {
-                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah SPK</span>',
+                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-sm-inline-block">Tambah SPK</span>',
                     className: 'create-new btn btn-label-primary waves-effect waves-light',
                     action: function (e, dt, node, config)
                         {

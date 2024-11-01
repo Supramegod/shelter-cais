@@ -92,10 +92,10 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th></th>
                                     <th class="text-center">No.</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
+                                    <th class="text-center">Site</th>
                                     <th class="text-center">Kebutuhan</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Jenis Kontrak</th>
@@ -193,11 +193,6 @@
                     visible: false,
                     searchable: false
                 },{
-                    className: 'dt-control',
-                    orderable: false,
-                    data: null,
-                    defaultContent: ''
-                },{
                     data : 'nomor',
                     name : 'nomor',
                     className:'text-center'
@@ -208,6 +203,10 @@
                 },{
                     data : 'nama_perusahaan',
                     name : 'nama_perusahaan',
+                    className:'text-center'
+                },{
+                    data : 'nama_site',
+                    name : 'nama_site',
                     className:'text-center'
                 },{
                     data : 'kebutuhan',
@@ -319,21 +318,6 @@
                         }
                     }
                 ],
-            });
-
-            // Add event listener for opening and closing details
-            table.on('click', 'td.dt-control', function (e) {
-                let tr = e.target.closest('tr');
-                let row = table.row(tr);
-            
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                }
-                else {
-                    // Open this row
-                    row.child(format(row.data())).show();
-                }
             });
     </script>
 @endsection

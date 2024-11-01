@@ -54,8 +54,9 @@ class QuotationController extends Controller
     public function add (Request $request){
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
 
-            return view('sales.quotation.add',compact('now'));
+            return view('sales.quotation.add',compact('now','company'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -803,32 +804,69 @@ class QuotationController extends Controller
         try {
             DB::beginTransaction();
 
-            $validator = Validator::make($request->all(), [
-                'leads' => 'required',
-                'jumlah_site' => 'required'
-            ], [
-                'min' => 'Masukkan :attribute minimal :min',
-                'max' => 'Masukkan :attribute maksimal :max',
-                'required' => ':attribute harus di isi',
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $current_date = Carbon::now()->toDateString();
+            $kebutuhan = DB::table('m_kebutuhan')->where('id',$request->layanan)->first();
+            $qClientId = DB::table('sl_quotation_client')->insertGetId([
+                'tgl' => $current_date,
+                'leads_id' => $request->leads_id,
+                'jumlah_site' =>  $request->jumlah_site,
+                'nama_perusahaan' => $request->leads,
+                'layanan_id' => $request->layanan,
+                'layanan' => $kebutuhan->nama,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
             ]);
-    
-            if ($validator->fails()) {
-                return back()->withErrors($validator->errors())->withInput();
+
+            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
+            $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
+            if ($request->jumlah_site=="Multi Site") {
+                foreach ($request->multisite as $key => $value) {
+                    $newId = DB::table('sl_quotation')->insertGetId([
+                        'nomor' => $this->generateNomor($request->leads_id,$request->entitas),
+                        'quotation_client_id' => $qClientId,
+                        'tgl_quotation' => $current_date,
+                        'leads_id' => $request->leads_id,
+                        'nama_perusahaan' => $request->leads,
+                        'kebutuhan_id' => $request->layanan,
+                        'kebutuhan' => $kebutuhan->nama,
+                        'company_id' => $request->entitas,
+                        'company' => $company->name,
+                        'nama_perusahaan' => $request->leads,
+                        'nama_site' => $value,
+                        'step' => 1,
+                        'status_quotation_id' =>1,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+
+                    DB::table('sl_quotation_pic')->insert([
+                        'quotation_id' => $newId,
+                        'leads_id' => $request->leads_id,
+                        'nama' => $leads->pic,
+                        'jabatan_id' => $leads->jabatan_id,
+                        'jabatan' => $leads->jabatan,
+                        'no_telp' => $leads->no_telp,
+                        'email' => $leads->email,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+                }
             }else{
-                $current_date_time = Carbon::now()->toDateTimeString();
-                $current_date = Carbon::now()->toDateString();
                 $newId = DB::table('sl_quotation')->insertGetId([
+                    'nomor' => $this->generateNomor($request->leads_id,$request->entitas),
+                    'quotation_client_id' => $qClientId,
                     'tgl_quotation' => $current_date,
                     'leads_id' => $request->leads_id,
-                    'jumlah_site' =>  $request->jumlah_site,
                     'nama_perusahaan' => $request->leads,
+                    'nama_site' => $request->nama_site,
+                    'company_id' => $request->entitas,
+                    'company' => $company->name,
                     'step' => 1,
                     'status_quotation_id' =>1,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
-
-                $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
 
                 DB::table('sl_quotation_pic')->insert([
                     'quotation_id' => $newId,
@@ -841,10 +879,9 @@ class QuotationController extends Controller
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
-
-                DB::commit();
-                return redirect()->route('quotation.step',['id'=>$newId,'step'=>'1']);
             }
+            DB::commit();
+            return redirect()->route('quotation');
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1889,12 +1926,12 @@ class QuotationController extends Controller
     public function list (Request $request){
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $data = DB::table('sl_quotation')
-                    ->leftJoin('sl_quotation_kebutuhan','sl_quotation.id','sl_quotation_kebutuhan.quotation_id')
-                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
+                    ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
                     ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('m_status_quotation.nama as status','sl_quotation_kebutuhan.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation_kebutuhan.company','sl_quotation_kebutuhan.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation_kebutuhan.id','sl_quotation_kebutuhan.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
-                    ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation_kebutuhan.deleted_at');
+                    ->select('sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation.deleted_at');
 
             if(!empty($request->tgl_dari)){
                 $data = $data->where('sl_quotation.tgl_quotation','>=',$request->tgl_dari);
@@ -1913,7 +1950,7 @@ class QuotationController extends Controller
                 $data = $data->where('sl_quotation.company_id',$request->company);
             }
             if(isset($request->is_aktif)){
-                $data = $data->where('sl_quotation_kebutuhan.is_aktif',$request->is_aktif);
+                $data = $data->where('sl_quotation.is_aktif',$request->is_aktif);
             }
             //divisi sales
             if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
@@ -2927,7 +2964,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
         $urutan = "00001";
 
-        $jumlahData = DB::select("select * from sl_quotation_kebutuhan where nomor like '".$nomor.$month.$now->year."-"."%'");
+        $jumlahData = DB::select("select * from sl_quotation where nomor like '".$nomor.$month.$now->year."-"."%'");
         $urutan = sprintf("%05d", count($jumlahData)+1);
         $nomor = $nomor.$month.$now->year."-".$urutan;
 

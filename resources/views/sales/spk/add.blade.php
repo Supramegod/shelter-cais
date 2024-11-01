@@ -18,7 +18,7 @@
           @csrf
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
-              <h4 class="mb-0">QUOTATION</h4>
+              <h4 class="mb-0">SPK</h4>
               <h4>Pilih Quotation Untuk Dijadikan SPK</h4>
             </div>
             <div class="row mb-3">

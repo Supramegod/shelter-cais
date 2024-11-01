@@ -19,14 +19,12 @@
     <script src="{{ asset('public/assets/vendor/libs/@form-validation/bootstrap5.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/libs/@form-validation/auto-focus.js') }}"></script>
     <!-- Vendors JS -->
-    <!-- <script src="{{ asset('public/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script> -->
+    <script src="{{ asset('public/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js"></script>
     <!-- <script src="{{ asset('public/assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script> -->
     <!-- <script src="{{ asset('public/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script> -->
     <!-- <script src="{{ asset('public/assets/vendor/libs/select2/select2.js') }}"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
     <!-- Flat Picker -->
     <script src="{{ asset('public/assets/vendor/libs/moment/moment.js')}}"></script>

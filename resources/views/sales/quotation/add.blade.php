@@ -22,32 +22,6 @@
               <h4 class="mb-0">LEADS</h4>
               <h4>Pilih Leads Untuk Quotation</h4>
             </div>
-            <div class="row mb-2">
-              <div class="row mb-3">
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
-                    <label class="form-check-label custom-option-content" for="single_site">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-map-marker-outline"></i>
-                        <span class="custom-option-title">Single Site</span>
-                      </span>
-                      <input name="jumlah_site" class="form-check-input" type="radio" value="Single Site" id="single_site">
-                    </label>
-                  </div>
-                </div>
-                <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon">
-                    <label class="form-check-label custom-option-content" for="multi_site">
-                      <span class="custom-option-body">
-                        <i class="mdi mdi-map-marker-multiple-outline"></i>
-                        <span class="custom-option-title">Multi Site</span>
-                      </span>
-                      <input name="jumlah_site" class="form-check-input" type="radio" value="Multi Site" id="multi_site">
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Leads / customer <span class="text-danger">*</span></label>
               <div class="col-sm-10">
@@ -59,6 +33,37 @@
                     <div class="invalid-feedback">{{$errors->first('leads')}}</div>
                   @endif
                 </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Entitas <span class="text-danger">*</span></label>
+              <div class="col-sm-10">
+                <select id="entitas" name="entitas" class="form-select" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                  @foreach($company as $value)
+                  <option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>  
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Jumlah Site <span class="text-danger">*</span></label>
+              <div class="col-sm-4">
+                <select id="jumlah_site" name="jumlah_site" class="form-select" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                  <option value="Single Site">Single Site</option>
+                  <option value="Multi Site">Multi Site</option>
+                </select>
+              </div>
+              <label class="col-sm-2 col-form-label text-sm-end">Layanan <span class="text-danger">*</span></label>
+              <div class="col-sm-4">
+                <select id="layanan" name="layanan" class="form-select" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                  <option value="1">Security</option>
+                  <option value="2">Direct Labour</option>
+                  <option value="3">Cleaning Service</option>
+                  <option value="4">Logistik</option>
+                </select>
               </div>
             </div>
             <div class="row mb-3">
@@ -91,7 +96,38 @@
                 <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
               </div>
             </div>
-            <div class="row">
+            <div class="row mb-3 d-single-site">
+              <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+              <div class="col-sm-10">
+                <input type="text" id="nama_site" name="nama_site" value="" class="form-control">
+              </div>
+            </div>
+            <div class="row mb-3 d-multi-site">
+              <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+              <div class="col-sm-8 col-form-label text-sm-end">
+                <input type="text" class="form-control" id="siteName" placeholder="Nama Site">
+              </div>
+              <div class="col-sm-2">
+                <button type="button" id="addSiteBtn" class="btn btn-info w-100 mt-2">Tambah Site</button>
+              </div>
+
+              <div class="row mt-4">
+              <div class="offset-sm-2 col-sm-10 d-flex">
+                <table class="table table-bordered mt-4">
+                  <thead>
+                      <tr>
+                          <th>Nama Site</th>
+                          <th>Aksi</th>
+                      </tr>
+                  </thead>
+                  <tbody id="siteTableBody">
+                      <!-- Rows will be added here -->
+                  </tbody>
+              </table>
+              </div>
+            </div>
+            </div>
+            <div class="row mt-5">
               <div class="col-12 d-flex flex-row-reverse">
                 <button type="button" id="btn-submit" class="btn btn-primary btn-next w-20" style="color:white">
                   <span class="align-middle d-sm-inline-block d-none me-sm-1">Buat Quotation</span>
@@ -236,6 +272,7 @@
       return false;
     }
   });
+
 $('#btn-submit').on('click',function(e){
   e.preventDefault();
   var form = $(this).parents('form');
@@ -245,11 +282,25 @@ $('#btn-submit').on('click',function(e){
   if(obj.leads_id == null || obj.leads_id == "" ){
     msg += "<b>Leads</b> belum dipilih </br>";
   };
-
- if(obj.jumlah_site == null || obj.jumlah_site == "" ){
-    msg += "<b>Nama Site</b> belum dipilih </br>";
+  if(obj.entitas == null || obj.entitas == "" ){
+    msg += "<b>Entitas</b> belum dipilih </br>";
+  };
+  if(obj.kebutuhan == null || obj.kebutuhan == "" ){
+    msg += "<b>Kebutuhan</b> belum dipilih </br>";
   }; 
-
+  if(obj.jumlah_site == null || obj.jumlah_site == "" ){
+      msg += "<b>Jumlah Site</b> belum dipilih </br>";
+    }else{
+      if(obj.jumlah_site =="Single Site"){
+        if(obj.nama_site == null || obj.nama_site == "" ){
+          msg += "<b>Nama Site</b> belum diisi </br>";
+        }
+      }else{
+        if(obj["multisite[]"] == null || obj["multisite[]"] == "" ){
+          msg += "Isikan minimal 1 <b>Site</b></br>";
+        }
+      }
+    };
   if(msg == ""){
     form.submit();
   }else{
@@ -260,6 +311,62 @@ $('#btn-submit').on('click',function(e){
     });
   }
 });
+
+
+function showJumlahSite() {
+  let selected = $("#jumlah_site option:selected").val();
+  if (selected=="Single Site") {
+    $('.d-single-site').removeClass('d-none');
+    $('.d-multi-site').addClass('d-none');
+  }else if (selected=="Multi Site") {
+    $('.d-single-site').addClass('d-none');
+    $('.d-multi-site').removeClass('d-none');
+  }else{
+    $('.d-single-site').addClass('d-none');
+    $('.d-multi-site').addClass('d-none');
+  }
+}
+
+$(document).ready(function() {
+  $('.d-single-site').addClass('d-none');
+  $('.d-multi-site').addClass('d-none');
+
+  $('#jumlah_site').on('change', function() {
+    showJumlahSite();
+  });
+
+  $('#addSiteBtn').click(function() {
+      var siteName = $('#siteName').val().trim();
+
+      if (siteName === "") {
+          alert("Nama Site tidak boleh kosong.");
+          return;
+      }
+
+      // Menambahkan baris baru ke tabel
+      var newRow = `
+          <tr>
+              <td>
+                  ${siteName}
+                  <input type="hidden" name="multisite[]" value="${siteName}">
+              </td>
+              <td>
+                  <button type="button" class="btn btn-danger btn-sm delete-btn">
+                      <i class="mdi mdi-delete"></i>
+                  </button>
+              </td>
+          </tr>
+      `;
+      $('#siteTableBody').append(newRow);
+      $('#siteName').val(''); // Kosongkan input setelah tambah
+  });
+
+  // Menghapus baris ketika tombol delete diklik
+  $('#siteTableBody').on('click', '.delete-btn', function() {
+      $(this).closest('tr').remove();
+  });
+});
+
 
 </script>
 @endsection

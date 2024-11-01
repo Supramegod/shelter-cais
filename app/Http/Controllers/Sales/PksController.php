@@ -57,10 +57,9 @@ class PksController extends Controller
             $data=null;
             $quotation =null;
             if($request->id!=null){
-                $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('id',$request->id)->first();
-                $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$data->id)->first();
+                $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->id)->first();
             }
-            return view('sales.pks.add',compact('now','data','quotation'));
+            return view('sales.pks.add',compact('now','spk'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
