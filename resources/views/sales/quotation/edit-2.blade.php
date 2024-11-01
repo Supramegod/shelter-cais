@@ -465,8 +465,6 @@ $('#btn-submit').on('click',function(e){
       }
     }
   }
-
-  console.log(obj);
   if(msg == ""){
     form.submit();
   }else{

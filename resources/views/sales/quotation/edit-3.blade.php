@@ -43,10 +43,10 @@
                         <div class="col-sm-6">
                           <label class="form-label" for="jabatan_detail_{{$value->id}}">Nama Posisi/Jabatan</label>
                           <div class="input-group">
-                            <select id="jabatan_detail_{{$value->id}}" name="nama_jabatan" class="form-select" data-allow-clear="true" tabindex="-1">
+                            <select id="jabatan_detail_{{$value->id}}" name="nama_jabatan" class="form-select select2" data-allow-clear="true" tabindex="-1">
                               <option value="">- Pilih data -</option>
                               @foreach($value->detail as $detail)
-                                <option value="{{$detail->id}}">{{$detail->nama}}</option>  
+                                <option value="{{$detail->id}}">{{$detail->name}}</option>  
                               @endforeach  
                             </select>
                           </div>
@@ -67,8 +67,8 @@
                         </div>
                       </div>
                       <div class="row mt-5">
-                        <div class="table-responsive overflow-hidden table-data-{{$value->id}}">
-                          <table id="table-data-{{$value->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                        <div class="">
+                          <table id="table-data-{{$value->id}}" class="dt-column-search table w-100 table-hover">
                               <thead>
                                   <tr>
                                       <th class="text-center">ID</th>
@@ -151,6 +151,10 @@
       }],
       "language": datatableLang,
     });
+
+    $(document).ready(function() {
+    $('#jabatan_detail_{{$value->id}}').select2();
+  });
 
     $('#btn-tambah-detail-{{$value->id}}').on('click',function () {
       let jabatanDetailId = $('#jabatan_detail_{{$value->id}}').val();

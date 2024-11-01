@@ -21,9 +21,25 @@
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
-              <div class="card-header">        </div>
+              <div class="card-header">
+              </div>
         <div class="card-body">
         <div class="card-header p-0">
+          <button type="button" id="btn-tambah-item" class="btn btn-info btn-back w-20 waves-effect waves-light"  data-bs-toggle="modal" data-bs-target="#basicModal" style="margin-left:20px;margin-bottom:20px">
+            <i class="mdi mdi-plus"></i> &nbsp; Tunjangan
+          </button>
+          <div class="row mb-3" style="margin-left:20px;margin-bottom:20px;margin-right:20px;">
+            <div class="col-sm-12">
+              <label class="form-label" for="barang">Penagihan</label>
+              <div class="input-group">
+                <select id="penagihan" name="penagihan" class="form-select" data-allow-clear="true" tabindex="-1">
+                  <option value="" @if($quotation->penagihan=="" || $quotation->penagihan==null) selected @endif>- Pilih data -</option>
+                  <option value="Tanpa Pembulatan" @if($quotation->penagihan=="Tanpa Pembulatan") selected @endif>Tanpa Pembulatan</option>
+                  <option value="Dengan Pembulatan" @if($quotation->penagihan=="Dengan Pembulatan") selected @endif>Dengan Pembulatan</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <div class="nav-align-top">
             <ul class="nav nav-tabs nav-fill" role="tablist">
               <li class="nav-item" role="presentation">
@@ -86,7 +102,7 @@
                       @foreach($daftarTunjangan as $it => $tunjangan)
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">{{$tunjangan->nama}}</td>
+                        <td style="text-align:left" class="">{{$tunjangan->nama}} <a href="javascript:void(0)"><i class="mdi mdi-delete text-danger delete-tunjangan" data-nama="{{$tunjangan->nama}}"></i></a></td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->{$tunjangan->nama},2,",",".")}}</td>
@@ -122,7 +138,7 @@
                         <td style="text-align:left" class="">Tunjangan Holiday <b>( {{$quotation->tunjangan_holiday}} )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                        <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif"){{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}}@elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($quotation->nominal_tunjangan_holiday,2,",",".")}} @endif</td>
+                        <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif"){{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}}@elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($quotation->nominal_tunjangan_holiday,2,",",".")}} @endif</td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
@@ -350,7 +366,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                       </tr>
                       @foreach($daftarTunjangan as $it => $tunjangan)
                       <tr>
-                        <td>{{$tunjangan->nama}}</th>
+                        <td>{{$tunjangan->nama}} &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-delete text-danger delete-tunjangan" data-nama="{{$tunjangan->nama}}"></i></a></th>
                         <td class="text-center"></th>
                         @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
                         <td class="text-end">{{"Rp. ".number_format($detailJabatan->{$tunjangan->nama},2,",",".")}}</th>
@@ -825,6 +841,59 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
   <hr class="container-m-nx mb-5" />
 </div>
 
+<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel1">Tambah Tunjangan</h4>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <div class="input-group">
+                <select id="kebutuhan-detail" class="form-select">
+                  <option value="">- Pilih Posisi -</option>
+                  @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detail)
+                    <option value="{{$detail->id}}">{{$detail->jabatan_kebutuhan}}</option> 
+                  @endforeach 
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <input type="text" id="nama-tunjangan" class="form-control" placeholder="Masukkan Nama Tunjangan" />
+              <label for="nama-tunjangan">Nama Tunjangan</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-4 mt-2">
+            <div class="form-floating form-floating-outline">
+              <input type="text" id="nominal-tunjangan" class="form-control mask-nominal" placeholder="Masukkan Nominal" />
+              <label for="nominal-tunjangan">Nominal Tunjangan</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" id="btn-save-tambah-item" class="btn btn-primary">Tambah Item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!--/ Content -->
 @endsection
 
@@ -838,10 +907,57 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
       }
     });
 
+    let extra = 0;
+    $('.mask-nominal').on("keyup", function(event) {    
+    // When user select text in the document, also abort.
+    var selection = window.getSelection().toString();
+    if (selection !== '') {
+      return;
+    }
+
+    // When the arrow keys are pressed, abort.
+    if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+      if (event.keyCode == 38) {
+        extra = 1000;
+      } else if (event.keyCode == 40) {
+        extra = -1000;
+      } else {
+        return;
+      }
+
+    }
+
+    var $this = $(this);
+    // Get the value.
+    var input = $this.val();
+    var input = input.replace(/[\D\s\._\-]+/g, "");
+    input = input ? parseInt(input, 10) : 0;
+    input += extra;
+    extra = 0;
+    $this.val(function() {
+      return (input === 0) ? "" : input.toLocaleString("id-ID");
+    });
+  });
+
   $('#btn-submit').on('click',function(e){
     e.preventDefault();
     var form = $(this).parents('form');
-    form.submit();
+    let msg = "";
+    let obj = $("form").serializeObject();
+      
+    if(obj.penagihan == null || obj.penagihan == "" ){
+      msg += "<b>Penagihan</b> belum dipilih </br>";
+    };
+    
+    if(msg == ""){
+      form.submit();
+    }else{
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: msg,
+        icon: "warning"
+      });
+    }
   });
 
   $('.edit-biaya-monitoring').on('click',function(e){
@@ -884,5 +1000,92 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
     }).then((result) => {
     });
   });
+
+  $('#btn-save-tambah-item').on('click',function(){
+      $(this).attr('disabled', true);
+      let msg="";
+      let namaTunjangan = $('#nama-tunjangan').val();
+      let nominalTunjangan = $('#nominal-tunjangan').val();
+      let kebutuhanDetailId = $("#kebutuhan-detail option:selected").val();
+
+      if(kebutuhanDetailId==null || kebutuhanDetailId==""){
+        msg += "<b>Posisi</b> belum dipilih </br>";
+      };
+
+      if(namaTunjangan==null || namaTunjangan==""){
+        msg += "<b>Nama Tunjangan</b> belum diisi </br>";
+      };
+
+      if(nominalTunjangan==null || nominalTunjangan==""){
+        msg += "<b>Nominal Tunjangan</b> belum diisi </br>";
+      };
+
+      if(msg!=""){
+        Swal.fire({
+              title: "Pemberitahuan",
+              html: msg,
+              icon: "warning",
+            });
+        $('#nama-tunjangan').val("");
+        $('#nominal-tunjangan').val("");
+        $("#kebutuhan-detail").val("").change();
+        $('#basicModal').modal('toggle');
+        return null;
+      };
+
+      let formData = {
+        "namaTunjangan":namaTunjangan,
+        "nominalTunjangan":nominalTunjangan,
+        "kebutuhanDetailId":kebutuhanDetailId,
+        "id":{{$quotation->id}},
+        "_token": "{{ csrf_token() }}"
+      };
+
+      $.ajax({
+        type: "POST",
+        url: "{{route('quotation.add-tunjangan')}}",
+        data:formData,
+        success: function(response){
+          if(response=="Data Berhasil Ditambahkan"){
+            location.reload();
+          }else{
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: response,
+              icon: "warning",
+            });
+            $('#nama-tunjangan').val("");
+        $('#nominal-tunjangan').val("");
+        $("#kebutuhan-detail").val("").change();
+          }
+        },
+        error:function(error){
+          console.log(error);
+          $('#nama-tunjangan').val("");
+          $('#nominal-tunjangan').val("");
+          $("#kebutuhan-detail").val("").change();
+        }
+      });
+    });
+
+    $('body').on('click', '.delete-tunjangan', function() {
+    let formData = {
+      "nama":$(this).data('nama'),
+      "quotation_id":{{$quotation->id}},
+      "_token": "{{ csrf_token() }}"
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "{{route('quotation.delete-tunjangan')}}",
+      data:formData,
+      success: function(response){
+        location.reload();
+      },
+      error:function(error){
+        console.log(error);
+      }
+    });
+  })
 </script>
 @endsection
