@@ -95,8 +95,8 @@
                                     <th class="text-center">No.</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
-                                    <th class="text-center">Site</th>
                                     <th class="text-center">Kebutuhan</th>
+                                    <th class="text-center">Site</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Entitas</th>
                                     <th class="text-center">Created By</th>
@@ -204,12 +204,12 @@
                     name : 'nama_perusahaan',
                     className:'text-center'
                 },{
-                    data : 'nama_site',
-                    name : 'nama_site',
-                    className:'text-center'
-                },{
                     data : 'kebutuhan',
                     name : 'kebutuhan',
+                    className:'text-center'
+                },{
+                    data : 'nama_site',
+                    name : 'nama_site',
                     className:'text-center'
                 },{
                     data : 'status',

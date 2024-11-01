@@ -19,6 +19,7 @@
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">OVER HEAD COST ( OHC )</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
+                <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
               </div>
               <div class="row mt-1">
                 <div class="row mb-3" style="display: flex;justify-content: center;">
@@ -229,7 +230,7 @@
       ajax: {
           url: "{{ route('quotation.list-ohc') }}",
           data: function (d) {
-              d.quotation_kebutuhan_id = {{$quotationKebutuhan[0]->id}};
+              d.quotation_id = {{$quotation->id}};
           },
       }, 
       rowGroup: {
@@ -306,7 +307,7 @@
           "barang":barang,
           "harga":harga,
           "jumlah":jumlah,
-          "quotation_kebutuhan_id":{{$quotationKebutuhan[0]->id}},
+          "quotation_id":{{$quotation->id}},
           "_token": "{{ csrf_token() }}"
         };
 
@@ -338,7 +339,7 @@
     $('body').on('click', '.btn-delete', function() {
     let formData = {
       "barang_id":$(this).data('barang'),
-      "quotation_kebutuhan_id":$(this).data('kebutuhan'),
+      "quotation_id":$(this).data('quotation'),
       "_token": "{{ csrf_token() }}"
     };
 
