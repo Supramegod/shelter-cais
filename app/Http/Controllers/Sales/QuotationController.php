@@ -1196,53 +1196,39 @@ class QuotationController extends Controller
     public function saveEdit5 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
-            foreach ($quotationKebutuhan as $key => $value) {
-                $jenisPerusahaanId = $request['jenis-perusahaan'];
-                $resiko = $request['resiko'];
-                $penjamin = $request['penjamin'];
-                $programBpjs = $request['program-bpjs'];
-                $nominalTakaful = $request['nominal-takaful'];
+            $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->first();
+            $jenisPerusahaanId = $request['jenis-perusahaan'];
+            $resiko = $request['resiko'];
+            $penjamin = $request['penjamin'];
+            $programBpjs = $request['program-bpjs'];
+            $nominalTakaful = $request['nominal-takaful'];
 
-                // jika penjamin takaful maka program bpjs == null
-                if($penjamin=="Takaful"){
-                    $programBpjs = null; 
-                    $nominalTakaful = str_replace(".","",$nominalTakaful);
-                }else{
-                    $nominalTakaful =null;
-                }
-
-                $jenisPerusahaan = null;
-                if($jenisPerusahaanId != null){
-                    $jenisPerusahaanList = DB::table('m_jenis_perusahaan')->where('id',$jenisPerusahaanId)->first();
-                    if($jenisPerusahaanList != null){
-                        $jenisPerusahaan = $jenisPerusahaanList->nama;
-                    }
-                }
-
-                $isAktif = $value->is_aktif;
-                if($isAktif==2){
-                    if($programBpjs != "4 BPJS"){
-                        $isAktif = 0;
-                    }
-                }
-
-                if($isAktif ==2){
-                    $isAktif = 1;
-                };
-
-                DB::table('sl_quotation_kebutuhan')->where('id',$value->id)->update([
-                    'jenis_perusahaan_id' => $jenisPerusahaanId,
-                    'jenis_perusahaan' => $jenisPerusahaan,
-                    'resiko' => $resiko,
-                    'is_aktif' => $isAktif,
-                    'penjamin' => $penjamin,
-                    'program_bpjs' => $programBpjs,
-                    'nominal_takaful' => $nominalTakaful,
-                    'updated_at' => $current_date_time,
-                    'updated_by' => Auth::user()->full_name
-                ]);
+            // jika penjamin takaful maka program bpjs == null
+            if($penjamin=="Takaful"){
+                $programBpjs = null; 
+                $nominalTakaful = str_replace(".","",$nominalTakaful);
+            }else{
+                $nominalTakaful =null;
             }
+
+            $jenisPerusahaan = null;
+            if($jenisPerusahaanId != null){
+                $jenisPerusahaanList = DB::table('m_jenis_perusahaan')->where('id',$jenisPerusahaanId)->first();
+                if($jenisPerusahaanList != null){
+                    $jenisPerusahaan = $jenisPerusahaanList->nama;
+                }
+            }
+
+            $isAktif = $quotation->is_aktif;
+            if($isAktif==2){
+                if($programBpjs != "4 BPJS"){
+                    $isAktif = 0;
+                }
+            }
+
+            if($isAktif == 2){
+                $isAktif = 1;
+            };
 
             $newStep = 6;
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
@@ -1255,15 +1241,20 @@ class QuotationController extends Controller
             
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
+                'jenis_perusahaan_id' => $jenisPerusahaanId,
+                'jenis_perusahaan' => $jenisPerusahaan,
+                'resiko' => $resiko,
+                'is_aktif' => $isAktif,
+                'penjamin' => $penjamin,
+                'program_bpjs' => $programBpjs,
+                'nominal_takaful' => $nominalTakaful,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-
             if($request->edit==0){
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
             }else{
-                return redirect()->route('quotation.view',$data->id);
+                return redirect()->route('quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {

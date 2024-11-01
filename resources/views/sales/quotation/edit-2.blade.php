@@ -19,7 +19,7 @@
                 <h6 class="mb-3">DETAIL KONTRAK</h6>
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
-                <h6>Site : {{$quotation->nama_site}}</h6>
+                <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
               </div>
               <div class="row mb-3">
                 <div class="col-sm-6">
