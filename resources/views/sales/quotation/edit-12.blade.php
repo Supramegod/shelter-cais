@@ -9,7 +9,7 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @if($quotationKebutuhan[0]->is_aktif==0)
+        @if($quotation->is_aktif==0)
           @include('sales.quotation.step')
         @endif
         <div class="bs-stepper-content">
@@ -21,6 +21,7 @@
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">FORM CHECKLIST NEW SITE & PERJANJIAN KERJA SAMA</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
+                <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
               </div>
               <div class="row mt-5">
                 <div class="table-responsive overflow-hidden">
@@ -28,7 +29,7 @@
                       <tbody>
                         <tr>
                           <td>No. Quotation</td>
-                          <td colspan="4">{{$quotationKebutuhan[0]->nomor}}</td>
+                          <td colspan="4">{{$quotation->nomor}}</td>
                         </tr>
                         <tr>
                           <td>Tgl. Pengajuan Kerjasama</td>
@@ -51,15 +52,15 @@
                         </tr>
                         <tr>
                           <td>Penerima Kerjasama</td>
-                          <td colspan="3" class="fw-bold">{{$quotationKebutuhan[0]->company}}</td>
+                          <td colspan="3" class="fw-bold">{{$quotation->company}}</td>
                         </tr>
                         <tr>
                           <td>Hal Kerjasama</td>
-                          <td colspan="3">PERJANJIAN KERJASAMA ALIH DAYA JASA {{strtoupper($quotationKebutuhan[0]->kebutuhan)}}</td>
+                          <td colspan="3">PERJANJIAN KERJASAMA ALIH DAYA JASA {{strtoupper($quotation->kebutuhan)}}</td>
                         </tr>
                         <tr>
                           <td>Jumlah Personel</td>
-                          <td colspan="3">{{$quotationKebutuhan[0]->jumlah_personel}}</td>
+                          <td colspan="3">{{$quotation->jumlah_personel}}</td>
                         </tr>
                         <tr>
                           <td>NPWP <span class="text-danger fw-bold">*</span> </td>
@@ -231,10 +232,10 @@
                           </td>
                           @endif
                         </tr>
-                        @if($quotationKebutuhan[0]->penjamin=="Takaful")
+                        @if($quotation->penjamin=="Takaful")
                         <tr>
                           <td>Penjamin</td>
-                          <td colspan="3">{{$quotationKebutuhan[0]->penjamin}}</td>
+                          <td colspan="3">{{$quotation->penjamin}}</td>
                         </tr>
                         @else
                         <tr>
@@ -251,7 +252,7 @@
                               <tbody>
                                 <tr>
                                   <td class="text-center">JKK</td>
-                                  <td class="text-center">@if($quotationKebutuhan[0]->resiko=="Sangat Rendah") 0,24 @elseif($quotationKebutuhan[0]->resiko=="Rendah") 0,54 @elseif($quotationKebutuhan[0]->resiko=="Sedang") 0,89 @elseif($quotationKebutuhan[0]->resiko=="Tinggi") 1,27 @elseif($quotationKebutuhan[0]->resiko=="Sangat Tinggi") 1,74 @endif %</td>
+                                  <td class="text-center">@if($quotation->resiko=="Sangat Rendah") 0,24 @elseif($quotation->resiko=="Rendah") 0,54 @elseif($quotation->resiko=="Sedang") 0,89 @elseif($quotation->resiko=="Tinggi") 1,27 @elseif($quotation->resiko=="Sangat Tinggi") 1,74 @endif %</td>
                                   <td class="text-center">&nbsp;</td>
                                 </tr>
                                 <tr>
@@ -259,14 +260,14 @@
                                   <td class="text-center">0,3 %</td>
                                   <td class="text-center">&nbsp;</td>
                                 </tr>
-                                @if($quotationKebutuhan[0]->program_bpjs=="3 BPJS" || $quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                                @if($quotation->program_bpjs=="3 BPJS" || $quotation->program_bpjs=="4 BPJS")
                                 <tr>
                                   <td class="text-center">JHT</td>
                                   <td class="text-center">3,7 %</td>
                                   <td class="text-center">2%</td>
                                 </tr>
                                 @endif
-                                @if($quotationKebutuhan[0]->program_bpjs=="4 BPJS")
+                                @if($quotation->program_bpjs=="4 BPJS")
                                 <tr>
                                   <td class="text-center">JP</td>
                                   <td class="text-center">2 %</td>

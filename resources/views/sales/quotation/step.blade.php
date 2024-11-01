@@ -22,29 +22,23 @@
     @foreach($arrStep as $key => $data)
         <!-- kalo belum ada kebutuhan maka skip kaporlap dll` -->
         @php
-            if(count($quotationKebutuhan)==0){
-                if(in_array($data['stepno'],[7,8,9,10])){
-                    continue;
-                }
-            }else{
-                if($quotationKebutuhan[0]->kebutuhan_id==2){
+            if($quotation->kebutuhan_id==2){
                     if(in_array($data['stepno'],[10])){
                         continue;
                     }
-                }else if($quotationKebutuhan[0]->kebutuhan_id==1){
+                }else if($quotation->kebutuhan_id==1){
                     if(in_array($data['stepno'],[10])){
                         continue;
                     }
-                }else if($quotationKebutuhan[0]->kebutuhan_id==3){
+                }else if($quotation->kebutuhan_id==3){
                     if(in_array($data['stepno'],[])){
                         continue;
                     }
-                }else if($quotationKebutuhan[0]->kebutuhan_id==4){
+                }else if($quotation->kebutuhan_id==4){
                     if(in_array($data['stepno'],[10])){
                         continue;
                     }
                 }
-            }
         @endphp
         @if(!$loop->first)
             <div class="line"></div>

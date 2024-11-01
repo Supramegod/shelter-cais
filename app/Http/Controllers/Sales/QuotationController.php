@@ -488,14 +488,13 @@ class QuotationController extends Controller
                 $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
                 $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
                 $sPersonil = "";
-                foreach ($quotationKebutuhan as $iqk => $qk) {
-                    $jPersonil = DB::select("SELECT sum(jumlah_hc) as jumlah_hc FROM sl_quotation_kebutuhan_detail WHERE quotation_kebutuhan_id = $qk->id and deleted_at is null;");
+                $jPersonil = DB::select("SELECT sum(jumlah_hc) as jumlah_hc FROM sl_quotation_detail WHERE quotation_id = $quotation->id and deleted_at is null;");
                     if($jPersonil!=null){
                         if ($jPersonil[0]->jumlah_hc!=null && $jPersonil[0]->jumlah_hc!=0) {
                             $sPersonil .= $jPersonil[0]->jumlah_hc." Manpower (";
-                            $detailPersonil = DB::table('sl_quotation_kebutuhan_detail')
-                            ->whereNull('sl_quotation_kebutuhan_detail.deleted_at')
-                            ->where('sl_quotation_kebutuhan_detail.quotation_kebutuhan_id',$qk->id)
+                            $detailPersonil = DB::table('sl_quotation_detail')
+                            ->whereNull('sl_quotation_detail.deleted_at')
+                            ->where('sl_quotation_detail.quotation_id',$quotation->id)
                             ->get();
                             foreach ($detailPersonil as $idp => $vdp) {
                                 if($idp !=0){
@@ -511,8 +510,7 @@ class QuotationController extends Controller
                     }else{
                         $sPersonil = "-";
                     }
-                    $qk->jumlah_personel = $sPersonil;
-                }
+                    $quotation->jumlah_personel = $sPersonil;
             }
 
             $isEdit = false;
@@ -1666,8 +1664,6 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
             
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
-
             //tamba perjanjian
             //hapus dulu perjanjian yg lama atau kalau ada
             DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->id)->whereNull('deleted_at')->update([
@@ -1675,7 +1671,7 @@ class QuotationController extends Controller
                 'deleted_by' => Auth::user()->full_name
             ]);
 
-            $kebutuhanPerjanjian = "<b>".$data->kebutuhan."</b>";
+            $kebutuhanPerjanjian = "<b>".$dataQuotation->kebutuhan."</b>";
             //buat perjanjian
             // $top = "";
             // if($dataQuotation->top=="Kurang Dari 7 Hari"){
@@ -1721,7 +1717,7 @@ class QuotationController extends Controller
             if ($dataQuotation->kunjungan_operasional !=null) {
                 $kunjunganOperasional = explode(" ",$dataQuotation->kunjungan_operasional)[0]." kali dalam 1 ".explode(" ",$dataQuotation->kunjungan_operasional)[1];
             }
-            $appPendukung = DB::table('sl_quotation_kebutuhan_aplikasi')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$data->id)->get();
+            $appPendukung = DB::table('sl_quotation_aplikasi')->whereNull('deleted_at')->where('quotation_id',$request->id)->get();
             $sAppPendukung = "<b>";
             foreach ($appPendukung as $kduk => $dukung) {
                 if($kduk != 0){
@@ -1756,7 +1752,7 @@ class QuotationController extends Controller
             if($request->edit==0){
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'13']);
             }else{
-                return redirect()->route('quotation.view',$data->id);
+                return redirect()->route('quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1769,9 +1765,8 @@ class QuotationController extends Controller
     public function saveEdit13 (Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
             $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->id)->first();
-            $umk = DB::table('m_umk')->where('city_id',$data->kota_id)->whereNull('deleted_at')->first();
+            $umk = DB::table('m_umk')->where('city_id',$quotation->kota_id)->whereNull('deleted_at')->first();
             $isAktif = 1;
             $statusQuotation = 3;
 
@@ -1781,42 +1776,37 @@ class QuotationController extends Controller
                 $statusQuotation = 2;
             }
             // jika nominal kurang dari umk
-            if ($data->nominal_upah<$umk->umk) {
+            if ($quotation->nominal_upah<$umk->umk) {
                 $isAktif = 0;
                 $statusQuotation = 2;
             }
 
             // jika persentasi mf kurang dari 7
-            if ($data->persentase < 7) {
+            if ($quotation->persentase < 7) {
                 $isAktif = 0;
                 $statusQuotation = 2;
             }
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
+                'is_aktif' => $isAktif,
                 'step' => 100,
                 'status_quotation_id' =>$statusQuotation,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            DB::table('sl_quotation_kebutuhan')->where('id',$data->id)->update([
-                'is_aktif' => $isAktif,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
 
             //Masukkan Requirement
-            $detail = DB::table('sl_quotation_kebutuhan_detail')->whereNull('deleted_at')->where('quotation_kebutuhan_id',$data->id)->get();
+            $detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
             foreach ($detail as $key => $value) {
                 //cari apakah ada requirement
-                $existData= DB::table('sl_quotation_kebutuhan_detail_requirement')->where('quotation_kebutuhan_detail_id',$value->id)->whereNull('deleted_at')->get();
+                $existData= DB::table('sl_quotation_detail_requirement')->where('quotation_detail_id',$value->id)->whereNull('deleted_at')->get();
 
                 if(count($existData)==0){
-                    $requirement = DB::table('m_kebutuhan_detail_requirement')->whereNull('deleted_at')->where('position_id',$value->kebutuhan_detail_id)->get();
+                    $requirement = DB::table('m_kebutuhan_detail_requirement')->whereNull('deleted_at')->where('position_id',$value->position_id)->get();
                     foreach ($requirement as $kreq => $req) {
-                        DB::table('sl_quotation_kebutuhan_detail_requirement')->insert([
-                            'quotation_id' => $data->quotation_id,
-                            'quotation_kebutuhan_id' => $data->id,
-                            'quotation_kebutuhan_detail_id' => $value->id,
+                        DB::table('sl_quotation_detail_requirement')->insert([
+                            'quotation_id' => $quotation->quotation_id,
+                            'quotation_detail_id' => $value->id,
                             'requirement' => $req->requirement,
                             'created_at' => $current_date_time,
                             'created_by' => Auth::user()->full_name
@@ -1825,7 +1815,7 @@ class QuotationController extends Controller
                 }
             }
 
-            return redirect()->route('quotation.view',$data->id);
+            return redirect()->route('quotation.view',$quotation->id);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
