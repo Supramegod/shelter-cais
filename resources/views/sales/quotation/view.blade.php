@@ -67,10 +67,13 @@
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
               @endif
               @if($data->is_aktif==1)
+                <a href="javascript:void(0)" class="btn btn-secondary"><i class="mdi mdi-content-copy"></i>&nbsp; Copy</a>
                 @if($data->spk==null)
+                <a href="javascript:void(0)" class="btn btn-danger"><i class="mdi mdi-refresh"></i>&nbsp; Ajukan Ulang</a>
                 <a href="{{route('spk.add',['id'=> $data->id])}}" class="btn btn-info"><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</a>
                 @endif
               @endif
+              <br>
               <div class="btn-group" role="group">
               <button id="btncetak" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" @if($data->is_aktif!=1) disabled @endif>
                 Cetak Dokumen

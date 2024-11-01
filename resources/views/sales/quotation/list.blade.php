@@ -235,7 +235,7 @@
                 buttons: [
                     {
                     extend: 'collection',
-                    className: 'btn btn-label-success dropdown-toggle me-2 waves-effect waves-light',
+                    className: 'btn btn-label-success dropdown-toggle waves-effect waves-light',
                     text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
                     buttons: [
                         {
@@ -263,7 +263,7 @@
                         }
                         },{
                         extend: 'excel',
-                        text: '<i class="mdi mdi-file-document-outline me-1" ></i>Excel',
+                        text: '<i class="mdi mdi-file-document-outline" ></i>Excel',
                         className: 'dropdown-item',
                         exportOptions: {
                             columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
@@ -271,7 +271,7 @@
                         },
                         {
                         extend: 'pdf',
-                        text: '<i class="mdi mdi-file-pdf-box me-1"></i>Pdf',
+                        text: '<i class="mdi mdi-file-pdf-box"></i>Pdf',
                         className: 'dropdown-item',
                         orientation: 'landscape',
                         customize: function(doc) {
@@ -302,6 +302,15 @@
                         }
                         }
                     ]
+                    },
+                    {
+                    text: '<i class="mdi mdi-content-copy mr-1"></i> <span class="d-none d-sm-inline-block">Copy Quotation</span>',
+                    className: 'create-new btn btn-label-warning waves-effect waves-light',
+                    action: function (e, dt, node, config)
+                        {
+                            //This will send the page to the location specified
+                           
+                        }
                     },
                     {
                     text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Quotation</span>',
