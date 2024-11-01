@@ -138,7 +138,29 @@ class QuotationController extends Controller
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
+            $province = DB::connection('mysqlhris')->table('m_province')->get();
+            foreach ($province as $key => $value) {
+                $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$value->id)->first();
+                $value->ump = "Rp. 0";
+                if($dataUmp !=null){
+                    $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
+                }
+            }
+            $kota = DB::connection('mysqlhris')->table('m_city')->get();
+            $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+           
+            //step 6 - aplikasi pendukung
+            $aplikasiPendukung = null;
+            $arrAplikasiSel = [];
+            if($request->step==6){
+                $aplikasiPendukung = DB::table('m_aplikasi_pendukung')->whereNull('deleted_at')->get();
+                $listApp = DB::table('sl_quotation_aplikasi')->where('quotation_id',$id)->whereNull('deleted_at')->get();
 
+                foreach ($listApp as $key => $value) {
+                    array_push($arrAplikasiSel,$value->aplikasi_pendukung_id);
+                }
+            }
             
             
             
@@ -160,29 +182,7 @@ class QuotationController extends Controller
                 $value->kebutuhan_detail = DB::table('sl_quotation_kebutuhan_detail')->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->get();
             }
 
-            $province = DB::connection('mysqlhris')->table('m_province')->get();
-            foreach ($province as $key => $value) {
-                $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$value->id)->first();
-                $value->ump = "Rp. 0";
-                if($dataUmp !=null){
-                    $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
-                }
-            }
-            $kota = DB::connection('mysqlhris')->table('m_city')->get();
-            $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
-            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
-           
-            //step 6 - aplikasi pendukung
-            $aplikasiPendukung = null;
-            $arrAplikasiSel = [];
-            if($request->step==6){
-                $aplikasiPendukung = DB::table('m_aplikasi_pendukung')->whereNull('deleted_at')->get();
-                $listApp = DB::table('sl_quotation_kebutuhan_aplikasi')->where('quotation_id',$id)->whereNull('deleted_at')->get();
-
-                foreach ($listApp as $key => $value) {
-                    array_push($arrAplikasiSel,$value->aplikasi_pendukung_id);
-                }
-            }
+            
 
             //step 7 - kaporlap
             $listKaporlap = null;
@@ -1270,32 +1270,30 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             if($request->aplikasi_pendukung !=null){
-                $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
-                foreach ($quotationKebutuhan as $key => $value) {
-                    $aplikasiPendukung = $request->aplikasi_pendukung;
-                    $arrAplikasiId = [];
-                    foreach ($aplikasiPendukung as $keyd => $valued) {
-                        $appdukung = DB::table('m_aplikasi_pendukung')->where('id',$valued)->first();
-    
-                        $dataAplikasi = DB::table('sl_quotation_kebutuhan_aplikasi')->where('aplikasi_pendukung_id',$valued)->where('quotation_kebutuhan_id',$value->id)->whereNull('deleted_at')->first();
-                        $quotationKebutuhanDetail = DB::table("sl_quotation_kebutuhan_detail")->whereNull('deleted_at')->where('quotation_kebutuhan_id',$value->id)->first();
+                $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->get();
+                $aplikasiPendukung = $request->aplikasi_pendukung;
+                $arrAplikasiId = [];
+                foreach ($aplikasiPendukung as $keyd => $valued) {
+                    $appdukung = DB::table('m_aplikasi_pendukung')->where('id',$valued)->first();
 
-                        if($dataAplikasi==null){
-                            $appId = DB::table('sl_quotation_kebutuhan_aplikasi')->insertGetId([
-                                'quotation_id' => $request->id,
-                                'quotation_kebutuhan_id' => $value->id,
-                                'aplikasi_pendukung_id' => $valued,
-                                'aplikasi_pendukung' => $appdukung->nama,
-                                'harga' => $appdukung->harga,
-                                'created_at' => $current_date_time,
-                                'created_by' => Auth::user()->full_name
-                            ]);
+                    $dataAplikasi = DB::table('sl_quotation_aplikasi')->where('aplikasi_pendukung_id',$valued)->where('quotation_id',$request->id)->whereNull('deleted_at')->first();
+                    $quotationDetail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where('quotation_id',$request->id)->get();
 
-                            DB::table('sl_quotation_kebutuhan_devices')->insert([
+                    if($dataAplikasi==null){
+                        $appId = DB::table('sl_quotation_aplikasi')->insertGetId([
+                            'quotation_id' => $request->id,
+                            'aplikasi_pendukung_id' => $valued,
+                            'aplikasi_pendukung' => $appdukung->nama,
+                            'harga' => $appdukung->harga,
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+
+                        foreach ($quotationDetail as $key => $detail) {
+                            DB::table('sl_quotation_devices')->insert([
                                 'quotation_id' => $request->id,
-                                'quotation_kebutuhan_id' => $value->id,
-                                'quotation_kebutuhan_detail_id' => $quotationKebutuhanDetail->id,
-                                'quotation_kebutuhan_aplikasi_id' => $appId,
+                                'quotation_detail_id' => $detail->id,
+                                'quotation_aplikasi_id' => $appId,
                                 'barang_id' => $appdukung->barang_id,
                                 'jumlah' => 1,
                                 'harga' => $appdukung->harga,
@@ -1304,23 +1302,25 @@ class QuotationController extends Controller
                                 'created_at' => $current_date_time,
                                 'created_by' => Auth::user()->full_name
                             ]);
-                            array_push($arrAplikasiId,$appId);
-                        }else{
-                            DB::table('sl_quotation_kebutuhan_aplikasi')->where('id',$dataAplikasi->id)->update([
-                                'quotation_id' => $request->id,
-                                'quotation_kebutuhan_id' => $value->id,
-                                'aplikasi_pendukung_id' => $valued,
-                                'aplikasi_pendukung' => $appdukung->nama,
-                                'harga' => $appdukung->harga,
-                                'updated_at' => $current_date_time,
-                                'updated_by' => Auth::user()->full_name
-                            ]);
+                        }
+                        
+                        array_push($arrAplikasiId,$appId);
+                    }else{
+                        DB::table('sl_quotation_aplikasi')->where('id',$dataAplikasi->id)->update([
+                            'quotation_id' => $request->id,
+                            'aplikasi_pendukung_id' => $valued,
+                            'aplikasi_pendukung' => $appdukung->nama,
+                            'harga' => $appdukung->harga,
+                            'updated_at' => $current_date_time,
+                            'updated_by' => Auth::user()->full_name
+                        ]);
 
-                            DB::table("sl_quotation_kebutuhan_devices")
+                        foreach ($quotationDetail as $key => $detail) {
+                            DB::table("sl_quotation_devices")
                             ->whereNull('deleted_at')
-                            ->where('quotation_kebutuhan_id',$value->id)
-                            ->where('quotation_kebutuhan_detail_id',$quotationKebutuhanDetail->id)
-                            ->where('quotation_kebutuhan_aplikasi_id',$dataAplikasi->id)
+                            ->where('quotation_id',$request->id)
+                            ->where('quotation_detail_id',$detail->id)
+                            ->where('quotation_aplikasi_id',$dataAplikasi->id)
                             ->where('barang_id',$request->barang)->update([
                                     'jumlah' => 1,
                                     'harga' => $appdukung->harga,
@@ -1329,20 +1329,20 @@ class QuotationController extends Controller
                                     'updated_at' => $current_date_time,
                                     'updated_by' => Auth::user()->full_name
                             ]);
-
-                            array_push($arrAplikasiId,$dataAplikasi->id);
                         }
+
+                        array_push($arrAplikasiId,$dataAplikasi->id);
                     }
-    
-                    DB::table('sl_quotation_kebutuhan_aplikasi')->where('quotation_kebutuhan_id',$value->id)->whereNotIn('aplikasi_pendukung_id', $aplikasiPendukung)->update([
-                        'deleted_at' => $current_date_time,
-                        'deleted_by' => Auth::user()->full_name
-                    ]);
-                    DB::table('sl_quotation_kebutuhan_devices')->where('quotation_kebutuhan_id',$value->id)->whereNotIn('quotation_kebutuhan_aplikasi_id', $arrAplikasiId)->update([
-                        'deleted_at' => $current_date_time,
-                        'deleted_by' => Auth::user()->full_name
-                    ]);
                 }
+
+                DB::table('sl_quotation_aplikasi')->where('quotation_id',$request->id)->whereNotIn('aplikasi_pendukung_id', $aplikasiPendukung)->update([
+                    'deleted_at' => $current_date_time,
+                    'deleted_by' => Auth::user()->full_name
+                ]);
+                DB::table('sl_quotation_devices')->where('quotation_id',$request->id)->whereNotIn('quotation_aplikasi_id', $arrAplikasiId)->update([
+                    'deleted_at' => $current_date_time,
+                    'deleted_by' => Auth::user()->full_name
+                ]);
             }
 
             $newStep = 7;
@@ -1361,12 +1361,11 @@ class QuotationController extends Controller
             ]);
 
             DB::commit();
-            $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
             if($request->edit==0){
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
             }else{
-                return redirect()->route('quotation.view',$data->id);
+                return redirect()->route('quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {

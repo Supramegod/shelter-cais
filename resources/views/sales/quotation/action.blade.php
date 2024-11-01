@@ -2,22 +2,19 @@
     <div class="col-12 d-flex justify-content-between">
     @php
     $stepSebelumnya = $request->step-1;
-
-    if(count($quotationKebutuhan)>0){
-        if($quotationKebutuhan[0]->kebutuhan_id==2){
-            if($stepSebelumnya==10){
-                $stepSebelumnya = 9;
-            }
-        }else if($quotationKebutuhan[0]->kebutuhan_id==1){
-            if($stepSebelumnya==10){
-                $stepSebelumnya = 9;
-            }
-        }else if($quotationKebutuhan[0]->kebutuhan_id==3){
-            
-        }else if($quotationKebutuhan[0]->kebutuhan_id==4){
-            if($stepSebelumnya==10){
-                $stepSebelumnya = 9;
-            }
+    if($quotation->kebutuhan_id==2){
+        if($stepSebelumnya==10){
+            $stepSebelumnya = 9;
+        }
+    }else if($quotation->kebutuhan_id==1){
+        if($stepSebelumnya==10){
+            $stepSebelumnya = 9;
+        }
+    }else if($quotation->kebutuhan_id==3){
+        
+    }else if($quotation->kebutuhan_id==4){
+        if($stepSebelumnya==10){
+            $stepSebelumnya = 9;
         }
     }
     @endphp
@@ -37,7 +34,7 @@
         </button>
     @else
         <input type="hidden" name="edit" value="1">
-        <a href="{{route('quotation.view',['id'=>$quotationKebutuhan[0]->id])}}" class="btn btn-secondary w-30">
+        <a href="{{route('quotation.view',['id'=>$quotation->id])}}" class="btn btn-secondary w-30">
             <i class="mdi mdi-arrow-left"></i>
             <span class="align-middle d-sm-inline-block d-none me-sm-1">&nbsp;Kembali Ke Quotation</span>
         </a>
