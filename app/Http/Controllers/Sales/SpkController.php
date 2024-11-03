@@ -57,8 +57,17 @@ class SpkController extends Controller
             $data=null;
             $quotation =null;
             if($request->id!=null){
-                $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('id',$request->id)->first();
-                $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$data->id)->first();
+                $data = DB::table('sl_quotation_client')->whereNull('deleted_at')->where('id',$request->id)->first();
+                $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$data->id)->get();
+
+                $data->nomor = "";
+
+                foreach ($quotation as $key => $value) {
+                    if ($key!=0) {
+                        $data->nomor .= ", ";
+                    }
+                    $data->nomor .= $value->nomor;
+                }
             }
             return view('sales.spk.add',compact('now','data','quotation'));
         } catch (\Exception $e) {
@@ -272,6 +281,14 @@ class SpkController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
+
+            $spk = DB::table('sl_spk')->where('id',$request->id)->first();
+            DB::table('sl_quotation')->where('quotation_client_id',$spk->quotation_client_id)->update([
+                'status_quotation_id' => 4,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
             return "success";
         } catch (\Throwable $th) {
             //throw $th;

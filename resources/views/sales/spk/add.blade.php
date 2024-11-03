@@ -39,7 +39,7 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
               <div class="col-sm-4">
-                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($data !=null) {{$quotation->nama_perusahaan}} @endif" class="form-control" readonly>
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($data !=null) {{$data->nama_perusahaan}} @endif" class="form-control" readonly>
               </div>
               <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
               <div class="col-sm-4">
@@ -167,6 +167,26 @@
             }],
       "language": datatableLang,
   });
+
+  @if($data != null)
+    $("#d-table-quotation").removeClass("d-none");
+    $.ajax({
+      url: '{{route("quotation.get-quotation-list")}}',
+      type: 'GET',
+      data: { quotation_client_id: {{$data->id}} },
+      success: function(data) {
+      $('#tbody-quotation').empty();
+      $('#tbody-quotation').append('');
+
+      $.each(data, function(key, value) {
+          $('#tbody-quotation').append('<tr><td>'+value.no+'</td><td>'+value.nomor+'</td><td>'+value.nama_site+'</td><td>'+value.kebutuhan+'</td></tr>');
+      });
+      },
+      error: function() {
+        alert('Gagal mengambil data');
+      }
+    });
+  @endif
 
   $('#table-data').on('click', 'tbody tr', function() {
       $('#modal-quotation').modal('hide');
