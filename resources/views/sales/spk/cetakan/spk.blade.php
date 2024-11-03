@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Perintah Kerja - {{$data->nama_perusahaan}}</title>
+    <title>Surat Perintah Kerja - {{$leads->nama_perusahaan}}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -53,15 +53,15 @@
             <table>
                 <tr>
                     <td class="label">Nama</td>
-                    <td>: @if($pic!=null){{$pic->nama}}@endif</td>
+                    <td>: @if($quotation[0]->pic!=null){{$quotation[0]->pic->nama}}@endif</td>
                 </tr>
                 <tr>
                     <td>Jabatan</td>
-                    <td>: @if($pic!=null){{$pic->jabatan}}@endif</td>
+                    <td>: @if($quotation[0]->pic!=null){{$quotation[0]->pic->jabatan}}@endif</td>
                 </tr>
                 <tr>
                     <td>Nama Perusahaan</td>
-                    <td>: {{$data->nama_perusahaan}}</td>
+                    <td>: {{$leads->nama_perusahaan}}</td>
                 </tr>
                 <tr>
                     <td>Alamat Perusahaan</td>
@@ -69,11 +69,11 @@
                 </tr>
                 <tr>
                     <td>No. NPWP</td>
-                    <td>: {{$quotation->npwp}}</td>
+                    <td>: {{$quotation[0]->npwp}}</td>
                 </tr>
             </table>
 
-            <p>Berdasarkan hasil diskusi & penawaran dari pihak SHELTER dengan {{$data->nama_perusahaan}}, maka dilakukan penunjukan kerjasama untuk penyediaan tenaga {{$quotationKebutuhan->kebutuhan}} sebanyak {{$quotation->total_hc}} personil yang akan mulai ditempatkan pertanggal {{$quotation->tgl_penempatan}} di lokasi {{$quotation->penempatan}} .</p>
+            <p>Berdasarkan hasil diskusi & penawaran dari pihak SHELTER dengan {{$leads->nama_perusahaan}}, maka dilakukan penunjukan kerjasama untuk penyediaan tenaga @foreach($quotation[0]->detail as $key => $value) @if($key !=0) , @endif {{$value->jabatan_kebutuhan}} sebanyak {{$value->jumlah_hc}} @endforeach personil yang akan mulai ditempatkan pertanggal {{$quotation[0]->tgl_penempatan}} di lokasi @foreach($quotation as $key => $value) @if($key !=0) , @endif {{$value->penempatan}} @endforeach .</p>
 
             <p>Maka dengan ini mengeluarkan (SPK) Surat Perintah Kerjasama atau sebagai Confirmation Letter kepada:</p>
 
@@ -95,8 +95,8 @@
             <div class="signature">
                 <p>Surabaya, {{$now}}</p>
                 <br><br><br>
-                <p>@if($pic!=null){{$pic->nama}}@else ............................... @endif</p>
-                <p>{{$data->nama_perusahaan}}</p>
+                <p>@if($quotation[0]->pic!=null){{$quotation[0]->pic->nama}}@else ............................... @endif</p>
+                <p>{{$leads->nama_perusahaan}}</p>
             </div>
         </div>
     </div>

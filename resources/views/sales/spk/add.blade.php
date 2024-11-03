@@ -24,7 +24,7 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Quotation <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="hidden" id="quotation_id" name="quotation_id" value="@if($data !=null) {{$data->id}} @endif" class="form-control">
+                <input type="hidden" id="quotation_client_id" name="quotation_client_id" value="@if($data !=null) {{$data->id}} @endif" class="form-control">
                 <div class="input-group">
                   <input type="text" id="quotation" name="quotation" value="@if($data !=null) {{$data->nomor}} @endif" class="form-control" readonly>
                   @if($data ==null)
@@ -43,10 +43,26 @@
               </div>
               <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
               <div class="col-sm-4">
-                <input type="text" id="kebutuhan" name="kebutuhan" value="@if($data !=null) {{$data->kebutuhan}} @endif" class="form-control" readonly>
+                <input type="text" id="layanan" name="layanan" value="@if($data !=null) {{$data->layanan}} @endif" class="form-control" readonly>
               </div>
             </div>
-            <div class="row">
+            <div id="d-table-quotation" class="row mb-3 d-none">
+              <div class="table-responsive overflow-hidden table-quotation">
+                <table id="table-quotation" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                  <thead>
+                    <tr>
+                      <th>No.</th>
+                      <th>Nomor</th>
+                      <th>Nama Site</th>
+                      <th>Kebutuhan</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-quotation">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row mb-3">
               <div class="col-12 d-flex flex-row-reverse">
                 <button id="btn-submit" type="submit" class="btn btn-primary btn-next w-20" style="color:white">
                   <span class="align-middle d-sm-inline-block d-none me-sm-1">Buat SPK</span>
@@ -76,10 +92,11 @@
                 <thead>
                   <tr>
                     <th class="text-center">ID</th>
-                    <th class="text-center">Nomor</th>
                     <th class="text-center">Tgl Quotation</th>
+                    <th class="text-center">Jumlah Site</th>
                     <th class="text-center">Nama Perusahaan</th>
                     <th class="text-center">Kebutuhan</th>
+                    <th class="text-center">Quotation</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -128,20 +145,24 @@
                 name : 'id',
                 searchable: false
             },{
-                data : 'nomor',
-                name : 'nomor',
-                className:'text-center'
-            },{
                 data : 'tgl_quotation',
                 name : 'tgl_quotation',
+                className:'text-center'
+            },{
+                data : 'jumlah_site',
+                name : 'jumlah_site',
                 className:'text-center'
             },{
                 data : 'nama_perusahaan',
                 name : 'nama_perusahaan',
                 className:'text-center'
             },{
-                data : 'kebutuhan',
-                name : 'kebutuhan',
+                data : 'layanan',
+                name : 'layanan',
+                className:'text-center'
+            },{
+                data : 'quotation',
+                name : 'quotation',
                 className:'text-center'
             }],
       "language": datatableLang,
@@ -150,10 +171,32 @@
   $('#table-data').on('click', 'tbody tr', function() {
       $('#modal-quotation').modal('hide');
       var rdata = table.row(this).data();
-      $('#quotation_id').val(rdata.id);
-      $('#quotation').val(rdata.nomor);
+      $('#quotation_client_id').val(rdata.id);
+      $('#quotation').val(rdata.quotation);
       $('#nama_perusahaan').val(rdata.nama_perusahaan);
-      $('#kebutuhan').val(rdata.kebutuhan);
+      $('#layanan').val(rdata.layanan);
+
+      if(rdata.jumlah_site=="Multi Site"){
+        $("#d-table-quotation").removeClass("d-none");
+        $.ajax({
+          url: '{{route("quotation.get-quotation-list")}}',
+          type: 'GET',
+          data: { quotation_client_id: rdata.id },
+          success: function(data) {
+          $('#tbody-quotation').empty();
+          $('#tbody-quotation').append('');
+
+          $.each(data, function(key, value) {
+              $('#tbody-quotation').append('<tr><td>'+value.no+'</td><td>'+value.nomor+'</td><td>'+value.nama_site+'</td><td>'+value.kebutuhan+'</td></tr>');
+          });
+          },
+          error: function() {
+           alert('Gagal mengambil data');
+          }
+        });
+      }else{
+        $("#d-table-quotation").addClass("d-none");
+      }
     });
 
 
@@ -170,7 +213,7 @@
     let msg = "";
     let obj = $("form").serializeObject();
       
-    if(obj.quotation_id == null || obj.quotation_id == "" ){
+    if(obj.quotation_client_id == null || obj.quotation_client_id == "" ){
       msg += "<b>Quotation</b> belum dipilih </br>";
     };
 

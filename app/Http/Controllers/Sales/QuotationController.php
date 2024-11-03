@@ -3460,6 +3460,20 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         return $quotationTujuan;
     }
     
+    public function getQuotationList(Request $request){
+        $quotation = DB::table("sl_quotation")
+        ->where("quotation_client_id",$request->quotation_client_id)
+        ->whereNull('deleted_at')
+        ->get();
+        
+        foreach ($quotation as $key => $value) {
+            $value->no = $key+1;
+        }
+
+        return $quotation;
+    }
+    
+
     public function getQuotationAsal(Request $request){
         $quotation = DB::table("sl_quotation")->where("id",$request->quotationTujuan)->first();
 

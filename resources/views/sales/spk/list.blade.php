@@ -94,10 +94,11 @@
                                     <th class="text-center">ID</th>
                                     <th></th>
                                     <th class="text-center">No SPK</th>
-                                    <th class="text-center">No Quotation</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
+                                    <th class="text-center">Site</th>
                                     <th class="text-center">Kebutuhan</th>
+                                    <th class="text-center">Nomor Quotation</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Created By</th>
                                     <th class="text-center">Aksi</th>
@@ -201,10 +202,6 @@
                     name : 'nomor',
                     className:'text-center'
                 },{
-                    data : 'nomor_quotation',
-                    name : 'nomor_quotation',
-                    className:'text-center'
-                },{
                     data : 'tgl_spk',
                     name : 'tgl_spk',
                     className:'text-center'
@@ -213,8 +210,16 @@
                     name : 'nama_perusahaan',
                     className:'text-center'
                 },{
+                    data : 'nama_site',
+                    name : 'nama_site',
+                    className:'text-center'
+                },{
                     data : 'kebutuhan',
                     name : 'kebutuhan',
+                    className:'text-center'
+                },{
+                    data : 'nomor_quotation',
+                    name : 'nomor_quotation',
                     className:'text-center'
                 },{
                     data : 'status',
