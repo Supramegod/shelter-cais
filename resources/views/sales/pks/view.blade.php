@@ -85,6 +85,12 @@
             </div>
           </div>
           <div class="card-body">
+          <div class="col-12 text-center mt-2">
+              <a onclick="window.open('{{route('spk.cetak-pks',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Download PKS</span>
+                <i class="mdi mdi-download scaleX-n1-rtl"></i>
+              </a>
+            </div>
           @if($data->status_pks_id == 1 && Auth::user()->role_id==96)
           <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="1"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Sales</button>
@@ -171,10 +177,6 @@
   @endif
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('pks')}}");
-  });
-
-  $('#btn-download-pks').on('click',function () {
-    alert('Template PKS Terdownload');
   });
   
   $('#btn-ajukan-ulang').on('click',function () {

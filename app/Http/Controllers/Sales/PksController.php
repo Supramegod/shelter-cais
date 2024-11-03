@@ -284,4 +284,33 @@ class PksController extends Controller
             abort(500);
         }
     }
+
+    public function cetakPks (Request $request,$id){
+        try {
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $data = DB::table("sl_pks")->where("id",$id)->first();
+            $quotationClient = DB::table("sl_quotation_client")->where("id",$data->quotation_client_id)->first();
+            $quotation = DB::table("sl_quotation")->where("quotation_client_id",$quotationClient->id)->get();
+            $leads = DB::table("sl_leads")->where("id",$data->leads_id)->first();
+            foreach ($quotation as $key => $value) {
+                $value->tgl_penempatan = Carbon::createFromFormat('Y-m-d',$value->tgl_penempatan)->isoFormat('D MMMM Y');
+                $value->detail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where("quotation_id",$value->id)->get();
+
+                $totalhc = 0;
+                foreach ($value->detail as $keyd => $valued) {
+                    $totalhc+=$valued->jumlah_hc;
+                }
+                $value->total_hc = $totalhc;
+                $value->pic = DB::table("sl_quotation_pic")->whereNull('deleted_at')->where('quotation_id',$value->id)->where('is_kuasa',1)->first();
+            }
+
+            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation[0]->company_id)->first();
+
+            return view('sales.pks.cetakan.pks',compact('now','data','quotation','quotationClient','leads','company'));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
 }
