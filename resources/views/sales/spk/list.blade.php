@@ -177,11 +177,6 @@
                 "createdRow": function( row, data, dataIndex){
                     if(data.status_spk_id==1){
                         $('td', row).css('background-color', '#f39c1240');
-                    }else if(data.status_spk_id==2){
-                        $('td', row).css('background-color', '#27ae6040');
-                    }else if(data.status_spk_id==4){
-                        $('td', row).css('background-color', '#57575740');
-                        $('td', row).css('color', '#fff');
                     }
                 },     
                 "order":[

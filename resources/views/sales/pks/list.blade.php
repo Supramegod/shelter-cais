@@ -95,7 +95,6 @@
                                     <th></th>
                                     <th class="text-center">No PKS</th>
                                     <th class="text-center">No SPK</th>
-                                    <th class="text-center">No Quotation</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
                                     <th class="text-center">Kebutuhan</th>
@@ -175,13 +174,8 @@
                     },
                 },
                 "createdRow": function( row, data, dataIndex){
-                    if(data.status_pks_id==1){
+                    if(data.status_pks_id==1 || data.status_pks_id==2 || data.status_pks_id==3 || data.status_pks_id== 4 || data.status_pks_id==5){
                         $('td', row).css('background-color', '#f39c1240');
-                    }else if(data.status_pks_id==2){
-                        $('td', row).css('background-color', '#27ae6040');
-                    }else if(data.status_pks_id==4){
-                        $('td', row).css('background-color', '#57575740');
-                        $('td', row).css('color', '#fff');
                     }
                 },     
                 "order":[
@@ -204,10 +198,6 @@
                 },{
                     data : 'nomor_spk',
                     name : 'nomor_spk',
-                    className:'text-center'
-                },{
-                    data : 'nomor_quotation',
-                    name : 'nomor_quotation',
                     className:'text-center'
                 },{
                     data : 'tgl_pks',

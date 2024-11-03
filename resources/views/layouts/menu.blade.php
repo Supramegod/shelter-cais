@@ -173,15 +173,47 @@
             <div data-i18n="Customer Activity">Customer Activity</div>
             </a>
         </li>
-        <!-- DIREKTUR -->
-        @elseif(in_array(Auth::user()->role_id,[96,97,98,99,100]))
+        @if(in_array(Auth::user()->role_id,[54,55,56]))
         <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
             <a href="{{route('quotation')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
             <div data-i18n="Quotation">Quotation</div>
             </a>
         </li>
-        
+        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
+            <a href="{{route('spk')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
+            <div data-i18n="SPK">SPK</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
+            <a href="{{route('pks')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
+            <div data-i18n="PKS">PKS</div>
+            </a>
+        </li>
+        @endif
+        <!-- DIREKTUR -->
+        @elseif(in_array(Auth::user()->role_id,[53,56,96,97,98,99,100]))
+        <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
+            <a href="{{route('quotation')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
+            <div data-i18n="Quotation">Quotation</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
+            <a href="{{route('spk')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
+            <div data-i18n="SPK">SPK</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
+            <a href="{{route('pks')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
+            <div data-i18n="PKS">PKS</div>
+            </a>
+        </li>
+
         <!-- SUPER USER -->
         @elseif(Auth::user()->role_id==2)
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">

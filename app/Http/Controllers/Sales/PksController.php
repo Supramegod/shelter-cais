@@ -69,11 +69,12 @@ class PksController extends Controller
 
     public function list (Request $request){
         $data = DB::table('sl_pks')
-                ->leftJoin('sl_quotation','sl_quotation.id','sl_pks.quotation_id')
+                ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_pks.quotation_client_id')
                 ->leftJoin('sl_spk','sl_spk.id','sl_pks.spk_id')
-                ->leftJoin('sl_quotation_kebutuhan','sl_quotation.id','sl_quotation_kebutuhan.quotation_id')
                 ->whereNull('sl_pks.deleted_at')
-                ->select('sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_quotation_kebutuhan.nomor as nomor_quotation','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation_kebutuhan.kebutuhan','sl_pks.status_pks_id')
+                ->whereNull('sl_spk.deleted_at')
+                ->whereNull('sl_quotation_client.deleted_at')
+                ->select('sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation_client.nama_perusahaan','sl_quotation_client.layanan as kebutuhan','sl_pks.status_pks_id')
                 ->get();
 
         foreach ($data as $key => $value) {
@@ -213,7 +214,7 @@ class PksController extends Controller
             Storage::disk('pks')->put($originalName, file_get_contents($request->file('file')));
             
             DB::table('sl_pks')->where('id',$request->id)->update([
-                'status_pks_id' => 2,
+                'status_pks_id' => 6,
                 'link_pks_disetujui' =>env('APP_URL')."/public/pks/".$originalName,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
@@ -221,5 +222,66 @@ class PksController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
         };
+    }
+
+    public function approve(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $ot = $request->ot;
+            $id = $request->id;
+            $status = 1;
+            if($ot==1){
+                $status = 2;
+            }else if($ot==2){
+                $status = 3;
+            }else if($ot==3){
+                $status = 4;
+            }else if($ot==4){
+                $status = 5;
+            }
+
+            $approve ="ot".$ot;
+            DB::table('sl_pks')->where('id',$id)->update([
+                $approve => Auth::user()->full_name,
+                'status_pks_id' => $status,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function aktifkanSite(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $pks = DB::table('sl_pks')->where('id',$request->id)->first();
+            DB::table('sl_pks')->where('id',$request->id)->update([
+                'ot5' => Auth::user()->full_name,
+                'status_pks_id' => 7,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+            DB::table('sl_quotation')->where('quotation_client_id',$pks->quotation_client_id)->update([
+                'status_quotation_id' => 6,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_spk')->where('id',$pks->spk_id)->update([
+                'status_spk_id' => 4,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
     }
 }

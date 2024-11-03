@@ -11,7 +11,7 @@
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
-            <span>Form PKS <span class="badge @if($data->status_pks_id==1 ) bg-label-warning @elseif($data->status_pks_id==2 ) bg-label-info @elseif($data->status_pks_id==3 ) bg-label-success @endif rounded-pill mt-1">{{$data->status}}</span></span>
+            <span>Form PKS <span class="badge @if($data->status_pks_id==1 || $data->status_pks_id==2 || $data->status_pks_id==3 || $data->status_pks_id==4 || $data->status_pks_id==5 ) bg-label-warning @elseif($data->status_pks_id==6 ) bg-label-info @elseif($data->status_pks_id==7 ) bg-label-success @endif rounded-pill mt-1">{{$data->status}}</span></span>
             <span style="font-weight:bold;color:#000">{{$data->nomor}} - {{$data->stgl_pks}}</span>
           </div>
         </h5>
@@ -85,33 +85,52 @@
             </div>
           </div>
           <div class="card-body">
-            @if($data->status_pks_id == 1)
-            <div class="col-12 text-center mt-2">
-              <button id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
-                <span class="me-1">Download Template PKS</span>
-                <i class="mdi mdi-download scaleX-n1-rtl"></i>
-              </button>
-            </div>
-            <div class="col-12 text-center mt-2">
-              <button id="btn-upload-pks" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Upload PKS</span>
-                <i class="mdi mdi-upload scaleX-n1-rtl"></i>
-              </button>
-            </div>
-            @elseif($data->status_pks_id == 2)
-            <div class="col-12 text-center mt-2">
-              <a target="_blank" href="{{$data->link_pks_disetujui}}" id="btn-lihat-pks" class="btn btn-success w-100 waves-effect waves-light">
-                <span class="me-1">Lihat PKS</span>
-                <i class="mdi mdi-download scaleX-n1-rtl"></i>
-              </a>
-            </div>
-            <div class="col-12 text-center mt-2">
-              <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Aktifkan Site</span>
-                <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
-              </button>
-            </div>
-            @endif
+          @if($data->status_pks_id == 1 && Auth::user()->role_id==96)
+          <div class="col-12 text-center mt-2">
+            <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="1"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Sales</button>
+          </div>
+          @elseif($data->status_pks_id == 2 && Auth::user()->role_id==97)
+          <div class="col-12 text-center mt-2">
+            <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="2"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Keuangan</button>
+          </div>
+          @elseif($data->status_pks_id == 3 && Auth::user()->role_id==53)
+          <div class="col-12 text-center mt-2">
+            <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="3"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval GM HRM</button>
+          </div>
+          @elseif($data->status_pks_id == 4 && Auth::user()->role_id==99)
+          <div class="col-12 text-center mt-2">
+            <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="4"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Utama</button>
+          </div>
+          @elseif($data->status_pks_id == 5 && Auth::user()->role_id==29)
+          <div class="col-12 text-center mt-2">
+            <button id="btn-upload-pks" class="btn btn-info w-100 waves-effect waves-light">
+              <span class="me-1">Upload PKS</span>
+              <i class="mdi mdi-upload scaleX-n1-rtl"></i>
+            </button>
+          </div>
+          @elseif($data->status_pks_id == 6 && Auth::user()->role_id==56)
+          <div class="col-12 text-center mt-2">
+            <button class="btn btn-info w-100 waves-effect waves-light" id="aktifkan-site" data-id="{{$data->id}}">
+              <span class="me-1">Aktifkan Site</span>
+              <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
+            </button>
+          </div>
+          @endif
+          @if($data->link_pks_disetujui !=null)
+          <div class="col-12 text-center mt-2">
+            <a target="_blank" href="{{$data->link_pks_disetujui}}" id="btn-lihat-pks" class="btn btn-success w-100 waves-effect waves-light">
+              <span class="me-1">Lihat PKS</span>
+              <i class="mdi mdi-download scaleX-n1-rtl"></i>
+            </a>
+          </div>
+          @else
+          <div class="col-12 text-center mt-2">
+            <button id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
+              <span class="me-1">Download PKS</span>
+              <i class="mdi mdi-download scaleX-n1-rtl"></i>
+            </button>
+          </div>
+          @endif
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
@@ -210,5 +229,106 @@
         });
     });
 
+    $('body').on('click', '#approve-pks', function() {
+    Swal.fire({
+      icon: "question",
+      title: "Apakah anda yakin ingin menyetujui data ini ?",
+      showCancelButton: true,
+      confirmButtonText: "Approve",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        let formData = {
+          "id":$(this).data('id'),
+          "ot":$(this).data('ot'),
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('pks.approve')}}",
+          data:formData,
+          success: function(response){
+            let timerInterval;
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: "Data berhasil disetujui.",
+              icon: "success",
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                timerInterval = setInterval(() => {
+                  timer.textContent = `${Swal.getTimerLeft()}`;
+                }, 100);
+              },
+              willClose: () => {
+                clearInterval(timerInterval);
+              }
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                location.reload();
+              }
+            });
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      }
+    });
+  });
+  $('body').on('click', '#aktifkan-site', function() {
+    Swal.fire({
+      icon: "question",
+      title: "Apakah anda yakin ingin mengaktifkan data ini ?",
+      showCancelButton: true,
+      confirmButtonText: "Aktifkan",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        let formData = {
+          "id":$(this).data('id'),
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('pks.aktifkan-site')}}",
+          data:formData,
+          success: function(response){
+            let timerInterval;
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: "Data berhasil diaktifkan.",
+              icon: "success",
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                timerInterval = setInterval(() => {
+                  timer.textContent = `${Swal.getTimerLeft()}`;
+                }, 100);
+              },
+              willClose: () => {
+                clearInterval(timerInterval);
+              }
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                location.reload();
+              }
+            });
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      }
+    });
+  });
 </script>
 @endsection

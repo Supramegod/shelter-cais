@@ -104,6 +104,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/pks/save', 'save')->name('pks.save');
         Route::get('/sales/pks/view/{id}', 'view')->name('pks.view');
         Route::post('/sales/pks/upload-pks', 'uploadPks')->name('pks.upload-pks');
+
+        Route::post('/sales/pks/approve', 'approve')->name('pks.approve');
+        Route::post('/sales/pks/aktifkan-site', 'aktifkanSite')->name('pks.aktifkan-site');
     });
 
     Route::controller(QuotationController::class)->group(function() {
