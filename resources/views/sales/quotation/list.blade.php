@@ -139,9 +139,6 @@
             <label for="quotationTujuan" class="form-label">Quotation Tujuan</label>
             <select id="quotationTujuan" class="form-select">
               <option value="" selected>Pilih Quotation Tujuan</option>
-              @foreach($quotationTujuan as $qtujuan)
-              <option value="{{$qtujuan->id}}">{{$qtujuan->nomor}}</option>
-              @endforeach
             </select>
           </div>
         </form>
@@ -149,6 +146,31 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
         <button type="button" id="simpan-copy-quotation" class="btn btn-primary">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="quotationModal2" tabindex="-1" aria-labelledby="quotationModalLabel2" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="quotationModalLabel2">Pilih Quotation Asal untuk Quotation : <span id="nomorQuotationTujuan"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <input type="hidden" id="quotationTujuan2">
+          <div class="mb-3">
+            <label for="quotationAsal2" class="form-label">Quotation Asal</label>
+            <select id="quotationAsal2" class="form-select">
+              <option value="" selected>Pilih Quotation Asal</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" id="simpan-copy-quotation-asal" class="btn btn-primary">Simpan</button>
       </div>
     </div>
   </div>
@@ -368,6 +390,75 @@
                 location.href = url;
             }
             
+            $("#simpan-copy-quotation-asal").on('click',function() {
+                let msg = "";
+                let qasal = $("#quotationAsal2").val();
+                let qtujuan = $("#quotationTujuan2").val();
+
+                if(qasal==null || qasal==""){
+                    msg += "<b>Quotation Asal</b> belum dipilih </br>";
+                }
+
+                if(qtujuan==null || qtujuan==""){
+                    msg += "<b>Quotation Tujuan</b> belum dipilih </br>";
+                }
+
+                if(msg == ""){
+                    $("#quotationModal2").modal("hide");                           
+
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: 'Apakah Anda yakin ingin mengcopy Quotation '+$('#quotationAsal2 option:selected').text()+' ke Quotation '+$('#nomorQuotationTujuan').text()+'?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Copy',
+                        cancelButtonText: 'Batal'
+                        }).then((result) => {
+                        // Jika user mengklik "Ya"
+                        if (result.isConfirmed) {
+                            redirectToQuotationCopy(qasal,qtujuan);
+                        }
+                    });
+                }else{
+                    $("#quotationModal2").modal("hide");                           
+                    Swal.fire({
+                    title: "Pemberitahuan",
+                    html: msg,
+                    icon: "warning"
+                    });
+                }
+            });
+
+            $('body').on('click', '.copy-quotation', function() {
+                $("#quotationModal2").modal("show"); 
+                $("#quotationTujuan2").val($(this).data('id'));
+                $("#nomorQuotationTujuan").text($(this).data('nomor'));
+                let quotationTujuan = $(this).data('id');
+                if(quotationTujuan) {
+                $.ajax({
+                    url: '{{route("quotation.get-quotation-asal")}}',
+                    type: 'GET',
+                    data: { quotationTujuan: quotationTujuan },
+                    success: function(data) {
+                    $('#quotationAsal2').empty();
+                    $('#quotationAsal2').append('<option value="">Pilih Quotation Asal</option>');
+
+                    $.each(data, function(key, value) {
+                        $('#quotationAsal2').append('<option value="' + value.id + '">' + value.nomor + '</option>');
+                    });
+                    },
+                    error: function() {
+                    alert('Gagal mengambil data');
+                    }
+                });
+                } else {
+                $('#quotationTujuan').empty();
+                $('#quotationTujuan').append('<option value="">Pilih Quotation Tujuan</option>');
+                }
+            });
+            
             $("#simpan-copy-quotation").on('click',function() {
                 let msg = "";
                 let qasal = $("#quotationAsal").val();
@@ -409,9 +500,30 @@
                 }
             });
 
-            $('body').on('click', '.copy-quotation', function() {
-            alert($(this).data('id'));
-            });
-            
+            $('#quotationAsal').change(function() {
+                var quotationAsal = $(this).val(); 
+
+                if(quotationAsal) {
+                $.ajax({
+                    url: '{{route("quotation.get-quotation-tujuan")}}',
+                    type: 'GET',
+                    data: { quotationAsal: quotationAsal },
+                    success: function(data) {
+                    $('#quotationTujuan').empty();
+                    $('#quotationTujuan').append('<option value="">Pilih Quotation Tujuan</option>');
+
+                    $.each(data, function(key, value) {
+                        $('#quotationTujuan').append('<option value="' + value.id + '">' + value.nomor + '</option>');
+                    });
+                    },
+                    error: function() {
+                    alert('Gagal mengambil data');
+                    }
+                });
+                } else {
+                $('#quotationTujuan').empty();
+                $('#quotationTujuan').append('<option value="">Pilih Quotation Tujuan</option>');
+                }
+            })
     </script>
 @endsection
