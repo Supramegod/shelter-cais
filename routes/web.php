@@ -183,6 +183,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/list-detail-requirement', 'listDetailRequirement')->name('quotation.list-detail-requirement'); // ajax
         Route::post('/sales/quotation/delete-detail-requirement', 'deleteDetailRequirement')->name('quotation.delete-detail-requirement');
         Route::post('/sales/quotation/add-detail-requirement', 'addDetailRequirement')->name('quotation.add-detail-requirement');
+
+        Route::get('/sales/quotation/copy-quotation/{qasal}/{qtujuan}', 'copyQuotation')->name('quotation.copy-quotation');
+
     });
 
 

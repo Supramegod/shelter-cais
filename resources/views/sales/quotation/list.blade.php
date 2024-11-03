@@ -116,6 +116,43 @@
     <!--/ Responsive Datatable -->
 </div>
 <!--/ Content -->
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="quotationModal" tabindex="-1" aria-labelledby="quotationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="quotationModalLabel">Pilih Quotation Asal dan Tujuan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="quotationAsal" class="form-label">Quotation Asal</label>
+            <select id="quotationAsal" class="form-select">
+              <option value="" selected>Pilih Quotation Asal</option>
+              @foreach($quotationAsal as $qasal)
+              <option value="{{$qasal->id}}">{{$qasal->nomor}}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="quotationTujuan" class="form-label">Quotation Tujuan</label>
+            <select id="quotationTujuan" class="form-select">
+              <option value="" selected>Pilih Quotation Tujuan</option>
+              @foreach($quotationTujuan as $qtujuan)
+              <option value="{{$qtujuan->id}}">{{$qtujuan->nomor}}</option>
+              @endforeach
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" id="simpan-copy-quotation" class="btn btn-primary">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('pageScript')
@@ -308,8 +345,7 @@
                     className: 'create-new btn btn-label-warning waves-effect waves-light',
                     action: function (e, dt, node, config)
                         {
-                            //This will send the page to the location specified
-                           
+                            $("#quotationModal").modal("show");                           
                         }
                     },
                     {
@@ -324,6 +360,54 @@
                 ],
             });
 
+            let baseUrl = "{{ route('quotation.copy-quotation', ['qasal' => ':qasal', 'qtujuan' => ':qtujuan']) }}";
+
+            function redirectToQuotationCopy(qasal, qtujuan) {
+                // Ganti placeholder `:qasal` dan `:qtujuan` dengan nilai aktual
+                let url = baseUrl.replace(':qasal', qasal).replace(':qtujuan', qtujuan);
+                location.href = url;
+            }
+            
+            $("#simpan-copy-quotation").on('click',function() {
+                let msg = "";
+                let qasal = $("#quotationAsal").val();
+                let qtujuan = $("#quotationTujuan").val();
+
+                if(qasal==null || qasal==""){
+                    msg += "<b>Quotation Asal</b> belum dipilih </br>";
+                }
+
+                if(qtujuan==null || qtujuan==""){
+                    msg += "<b>Quotation Tujuan</b> belum dipilih </br>";
+                }
+
+                if(msg == ""){
+                    $("#quotationModal").modal("hide");                           
+
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: 'Apakah Anda yakin ingin mengcopy Quotation '+$('#quotationAsal option:selected').text()+' ke Quotation '+$('#quotationTujuan option:selected').text()+'?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Copy',
+                        cancelButtonText: 'Batal'
+                        }).then((result) => {
+                        // Jika user mengklik "Ya"
+                        if (result.isConfirmed) {
+                            redirectToQuotationCopy(qasal,qtujuan);
+                        }
+                    });
+                }else{
+                    $("#quotationModal").modal("hide");                           
+                    Swal.fire({
+                    title: "Pemberitahuan",
+                    html: msg,
+                    icon: "warning"
+                    });
+                }
+            });
 
             $('body').on('click', '.copy-quotation', function() {
             alert($(this).data('id'));

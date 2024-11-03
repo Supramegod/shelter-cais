@@ -67,7 +67,7 @@
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
               @endif
               @if($data->is_aktif==1)
-                <a href="javascript:void(0)" class="btn btn-secondary"><i class="mdi mdi-content-copy"></i>&nbsp; Copy</a>
+                <a href="javascript:void(0)" class="btn btn-secondary" id="btn-copy-quotation"><i class="mdi mdi-content-copy"></i>&nbsp; Copy</a>
                 @if($data->spk==null)
                 <a href="javascript:void(0)" class="btn btn-danger"><i class="mdi mdi-refresh"></i>&nbsp; Ajukan Ulang</a>
                 <a href="{{route('spk.add',['id'=> $data->id])}}" class="btn btn-info"><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</a>
@@ -1810,6 +1810,35 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
   </div>
 </div>
 
+<div class="modal fade" id="quotationModal" tabindex="-1" aria-labelledby="quotationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="quotationModalLabel">Pilih Quotation Asal dan Tujuan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <input type="hidden" id="quotationAsal" value="{{$quotation->id}}">
+          <div class="mb-3">
+            <label for="quotationTujuan" class="form-label">Quotation Tujuan</label>
+            <select id="quotationTujuan" class="form-select">
+              <option value="" selected>Pilih Quotation Tujuan</option>
+              @foreach($quotationTujuan as $qtujuan)
+              <option value="{{$qtujuan->id}}">{{$qtujuan->nomor}}</option>
+              @endforeach
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" id="simpan-copy-quotation" class="btn btn-primary">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!--/ Content -->
 @endsection
 
@@ -2103,5 +2132,57 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
       });
     });
     
+    let baseUrl = "{{ route('quotation.copy-quotation', ['qasal' => ':qasal', 'qtujuan' => ':qtujuan']) }}";
+
+    function redirectToQuotationCopy(qasal, qtujuan) {
+        // Ganti placeholder `:qasal` dan `:qtujuan` dengan nilai aktual
+        let url = baseUrl.replace(':qasal', qasal).replace(':qtujuan', qtujuan);
+        location.href = url;
+    }
+    
+    $("#simpan-copy-quotation").on('click',function() {
+        let msg = "";
+        let qasal = $("#quotationAsal").val();
+        let qtujuan = $("#quotationTujuan").val();
+
+        if(qasal==null || qasal==""){
+            msg += "<b>Quotation Asal</b> belum dipilih </br>";
+        }
+
+        if(qtujuan==null || qtujuan==""){
+            msg += "<b>Quotation Tujuan</b> belum dipilih </br>";
+        }
+
+        if(msg == ""){
+            $("#quotationModal").modal("hide");                           
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: 'Apakah Anda yakin ingin mengcopy Quotation '+$('#quotationAsal option:selected').text()+' ke Quotation '+$('#quotationTujuan option:selected').text()+'?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Copy',
+                cancelButtonText: 'Batal'
+                }).then((result) => {
+                // Jika user mengklik "Ya"
+                if (result.isConfirmed) {
+                    redirectToQuotationCopy(qasal,qtujuan);
+                }
+            });
+        }else{
+            $("#quotationModal").modal("hide");                           
+            Swal.fire({
+            title: "Pemberitahuan",
+            html: msg,
+            icon: "warning"
+            });
+        }
+    });
+    
+    $("#btn-copy-quotation").on("click",function(){
+      $("#quotationModal").modal("show");
+    })
 </script>
 @endsection
