@@ -55,7 +55,7 @@
                   @foreach($quotation as $key => $value)
                   <tr>
                     <td>{{$key+1}}</td>
-                    <td>{{$value->nomor}}</td>
+                    <td><b><a href="{{route('quotation.view',[$value->id])}}">{{$value->nomor}}</a></b></td>
                     <td>{{$value->nama_site}}</td>
                     <td>{{$quotationClient->layanan}}</td>
                   </tr>

@@ -182,6 +182,12 @@ class SpkController extends Controller
                 ]);
             }
 
+            DB::table('sl_quotation')->where('quotation_client_id',$quotationClient->id)->update([
+                'status_quotation_id' => 4,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
             return redirect()->route('spk.view',$newId);
         } catch (\Exception $e) {
             dd($e);
@@ -278,13 +284,6 @@ class SpkController extends Controller
             DB::table('sl_spk')->where('id',$request->id)->update([
                 'status_spk_id' => 2,
                 'link_spk_disetujui' =>env('APP_URL')."/public/spk/".$originalName,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
-
-            $spk = DB::table('sl_spk')->where('id',$request->id)->first();
-            DB::table('sl_quotation')->where('quotation_client_id',$spk->quotation_client_id)->update([
-                'status_quotation_id' => 4,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);

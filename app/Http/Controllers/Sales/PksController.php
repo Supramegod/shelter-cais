@@ -98,8 +98,12 @@ class PksController extends Controller
     public function availableSpk (Request $request){
         try {
             $data = DB::table('sl_spk')
+                ->leftJoin('sl_leads','sl_leads.id','sl_spk.leads_id')
+                ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                ->where('m_tim_sales_d.user_id',Auth::user()->id)
                 ->whereNull('sl_spk.deleted_at')
                 ->where('sl_spk.status_spk_id',2)
+                ->select("sl_spk.id","sl_spk.nomor","sl_spk.nama_perusahaan","sl_spk.tgl_spk","sl_spk.kebutuhan")
                 ->get();
             
             return DataTables::of($data)
@@ -115,14 +119,14 @@ class PksController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             $dataSpk = DB::table('sl_spk')->where('id',$request->spk_id)->first();
-            $quotation = DB::table('sl_quotation')->where('id',$dataSpk->quotation_id)->first();
+            $quotationClient = DB::table('sl_quotation_client')->where('id',$dataSpk->quotation_client_id)->first();
+            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('quotation_client_id',$dataSpk->quotation_client_id)->get();
 
             $newId = DB::table('sl_pks')->insertGetId([
-                'quotation_id' => $dataSpk->quotation_id,
-                'quotation_kebutuhan_id' => $dataSpk->quotation_kebutuhan_id,
+                'quotation_client_id' => $dataSpk->quotation_client_id,
                 'spk_id' => $dataSpk->id,
                 'leads_id' => $dataSpk->leads_id,
-                'nomor' => $this->generateNomor($quotation->leads_id,$quotation->company_id),
+                'nomor' => $this->generateNomor($quotationClient->leads_id,$quotation[0]->company_id),
                 'tgl_pks' => $current_date_time,
                 'nama_perusahaan' => $dataSpk->nama_perusahaan,
                 'link_pks_disetujui' => null,
@@ -131,7 +135,7 @@ class PksController extends Controller
                 'created_by' => Auth::user()->full_name
             ]);
 
-            DB::table('sl_quotation')->where('id',$quotation->id)->update([
+            DB::table('sl_quotation')->where('quotation_client_id',$quotationClient->id)->update([
                 'status_quotation_id' => 5,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
@@ -182,14 +186,15 @@ class PksController extends Controller
     public function view (Request $request,$id){
         try {
             $data = DB::table('sl_pks')->where('id',$id)->first();
+            $spk = DB::table('sl_spk')->where('id',$data->spk_id)->first();
 
             $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
-            $quotation = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
-            $quotationKebutuhan = DB::table('sl_quotation_kebutuhan')->where('id',$data->quotation_kebutuhan_id)->first();
+            $quotationClient = DB::table('sl_quotation_client')->where('id',$data->quotation_client_id)->first();
+            $quotation = DB::table('sl_quotation')->where('quotation_client_id',$data->quotation_client_id)->get();
             $data->status = DB::table('m_status_pks')->where('id',$data->status_pks_id)->first()->nama;
 
-            return view('sales.pks.view',compact('data','quotation','quotationKebutuhan'));
+            return view('sales.pks.view',compact('spk','data','quotation','quotationClient'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

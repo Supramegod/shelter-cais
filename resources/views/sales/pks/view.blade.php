@@ -24,11 +24,46 @@
               <table class="table">
                 <tbody>
                   <tr>
-                    <td>Nama Perusahaan</td>
-                    <td>: {{$quotation->nama_perusahaan}}</td>
-                    <td>Kebutuhan</td>
-                    <td>: {{$quotationKebutuhan->kebutuhan}}</td>
+                    <td>Nomor SPK</td>
+                    <td colspan="3">: <b><a href="{{route('spk.view',[$spk->id])}}">{{$spk->nomor}}</a></b></td>
                   </tr>
+                  <tr>
+                    <td>Nama Perusahaan</td>
+                    <td>: {{$quotationClient->nama_perusahaan}}</td>
+                    <td>Kebutuhan</td>
+                    <td>: {{$quotationClient->layanan}}</td>
+                  </tr>
+                  <tr>
+                    <td>Entitas</td>
+                    <td>: {{$quotation[0]->company}}</td>
+                    <td>Jumlah Site</td>
+                    <td>: {{$quotationClient->jumlah_site}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <h6>2. Informasi Quotation</h6>
+          <div class="row mb-3">
+            <div class="table-responsive overflow-hidden table-quotation">
+              <table id="table-quotation" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Nomor</th>
+                    <th>Nama Site</th>
+                    <th>Kebutuhan</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-quotation">
+                  @foreach($quotation as $key => $value)
+                  <tr>
+                    <td>{{$key+1}}</td>
+                    <td><b><a href="{{route('quotation.view',[$value->id])}}">{{$value->nomor}}</a></b></td>
+                    <td>{{$value->nama_site}}</td>
+                    <td>{{$quotationClient->layanan}}</td>
+                  </tr>
+                  @endforeach
                 </tbody>
               </table>
             </div>
