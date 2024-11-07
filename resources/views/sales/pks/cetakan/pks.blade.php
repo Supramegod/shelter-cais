@@ -460,7 +460,7 @@ td, th {
 			</p>
 			<ol style="margin:0pt; padding-left:0pt">
 				<li class="NoSpacing" style="margin-left:15.01pt; margin-bottom:6pt; text-align:justify; widows:2; orphans:2; padding-left:2.99pt; font-family:Arial; font-size:12pt; font-weight:bold">
-					<span style="font-weight:normal">Perjanjian ini berlaku terhitung sejak tanggal </span>{{$quotation[0]->mulai_kontrak}} <span style="font-weight:normal">sampai dengan </span>{{$quotation[0]->selesai_kontrak}}<span style="font-weight:normal">;</span>
+					<span style="font-weight:normal">Perjanjian ini berlaku terhitung sejak tanggal </span>{{$quotation[0]->mulai_kontrak}} <span style="font-weight:normal">sampai dengan </span>{{$quotation[0]->kontrak_selesai}}<span style="font-weight:normal">;</span>
 				</li>
 				<li class="NoSpacing" style="margin-left:15.01pt; margin-bottom:6pt; text-align:justify; widows:2; orphans:2; padding-left:2.99pt; font-family:Arial; font-size:12pt; font-weight:bold">
 					<span style="font-weight:normal">Setelah berjalan dalam kurun waktu periode kerjasama, perjanjian ini secara otomatis akan berlanjut, kecuali apabila salah satu </span>PIHAK <span style="font-weight:normal">memutuskan untuk tidak meneruskan perjanjian ini atau mengubah masa perjanjian dengan pemberitahuan secara tertulis kepada </span>PIHAK <span style="font-weight:normal">yang bersangkutan, paling lambat dalam kurun waktu 1 (satu) bulan sebelum tanggal berakhirnya perjanjian ini;</span>

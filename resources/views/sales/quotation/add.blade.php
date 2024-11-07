@@ -36,33 +36,30 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Entitas <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Layanan <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <select id="entitas" name="entitas" class="form-select" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($company as $value)
-                  <option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>  
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Jumlah Site <span class="text-danger">*</span></label>
-              <div class="col-sm-4">
-                <select id="jumlah_site" name="jumlah_site" class="form-select" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  <option value="Single Site">Single Site</option>
-                  <option value="Multi Site">Multi Site</option>
-                </select>
-              </div>
-              <label class="col-sm-2 col-form-label text-sm-end">Layanan <span class="text-danger">*</span></label>
-              <div class="col-sm-4">
                 <select id="layanan" name="layanan" class="form-select" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   <option value="1">Security</option>
                   <option value="2">Direct Labour</option>
                   <option value="3">Cleaning Service</option>
                   <option value="4">Logistik</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Entitas <span class="text-danger">*</span></label>
+              <div class="col-sm-4">
+                <select id="entitas" name="entitas" class="form-select" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                </select>
+              </div>
+              <label class="col-sm-2 col-form-label text-sm-end">Jumlah Site <span class="text-danger">*</span></label>
+              <div class="col-sm-4">
+                <select id="jumlah_site" name="jumlah_site" class="form-select" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                  <option value="Single Site">Single Site</option>
+                  <option value="Multi Site">Multi Site</option>
                 </select>
               </div>
             </div>
@@ -96,19 +93,68 @@
                 <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
               </div>
             </div>
-            <div class="row mb-3 d-single-site">
-              <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
-              <div class="col-sm-10">
-                <input type="text" id="nama_site" name="nama_site" value="" class="form-control">
+            <div class="d-single-site">
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Provinsi  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-4">
+                  <select id="provinsi" name="provinsi" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="">- Pilih data -</option>
+                    @foreach($province as $data)
+                      <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
+                    @endforeach
+                  </select>
+                </div>
+                <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-4">
+                  <select id="kota" name="kota" class="form-select" data-allow-clear="true" tabindex="-1">
+                  </select>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-10">
+                  <input type="text" id="nama_site" name="nama_site" value="" class="form-control">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Alamat Penempatan <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-10">
+                  <input type="text" id="penempatan" name="penempatan" value="" class="form-control">
+                </div>
               </div>
             </div>
             <div class="row mb-3 d-multi-site">
-              <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
-              <div class="col-sm-8 col-form-label text-sm-end">
-                <input type="text" class="form-control" id="siteName" placeholder="Nama Site">
+              <hr class="mb-3">
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Provinsi  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-4">
+                  <select id="provinsiMulti" name="provinsiMulti" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="">- Pilih data -</option>
+                    @foreach($province as $data)
+                      <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
+                    @endforeach
+                  </select>
+                </div>
+                <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-4">
+                  <select id="kotaMulti" name="kotaMulti" class="form-select" data-allow-clear="true" tabindex="-1">
+                  </select>
+                </div>
               </div>
-              <div class="col-sm-2">
-                <button type="button" id="addSiteBtn" class="btn btn-info w-100 mt-2">Tambah Site</button>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-10 col-form-label text-sm-end">
+                  <input type="text" class="form-control" id="siteName" placeholder="Nama Site">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Alamat Penempatan <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-10">
+                  <input type="text" id="penempatanMulti" name="penempatanMulti" value="" class="form-control">
+                </div>
+              </div>
+              <div class="col-sm-12 d-flex justify-content-center">
+                <button type="button" id="addSiteBtn" class="btn btn-info w-50 mt-2">Tambah Site</button>
               </div>
 
               <div class="row mt-4">
@@ -117,6 +163,9 @@
                   <thead>
                       <tr>
                           <th>Nama Site</th>
+                          <th>Provinsi</th>
+                          <th>Kota</th>
+                          <th>Penempatan</th>
                           <th>Aksi</th>
                       </tr>
                   </thead>
@@ -266,6 +315,7 @@
       }
     });
 
+    generateNama();
     $('form').bind("keypress", function(e) {
     if (e.keyCode == 13) {               
       e.preventDefault();
@@ -295,6 +345,15 @@ $('#btn-submit').on('click',function(e){
         if(obj.nama_site == null || obj.nama_site == "" ){
           msg += "<b>Nama Site</b> belum diisi </br>";
         }
+        if(obj.provinsi == null || obj.provinsi == "" ){
+          msg += "<b>Provinsi</b> belum diisi </br>";
+        }
+        if(obj.kota == null || obj.kota == "" ){
+          msg += "<b>Kota</b> belum diisi </br>";
+        }
+        if(obj.penempatan == null || obj.penempatan == "" ){
+          msg += "<b>Penempatan</b> belum diisi </br>";
+        }
       }else{
         if(obj["multisite[]"] == null || obj["multisite[]"] == "" ){
           msg += "Isikan minimal 1 <b>Site</b></br>";
@@ -312,7 +371,52 @@ $('#btn-submit').on('click',function(e){
   }
 });
 
+$('#provinsi').on('change', function() {
+    $('#kota').find('option').remove();
+    $('#kota').append('<option value="">- Pilih data -</option>');
+    if(this.value!=""){
+      var param = "province_id="+this.value;
+      $.ajax({
+        url: "{{route('quotation.change-kota')}}",
+        type: 'GET',
+        data: param,
+        success: function(res) {
+          res.forEach(element => {
+            let selected = "";
+            $('#kota').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+          });
+        }
+      });
+    }
+  });
 
+  $('#kota').on('change', function() {
+    generateNama();
+  })
+  $('#kotaMulti').on('change', function() {
+    generateNama();
+  })
+
+  $('#provinsiMulti').on('change', function() {
+    $('#kotaMulti').find('option').remove();
+    $('#kotaMulti').append('<option value="">- Pilih data -</option>');
+    if(this.value!=""){
+      var param = "province_id="+this.value;
+      $.ajax({
+        url: "{{route('quotation.change-kota')}}",
+        type: 'GET',
+        data: param,
+        success: function(res) {
+          res.forEach(element => {
+            let selected = "";
+            $('#kotaMulti').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+          });
+        }
+      });
+    }
+  });
+
+ 
 function showJumlahSite() {
   let selected = $("#jumlah_site option:selected").val();
   if (selected=="Single Site") {
@@ -328,6 +432,35 @@ function showJumlahSite() {
 }
 
 $(document).ready(function() {
+
+  $('#layanan').on('change', function() {
+    $('#entitas').find('option').remove();
+    $('#entitas').append('<option value="">- Pilih data -</option>');
+    if(this.value!=""){
+      if (this.value == 1) {
+        @foreach($company as $value)
+          @if($value->code=="GSU" || $value->code=="SN")
+          $('#entitas').append('<option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>');
+          @endif
+          @endforeach
+      } else if (this.value == 2 || this.value == 4) {
+        @foreach($company as $value)
+          @if($value->code=="SIG" || $value->code=="SNI")
+          $('#entitas').append('<option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>');
+          @endif
+        @endforeach
+      } else if (this.value == 3) {
+        @foreach($company as $value)
+          @if($value->code=="RCI" || $value->code=="SNI")
+          $('#entitas').append('<option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>');
+          @endif
+        @endforeach
+      }
+    }
+  });
+
+
+
   $('.d-single-site').addClass('d-none');
   $('.d-multi-site').addClass('d-none');
 
@@ -337,28 +470,65 @@ $(document).ready(function() {
 
   $('#addSiteBtn').click(function() {
       var siteName = $('#siteName').val().trim();
+      var province = $('#provinsiMulti').val();
+      var city = $('#kotaMulti').val();
+      var penempatan = $('#penempatanMulti').val();
 
+      let msg = "";
+
+      if(siteName == null || siteName == "" ){
+        msg += "<b>Nama Site</b> belum diisi </br>";
+      };
+      if(province == null || province == "" ){
+        msg += "<b>Provinsi</b> belum dipilih </br>";
+      };
+      if(city == null || city == "" ){
+        msg += "<b>Kota</b> belum dipilih </br>";
+      };
+      if(penempatan == null || penempatan == "" ){
+        msg += "<b>Penempatan</b> belum diisi </br>";
+      };
+      if(msg == ""){
+        // Menambahkan baris baru ke tabel
+        var newRow = `
+            <tr>
+                <td>
+                    ${siteName}
+                    <input type="hidden" name="multisite[]" value="${siteName}">
+                    <input type="hidden" name="provinsi_multi[]" value="${province}">
+                    <input type="hidden" name="kota_multi[]" value="${city}">
+                    <input type="hidden" name="penempatan_multi[]" value="${penempatan}">
+                </td>
+                <td>
+                    ${$('#provinsiMulti option:selected').text()}
+                </td>
+                <td>
+                    ${$('#kotaMulti option:selected').text()}
+                </td>
+                <td>
+                    ${penempatan}
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm delete-btn">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $('#siteTableBody').append(newRow);
+        // $('#siteName').val(''); // Kosongkan input setelah tambah
+      }else{
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: msg,
+          icon: "warning"
+        });
+        return;
+      }
+      
       if (siteName === "") {
           alert("Nama Site tidak boleh kosong.");
-          return;
       }
-
-      // Menambahkan baris baru ke tabel
-      var newRow = `
-          <tr>
-              <td>
-                  ${siteName}
-                  <input type="hidden" name="multisite[]" value="${siteName}">
-              </td>
-              <td>
-                  <button type="button" class="btn btn-danger btn-sm delete-btn">
-                      <i class="mdi mdi-delete"></i>
-                  </button>
-              </td>
-          </tr>
-      `;
-      $('#siteTableBody').append(newRow);
-      $('#siteName').val(''); // Kosongkan input setelah tambah
   });
 
   // Menghapus baris ketika tombol delete diklik
@@ -367,6 +537,13 @@ $(document).ready(function() {
   });
 });
 
+function generateNama() {
+    let nama = "";
+    nama += $("#leads").val();
+    nama += " - ";
 
+    $("#nama_site").val(nama+$('#kota option:selected').text());
+    $("#siteName").val(nama+$('#kotaMulti option:selected').text());
+  }
 </script>
 @endsection

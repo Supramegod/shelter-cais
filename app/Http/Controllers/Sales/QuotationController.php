@@ -64,8 +64,15 @@ class QuotationController extends Controller
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
-
-            return view('sales.quotation.add',compact('now','company'));
+            $province = DB::connection('mysqlhris')->table('m_province')->get();
+            foreach ($province as $key => $value) {
+                $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$value->id)->first();
+                $value->ump = "Rp. 0";
+                if($dataUmp !=null){
+                    $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
+                }
+            }
+            return view('sales.quotation.add',compact('now','company','province'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -1075,6 +1082,9 @@ class QuotationController extends Controller
             $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
             if ($request->jumlah_site=="Multi Site") {
                 foreach ($request->multisite as $key => $value) {
+                    $province = DB::connection('mysqlhris')->table('m_province')->where('id',$request->provinsi_multi[$key])->first();
+                    $city = DB::connection('mysqlhris')->table('m_city')->where('id',$request->kota_multi[$key])->first();
+
                     $newId = DB::table('sl_quotation')->insertGetId([
                         'nomor' => $this->generateNomor($request->leads_id,$request->entitas),
                         'quotation_client_id' => $qClientId,
@@ -1089,6 +1099,11 @@ class QuotationController extends Controller
                         'nama_site' => $value,
                         'step' => 1,
                         'status_quotation_id' =>1,
+                        'provinsi_id' => $province->id,
+                        'provinsi' => $province->name,
+                        'kota_id' => $city->id,
+                        'kota' => $city->name,
+                        'penempatan' => $request->penempatan_multi[$key],
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -1106,6 +1121,9 @@ class QuotationController extends Controller
                     ]);
                 }
             }else{
+                $province = DB::connection('mysqlhris')->table('m_province')->where('id',$request->provinsi)->first();
+                $city = DB::connection('mysqlhris')->table('m_city')->where('id',$request->kota)->first();
+
                 $newId = DB::table('sl_quotation')->insertGetId([
                     'nomor' => $this->generateNomor($request->leads_id,$request->entitas),
                     'quotation_client_id' => $qClientId,
@@ -1120,6 +1138,11 @@ class QuotationController extends Controller
                     'nama_site' => $request->nama_site,
                     'step' => 1,
                     'status_quotation_id' =>1,
+                    'provinsi_id' => $request->provinsi,
+                    'provinsi' => $province->name,
+                    'kota_id' => $request->kota,
+                    'kota' => $city->name,
+                    'penempatan' => $request->penempatan,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
@@ -1242,7 +1265,6 @@ class QuotationController extends Controller
                 DB::table('sl_quotation')->where('id',$request->id)->update([
                     'mulai_kontrak' => $request->mulai_kontrak,
                     'kontrak_selesai' => $request->kontrak_selesai,
-                    'penempatan' => $request->penempatan,
                     'tgl_penempatan' => $request->tgl_penempatan,
                     'salary_rule_id' => $request->salary_rule,
                     'top' => $request->top,
@@ -1261,8 +1283,8 @@ class QuotationController extends Controller
                     'prorate' => $request->prorate,
                     'shift_kerja' => $request->shift_kerja ,
                     'jam_kerja' => $request->jam_kerja ,
-                    'mulai_kerja' => $request->mulai_kerja ,
-                    'selesai_kerja' => $request->selesai_kerja ,
+                    // 'mulai_kerja' => $request->mulai_kerja ,
+                    // 'selesai_kerja' => $request->selesai_kerja ,
                     // 'sistem_kerja' => $request->sistem_kerja ,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -2546,17 +2568,17 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             if(in_array(Auth::user()->role_id,[96])){
-                DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
+                DB::table('sl_quotation')->where('id',$request->id)->update([
                     'ot1' => Auth::user()->full_name,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
 
                 //ambil quotation
-                $data = DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->first();
+                $data = DB::table('sl_quotation')->where('id',$request->id)->first();
                 $master = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
                 if($master->top=="Kurang Dari 7 Hari"){
-                    DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
+                    DB::table('sl_quotation')->where('id',$request->id)->update([
                         'is_aktif' => 1,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
@@ -2569,13 +2591,13 @@ class QuotationController extends Controller
                     ]);
                 }
             }else if(in_array(Auth::user()->role_id,[97])){
-                DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
+                DB::table('sl_quotation')->where('id',$request->id)->update([
                     'ot2' => Auth::user()->full_name,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
             }else if(in_array(Auth::user()->role_id,[99])){
-                DB::table('sl_quotation_kebutuhan')->where('id',$request->id)->update([
+                DB::table('sl_quotation')->where('id',$request->id)->update([
                     'ot3' => Auth::user()->full_name,
                     'is_aktif' => 1,
                     'updated_at' => $current_date_time,
@@ -3074,7 +3096,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
     public function addBiayaMonitoring(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            DB::table('sl_quotation_kebutuhan_detail')->where('id',$request->detailId)->update([
+            DB::table('sl_quotation_detail')->where('id',$request->detailId)->update([
                 'biaya_monitoring_kontrol' => $request-> nominal,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name

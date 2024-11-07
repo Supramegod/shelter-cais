@@ -191,3 +191,47 @@ XXX		- urutan aktifitas terbaru diatas
 - hijau is valid dihilangkan
 PENDING	- sales ada grouping berdasarkan layanan , wilayah
 INFO	- MENU BARU : insentif sales dll
+
+
+
+
+// CODING ALI UNTUK MENGIRIM DATA
+function send_custom_webhook( $record, $handler ) {
+
+	$form_name = $record->get_form_settings( 'Form Contact' );
+
+	// Replace MY_FORM_NAME with the name you gave your form
+	if ( 'Form Contact' !== $form_name ) {
+		return;
+	}
+
+	// Ambil data dari form yang dikirim
+    $raw_fields = $record->get_fields();
+    $fields = [];
+
+    foreach ($raw_fields as $id => $field) {
+        $fields[$id] = $field['value']; // Ambil nilai dari setiap field
+    }
+
+	wp_remote_post(
+		'https://cais.shelterapp2.co.id/webhook-endpoint/zRdjjhBKq8g4Xn1Xojp2oOggh8Ar4jpr',
+		[
+			'body'    => json_encode($fields),
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+		]
+	);
+	
+	wp_remote_post(
+		'https://dev-cais.shelterapp2.co.id/webhook-endpoint/zRdjjhBKq8g4Xn1Xojp2oOggh8Ar4jpr',
+		[
+			'body'    => json_encode($fields),
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+		]
+	);
+	
+}
+add_action( 'elementor_pro/forms/new_record', 'send_custom_webhook', 10, 2 );

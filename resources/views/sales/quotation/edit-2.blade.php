@@ -55,15 +55,6 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-12">
-                  <label class="form-label" for="penempatan">Penempatan</label>
-                  <input type="text" name="penempatan" value="{{$quotation->penempatan}}" class="form-control @if($errors->has('penempatan')) is-invalid @endif" id="penempatan">
-                  @if($errors->has('penempatan'))
-                    <span class="text-danger">{{$errors->first('penempatan')}}</span>
-                  @endif
-                </div>
-              </div>
-              <div class="row mb-3">
                 <div class="col-sm-6">
                   <label class="form-label" for="tgl_penempatan">Tanggal Penempatan</label>
                   <input type="date" name="tgl_penempatan" value="{{$quotation->tgl_penempatan}}" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl-penempatan">
@@ -112,7 +103,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                   <label class="form-label" for="shift_kerja">Hari Kerja dan Jam Kerja</label>
                   <select id="shift_kerja" name="shift_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->shift_kerja=='') selected @endif>- Pilih Data -</option>  
@@ -121,7 +112,7 @@
                     <option value="3 Shift" @if($quotation->shift_kerja=='3 Shift') selected @endif>3 Shift</option>  
                   </select>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                 <label class="form-label">&nbsp;</label>
                   <select id="jam_kerja" name="jam_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->jam_kerja=='') selected @endif>- Pilih Data -</option>  
@@ -129,9 +120,6 @@
                     <option value="8 Jam Kerja" @if($quotation->jam_kerja=='8 Jam Kerja') selected @endif>8 Jam Kerja</option>  
                     <option value="12 Jam Kerja" @if($quotation->jam_kerja=='12 Jam Kerja') selected @endif>12 Jam Kerja</option>  
                   </select>
-                </div>
-                <div class="col-sm-4" style="display:flex;flex-direction:row;align-items:flex-end">
-                  <input type="time" name="mulai_kerja" value="{{$quotation->mulai_kerja}}" class="form-control w-50" style="height:40px"> <span style="padding-left:5px;padding-right:5px">s/d</span> <input type="time" name="selesai_kerja" value="{{$quotation->selesai_kerja}}" class="form-control w-50" style="height:40px">
                 </div>
               </div>
               <!-- <div class="row mb-3">
@@ -309,9 +297,9 @@ $('#btn-submit').on('click',function(e){
   if(obj.evaluasi_kontrak == null || obj.evaluasi_kontrak == ""){
     msg += "<b>Evaluasi Kontrak</b> belum dipilih </br>";
   }
-  if(obj.penempatan == null || obj.penempatan == ""){
-    msg += "<b>Penempatan</b> belum diisi </br>";
-  }
+  // if(obj.penempatan == null || obj.penempatan == ""){
+  //   msg += "<b>Penempatan</b> belum diisi </br>";
+  // }
   if(obj.tgl_penempatan == null || obj.tgl_penempatan == ""){
     msg += "<b>Tanggal Penempatan</b> belum dipilih </br>";
   }
@@ -333,12 +321,12 @@ $('#btn-submit').on('click',function(e){
   if(obj.jam_kerja==null || obj.jam_kerja==""){
     msg += "<b>Jam Kerja</b> belum dipilih </br>";
   }
-  if(obj.mulai_kerja==null || obj.mulai_kerja==""){
-    msg += "<b>Mulai Kerja</b> belum diisi </br>";
-  }
-  if(obj.selesai_kerja==null || obj.selesai_kerja==""){
-    msg += "<b>Selesai Kerja</b> belum diisi </br>";
-  }
+  // if(obj.mulai_kerja==null || obj.mulai_kerja==""){
+  //   msg += "<b>Mulai Kerja</b> belum diisi </br>";
+  // }
+  // if(obj.selesai_kerja==null || obj.selesai_kerja==""){
+  //   msg += "<b>Selesai Kerja</b> belum diisi </br>";
+  // }
   // if(obj.sistem_kerja==null || obj.sistem_kerja==""){
   //   msg += "<b>Sistem Kerja</b> belum dipilih </br>";
   // }

@@ -27,13 +27,13 @@
               </div>
               <div class="row mb-3">
                 <div class="col-md mb-md-0 mb-2">
-                  <div class="form-check custom-option custom-option-icon @if($quotation->jenis_kontrak=='PKWT') checked @endif">
-                    <label class="form-check-label custom-option-content" for="pkwt">
+                  <div class="form-check custom-option custom-option-icon @if($quotation->jenis_kontrak=='c') checked @endif">
+                    <label class="form-check-label custom-option-content" for="reguler">
                       <span class="custom-option-body">
                         <i class="mdi mdi-file-sign"></i>
-                        <span class="custom-option-title">PKWT</span>
+                        <span class="custom-option-title">Reguler</span>
                       </span>
-                      <input name="jenis_kontrak" class="form-check-input" value="PKWT" type="radio" value="" id="pkwt" @if($quotation->jenis_kontrak=='PKWT') checked @endif>
+                      <input name="jenis_kontrak" class="form-check-input" value="Reguler" type="radio" value="" id="reguler" @if($quotation->jenis_kontrak=='Reguler') checked @endif>
                     </label>
                   </div>
                 </div>
