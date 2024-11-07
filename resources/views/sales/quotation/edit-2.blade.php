@@ -215,13 +215,6 @@
                             <label class="form-check-label" for="cuti-kematian"> Cuti Kematian </label>
                           </div>
                         </td>
-                        <td>
-                          <div class="input-group d-hari-cuti-kematian">
-                            <input type="number" min="0" max="100" name="hari_cuti_kematian" value="{{$quotation->hari_cuti_kematian}}" class="form-control  minimal" id="hari_cuti_kematian">
-                            <span class="input-group-text" id="basic-addon41">Hari</span>
-                          </div>
-                        </td>
-                        <td>&nbsp;</td>
                       </tr>
                       <tr>
                         <td>
@@ -230,13 +223,6 @@
                             <label class="form-check-label" for="istri-melahirkan"> Istri Melahirkan </label>
                           </div>
                         </td>
-                        <td>
-                          <div class="input-group d-hari-istri-melahirkan">
-                            <input type="number" min="0" max="100" name="hari_istri_melahirkan" value="{{$quotation->hari_istri_melahirkan}}" class="form-control  minimal" id="hari_istri_melahirkan">
-                            <span class="input-group-text" id="basic-addon41">Hari</span>
-                          </div>
-                        </td>
-                        <td>&nbsp;</td>
                       </tr>
                       <tr>
                         <td>
@@ -245,13 +231,14 @@
                             <label class="form-check-label" for="cuti-menikah"> Cuti Menikah</label>
                           </div>
                         </td>
+                      </tr>
+                      <tr>
                         <td>
-                          <div class="input-group d-hari-cuti-menikah">
-                            <input type="number" min="0" max="100" name="hari_cuti_menikah" value="{{$quotation->hari_cuti_menikah}}" class="form-control  minimal" id="hari_cuti_menikah">
-                            <span class="input-group-text" id="basic-addon41">Hari</span>
+                          <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="Cuti Tahunan" name="cuti[]" id="cuti-tahunan" @if(str_contains($quotation->cuti,'Cuti Tahunan')) checked @endif>
+                            <label class="form-check-label" for="cuti-tahunan"> Cuti Tahunan</label>
                           </div>
                         </td>
-                        <td>&nbsp;</td>
                       </tr>
                     </tbody>
                   </table>
@@ -547,8 +534,9 @@ function showCuti(first) {
 
 function showProrate(first) {
   let selected = $("#gaji_saat_cuti option:selected").val();
-  
-  if (selected!="Prorate") {
+  if(!$('#cuti-melahirkan').is(':checked')){
+    $('.d-prorate').addClass('d-none');
+  }else if (selected!="Prorate") {
     $('.d-prorate').addClass('d-none');
   }else{
     $('.d-prorate').removeClass('d-none');
@@ -569,6 +557,7 @@ $('#ada_cuti').on('change', function() {
 });
 
 $('#cuti-melahirkan').on('change', function() {
+  showProrate(2);
   gajiSaatCuti(2);
 });
 

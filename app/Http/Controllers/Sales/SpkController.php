@@ -57,12 +57,12 @@ class SpkController extends Controller
             $data=null;
             $quotation =null;
             if($request->id!=null){
-                $data = DB::table('sl_quotation_client')->whereNull('deleted_at')->where('id',$request->id)->first();
-                $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$data->id)->get();
-
+                $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->id)->first();
+                $data = DB::table('sl_quotation_client')->whereNull('deleted_at')->where('id',$quotation->quotation_client_id)->first();
+                $quotationList = DB::table('sl_quotation')->whereNull('deleted_at')->where('quotation_client_id',$data->id)->get();
                 $data->nomor = "";
 
-                foreach ($quotation as $key => $value) {
+                foreach ($quotationList as $key => $value) {
                     if ($key!=0) {
                         $data->nomor .= ", ";
                     }

@@ -277,14 +277,14 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari management fee</span></td>
+                        <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                         <td style="text-align:center">11 %</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->ppn,2,",",".")}}</td>
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td colspan="2" style="text-align:right" class="fw-bold">PPh <span class='text-danger'>*dari management fee</span></td>
+                        <td colspan="2" style="text-align:right" class="fw-bold">PPh <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                         <td style="text-align:center">-2 %</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pph,2,",",".")}}</td>
@@ -477,21 +477,21 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td>Provisi Seragam</th>
                         <td class="text-center"></th>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_kaporlap,2,",",".")}}</th>
+                        <td class="text-end">{{"Rp. ".number_format((ceil($detailJabatan->personil_kaporlap / 1000) * 1000),2,",",".")}}</th>
                         @endforeach
                       </tr>
                       <tr>
                         <td>Provisi Peralatan</th>
                         <td class="text-center"></th>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_devices,2,",",".")}}</th>
+                        <td class="text-end">{{"Rp. ".number_format((ceil($detailJabatan->personil_devices / 1000) * 1000),2,",",".")}}</th>
                         @endforeach
                       </tr>
                       <tr>
                         <td>Provisi Chemical</th>
                         <td class="text-center"></th>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_chemical,2,",",".")}}</th>
+                        <td class="text-end">{{"Rp. ".number_format((ceil($detailJabatan->personil_chemical / 1000) * 1000),2,",",".")}}</th>
                         @endforeach
                       </tr>
                       <tr class="table-success">
@@ -560,14 +560,14 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         @endforeach
                       </tr>
                         <tr class="">
-                          <td style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari management fee</span></td>
+                          <td style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                           <td style="text-align:center">11 %</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
                           <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->ppn_coss,2,",",".")}}</td>
                           @endforeach
                         </tr>
                         <tr class="">
-                          <td style="text-align:right" class="fw-bold">PPh <span class='text-danger'>*dari management fee</span></td>
+                          <td style="text-align:right" class="fw-bold">PPh <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                           <td style="text-align:center">-2 %</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
                           <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pph_coss,2,",",".")}}</td>
@@ -689,7 +689,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                         @php
                           $totalBiayaCoss = 0;
                           foreach($quotation->quotation_detail as $detailJabatan){
-                            $totalBiayaCoss += $detailJabatan->sub_total_personil_coss;
+                            $totalBiayaCoss += $detailJabatan->sub_total_personil;
                           }
                           @endphp
                           {{"Rp. ".number_format($totalBiayaCoss,2,",",".")}}
@@ -785,7 +785,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                         @php
                           $totalBiayaCoss = 0;
                           foreach($quotation->quotation_detail as $detailJabatan){
-                            $totalBiayaCoss += $detailJabatan->sub_total_personil_coss;
+                            $totalBiayaCoss += $detailJabatan->sub_total_personil;
                           }
                           @endphp
                           {{"Rp. ".number_format($totalBiayaCoss,2,",",".")}}

@@ -2039,7 +2039,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
         ajax: {
             url: "{{ route('quotation.list-detail-requirement') }}",
             data: function (d) {
-                d.quotation_quotation_detail_id = {{$detail->id}};
+                d.quotation_detail_id = {{$detail->id}};
             },
         },   
         "order":[
@@ -2090,7 +2090,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                 data: { 
                   "_token": "{{ csrf_token() }}",
                   requirement: result.value,
-                  quotation_quotation_detail_id:{{$detail->id}}
+                  quotation_detail_id:{{$detail->id}}
                 },
                 success: function(response){
                   if(response=="Data Berhasil Ditambahkan"){

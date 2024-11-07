@@ -133,7 +133,7 @@ Hormat kami,
         <div class="content">
             <div class="pendahuluan">
                 <h1>KETENTUAN PENAWARAN HARGA</h1>
-                <h1>Jasa {{$quotationKebutuhan[0]->kebutuhan}}</h1>
+                <h1>Jasa {{$data->kebutuhan}}</h1>
                 <div style="margin-top:20px">
                     <table>
                         @foreach($listKerjasama as $kker => $valker)

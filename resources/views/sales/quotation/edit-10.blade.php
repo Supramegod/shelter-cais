@@ -19,6 +19,7 @@
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">CHEMICAL</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
+                <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
               </div>
               <div class="row mt-1">
                 <div class="row mb-3" style="display: flex;justify-content: center;">
@@ -35,7 +36,6 @@
                             @endif
                           @endforeach  
                         @endforeach
-                        
                       </select>
                     </div>
                   </div>
@@ -45,14 +45,12 @@
                       <input type="text" class="form-control" id="harga" readonly>
                     </div>
                   </div>
-                  @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
                   <div class="col-sm-3">
-                    <label class="form-label" for="jumlah_{{$detailJabatan->id}}">Jumlah</label>
+                    <label class="form-label" for="jumlah">Jumlah</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" id="jumlah_{{$detailJabatan->id}}">
+                      <input type="number" class="form-control" id="jumlah">
                     </div>
                   </div>
-                  @endforeach
                 </div>
                 <div class="row">
                   <div class="col-12 d-flex justify-content-center">
@@ -71,9 +69,7 @@
                                 <th class="text-center">Jenis</th>
                                 <th class="text-center">Nama Barang</th>
                                 <th class="text-center">Harga/Unit</th>
-                                @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                                  <th class="text-center">Jumlah</th>
-                                @endforeach
+                                <th class="text-center">Jumlah</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -126,7 +122,7 @@
       ajax: {
           url: "{{ route('quotation.list-chemical') }}",
           data: function (d) {
-              d.quotation_kebutuhan_id = {{$quotationKebutuhan[0]->id}};
+              d.quotation_id = {{$quotation->id}};
           },
       }, 
       rowGroup: {
@@ -159,14 +155,12 @@
           className:'text-end',
           orderable:false
       },
-      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
       {
-          data : 'data-{{$detailJabatan->id}}',
-          name : 'data-{{$detailJabatan->id}}',
+          data : 'data',
+          name : 'data',
           className:'text-center',
           orderable:false
       },
-      @endforeach
       {
           data : 'aksi',
           name : 'aksi',
@@ -180,9 +174,7 @@
 
     $('#btn-tambah-detail').on('click',function () {
       let barang = $('#barang').val();
-      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-        let jumlah{{$detailJabatan->id}} = $('#jumlah_{{$detailJabatan->id}}').val();
-      @endforeach
+      let jumlah = $('#jumlah').val();
 
       let msg="";
       if(barang ==""){
@@ -190,11 +182,9 @@
       }
       
       let isJumlahKeisi = false;
-      @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-      if(jumlah{{$detailJabatan->id}} !=null && jumlah{{$detailJabatan->id}} !=""){
+      if(jumlah !=null && jumlah !=""){
         isJumlahKeisi = true;
       }
-      @endforeach
       
       if(!isJumlahKeisi){
         msg += "Masukkan salah satu jumlah <br />";
@@ -209,10 +199,8 @@
       }else{
         let formData = {
           "barang":barang,
-          @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-          "jumlah{{$detailJabatan->id}}":jumlah{{$detailJabatan->id}},
-          @endforeach
-          "quotation_kebutuhan_id":{{$quotationKebutuhan[0]->id}},
+          "jumlah":jumlah,
+          "quotation_id":{{$quotation->id}},
           "_token": "{{ csrf_token() }}"
         };
 
@@ -224,9 +212,7 @@
             if(response=="Data Berhasil Ditambahkan"){
               $('#table-data').DataTable().ajax.reload();
               $('#barang').val("").change();
-              @foreach($quotationKebutuhan[0]->kebutuhan_detail as $detailJabatan)
-                $('#jumlah_{{$detailJabatan->id}}').val("");
-              @endforeach
+              $('#jumlah').val("");
             }else{
               Swal.fire({
                 title: "Pemberitahuan",
