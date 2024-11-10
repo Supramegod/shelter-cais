@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COST STRUCTURE - {{$leads->nama_perusahaan}}</title>
+    <title>Breakdown Pricing - {{$leads->nama_perusahaan}}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -43,7 +43,7 @@
                   <table>
                     <thead class="text-center">
                       <tr class="table-success">
-                        <th colspan="{{3+count($master->quotation_detail)}}" style="vertical-align: middle;">COST STRUCTURE {{$master->kebutuhan}}</th>
+                        <th colspan="{{3+count($master->quotation_detail)}}" style="vertical-align: middle;">BREAKDOWN PRICING {{$master->kebutuhan}}</th>
                       </tr>
                       <tr class="table-success">
                         <th colspan="{{3+count($master->quotation_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}</th>

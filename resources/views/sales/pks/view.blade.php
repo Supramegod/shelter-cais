@@ -86,11 +86,22 @@
           </div>
           <div class="card-body">
           <!-- <div class="col-12 text-center mt-2">
-              <a onclick="window.open('{{route('spk.cetak-pks',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
+              <a onclick="window.open('{{route('pks.cetak-pks',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
                 <span class="me-1">Download PKS</span>
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
               </a>
             </div> -->
+            @if(Auth::user()->role_id==29)
+            <div class="col-12 text-center mt-2">
+              <a href="{{route('pks.isi-checklist',$data->id)}}" class="btn btn-primary w-100"><i class="mdi mdi-pencil"></i>&nbsp;  Isi Checklist</a>
+            </div>
+            @endif
+
+            @if($dataQuotation->kunjungan_operasional !=null)
+          <div class="col-12 text-center mt-2">
+            <a onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-info w-100" ><i class="mdi mdi-print"></i>&nbsp;  Cetak Checklist</a>
+          </div>
+          @endif
           @if($data->status_pks_id == 1 && Auth::user()->role_id==96)
           <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="1"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Sales</button>

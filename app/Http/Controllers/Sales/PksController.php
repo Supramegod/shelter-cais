@@ -188,6 +188,8 @@ class PksController extends Controller
         try {
             $data = DB::table('sl_pks')->where('id',$id)->first();
             $spk = DB::table('sl_spk')->where('id',$data->spk_id)->first();
+            $spkD = DB::table('sl_spk_detail')->where('spk_id',$data->spk_id)->first();
+            $dataQuotation = DB::table('sl_quotation')->where('id',$spkD->quotation_id)->whereNull('deleted_at')->first();
 
             $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
@@ -195,7 +197,7 @@ class PksController extends Controller
             $quotation = DB::table('sl_quotation')->where('quotation_client_id',$data->quotation_client_id)->get();
             $data->status = DB::table('m_status_pks')->where('id',$data->status_pks_id)->first()->nama;
 
-            return view('sales.pks.view',compact('spk','data','quotation','quotationClient'));
+            return view('sales.pks.view',compact('dataQuotation','spk','data','quotation','quotationClient'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -278,6 +280,91 @@ class PksController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function isiChecklist(Request $request,$id){
+        $pks = DB::table('sl_pks')->where('id',$id)->first();
+        $spkD = DB::table('sl_spk_detail')->where('spk_id',$pks->spk_id)->whereNull('deleted_at')->first();
+        $quotation = DB::table('sl_quotation')->where('id',$spkD->quotation_id)->whereNull('deleted_at')->first();
+
+        $listJabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
+        $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+        $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
+        $quotation->mulai_kontrak = Carbon::parse($quotation->mulai_kontrak)->format('d F Y');
+        $quotation->kontrak_selesai = Carbon::parse($quotation->kontrak_selesai)->format('d F Y');
+        $quotation->tgl_quotation = Carbon::parse($quotation->tgl_quotation)->format('d F Y');
+        $quotation->tgl_penempatan = Carbon::parse($quotation->tgl_penempatan)->format('d F Y');
+
+        $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+        $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
+        $sPersonil = "";
+        $jPersonil = DB::select("SELECT sum(jumlah_hc) as jumlah_hc FROM sl_quotation_detail WHERE quotation_id = $quotation->id and deleted_at is null;");
+        if($jPersonil!=null){
+            if ($jPersonil[0]->jumlah_hc!=null && $jPersonil[0]->jumlah_hc!=0) {
+                $sPersonil .= $jPersonil[0]->jumlah_hc." Manpower (";
+                $detailPersonil = DB::table('sl_quotation_detail')
+                ->whereNull('sl_quotation_detail.deleted_at')
+                ->where('sl_quotation_detail.quotation_id',$quotation->id)
+                ->get();
+                foreach ($detailPersonil as $idp => $vdp) {
+                    if($idp !=0){
+                        $sPersonil .= ", ";
+                    }
+                    $sPersonil .= $vdp->jumlah_hc." ".$vdp->jabatan_kebutuhan;
+                }
+
+                $sPersonil .= " )";
+            }else{
+                $sPersonil = "-";
+            }
+        }else{
+            $sPersonil = "-";
+        }
+        $quotation->jumlah_personel = $sPersonil;
+
+        return view('sales.pks.checklist-form',compact('pks','quotation','listJabatanPic','listTrainingQ','listTraining','salaryRuleQ','leads'));
+    }
+
+    public function saveChecklist(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
+            
+            if($request->ada_training=="Tidak Ada"){
+                $request->training ="0";
+            }
+            if($request->ada_serikat=="Tidak Ada"){
+                $request->status_serikat ="Tidak Ada";
+            }
+
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'npwp' => $request->npwp ,
+                'alamat_npwp' => $request->alamat_npwp,
+                'pic_invoice' => $request->pic_invoice ,
+                'telp_pic_invoice' => $request->telp_pic_invoice ,
+                'email_pic_invoice' => $request->email_pic_invoice ,
+                'materai' => $request->materai ,
+                'kunjungan_operasional' => $request->jumlah_kunjungan_operasional." ".$request->bulan_tahun_kunjungan_operasional ,
+                'kunjungan_tim_crm' => $request->jumlah_kunjungan_tim_crm." ".$request->bulan_tahun_kunjungan_tim_crm ,
+                'keterangan_kunjungan_operasional' => $request->keterangan_kunjungan_operasional ,
+                'keterangan_kunjungan_tim_crm' => $request->keterangan_kunjungan_tim_crm ,
+                'training' => $request->training ,
+                'joker_reliever' => $request->joker_reliever ,
+                'syarat_invoice' => $request->syarat_invoice ,
+                'alamat_penagihan_invoice' => $request->alamat_penagihan_invoice ,
+                'catatan_site' => $request->catatan_site ,
+                'status_serikat' => $request->status_serikat ,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+            return redirect()->route('pks.view',$request->pksid);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
