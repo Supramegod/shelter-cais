@@ -77,7 +77,6 @@
                 Cetak Dokumen
               </button>
               <ul class="dropdown-menu" aria-labelledby="btncetak">
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-coss',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Cost Structure</a></li>
                 <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-quotation',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Quotation</a></li>
               </ul>
             </div>
