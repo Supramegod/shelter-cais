@@ -7,9 +7,9 @@
         [ 'stepno' => 5 ,'step' => 'BPJS', 'info' => 'Informasi Program BPJS' ],
         [ 'stepno' => 6 ,'step' => 'Aplikasi Pendukung', 'info' => 'Informasi Aplikasi Pendukung' ],
         [ 'stepno' => 7 ,'step' => 'Kaporlap / Seragam', 'info' => 'Informasi Kaporlap / Seragam' ],
-        [ 'stepno' => 8 ,'step' => 'OHC', 'info' => 'Informasi OHC' ],
-        [ 'stepno' => 9 ,'step' => 'Devices', 'info' => 'Informasi Devices' ],
-        [ 'stepno' => 10 ,'step' => 'Chemical', 'info' => 'Informasi Chemical' ],
+        [ 'stepno' => 8 ,'step' => 'Devices', 'info' => 'Informasi Devices' ],
+        [ 'stepno' => 9 ,'step' => 'Chemical', 'info' => 'Informasi Chemical' ],
+        [ 'stepno' => 10 ,'step' => 'OHC', 'info' => 'Informasi OHC' ],
         [ 'stepno' => 11 ,'step' => 'Cost Structure', 'info' => 'Informasi Cost Structure' ],
         [ 'stepno' => 12 ,'step' => 'Checklist', 'info' => 'Informasi Checklist' ],
         [ 'stepno' => 13 ,'step' => 'Perjanjian', 'info' => 'Informasi Perjanjian' ]
@@ -23,11 +23,11 @@
         <!-- kalo belum ada kebutuhan maka skip kaporlap dll` -->
         @php
             if($quotation->kebutuhan_id==2){
-                    if(in_array($data['stepno'],[10])){
+                    if(in_array($data['stepno'],[9])){
                         continue;
                     }
                 }else if($quotation->kebutuhan_id==1){
-                    if(in_array($data['stepno'],[10])){
+                    if(in_array($data['stepno'],[9])){
                         continue;
                     }
                 }else if($quotation->kebutuhan_id==3){
@@ -35,7 +35,7 @@
                         continue;
                     }
                 }else if($quotation->kebutuhan_id==4){
-                    if(in_array($data['stepno'],[10])){
+                    if(in_array($data['stepno'],[9])){
                         continue;
                     }
                 }
