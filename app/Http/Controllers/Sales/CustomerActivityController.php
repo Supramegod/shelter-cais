@@ -34,7 +34,7 @@ class CustomerActivityController extends Controller
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
         
 
-        $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+        $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
         $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
 
@@ -57,7 +57,7 @@ class CustomerActivityController extends Controller
 
             if(!empty($request->leads_id)){
                 $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
-                $branchLeads = DB::connection('mysqlhris')->table('m_branch')->where('id',$leads->branch_id)->first();
+                $branchLeads = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('id',$leads->branch_id)->first();
                 if($branchLeads !=null){
                     $leads->branch = $branchLeads->name;
                 }

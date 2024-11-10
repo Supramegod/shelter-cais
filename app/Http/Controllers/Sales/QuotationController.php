@@ -34,7 +34,7 @@ class QuotationController extends Controller
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
         
 
-        $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+        $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
         $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
 
@@ -399,8 +399,8 @@ class QuotationController extends Controller
             }
             $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$dataKota->id)->first();
             $dataKota->umk = "Rp. 0";
-            if($dataUmp !=null){
-                $dataKota->umk = "Rp. ".number_format($dataUmp->ump,0,",",".");
+            if($dataUmk !=null){
+                $dataKota->umk = "Rp. ".number_format($dataUmk->umk,0,",",".");
             }
 
             foreach ($province as $key => $value) {

@@ -42,12 +42,13 @@
                     <label class="form-check-label custom-option-content" for="pkhl">
                       <span class="custom-option-body">
                         <i class="mdi mdi-account-outline"></i>
-                        <span class="custom-option-title"> PKHL </span>
+                        <span class="custom-option-title"> @if($quotation->kebutuhan_id==1 || $quotation->kebutuhan_id==3) Event Gaji Harian @else PKHL @endif </span>
                       </span>
                       <input name="jenis_kontrak" class="form-check-input" value="PKHL" type="radio" value="" id="pkhl" @if($quotation->jenis_kontrak=='PKHL') checked @endif>
                     </label>
                   </div>
                 </div>
+                @if($quotation->kebutuhan_id!=1 && $quotation->kebutuhan_id!=3)
                 <div class="col-md mb-md-0 mb-2">
                   <div class="form-check custom-option custom-option-icon @if($quotation->jenis_kontrak=='Borongan') checked @endif">
                     <label class="form-check-label custom-option-content" for="borongan">
@@ -59,6 +60,7 @@
                     </label>
                   </div>
                 </div>
+                @endif
                 @if($errors->has('jenis_kontrak'))
                   <span class="text-danger">{{$errors->first('jenis_kontrak')}}</span>
                 @endif

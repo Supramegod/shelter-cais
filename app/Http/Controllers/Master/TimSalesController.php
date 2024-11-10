@@ -43,7 +43,7 @@ class TimSalesController extends Controller
 
     public function add(Request $request){
         $now = Carbon::now()->isoFormat('DD MMMM Y');
-        $listBranch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+        $listBranch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
 
         return view('master.tim-sales.add',compact('now', 'listBranch'));
     }
@@ -51,7 +51,7 @@ class TimSalesController extends Controller
     public function view(Request $request,$id){
         try {
             $data = DB::table('m_tim_sales')->where('id',$id)->first();
-            $listBranch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+            $listBranch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
             $listUser = DB::connection('mysqlhris')->table('m_user')->where('is_active',1)->whereIn('role_id', [29,31])->where('branch_id',$data->branch_id)->get();
 
             return view('master.tim-sales.view',compact('data', 'listBranch', 'listUser'));

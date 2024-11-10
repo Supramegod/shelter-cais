@@ -119,8 +119,8 @@
                   <div class="col-sm-6 ada_thr">
                     <label class="form-label" for="thr">Provisi / Ditagihkan</label>
                       <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan</option>  
-                        <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                        <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan Setiap Bulan</option>  
+                        <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan Terpisah</option>  
                       </select>
                   </div>
                 </div>
@@ -136,8 +136,8 @@
                   <div class="col-sm-6 ada_kompensasi">
                     <label class="form-label" for="kompensasi">Provisi / Ditagihkan</label>
                       <select id="kompensasi" name="kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="Diprovisikan" @if($quotation->kompensasi=="Diprovisikan") selected @endif>Diprovisikan</option>  
-                        <option value="Ditagihkan" @if($quotation->kompensasi=="Ditagihkan") selected @endif>Ditagihkan</option>  
+                        <option value="Diprovisikan" @if($quotation->kompensasi=="Diprovisikan") selected @endif>Diprovisikan Setiap Bulan</option>  
+                        <option value="Ditagihkan" @if($quotation->kompensasi=="Ditagihkan") selected @endif>Ditagihkan Terpisah</option>  
                       </select>
                   </div>
                 </div>

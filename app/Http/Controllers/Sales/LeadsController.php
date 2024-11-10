@@ -34,7 +34,7 @@ class LeadsController extends Controller
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
         
 
-        $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+        $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
         $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
 
@@ -54,7 +54,7 @@ class LeadsController extends Controller
     public function add (Request $request){
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
-            $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+            $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
             $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
