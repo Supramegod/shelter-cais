@@ -11,8 +11,7 @@
         [ 'stepno' => 9 ,'step' => 'Chemical', 'info' => 'Informasi Chemical' ],
         [ 'stepno' => 10 ,'step' => 'OHC', 'info' => 'Informasi OHC' ],
         [ 'stepno' => 11 ,'step' => 'Cost Structure', 'info' => 'Informasi Cost Structure' ],
-        [ 'stepno' => 12 ,'step' => 'Checklist', 'info' => 'Informasi Checklist' ],
-        [ 'stepno' => 13 ,'step' => 'Perjanjian', 'info' => 'Informasi Perjanjian' ]
+        [ 'stepno' => 12 ,'step' => 'Perjanjian', 'info' => 'Informasi Perjanjian' ]
     ];
 @endphp
 <div class="bs-stepper-header gap-lg-3 pt-5"  style="border-right:1px solid rgba(0, 0, 0, 0.1);">
