@@ -740,6 +740,12 @@ class QuotationController extends Controller
             if(isset($request->edit)){
                 $isEdit = true;
             }
+
+            $listJabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
+            $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+            $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
+            $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
+
             return view('sales.quotation.edit-'.$request->step,compact('dataProvinsi','dataKota','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','quotationKebutuhan'));
         } catch (\Exception $e) {
             dd($e);
