@@ -82,27 +82,30 @@
                         <th>#</th>
                         <th>Tanggal</th>
                         <th>Nama Perusahaan</th>
-                        <th>Nama</th>
-                        <th>Jabatan</th>
-                        <th>Nomor Telepon</th>
-                        <th>Email</th>
+                        <th>Jenis Perusahaan</th>
+                        <th>No Telp Perusahaan</th>
+                        <th>PIC</th>
+                        <th>Jabatan PIC</th>
+                        <th>No. Telp PIC</th>
+                        <th>Email PIC</th>
                         <th>Kebutuhan</th>
                         <th>Wilayah</th>
                         <th>Sumber Leads</th>
+                        <th>Alamat</th>
                         <th>Keterangan</th>
-                        <th>Keterangan Lanjutan</th>
+                        <th>Username Sales</th>
                         <th class="d-none">status</th>
                       </tr>
                     </thead>
                     <tbody>
                     @foreach ($datas[0] as $data)
                       <tr>
-                        <td>{{$data[12]}}</td>
-                        <input type="hidden" name="value[]" value="{{$data[0]}}||{{$data[1]}}||{{$data[3]}}||{{$data[2]}}||{{$data[4]}}||{{$data[5]}}||{{$data[6]}}||{{$data[7]}}||{{$data[8]}}||{{$data[9]}}||{{$data[10]}} {{$data[11]}}">
+                        <td>{{$data[15]}}</td>
+                        <input type="hidden" name="value[]" value="{{$data[0]}}||{{$data[1]}}||{{$data[2]}}||{{$data[3]}}||{{$data[4]}}||{{$data[5]}}||{{$data[6]}}||{{$data[7]}}||{{$data[8]}}||{{$data[9]}}||{{$data[10]}}||{{$data[11]}}||{{$data[12]}}||{{$data[13]}}||{{$data[14]}}">
                         <td>{{$data[0]}}</td>
                         <td>{{$data[1]}}</td>
-                        <td>{{$data[3]}}</td>
                         <td>{{$data[2]}}</td>
+                        <td>{{$data[3]}}</td>
                         <td>{{$data[4]}}</td>
                         <td>{{$data[5]}}</td>
                         <td>{{$data[6]}}</td>
@@ -111,7 +114,10 @@
                         <td>{{$data[9]}}</td>
                         <td>{{$data[10]}}</td>
                         <td>{{$data[11]}}</td>
-                        <td class="d-none">{{$data[13]}}</td>
+                        <td>{{$data[12]}}</td>
+                        <td>{{$data[13]}}</td>
+                        <td>{{$data[14]}}</td>
+                        <td class="d-none">{{$data[16]}}</td>
                       </tr>
                     @endforeach
                     </tbody>
@@ -138,10 +144,10 @@
       "paging": false,
       'processing': true,
       "createdRow": function( row, data, dataIndex){
-                  if(data[13]=="2"){
+                  if(data[16]=="2"){
                     $('td', row).css('background-color', "#fff4df");
 
-                  }else if(data[13]=="3"){
+                  }else if(data[16]=="3"){
                     $('td', row).css('background-color', "#ffe4e4");
                   }
                 },  

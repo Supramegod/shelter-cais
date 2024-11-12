@@ -38,17 +38,20 @@ class LeadsTemplateExport implements FromCollection,WithCustomStartCell, WithEve
                 $sheet = $event->sheet;
 
                 $sheet->setCellValue('A1', "No.");
-                $sheet->setCellValue('B1', "Tanggal");
-                $sheet->setCellValue('C1', "Nama");
-                $sheet->setCellValue('D1', "Nama Perusahaan");
-                $sheet->setCellValue('E1', "Jabatan");
-                $sheet->setCellValue('F1', "Nomor Telepon");
-                $sheet->setCellValue('G1', "Email");
-                $sheet->setCellValue('H1', "Kebutuhan");
-                $sheet->setCellValue('I1', "Wilayah");
-                $sheet->setCellValue('J1', "Sumber Leads");
-                $sheet->setCellValue('K1', "Keterangan");
-                $sheet->setCellValue('L1', "Keterangan Lanjutan");
+                $sheet->setCellValue('B1', "Tanggal ( Contoh : 22-01-2024 )");
+                $sheet->setCellValue('C1', "Nama Perusahaan");
+                $sheet->setCellValue('D1', "Jenis Perusahaan ( Sesuai Master Jenis Perusahaan )");
+                $sheet->setCellValue('E1', "No. Telp. Perusahaan");
+                $sheet->setCellValue('F1', "PIC");
+                $sheet->setCellValue('G1', "Jabatan PIC");
+                $sheet->setCellValue('H1', "No Telp. PIC");
+                $sheet->setCellValue('I1', "Email PIC");
+                $sheet->setCellValue('J1', "Kebutuhan ( Security , Direct Labour , Cleaning Service , Logistik )");
+                $sheet->setCellValue('K1', "Wilayah ( Sesuai Master )");
+                $sheet->setCellValue('L1', "Sumber Leads ( Sesuai Master )");
+                $sheet->setCellValue('M1', "Alamat");
+                $sheet->setCellValue('N1', "Keterangan");
+                $sheet->setCellValue('O1', "Username Sales");
 
                 $styleArray = [
                     'alignment' => [
@@ -65,11 +68,11 @@ class LeadsTemplateExport implements FromCollection,WithCustomStartCell, WithEve
                     ]
                 ];
                 
-                $cellRange = 'A1:L1'; // All headers
+                $cellRange = 'A1:O1'; // All headers
                 $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray($styleArray);
                 $event->sheet->autoSize(true);
 
-                $event->sheet->getStyle('A2:L800')->applyFromArray([
+                $event->sheet->getStyle('A2:O800')->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

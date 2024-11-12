@@ -398,12 +398,12 @@ class LeadsController extends Controller
                         if($keyd==0){
                             continue;
                         };
-                        if($value[0]==null&&$value[2]==null&&$value[3]==null&&$value[4]==null&&$value[5]==null&&$value[6]==null&&$value[7]==null){
+                        if($value[0]==null&&$value[1]==null&&$value[2]==null&&$value[3]==null&&$value[4]==null&&$value[5]==null&&$value[6]==null&&$value[7]==null&&$value[8]==null&&$value[9]==null&&$value[10]==null&&$value[11]==null&&$value[12]==null){
                             continue;
                         }
 
-                        $value[12] = "";
-                        $value[13] = 1; // status : 1 success,2 warning , 3 error
+                        $value[15] = "";
+                        $value[16] = 1; // status : 1 success,2 warning , 3 error
                         //convert date
                         $UNIX_DATE = Carbon::now()->toDateString();
                         try {
@@ -414,38 +414,58 @@ class LeadsController extends Controller
                         $value[1] = $UNIX_DATE;
 
                         //Cek Data Master
-                        $lbranch = DB::connection('mysqlhris')->table('m_branch')->where('name',$value[8])->first();
-                        $lplatform = DB::table('m_platform')->where('nama',$value[9])->first();
-                        $lkebutuhan = DB::table('m_kebutuhan')->where('nama',$value[7])->first();
+                        $lbranch = DB::connection('mysqlhris')->table('m_branch')->where('name',$value[10])->first();
+                        $lplatform = DB::table('m_platform')->where('nama',$value[11])->first();
+                        $lkebutuhan = DB::table('m_kebutuhan')->where('nama',$value[9])->first();
+                        $lJenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->where('nama',$value[3])->first();
+                        $ltimSalesD = DB::table('m_tim_sales_d')->whereNull('deleted_at')->where('username',$value[14])->first();
 
                         if($lbranch==null){
-                            $value[8] ="";
-                            if($value[12]!=""){
-                                $value[12] .= " , ";
-                                $value[13] = 2;
+                            $value[10] ="";
+                            if($value[15]!=""){
+                                $value[15] .= " , ";
+                                $value[16] = 2;
                             }
-                            $value[12] .= "Wilayah Tidak ditemukan";
+                            $value[15] .= "Wilayah Tidak ditemukan";
                         }
 
                         if($lplatform==null){
-                            $value[9] ="";
-                            if($value[12]!=""){
-                                $value[12] .= " , ";
-                                $value[13] = 2;
+                            $value[11] ="";
+                            if($value[15]!=""){
+                                $value[15] .= " , ";
+                                $value[16] = 2;
                             }
-                            $value[12] .= "Sumber Leads Tidak ditemukan";
+                            $value[15] .= "Sumber Leads Tidak ditemukan";
                         }
 
                         if($lkebutuhan==null){
-                            $value[7] ="";
-                            if($value[12]!=""){
-                                $value[12] .= " , ";
-                                $value[13] = 2;
+                            $value[9] ="";
+                            if($value[15]!=""){
+                                $value[15] .= " , ";
+                                $value[16] = 2;
                             }
-                            $value[12] .= "Kebutuhan Tidak ditemukan";
+                            $value[15] .= "Kebutuhan Tidak ditemukan";
                         }
 
-                        if($value[12]==""){
+                        if($lJenisPerusahaan==null){
+                            $value[3] ="";
+                            if($value[15]!=""){
+                                $value[15] .= " , ";
+                                $value[16] = 2;
+                            }
+                            $value[15] .= "Jenis Perusahaan Tidak ditemukan";
+                        }
+
+                        if($ltimSalesD==null){
+                            $value[14] ="";
+                            if($value[15]!=""){
+                                $value[15] .= " , ";
+                                $value[16] = 2;
+                            }
+                            $value[15] .= "Tim Sales Tidak ditemukan";
+                        }
+
+                        if($value[15]==""){
                             $jumlahSuccess++;
                         }else{
                             $jumlahWarning++;
@@ -486,18 +506,24 @@ class LeadsController extends Controller
 
                 $dtgl = $data[1];
                 $dperusahaan = $data[2];
-                $dnama = $data[3];
-                $djabatan = $data[4];
-                $dtelp = $data[5];
-                $demail = $data[6];
-                $dkebutuhan = $data[7];
-                $dbranch = $data[8];
-                $dplatform = $data[9];
-                $dketerangan = $data[10];
+                $djenisPerusahaan = $data[3];
+                $dnoTelpPerusahaan =$data[4];
+                $dpic = $data[5];
+                $djabatanPic = $data[6];
+                $dnoTelpPic = $data[7];
+                $demailPic = $data[8];
+                $dkebutuhan = $data[9];
+                $dbranch = $data[10];
+                $dsumberLeads = $data[11];
+                $dalamat = $data[12];
+                $dketerangan = $data[13];
+                $dSales = $data[14];
 
                 $lbranch = DB::connection('mysqlhris')->table('m_branch')->where('name',$dbranch)->first();
-                $lplatform = DB::table('m_platform')->where('nama',$dplatform)->first();
+                $lplatform = DB::table('m_platform')->where('nama',$dsumberLeads)->first();
                 $lkebutuhan = DB::table('m_kebutuhan')->where('nama',$dkebutuhan)->first();
+                $lJenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->where('nama',$djenisPerusahaan)->first();
+                $ltimSalesD = DB::table('m_tim_sales_d')->whereNull('deleted_at')->where('username',$dSales)->first();
 
                 $branch = null;
                 if($lbranch!=null){
@@ -514,20 +540,36 @@ class LeadsController extends Controller
                     $kebutuhan = $lkebutuhan->id;
                 }
 
+                $jenisPerusahaan = null;
+                if($lJenisPerusahaan!=null){
+                    $jenisPerusahaan = $lJenisPerusahaan->id;
+                }
+
+                $timSalesD = null;
+                $timSales = null;
+                if($ltimSalesD!=null){
+                    $timSalesD = $ltimSalesD->id;
+                    $timSales = $ltimSalesD->tim_sales_id;
+                }
 
                 DB::table('sl_leads')->insert([
                     'nomor' =>  $nomor,
                     'tgl_leads' => $dtgl,
                     'nama_perusahaan' => $dperusahaan,
+                    'telp_perusahaan' => $dnoTelpPerusahaan,
+                    'jenis_perusahaan_id' =>$jenisPerusahaan ,
                     'branch_id' => $branch,
                     'platform_id' => 99,
                     'kebutuhan_id' =>  $kebutuhan,
-                    'pic' =>  $dnama,
-                    'jabatan' =>  $djabatan,
-                    'no_telp' => $dtelp,
-                    'email' => $demail,
-                    'status_leads_id' => 1,
+                    'alamat' => $dalamat,
                     'notes' => $dketerangan,
+                    'pic' =>  $dpic,
+                    'jabatan' =>  $djabatanPic,
+                    'no_telp' => $dnoTelpPic,
+                    'email' => $demailPic,
+                    'status_leads_id' => 1,
+                    'tim_sales_id' => $timSales,
+                    'tim_sales_d_id' => $timSalesD,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);    
