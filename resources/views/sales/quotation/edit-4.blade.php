@@ -143,7 +143,7 @@
                 </div>
                 <div class="row mb-3">
                   <div class="col-sm-4">
-                    <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Holiday</label>
+                    <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Hari Libur</label>
                       <select id="ada_tunjangan_holiday" name="ada_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>  
                         <option value="Ada" @if($quotation->tunjangan_holiday!=null && $quotation->tunjangan_holiday!="" && $quotation->tunjangan_holiday!="Tidak Ada") selected @endif>Ada</option>  
@@ -158,7 +158,7 @@
                       </select>
                   </div>
                   <div class="col-sm-4 d-nominal-tunjangan-holiday">
-                    <label class="form-label" for="nominal_tunjangan_holiday">Nominal Tunjangan Holiday</label>
+                    <label class="form-label" for="nominal_tunjangan_holiday">Nominal Tunjangan Hari Libur</label>
                     <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_tunjangan_holiday}}" name="nominal_tunjangan_holiday" id="nominal_tunjangan_holiday">
                   </div>
                 </div>
@@ -264,16 +264,16 @@ $('.show-custom').on('click',function(){
   }
 
   if(obj.ada_tunjangan_holiday==null || obj.ada_tunjangan_holiday==""){
-    msg += "<b>Tunjangan Holiday</b> belum dipilih </br>";
+    msg += "<b>Tunjangan Hari Libur</b> belum dipilih </br>";
   }else{
     if(obj.ada_tunjangan_holiday=="Ada"){
       if(obj.tunjangan_holiday==null || obj.tunjangan_holiday==""){
-        msg += "<b>Tunjangan Holiday</b> belum dipilih </br>";
+        msg += "<b>Tunjangan Hari Libur</b> belum dipilih </br>";
       }
     }else{
       if(obj.tunjangan_holiday =="Flat"){
         if(obj.nominal_tunjangan_holiday==null || obj.nominal_tunjangan_holiday==""){
-          msg += "<b>Nominal Tunjangan Holiday</b> belum diisi </br>";
+          msg += "<b>Nominal Tunjangan Hari Libur</b> belum diisi </br>";
         }
       }
     }

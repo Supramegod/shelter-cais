@@ -205,7 +205,7 @@ Hormat kami,
                 @endif
                 @if($master->tunjangan_holiday=="Flat" || $master->tunjangan_holiday=="Normatif")
                 <tr>
-                <td>Tunjangan Holiday</th>
+                <td>Tunjangan Hari Libur</th>
                 @foreach($master->quotation_detail as $detailJabatan)
                 <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}}</th>
                 @endforeach
