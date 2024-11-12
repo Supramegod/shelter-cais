@@ -541,9 +541,19 @@ class LeadsController extends Controller
                 }
 
                 $jenisPerusahaan = null;
-                if($lJenisPerusahaan!=null){
-                    $jenisPerusahaan = $lJenisPerusahaan->id;
+                if ($djenisPerusahaan !=null && $djenisPerusahaan != "" && $djenisPerusahaan !="-") {
+                    if($lJenisPerusahaan!=null){
+                        $jenisPerusahaan = $lJenisPerusahaan->id;
+                    }else{
+                        $jenisPerusahaan = DB::table('m_jenis_perusahaan')->insertGetId([
+                            'nama' => $djenisPerusahaan,
+                            'resiko' => "",
+                            'created_at' => $current_date_time,
+                            'created_by' => Auth::user()->full_name
+                        ]);
+                    }
                 }
+                
 
                 $timSalesD = null;
                 $timSales = null;
