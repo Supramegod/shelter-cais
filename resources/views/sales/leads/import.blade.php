@@ -27,7 +27,7 @@
                 @csrf
                 <div class="input-group">
                     <input type="file" name="file" id="file" class="form-control @if ($errors->any()) @if($errors->has('file')) is-invalid @else   @endif @endif" >
-                    <label class="input-group-text" for="file">Pilih file</label>
+                    <label class="input-group-text" for="file">Pilih file ( Disarankan max 500 baris )</label>
                     @if($errors->has('file'))
                       <div class="invalid-feedback">{{$errors->first('file')}}</div>
                     @endif

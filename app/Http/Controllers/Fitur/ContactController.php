@@ -168,80 +168,69 @@ class ContactController extends Controller
         // Perform actions based on the webhook data
         try {
             if($key =="zRdjjhBKq8g4Xn1Xojp2oOggh8Ar4jpr"){
-                $data = $request->all();
-                    
                 // Ambil 'fields' dari data JSON
-                if (isset($data['fields'])) {
-                    $fields = $data['fields'];
-                     // Ambil nilai dari setiap field
-                    $name = $fields['name']['value'] ?? null;
-                    $message = $fields['message']['value'] ?? null;
-                    $email = $fields['email']['value'] ?? null;
-                    $kebutuhan = $fields['field_755c2e6']['value'] ?? null;
-                    $kota = $fields['field_41ddce4']['value'] ?? null;
-                    $jabatan = $fields['field_c71451e']['value'] ?? null;
-                    $namaPerusahaan = $fields['field_1f9a4aa']['value'] ?? null;
-                    $pesan = $fields['field_d6eada5']['value'] ?? null;
-                    $recaptcha = $fields['field_33bab84']['value'] ?? null;
-                    $wilayah = $fields['field_41ddce4']['value'] ?? null;
-                    
-                    DB::table('wh_shelterapp')->insert([
-                        'name' => $name,
-                        'no_telepon' => $message,
-                        'email' => $email,
-                        'kebutuhan' => $kebutuhan,
-                        'kota' => $kota,
-                        'jabatan' => $jabatan,
-                        'nama_perusahaan' => $namaPerusahaan,
-                        'pesan' => $pesan,
-                        'message' => $message,
-                        'wilayah' => $wilayah,
-                        'recaptcha' => $recaptcha
-                    ]);
-                    
-                    $current_date_time = Carbon::now()->toDateTimeString();
-                    $nomor = $this->generateNomor();
-                    $kebutuhanId = null;
-                    if($kebutuhan=='securityservice'){
-                        $kebutuhanId = 1;
-                    }else if($kebutuhan=='cleaning_service'){
-                        $kebutuhanId = 3;
-                    }else if($kebutuhan=='labour_supply'){
-                        $kebutuhanId = 2;
-                    }else if($kebutuhan=='Logistic'){
-                        $kebutuhanId = 4;
-                    }else{
-                        $kebutuhanId = 99;
-                    };
-    
-                    $branch = null;
-                    $province = DB::connection('mysqlhris')->table('m_province')->where('name','like',$wilayah)->first();
-                    if($province !=null){
-                        $branch = $province->branch_id;
-                    };
-                    
-                    DB::table('sl_leads')->insert([
-                        'nomor' =>  $nomor,
-                        'tgl_leads' => $current_date_time,
-                        'nama_perusahaan' => $namaPerusahaan,
-                        'branch_id' => $branch,
-                        'platform_id' => 4,
-                        'kebutuhan_id' =>  $kebutuhanId,
-                        'pic' =>  $name,
-                        'jabatan' =>  $jabatan,
-                        'no_telp' => $message,
-                        'email' => $email,
-                        'status_leads_id' => 1,
-                        'notes' => $pesan,
-                        'created_at' => $current_date_time,
-                        'created_by' => 'webhook'
-                    ]);    
-                    
-                    // $arrService = array("securityservice", "cleaning_service", "labour_supply","Logistic");
-                    // if(in_array($kebutuhan, $arrService)){
-                        
-                    // };
-                }
+                $name = $request->input('name');
+                $message = $request->input('message');
+                $email = $request->input('email');
+                $kebutuhan = $request->input('field_755c2e6');
+                $kota = $request->input('field_41ddce4');
+                $jabatan = $request->input('field_c71451e');
+                $namaPerusahaan = $request->input('field_1f9a4aa');
+                $pesan = $request->input('field_d6eada5');
+                $recaptcha = $request->input('field_33bab84');
+                $wilayah = $request->input('field_41ddce4');
+
+                DB::table('wh_shelterapp')->insert([
+                    'name' => $name,
+                    'no_telepon' => $message,
+                    'email' => $email,
+                    'kebutuhan' => $kebutuhan,
+                    'kota' => $kota,
+                    'jabatan' => $jabatan,
+                    'nama_perusahaan' => $namaPerusahaan,
+                    'pesan' => $pesan,
+                    'message' => $message,
+                    'wilayah' => $wilayah,
+                    'recaptcha' => $recaptcha
+                ]);
+                
+                $current_date_time = Carbon::now()->toDateTimeString();
+                $nomor = $this->generateNomor();
+                $kebutuhanId = null;
+                if($kebutuhan=='securityservice'){
+                    $kebutuhanId = 1;
+                }else if($kebutuhan=='cleaning_service'){
+                    $kebutuhanId = 3;
+                }else if($kebutuhan=='labour_supply'){
+                    $kebutuhanId = 2;
+                }else if($kebutuhan=='Logistic'){
+                    $kebutuhanId = 4;
+                }else{
+                    $kebutuhanId = 99;
+                };
+
+                $branch = null;
+                $province = DB::connection('mysqlhris')->table('m_province')->where('name','like',$wilayah)->first();
+                if($province !=null){
+                    $branch = $province->branch_id;
+                };
+                
+                DB::table('sl_leads')->insert([
+                    'nomor' =>  $nomor,
+                    'tgl_leads' => $current_date_time,
+                    'nama_perusahaan' => $namaPerusahaan,
+                    'branch_id' => $branch,
+                    'platform_id' => 4,
+                    'kebutuhan_id' =>  $kebutuhanId,
+                    'pic' =>  $name,
+                    'jabatan' =>  $jabatan,
+                    'no_telp' => $message,
+                    'email' => $email,
+                    'status_leads_id' => 1,
+                    'notes' => $pesan,
+                    'created_at' => $current_date_time,
+                    'created_by' => 'webhook'
+                ]);    
                 
                 return response()->json(['success' => true]);
             }else{
