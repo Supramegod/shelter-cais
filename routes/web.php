@@ -26,6 +26,7 @@ use App\Http\Controllers\Master\BarangController;
 use App\Http\Controllers\Master\KebutuhanController;
 use App\Http\Controllers\Master\TimSalesController;
 use App\Http\Controllers\Master\TrainingController;
+use App\Http\Controllers\Master\UmpController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -367,5 +368,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/training/delete', 'delete')->name('training.delete');
 
         Route::get('/master/training/list', 'list')->name('training.list'); // ajax
+    });
+    
+    Route::controller(UmpController::class)->group(function() {
+        Route::get('/master/ump', 'index')->name('ump');
+        Route::get('/master/ump/add', 'add')->name('ump.add');
+        Route::get('/master/ump/view/{id}', 'view')->name('ump.view');
+        Route::post('/master/ump/save', 'save')->name('ump.save');
+
+        Route::get('/master/ump/list', 'list')->name('ump.list'); // ajax
+        Route::get('/master/ump/list-ump', 'listUmp')->name('ump.list-ump'); // ajax
     });
 });
