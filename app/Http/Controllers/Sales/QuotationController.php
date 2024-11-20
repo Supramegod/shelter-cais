@@ -72,7 +72,9 @@ class QuotationController extends Controller
                     $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
                 }
             }
-            return view('sales.quotation.add',compact('now','company','province'));
+
+            $tipe = $request->tipe;
+            return view('sales.quotation.add',compact('now','company','province','tipe'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);

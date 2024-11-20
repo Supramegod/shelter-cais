@@ -11,7 +11,7 @@
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
-            <span class="text-center">Form Quotation Baru</span>
+            <span class="text-center">Form Quotation ( {{$tipe}} )</span>
             <span class="text-center"><button class="btn btn-secondary waves-effect @if(old('leads_id')==null) d-none @endif" type="button" id="btn-lihat-leads"><span class="tf-icons mdi mdi-arrow-right-circle-outline me-1"></span>&nbsp; Lihat Leads</button>&nbsp;&nbsp;&nbsp;&nbsp; <span>{{$now}}</span></span>
           </div>
         </h5>
@@ -19,19 +19,18 @@
           @csrf
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
-              <h4 class="mb-0">LEADS</h4>
-              <h4>Pilih Leads Untuk Quotation</h4>
+              <h4 class="mb-0">@if($tipe=="Quotation Baru") LEADS @elseif($tipe=="Adendum") QUOTATION @elseif($tipe=="Quotation Lanjutan") CUSTOMER @endif</h4>
+              <h4>Pilih @if($tipe=="Quotation Baru") Leads @elseif($tipe=="Adendum") Quotation @elseif($tipe=="Quotation Lanjutan") Customer @endif Untuk Quotation</h4>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Leads / customer <span class="text-danger">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">@if($tipe=="Quotation Baru") Leads @elseif($tipe=="Adendum") Quotation @elseif($tipe=="Quotation Lanjutan") Customer @endif <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="hidden" id="leads_id" name="leads_id" value="{{old('leads_id')}}" class="form-control">
+                <input type="hidden" id="tipe" name="tipe" class="form-control">
+                <input type="hidden" id="leads_id" name="leads_id" class="form-control">
+                <input type="hidden" id="quotation_id" name="quotation_id" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="leads" name="leads" value="{{old('leads')}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else   @endif @endif" readonly>
+                  <input type="text" id="leads" name="leads"  class="form-control" readonly>
                   <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
-                  @if($errors->has('leads'))
-                    <div class="invalid-feedback">{{$errors->first('leads')}}</div>
-                  @endif
                 </div>
               </div>
             </div>

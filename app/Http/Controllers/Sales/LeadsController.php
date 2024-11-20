@@ -386,6 +386,7 @@ class LeadsController extends Controller
                 return back()->withErrors($validator->errors())->withInput();
             }else{
                 $file = $request->file('file');
+                $current_date_time = Carbon::now()->toDateTimeString();
 
                 // Get the csv rows as an array
                 $array = Excel::toArray(new stdClass(), $file);
@@ -447,13 +448,21 @@ class LeadsController extends Controller
                             $value[15] .= "Kebutuhan Tidak ditemukan";
                         }
 
-                        if($lJenisPerusahaan==null){
-                            $value[3] ="";
-                            if($value[15]!=""){
-                                $value[15] .= " , ";
-                                $value[16] = 2;
+                        if ($value[3]!=null && $value[3]!="" && $value[3]!="-") {
+                            if($lJenisPerusahaan==null){
+                                DB::table('m_jenis_perusahaan')->insert([
+                                    'nama' => $value[3],
+                                    'resiko' => "",
+                                    'created_at' => $current_date_time,
+                                    'created_by' => Auth::user()->full_name
+                                ]);
+                            }else{
+                                if($value[15]!=""){
+                                    $value[15] .= " , ";
+                                    $value[16] = 2;
+                                }
+                                $value[15] .= "Jenis Perusahaan Tidak ditemukan";
                             }
-                            $value[15] .= "Jenis Perusahaan Tidak ditemukan";
                         }
 
                         if($ltimSalesD==null){
@@ -477,8 +486,10 @@ class LeadsController extends Controller
                 array_push($datas,$data);
             }
             $now = Carbon::now()->isoFormat('DD MMMM Y');
+            DB::commit();
             return view('sales.leads.inquiry',compact('datas','now','jumlahError','jumlahSuccess','jumlahWarning'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -541,20 +552,10 @@ class LeadsController extends Controller
                 }
 
                 $jenisPerusahaan = null;
-                if ($djenisPerusahaan !=null && $djenisPerusahaan != "" && $djenisPerusahaan !="-") {
-                    if($lJenisPerusahaan!=null){
-                        $jenisPerusahaan = $lJenisPerusahaan->id;
-                    }else{
-                        $jenisPerusahaan = DB::table('m_jenis_perusahaan')->insertGetId([
-                            'nama' => $djenisPerusahaan,
-                            'resiko' => "",
-                            'created_at' => $current_date_time,
-                            'created_by' => Auth::user()->full_name
-                        ]);
-                    }
+                if($lJenisPerusahaan!=null){
+                    $jenisPerusahaan = $lJenisPerusahaan->id;
                 }
                 
-
                 $timSalesD = null;
                 $timSales = null;
                 if($ltimSalesD!=null){

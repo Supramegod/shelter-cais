@@ -367,18 +367,41 @@
                     className: 'create-new btn btn-label-warning waves-effect waves-light',
                     action: function (e, dt, node, config)
                         {
-                            $("#quotationModal").modal("show");                           
+                            $("#quotationModal").modal("show");
                         }
                     },
                     {
-                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Quotation</span>',
-                    className: 'create-new btn btn-label-primary waves-effect waves-light',
-                    action: function (e, dt, node, config)
+                    extend: 'collection',
+                    className: 'btn btn-label-primary dropdown-toggle waves-effect waves-light',
+                    text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Quotation</span>',
+                    buttons: [
                         {
-                            //This will send the page to the location specified
-                            window.location.href = '{{route("quotation.add")}}';
+                        text: '<i class="mdi mdi-file-document-outline me-1" ></i>Quotation Baru',
+                        className: 'dropdown-item',
+                        action: function (e, dt, node, config)
+                            {
+                                //This will send the page to the location specified
+                                window.location.href = "{{route('quotation.add',['tipe'=>'Quotation Baru'])}}";
+                            }
+                        },{
+                        text: '<i class="mdi mdi-file-document-outline me-1" ></i>Adendum',
+                        className: 'dropdown-item',
+                        action: function (e, dt, node, config)
+                            {
+                                //This will send the page to the location specified
+                                window.location.href = "{{route('quotation.add',['tipe'=>'Adendum'])}}";
+                            }
+                        },{
+                        text: '<i class="mdi mdi-file-document-outline me-1" ></i>Quotation Lanjutan',
+                        className: 'dropdown-item',
+                        action: function (e, dt, node, config)
+                            {
+                                //This will send the page to the location specified
+                                window.location.href = "{{route('quotation.add',['tipe'=>'Quotation Lanjutan'])}}";
+                            }
                         }
-                    }
+                    ]
+                    },
                 ],
             });
 

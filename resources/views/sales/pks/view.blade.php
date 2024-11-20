@@ -142,10 +142,10 @@
           </div>
           @else
           <div class="col-12 text-center mt-2">
-            <button id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
-              <span class="me-1">Download PKS</span>
-              <i class="mdi mdi-download scaleX-n1-rtl"></i>
-            </button>
+            <a onclick="window.open('{{route('pks.cetak-pks',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Download PKS</span>
+                <i class="mdi mdi-download scaleX-n1-rtl"></i>
+              </a>
           </div>
           @endif
             <div class="col-12 text-center mt-2">
