@@ -530,7 +530,7 @@ class QuotationController extends Controller
             $listTrainingQ = [];
 
             if($request->step==11){
-                $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama,nominal FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
+                $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
 
                 $jumlahHc = 0;
                 foreach ($quotation->quotation_detail as $jhc) {
@@ -2251,17 +2251,23 @@ class QuotationController extends Controller
 
             $nominalTunjangan = str_replace(".","",$nominalTunjangan);
 
-            $quotationDetail = DB::table('sl_quotation_detail')->where('id',$quotationDetailId)->first();
+            $quotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
 
-            DB::table('sl_quotation_detail_tunjangan')->insert([
-                'quotation_id' => $quotationDetail->quotation_id,
-                'quotation_detail_id' => $quotationDetail->id,
-                'tunjangan_id' => null,
-                'nama_tunjangan' => $namaTunjangan,
-                'nominal' => $nominalTunjangan,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            foreach ($quotationDetail as $key => $value) {
+                $nominal = 0;
+                if($value->id == $quotationDetailId){
+                    $nominal = $nominalTunjangan;
+                }
+                DB::table('sl_quotation_detail_tunjangan')->insert([
+                    'quotation_id' => $value->quotation_id,
+                    'quotation_detail_id' => $value->id,
+                    'tunjangan_id' => null,
+                    'nama_tunjangan' => $namaTunjangan,
+                    'nominal' => $nominal,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
 
             return "Data Berhasil Ditambahkan";
         } catch (\Exception $e) {
@@ -2338,6 +2344,23 @@ class QuotationController extends Controller
             abort(500);
         }
     }
+
+    public function editTunjangan(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation_detail_tunjangan')->where('quotation_detail_id',$request->id)->where('nama_tunjangan',$request->nama)->update([
+                'nominal' => $request->nominal,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
 
     public function listDetailHC (Request $request){
         $data = DB::table('sl_quotation_detail')
