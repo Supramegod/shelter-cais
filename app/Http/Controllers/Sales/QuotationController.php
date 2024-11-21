@@ -2193,6 +2193,7 @@ class QuotationController extends Controller
                     'training_id' => $value,
                     'quotation_id' =>$request->quotation_id,
                     'nama' => $dTraining->nama,
+                    'harga' => $dTraining->harga,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);

@@ -292,6 +292,9 @@ class PksController extends Controller
         $spkD = DB::table('sl_spk_detail')->where('spk_id',$pks->spk_id)->whereNull('deleted_at')->first();
         $quotation = DB::table('sl_quotation')->where('id',$spkD->quotation_id)->whereNull('deleted_at')->first();
 
+        $listRo = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id',[4,5,6,8])->orderBy('full_name','asc')->get();
+        $listCrm = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id',[54,55,56])->orderBy('full_name','asc')->get();
+
         $listJabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
         $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
         $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
@@ -327,7 +330,7 @@ class PksController extends Controller
         }
         $quotation->jumlah_personel = $sPersonil;
 
-        return view('sales.pks.checklist-form',compact('pks','quotation','listJabatanPic','listTrainingQ','listTraining','salaryRuleQ','leads'));
+        return view('sales.pks.checklist-form',compact('listCrm','listRo','pks','quotation','listJabatanPic','listTrainingQ','listTraining','salaryRuleQ','leads'));
     }
 
     public function saveChecklist(Request $request){
@@ -339,6 +342,18 @@ class PksController extends Controller
             if($request->ada_serikat=="Tidak Ada"){
                 $request->status_serikat ="Tidak Ada";
             }
+
+            $ro = DB::connection('mysqlhris')->table('m_user')->where('id',$request->ro)->first();
+            $crm = DB::connection('mysqlhris')->table('m_user')->where('id',$request->crm)->first();
+        
+            DB::table('sl_pks')->where('id',$request->pks_id)->update([
+                'ro_id' => $ro->id,
+                'ro' => $ro->full_name,
+                'crm_id' => $crm->id,
+                'crm' => $crm->full_name,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'npwp' => $request->npwp ,
@@ -356,7 +371,7 @@ class PksController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            return redirect()->route('pks.view',$request->pksid);
+            return redirect()->route('pks.view',$request->pks_id);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

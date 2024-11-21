@@ -11,7 +11,7 @@
       <form class="card-body" action="{{route('pks.save-checklist')}}" method="POST" enctype="multipart/form-data">        
         @csrf
         <input type="hidden" name="id" value="{{$quotation->id}}">
-        <input type="hidden" name="pksid" value="{{$pks->id}}">
+        <input type="hidden" name="pks_id" value="{{$pks->id}}">
         <!-- Account Details -->
         <div id="account-details-1" class="content active">
           <div class="content-header mb-5 text-center">
@@ -136,17 +136,15 @@
                     </tr>
                     <tr>
                       <td>Kunjungan Operasional <span class="text-danger fw-bold">*</span></td>
-                      <td>
-                        {{$quotation->kunjungan_operasional}}
-                      </td>
+                      <td>@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif Kali Dalam 1 @if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[1]}}@endif</td>
                       <td>{{$quotation->keterangan_kunjungan_operasional}}</td>
+                      <td></td>
                     </tr>
                     <tr>
                       <td>Kunjungan Tim CRM <span class="text-danger fw-bold">*</span></td>
-                      <td>
-                        {{$quotation->kunjungan_tim_crm}}
-                      </td>
+                      <td>@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif Kali Dalam 1 @if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[1]}}@endif</td>
                       <td>{{$quotation->keterangan_kunjungan_tim_crm}}</td>
+                      <td></td>
                     </tr>
                     <tr id="list-training">
                       <td colspan="4" id="data-list-training">@foreach($listTrainingQ as $training) {{$training->nama}} @if(!$loop->last), @endif @endforeach</td>
@@ -271,6 +269,28 @@
                           <option value="" @if($quotation->joker_reliever=='') selected @endif>- Pilih Data -</option>  
                           <option value="Ada" @if($quotation->joker_reliever=='Ada') selected @endif>Ada</option>
                           <option value="Tidak Ada" @if($quotation->joker_reliever=='Tidak Ada') selected @endif>Tidak Ada</option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>RO <span class="text-danger fw-bold">*</span></td>
+                      <td colspan="3">
+                        <select id="ro" name="ro" class="form-select w-100" data-allow-clear="true" tabindex="-1">
+                          <option value="" @if($pks->ro_id==null) selected @endif>- Pilih Data -</option>  
+                          @foreach($listRo as $ro)
+                            <option value="{{$ro->id}}" @if($pks->ro_id==$ro->id) selected @endif>{{$ro->full_name}}</option>  
+                          @endforeach
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>CRM <span class="text-danger fw-bold">*</span></td>
+                      <td colspan="3">
+                        <select id="crm" name="crm" class="form-select w-100" data-allow-clear="true" tabindex="-1">
+                          <option value="" @if($pks->crm_id==null) selected @endif>- Pilih Data -</option>  
+                          @foreach($listCrm as $crm)
+                            <option value="{{$crm->id}}" @if($pks->crm_id==$crm->id) selected @endif>{{$crm->full_name}}</option>  
+                          @endforeach
                         </select>
                       </td>
                     </tr>
@@ -496,7 +516,12 @@
       if(obj.catatan_site==null || obj.catatan_site==""){
         msg += "<b>Catatan Site</b> belum diisi </br>";
       }
-
+      if(obj.ro==null || obj.ro==""){
+        msg += "<b>RO</b> belum dipilih </br>";
+      }
+      if(obj.crm==null || obj.crm==""){
+        msg += "<b>CRM</b> belum diisi </br>";
+      }
       if(obj.ada_serikat==null || obj.ada_serikat==""){
         msg += "<b>Serikat</b> belum dipilih </br>";
       }else{

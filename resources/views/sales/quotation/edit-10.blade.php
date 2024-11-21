@@ -84,7 +84,7 @@
                       <span class="input-group-text" id="basic-addon41">Kali Dalam 1 Tahun</span>
                     </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-3 d-training">
                     <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#basicModalTraining">
                       Isi Training
                     </button>
@@ -236,26 +236,30 @@
       </div>
       <div class="modal-body">
         <input type="hidden" id="quotation_id" value="{{$quotation->id}}" >
-        <table class="table table-stripped table-hover">
-          <thead>
-            <tr>
-              <td>No.</td>
-              <td>Jenis</td>
-              <td>Nama Training</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach($listTraining as $tr)
-            <tr>
-              <td>{{$tr->id}}</td>
-              <td>{{$tr->jenis}}</td>
-              <td>{{$tr->nama}}</td>
-              <td><input class="form-check-input training-pilihan" type="checkbox" value="{{$tr->id}}" name="trainingList[]" @foreach($listTrainingQ as $trq) @if($trq->training_id==$tr->id) checked @endif @endforeach></td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-stripped table-hover">
+            <thead>
+              <tr>
+                <td>No.</td>
+                <td>Jenis</td>
+                <td>Nama Training</td>
+                <td>Harga</td>
+                <td></td>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($listTraining as $tr)
+              <tr>
+                <td>{{$tr->id}}</td>
+                <td>{{$tr->jenis}}</td>
+                <td>{{$tr->nama}}</td>
+                <td>{{$tr->harga}}</td>
+                <td><input class="form-check-input training-pilihan" type="checkbox" value="{{$tr->id}}" name="trainingList[]" @foreach($listTrainingQ as $trq) @if($trq->training_id==$tr->id) checked @endif @endforeach></td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -289,6 +293,10 @@ $(document).ready(function(){
       return null;
     }
 
+    console.log(jumlahTraining);
+    console.log(checkedCount);
+    
+    
     if (jumlahTraining<checkedCount) {
       Swal.fire({
             title: "Pemberitahuan",
@@ -625,14 +633,14 @@ $(document).ready(function(){
   function showTraining(first) {
     let selected = $("#ada_training option:selected").val();
     if (selected!="Ada") {
-      $('#d-training').addClass('d-none');
+      $('.d-training').addClass('d-none');
       $('#list-training').addClass('d-none');
       
     }else{
-      $('#d-training').removeClass('d-none');
+      $('.d-training').removeClass('d-none');
       $('#list-training').removeClass('d-none');
       if(first!=1){
-        $("#d-training").val("");
+        $(".d-training").val("");
       }
     }
   }
