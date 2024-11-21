@@ -292,10 +292,6 @@ $(document).ready(function(){
 
       return null;
     }
-
-    console.log(jumlahTraining);
-    console.log(checkedCount);
-    
     
     if (jumlahTraining<checkedCount) {
       Swal.fire({
