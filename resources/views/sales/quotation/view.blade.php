@@ -891,7 +891,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_exclude_base_manpower,2,",",".")}}</th>
                         @endforeach
                       </tr>
-                      <tr>
+                      <!-- <tr>
                         <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
                         <td class="text-center fw-bold"></th>
                         @foreach($quotation->quotation_detail as $detailJabatan)
@@ -920,7 +920,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                       <tr>
                         <td style="text-align:left">Biaya Investigasi Team</td>
                         <td style="text-align:center"></td>
-                      </tr>
+                      </tr> -->
                       <tr class="table-success">
                         <td style="text-align:right" class="fw-bold">Total Biaya per Personil <span class="text-danger">(1+2+3)</span></td>
                         <td style="text-align:center"></td>

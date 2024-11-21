@@ -137,64 +137,19 @@
                     <tr>
                       <td>Kunjungan Operasional <span class="text-danger fw-bold">*</span></td>
                       <td>
-                        <div class="input-group"> 
-                          <input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_operasional" value="@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif" id="jumlah_kunjungan_operasional" class="form-control minimal">
-                          <span class="input-group-text" id="basic-addon41">Kali Dalam 1</span>
-                        </div>
+                        {{$quotation->kunjungan_operasional}}
                       </td>
-                      <td>
-                        <select id="bulan_tahun_kunjungan_operasional" name="bulan_tahun_kunjungan_operasional" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                          <option value="" @if($quotation->kunjungan_operasional=='') selected @endif>- Pilih Data -</option>  
-                          <option value="Bulan" @if($quotation->kunjungan_operasional!=null)@if(explode(' ',$quotation->kunjungan_operasional)[1]=='Bulan') selected @endif @endif>Bulan</option>
-                          <option value="Tahun" @if($quotation->kunjungan_operasional!=null)@if(explode(' ',$quotation->kunjungan_operasional)[1]=='Tahun') selected @endif @endif>Tahun</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="text" placeholder="keterangan" name="keterangan_kunjungan_operasional" value="{{$quotation->keterangan_kunjungan_operasional}}" id="keterangan_kunjungan_operasional" class="form-control w-100">
-                      </td>
+                      <td>{{$quotation->keterangan_kunjungan_operasional}}</td>
                     </tr>
                     <tr>
                       <td>Kunjungan Tim CRM <span class="text-danger fw-bold">*</span></td>
                       <td>
-                        <div class="input-group"> 
-                        <input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_tim_crm" value="@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif" id="jumlah_kunjungan_tim_crm" class="form-control minimal">
-                          <span class="input-group-text" id="basic-addon41">Kali Dalam 1</span>
-                        </div>
+                        {{$quotation->kunjungan_tim_crm}}
                       </td>
-                      <td>
-                        <select id="bulan_tahun_kunjungan_tim_crm" name="bulan_tahun_kunjungan_tim_crm" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                          <option value="" @if($quotation->kunjungan_tim_crm=='') selected @endif>- Pilih Data -</option>  
-                          <option value="Bulan" @if($quotation->kunjungan_tim_crm!=null)@if(explode(' ',$quotation->kunjungan_tim_crm)[1]=='Bulan') selected @endif @endif>Bulan</option>
-                          <option value="Tahun" @if($quotation->kunjungan_tim_crm!=null)@if(explode(' ',$quotation->kunjungan_tim_crm)[1]=='Tahun') selected @endif @endif>Tahun</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="text" placeholder="keterangan" name="keterangan_kunjungan_tim_crm" value="{{$quotation->keterangan_kunjungan_tim_crm}}" id="keterangan_kunjungan_tim_crm" class="form-control w-100">
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Training <span class="text-danger fw-bold">*</span></td>
-                      <td>
-                        <select id="ada_training" name="ada_training" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                          <option value="" @if($quotation->training=='' || $quotation->training==null) selected @endif>- Pilih Data -</option>  
-                          <option value="Ada" @if($quotation->training!='' && $quotation->training!=null && $quotation->training!='0') selected @endif>Ada</option>
-                          <option value="Tidak Ada" @if($quotation->training=='0') selected @endif>Tidak Ada</option>
-                        </select>
-                      </td>
-                      <td colspan="2">
-                        <div class="input-group d-training" id="d-training"> 
-                          <input type="number" min="0" max="100" name="training" placeholder="masukkan jumlah dalam 1 tahun" value="{{$quotation->training}}" class="form-control minimal" id="training">
-                          <span class="input-group-text" id="basic-addon41">Kali Dalam 1 Tahun</span>
-                        </div>
-                      </td>
+                      <td>{{$quotation->keterangan_kunjungan_tim_crm}}</td>
                     </tr>
                     <tr id="list-training">
-                      <td>
-                        <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#basicModal">
-                          List Training
-                        </button>
-                      </td>
-                      <td colspan="3" id="data-list-training">@foreach($listTrainingQ as $training) {{$training->nama}} @if(!$loop->last), @endif @endforeach</td>
+                      <td colspan="4" id="data-list-training">@foreach($listTrainingQ as $training) {{$training->nama}} @if(!$loop->last), @endif @endforeach</td>
                     </tr>
                     <tr>
                       <td>Tunjangan Hari Raya (THR)</td>
@@ -438,52 +393,6 @@
   </div>
   <hr class="container-m-nx mb-5" />
 </div>
-
-<!-- Modal -->
-<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="exampleModalLabel1">List Training</h4>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="quotation_id" value="{{$quotation->id}}" >
-        <table class="table table-stripped table-hover">
-          <thead>
-            <tr>
-              <td>No.</td>
-              <td>Jenis</td>
-              <td>Nama Training</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach($listTraining as $tr)
-            <tr>
-              <td>{{$tr->id}}</td>
-              <td>{{$tr->jenis}}</td>
-              <td>{{$tr->nama}}</td>
-              <td><input class="form-check-input training-pilihan" type="checkbox" value="{{$tr->id}}" name="trainingList[]" @foreach($listTrainingQ as $trq) @if($trq->training_id==$tr->id) checked @endif @endforeach></td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-        <button type="button" id="btn-simpan-training" class="btn btn-primary">Simpan Training</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal fade" id="tambahPic" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -551,67 +460,6 @@
 @section('pageScript')
 <script>
   $(document).ready(function(){
-    $('#btn-simpan-training').on('click',function(){
-      var checkedCount = $('.training-pilihan:checked').length;
-      var jumlahTraining = $('#training').val();
-
-      if(jumlahTraining==""){
-        Swal.fire({
-              title: "Pemberitahuan",
-              html: "Belum memasukkan jumlah training per tahun",
-              icon: "warning",
-            });
-            $('#basicModal').modal('toggle');
-
-        return null;
-      }
-
-      if (jumlahTraining<checkedCount) {
-        Swal.fire({
-              title: "Pemberitahuan",
-              html: "Training yang dipilih lebih dari jumlah training dalam 1 tahun",
-              icon: "warning",
-            });
-            $('#basicModal').modal('toggle');
-
-        return null;
-      }
-      
-      var checkedValues = [];
-      $('.training-pilihan:checked').each(function() {
-          checkedValues.push($(this).val());
-      });
-
-      if(checkedValues.length==0){
-        Swal.fire({
-              title: "Pemberitahuan",
-              html: "Belum ada training yang dipilih",
-              icon: "warning",
-            });
-        return null;
-      };
-
-      let formData = {
-        "training_id":checkedValues.join(", "),
-        "quotation_id":$('#quotation_id').val(),
-        "_token": "{{ csrf_token() }}"
-      };
-
-      $.ajax({
-        type: "POST",
-        url: "{{route('quotation.add-quotation-training')}}",
-        data:formData,
-        success: function(response){
-          $('#data-list-training').text(response);
-            $('#basicModal').modal('toggle');
-        },
-        error:function(error){
-          console.log(error);
-        }
-      });
-    });
-
-
     $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {               
         e.preventDefault();
@@ -635,28 +483,7 @@
       if(obj.materai==null || obj.materai==""){
         msg += "<b>Materai</b> belum dipilih </br>";
       }
-      if(obj.jumlah_kunjungan_operasional==null || obj.jumlah_kunjungan_operasional==""){
-        msg += "<b>Jumlah Kunjungan Operasional</b> belum diisi </br>";
-      }
-      if(obj.bulan_tahun_kunjungan_operasional==null || obj.bulan_tahun_kunjungan_operasional==""){
-        msg += "<b>Bulan / Tahun Kunjungan Operasional</b> belum diisi </br>";
-      }
-      if(obj.jumlah_kunjungan_tim_crm==null || obj.jumlah_kunjungan_tim_crm==""){
-        msg += "<b>Jumlah Kunjungan Tim CRM</b> belum diisi </br>";
-      }
-      if(obj.bulan_tahun_kunjungan_tim_crm==null || obj.bulan_tahun_kunjungan_tim_crm==""){
-        msg += "<b>Bulan / Tahun Kunjungan Tim CRM</b> belum diisi </br>";
-      }
 
-      if(obj.ada_training==null || obj.ada_training==""){
-        msg += "<b>Training</b> belum dipilih </br>";
-      }else{
-        if(obj.ada_training=="Ada"){
-          if(obj.training==null || obj.training==""){
-            msg += "<b>Durasi Training</b> belum dipilih </br>";
-          }
-        }
-      }
       if(obj.joker_reliever==null || obj.joker_reliever==""){
         msg += "<b>Joker / Reliever</b> belum dipilih </br>";
       }
@@ -691,7 +518,6 @@
       }
     });
   
-    showTraining(1);
     showSerikat(1);
 
     function showSerikat(first) {
@@ -707,24 +533,6 @@
     }
     $('#ada_serikat').on('change', function() {
       showSerikat(2);
-    });
-
-    function showTraining(first) {
-    let selected = $("#ada_training option:selected").val();
-      if (selected!="Ada") {
-        $('#d-training').addClass('d-none');
-        $('#list-training').addClass('d-none');
-        
-      }else{
-        $('#d-training').removeClass('d-none');
-        $('#list-training').removeClass('d-none');
-        if(first!=1){
-          $("#d-training").val("");
-        }
-      }
-    }
-    $('#ada_training').on('change', function() {
-      showTraining(2);
     });
   });
 

@@ -287,7 +287,7 @@ Hormat kami,
                 @endforeach
                 </tr>
                 <tr>
-                <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
+                <!-- <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
                 @foreach($master->quotation_detail as $detailJabatan)
                 <td class="text-center fw-bold">Unit/Month</th>
                 @endforeach
@@ -309,7 +309,7 @@ Hormat kami,
                 </tr>
                 <tr>
                 <td style="text-align:left">Biaya Investigasi Team</td>
-                </tr>
+                </tr> -->
                 <tr class="table-success">
                 <td style="text-align:right" class="fw-bold">Total Biaya per Personil <span class="text-danger">(1+2+3)</span></td>
                 @foreach($master->quotation_detail as $detailJabatan)

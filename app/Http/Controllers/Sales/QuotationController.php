@@ -650,7 +650,7 @@ class QuotationController extends Controller
                     $kbdOhc = DB::table('sl_quotation_ohc')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
                     foreach ($kbdOhc as $ikdbohc => $kdbohc) {
                         $personilOhc += ($kdbohc->harga*$kdbohc->jumlah/$jumlahHc)/$provisi;
-                        $totalOhc += ($kdbohc->harga*$kdbohc->jumlah/$jumlahHc)/$provisi;
+                        $totalOhc += ($kdbohc->harga*$kdbohc->jumlah);
                     };
 
                     $kbd->personil_ohc = $personilOhc;
@@ -665,7 +665,7 @@ class QuotationController extends Controller
                     $kbd->personil_chemical = $personilChemical;
 
                     // dd($kbd->personil_kaporlap);
-                    $kbd->total_personil = $quotation->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                    $kbd->total_personil = $quotation->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
@@ -694,16 +694,16 @@ class QuotationController extends Controller
 
                     //OHC DILEPAS
                     // 
-                    $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+(ceil($kbd->personil_kaporlap / 1000) * 1000)+(ceil($kbd->personil_devices / 1000) * 1000)+$kbd->personil_ohc+(ceil($kbd->personil_chemical / 1000) * 1000);
+                    $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+(ceil($kbd->personil_kaporlap / 1000) * 1000)+(ceil($kbd->personil_devices / 1000) * 1000)+(ceil($kbd->personil_chemical / 1000) * 1000);
 
                     $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
 
                     $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
 
                     // Permintaan pak yaser Management Fee untuk COST STRUCTURE DITAMBAH TOTAL OHC 
-                    $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$quotation->persentase/100)+$totalOhc;
+                    $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$quotation->persentase/100);
 
-                    $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss;
+                    $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss+$kbd->total_ohc;
                     
                     $kbd->ppn_coss = 0;
                     $kbd->pph_coss = 0;
@@ -730,8 +730,6 @@ class QuotationController extends Controller
                 }
                 $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();         
             }
-            
-            
             
             $quotationKebutuhan = 
             DB::table("sl_quotation_kebutuhan")
@@ -973,7 +971,7 @@ class QuotationController extends Controller
                 $kbd->personil_chemical = $personilChemical;
 
                 // dd($kbd->personil_kaporlap);
-                $kbd->total_personil = $quotation->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                $kbd->total_personil = $quotation->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
@@ -999,7 +997,7 @@ class QuotationController extends Controller
 
                 // COST STRUCTURE
                 $kbd->total_base_manpower = $quotation->nominal_upah+$totalTunjangan;
-                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
+                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;;
 
                 $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
 
@@ -1806,8 +1804,17 @@ class QuotationController extends Controller
                 $newStep = $dataQuotation->step;
             }
             
+            if($request->ada_training=="Tidak Ada"){
+                $request->training ="0";
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
+                'kunjungan_operasional' => $request->jumlah_kunjungan_operasional." ".$request->bulan_tahun_kunjungan_operasional ,
+                'kunjungan_tim_crm' => $request->jumlah_kunjungan_tim_crm." ".$request->bulan_tahun_kunjungan_tim_crm ,
+                'keterangan_kunjungan_operasional' => $request->keterangan_kunjungan_operasional ,
+                'keterangan_kunjungan_tim_crm' => $request->keterangan_kunjungan_tim_crm ,
+                'training' => $request->training ,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -3310,7 +3317,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->personil_chemical = $personilChemical;
 
                 // dd($kbd->personil_kaporlap);
-                $kbd->total_personil = $master->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                $kbd->total_personil = $master->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
@@ -3336,7 +3343,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
                 // COST STRUCTURE
                 $kbd->total_base_manpower = $master->nominal_upah+$totalTunjangan;
-                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;;
+                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;;
 
                 $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
 
@@ -3655,7 +3662,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->personil_chemical = $personilChemical;
 
                 // dd($kbd->personil_kaporlap);
-                $kbd->total_personil = $master->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_ohc+$kbd->personil_chemical;
+                $kbd->total_personil = $master->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
@@ -3684,14 +3691,14 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
                 //OHC DILEPAS
                 // 
-                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+(ceil($kbd->personil_kaporlap / 1000) * 1000)+(ceil($kbd->personil_devices / 1000) * 1000)+$kbd->personil_ohc+(ceil($kbd->personil_chemical / 1000) * 1000);
+                $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+(ceil($kbd->personil_kaporlap / 1000) * 1000)+(ceil($kbd->personil_devices / 1000) * 1000)+(ceil($kbd->personil_chemical / 1000) * 1000);
 
                 $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
 
                 $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
 
                 // Permintaan pak yaser Management Fee untuk COST STRUCTURE DITAMBAH TOTAL OHC 
-                $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$master->persentase/100)+$totalOhc;
+                $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$master->persentase/100);
 
                 $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss;
                 

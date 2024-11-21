@@ -336,9 +336,6 @@ class PksController extends Controller
 
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
             
-            if($request->ada_training=="Tidak Ada"){
-                $request->training ="0";
-            }
             if($request->ada_serikat=="Tidak Ada"){
                 $request->status_serikat ="Tidak Ada";
             }
@@ -350,11 +347,6 @@ class PksController extends Controller
                 'telp_pic_invoice' => $request->telp_pic_invoice ,
                 'email_pic_invoice' => $request->email_pic_invoice ,
                 'materai' => $request->materai ,
-                'kunjungan_operasional' => $request->jumlah_kunjungan_operasional." ".$request->bulan_tahun_kunjungan_operasional ,
-                'kunjungan_tim_crm' => $request->jumlah_kunjungan_tim_crm." ".$request->bulan_tahun_kunjungan_tim_crm ,
-                'keterangan_kunjungan_operasional' => $request->keterangan_kunjungan_operasional ,
-                'keterangan_kunjungan_tim_crm' => $request->keterangan_kunjungan_tim_crm ,
-                'training' => $request->training ,
                 'joker_reliever' => $request->joker_reliever ,
                 'syarat_invoice' => $request->syarat_invoice ,
                 'alamat_penagihan_invoice' => $request->alamat_penagihan_invoice ,

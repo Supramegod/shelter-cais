@@ -180,7 +180,7 @@ Tunjangan overtime flat		<br>
                           <td class="text-center fw-bold"></th>
                           <td class="fw-bold" style="text-align:right">Rp {{number_format($total,0,",",".")}}</th>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
                           <td class="text-center fw-bold"></th>
                           <td class="text-center fw-bold">Unit/Month</th>
@@ -205,7 +205,7 @@ Tunjangan overtime flat		<br>
                         <tr>
                           <td style="text-align:left">Biaya Investigasi Team</td>
                           <td style="text-align:center"></td>
-                        </tr>
+                        </tr> -->
                         @else
                         @php
                           $trclass = "";
