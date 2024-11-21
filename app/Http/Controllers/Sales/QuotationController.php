@@ -668,9 +668,13 @@ class QuotationController extends Controller
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
+                    // bunga bank dan insentif
+                    $kbd->bunga_bank = $kbd->sub_total_personil*$quotation->persen_bunga_bank/100;
+                    $kbd->insentif = $kbd->sub_total_personil*$quotation->persen_insentif/100;
+
                     $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100;
 
-                    $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee;
+                    $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee+$kbd->bunga_bank+$kbd->insentif;
 
                     $kbd->ppn = 0;
                     $kbd->pph = 0;
@@ -975,9 +979,13 @@ class QuotationController extends Controller
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
+                // bunga bank dan insentif
+                $kbd->bunga_bank = $kbd->sub_total_personil*$quotation->persen_bunga_bank/100;
+                $kbd->insentif = $kbd->sub_total_personil*$quotation->persen_insentif/100;
+
                 $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100;
 
-                $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee;
+                $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee+$kbd->bunga_bank+$kbd->insentif;
 
                 $kbd->ppn = 0;
                 $kbd->pph = 0;
@@ -2382,6 +2390,37 @@ class QuotationController extends Controller
         }
     }
 
+    public function editPersenInsentif(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation')->where('id',$request->quotation_id)->update([
+                'persen_insentif' => $request->persen,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function editPersenBungaBank(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            DB::table('sl_quotation')->where('id',$request->quotation_id)->update([
+                'persen_bunga_bank' => $request->persen,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
 
     public function listDetailHC (Request $request){
         $data = DB::table('sl_quotation_detail')

@@ -259,7 +259,7 @@
               @endif
               <tr>
                 <td>Hari/Jam Kerja</td>
-                <td colspan="3">: {{$master->shift_kerja}} {{$master->jam_kerja}} {{$master->mulai_kerja}} s/d {{$master->selesai_kerja}}</td>
+                <td colspan="3">: {{$master->shift_kerja}} {{$master->jam_kerja}}</td>
               </tr>
               <tr>
                 <td>Cuti</td>
@@ -268,14 +268,20 @@
               <tr>
                 <td>THR</td>
                 <td>{{$master->thr}}</td>
+              </tr>
+              <tr>
                 <td>Kompensasi</td>
                 <td>{{$master->kompensasi}}</td>
               </tr>
               <tr>
                 <td>Tunjangan Hari Libur Nasional</td>
                 <td>{{$master->tunjangan_holiday}}</td>
+                <td colspan="2">@if($master->nominal_tunjangan_holiday !=null ) {{"Rp. ".number_format($master->nominal_tunjangan_holiday,2,",",".")}} @endif</td>
+              </tr>
+              <tr>
                 <td>Lembur</td>
                 <td>{{$master->lembur}}</td>
+                <td colspan="2">@if($master->nominal_lembur !=null ) {{"Rp. ".number_format($master->nominal_lembur,2,",",".")}} @endif</td>
               </tr>
             </table>
           </div>
@@ -704,6 +710,20 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->management_fee,2,",",".")}}</td>
                         @endforeach
                       </tr>
+                      <tr class="">
+                        <td colspan="2" style="text-align:right" class="">Bunga Bank</td>
+                        <td style="text-align:center">{{$quotation->persen_bunga_bank}} %</td>
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bunga_bank,2,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
+                        <td colspan="2" style="text-align:right" class="">Insentif</td>
+                        <td style="text-align:center">{{$quotation->persen_insentif}} %</td>
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->insentif,2,",",".")}}</td>
+                        @endforeach
+                      </tr>
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
                         <td style="text-align:center"></td>
@@ -739,6 +759,71 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pembulatan,2,",",".")}}</td>
                         @endforeach
                       </tr>             
+                    </tbody>
+                  </table>
+                </div>
+                <div class="table-responsive text-nowrap">
+                  <table class="table mt-3" >
+                    <tbody>
+                      <tr class="table-info">
+                        <td class="text-center fw-bold" colspan="2" style="vertical-align: middle;">TOTAL KESELURUHAN</td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Total Biaya Per Personil</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalBiayaPersonil=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalBiayaPersonil+=$detailJabatan->sub_total_personil;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalBiayaPersonil,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Grand Total Sebelum Pajak</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalGrandTotal=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalGrandTotal+=$detailJabatan->grand_total;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalGrandTotal,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">TOTAL INVOICE</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalInvoice=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalInvoice+=$detailJabatan->total_invoice;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalInvoice,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">PEMBULATAN</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalPembulatan=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalPembulatan+=$detailJabatan->pembulatan;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalPembulatan,2,",",".")}}
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -1029,6 +1114,71 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pembulatan_coss,2,",",".")}}</td>
                         @endforeach
                       </tr>      
+                    </tbody>
+                  </table>
+                </div>
+                <div class="table-responsive text-nowrap">
+                  <table class="table mt-3" >
+                    <tbody>
+                      <tr class="table-info">
+                        <td class="text-center fw-bold" colspan="2" style="vertical-align: middle;">TOTAL KESELURUHAN</td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Total Biaya Per Personil</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalBiayaPersonil=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalBiayaPersonil+=$detailJabatan->sub_total_personil_coss;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalBiayaPersonil,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Grand Total Sebelum Pajak</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalGrandTotal=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalGrandTotal+=$detailJabatan->grand_total_coss;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalGrandTotal,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">TOTAL INVOICE</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalInvoice=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalInvoice+=$detailJabatan->total_invoice_coss;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalInvoice,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">PEMBULATAN</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalPembulatan=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalPembulatan+=$detailJabatan->pembulatan_coss;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalPembulatan,2,",",".")}}
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
