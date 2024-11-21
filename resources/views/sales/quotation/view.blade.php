@@ -138,9 +138,7 @@
               </tr>
               <tr>
                 <td>Tanggal Penempatan</td>
-                <td>: {{$master->stgl_penempatan}}</td>
-                <td>Salary Rule</td>
-                <td>: {{$master->salary_rule}}</td>
+                <td colspan="3">: {{$master->stgl_penempatan}}</td>
               </tr>
               <tr>
                 <td>TOP Invoice @if($master->top=="Lebih Dari 7 Hari")<span class="badge bg-label-warning rounded-pill">Butuh Approval Direksi</span>@endif</td>
@@ -150,6 +148,53 @@
                 @else
                 <td colspan="2">&nbsp;</td>
                 @endif
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <div class="responsive-table">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th class="text-center"><b>No.</b></th>
+                        <th class="text-center"><b>Schedule Plan</b></th>
+                        <th class="text-center"><b>Periode</b></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-center">1</td>
+                        <td>Cut Off</td>
+                        <td>{{$salaryRuleQ->cutoff}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">2</td>
+                        <td>Crosscheck Absensi</td>
+                        <td>{{$salaryRuleQ->crosscheck_absen}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">3</td>
+                        <td>Pengiriman <i>Invoice</i></td>
+                        <td>{{$salaryRuleQ->pengiriman_invoice}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">4</td>
+                        <td>Perkiraan <i>Invoice</i> Diterima Pelanggan</td>
+                        <td>{{$salaryRuleQ->perkiraan_invoice_diterima}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">5</td>
+                        <td>Pembayaran <i>Invoice</i></td>
+                        <td>{{$salaryRuleQ->pembayaran_invoice}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">6</td>
+                        <td>Rilis <i>Payroll</i> / Gaji</td>
+                        <td>{{$salaryRuleQ->rilis_payroll}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </div>
+                </td>
               </tr>
             </table>
           </div>
@@ -940,6 +985,13 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td style="text-align:center">{{$quotation->persentase}} %</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->management_fee_coss,2,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
+                        <td style="text-align:right" class="fw-bold">Over Head Cost</td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->total_ohc,2,",",".")}}</td>
                         @endforeach
                       </tr>
                       <tr class="table-success">
