@@ -69,7 +69,7 @@ class LeadsController extends Controller
 
     public function view (Request $request,$id){
         try {
-            $data = DB::table('sl_leads')->where('id',$id)->first();
+            $data = DB::table('sl_leads')->whereNull('customer_id')->where('id',$id)->first();
 
             $data->stgl_leads = Carbon::createFromFormat('Y-m-d',$data->tgl_leads)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
@@ -104,7 +104,8 @@ class LeadsController extends Controller
                         ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->select('sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
-                        ->whereNull('sl_leads.deleted_at');
+                        ->whereNull('sl_leads.deleted_at')
+                        ->whereNull('sl_leads.customer_id');
             
             if(!empty($request->tgl_dari)){
                 $data = $data->where('sl_leads.tgl_leads','>=',$request->tgl_dari);
@@ -620,7 +621,8 @@ class LeadsController extends Controller
                         ->leftJoin('m_tim_sales','sl_leads.tim_sales_id','=','m_tim_sales.id')
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
-                        ->whereNull('sl_leads.deleted_at');
+                        ->whereNull('sl_leads.deleted_at')
+                        ->whereNull('sl_leads.customer_id');
             
             //divisi sales
             if(in_array(Auth::user()->role_id,[29,30,31,32,33])){

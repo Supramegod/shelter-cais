@@ -19,18 +19,18 @@
           @csrf
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
-              <h4 class="mb-0">LEADS</h4>
-              <h4>Pilih Leads</h4>
+              <h4 class="mb-0">CUSTOMER</h4>
+              <h4>Pilih Customer Untuk Quotation</h4>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Leads <span class="text-danger">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">Customer <span class="text-danger">*</span></label>
               <div class="col-sm-10">
                 <input type="hidden" id="tipe" name="tipe" class="form-control">
                 <input type="hidden" id="leads_id" name="leads_id" class="form-control">
                 <input type="hidden" id="quotation_id" name="quotation_id" class="form-control">
                 <div class="input-group">
                   <input type="text" id="leads" name="leads"  class="form-control" readonly>
-                  <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
+                  <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-customer"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Customer</button>
                 </div>
               </div>
             </div>
@@ -191,13 +191,13 @@
   <hr class="container-m-nx mb-5" />
 </div>
 
-<div class="modal fade" id="modal-leads" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modal-customer" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
     <div class="modal-content p-3 p-md-5">
       <div class="modal-body">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="text-center mb-4">
-          <h3 class="mb-2">Daftar Leads / Customer</h3>
+          <h3 class="mb-2">Daftar Customer</h3>
         </div>
         <div class="row">
           <div class="table-responsive overflow-hidden table-data">
@@ -229,8 +229,8 @@
 
 @section('pageScript')
 <script>
-  $('#btn-modal-cari-leads').on('click',function(){
-    $('#modal-leads').modal('show');
+  $('#btn-modal-cari-customer').on('click',function(){
+    $('#modal-customer').modal('show');
   });
   
   let dt_filter_table = $('.dt-column-search');
@@ -247,7 +247,7 @@
           'processing': 'Loading...'
       },
       ajax: {
-          url: "{{ route('leads.available-leads') }}",
+          url: "{{ route('customer.available-customer') }}",
           data: function (d) {
               
           },
@@ -293,7 +293,7 @@
   });
 
   $('#table-data').on('click', 'tbody tr', function() {
-      $('#modal-leads').modal('hide');
+      $('#modal-customer').modal('hide');
       var rdata = table.row(this).data();
       $('#branch').val(rdata.branch);
       $('#leads').val(rdata.nama_perusahaan);

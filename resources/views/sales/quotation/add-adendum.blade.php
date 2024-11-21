@@ -19,11 +19,11 @@
           @csrf
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
-              <h4 class="mb-0">LEADS</h4>
-              <h4>Pilih Leads</h4>
+              <h4 class="mb-0">QUOTATION</h4>
+              <h4>Pilih Quotation Untuk Adendum</h4>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Leads <span class="text-danger">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">Quotation <span class="text-danger">*</span></label>
               <div class="col-sm-10">
                 <input type="hidden" id="tipe" name="tipe" class="form-control">
                 <input type="hidden" id="leads_id" name="leads_id" class="form-control">

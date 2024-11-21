@@ -142,28 +142,37 @@
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-4">
-                    <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Hari Libur</label>
+                  <div class="col-sm-3">
+                    <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Hari Libur Nasional</label>
                       <select id="ada_tunjangan_holiday" name="ada_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>  
                         <option value="Ada" @if($quotation->tunjangan_holiday!=null && $quotation->tunjangan_holiday!="" && $quotation->tunjangan_holiday!="Tidak Ada") selected @endif>Ada</option>  
                         <option value="Tidak Ada" @if($quotation->tunjangan_holiday=="Tidak Ada") selected @endif>Tidak Ada</option>  
                       </select>
                   </div>
-                  <div class="col-sm-4 ada_tunjangan_holiday">
+                  <div class="col-sm-3 ada_tunjangan_holiday">
                     <label class="form-label" for="tunjangan_holiday">Normatif / Flat</label>
                       <select id="tunjangan_holiday" name="tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="Normatif" @if($quotation->tunjangan_holiday=="Normatif") selected @endif>Normatif</option>  
                         <option value="Flat" @if($quotation->tunjangan_holiday=="Flat") selected @endif>Flat</option>  
                       </select>
                   </div>
-                  <div class="col-sm-4 d-nominal-tunjangan-holiday">
-                    <label class="form-label" for="nominal_tunjangan_holiday">Nominal Tunjangan Hari Libur</label>
+                  <div class="col-sm-3 d-nominal-tunjangan-holiday">
+                    <label class="form-label" for="nominal_tunjangan_holiday">Nominal T. Hari Libur Nasional</label>
                     <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_tunjangan_holiday}}" name="nominal_tunjangan_holiday" id="nominal_tunjangan_holiday">
+                  </div>
+                  <div class="col-sm-3 ada_tunjangan_holiday d-nominal-tunjangan-holiday">
+                    <label class="form-label" for="jenis_bayar_tunjangan_holiday">Jenis Bayar</label>
+                      <select id="jenis_bayar_tunjangan_holiday" name="jenis_bayar_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih Jenis -</option>  
+                        <option value="Per Jam" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Jam") selected @endif>Per Jam</option>  
+                        <option value="Per Hari" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Hari") selected @endif>Per Hari</option>  
+                        <option value="Per Bulan" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Bulan") selected @endif>Per Bulan</option>  
+                      </select>
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-4">
+                  <div class="col-sm-3">
                     <label class="form-label" for="ada_lembur">Lembur</label>
                       <select id="ada_lembur" name="ada_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="" @if($quotation->lembur=="" || $quotation->lembur==null) selected @endif>- Pilih Data -</option>  
@@ -171,7 +180,7 @@
                         <option value="Tidak Ada" @if($quotation->lembur=="Tidak Ada") selected @endif>Tidak Ada</option>  
                       </select>
                   </div>
-                  <div class="col-sm-4 ada_lembur">
+                  <div class="col-sm-3 ada_lembur">
                     <label class="form-label" for="lembur">Normatif / Flat</label>
                       <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>  
@@ -179,9 +188,18 @@
                         <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>  
                       </select>
                   </div>
-                  <div class="col-sm-4 d-nominal-lembur">
+                  <div class="col-sm-3 ada_lembur d-nominal-lembur">
                     <label class="form-label" for="nominal_lembur">Nominal Lembur</label>
                     <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_lembur}}" name="nominal_lembur" id="nominal_lembur">
+                  </div>
+                  <div class="col-sm-3 ada_lembur d-nominal-lembur">
+                    <label class="form-label" for="jenis_bayar_lembur">Jenis Bayar</label>
+                      <select id="jenis_bayar_lembur" name="jenis_bayar_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih Jenis -</option>  
+                        <option value="Per Jam" @if($quotation->jenis_bayar_lembur=="Per Jam") selected @endif>Per Jam</option>  
+                        <option value="Per Hari" @if($quotation->jenis_bayar_lembur=="Per Hari") selected @endif>Per Hari</option>  
+                        <option value="Per Bulan" @if($quotation->jenis_bayar_lembur=="Per Bulan") selected @endif>Per Bulan</option>  
+                      </select>
                   </div>
                 </div>
               </div>
@@ -264,16 +282,19 @@ $('.show-custom').on('click',function(){
   }
 
   if(obj.ada_tunjangan_holiday==null || obj.ada_tunjangan_holiday==""){
-    msg += "<b>Tunjangan Hari Libur</b> belum dipilih </br>";
+    msg += "<b>Tunjangan Hari Libur Nasional</b> belum dipilih </br>";
   }else{
     if(obj.ada_tunjangan_holiday=="Ada"){
       if(obj.tunjangan_holiday==null || obj.tunjangan_holiday==""){
-        msg += "<b>Tunjangan Hari Libur</b> belum dipilih </br>";
-      }
-    }else{
-      if(obj.tunjangan_holiday =="Flat"){
-        if(obj.nominal_tunjangan_holiday==null || obj.nominal_tunjangan_holiday==""){
-          msg += "<b>Nominal Tunjangan Hari Libur</b> belum diisi </br>";
+        msg += "<b>Tunjangan Hari Libur Nasional</b> belum dipilih </br>";
+      }else{
+        if(obj.tunjangan_holiday =="Flat"){
+          if(obj.nominal_tunjangan_holiday==null || obj.nominal_tunjangan_holiday==""){
+            msg += "<b>Nominal Tunjangan Hari Libur Nasional</b> belum diisi </br>";
+          }
+          if(obj.jenis_bayar_tunjangan_holiday==null || obj.jenis_bayar_tunjangan_holiday==""){
+            msg += "<b>Jenis Bayar Tunjangan Hari Libur Nasional</b> belum diisi </br>";
+          }
         }
       }
     }
@@ -290,12 +311,14 @@ $('.show-custom').on('click',function(){
           if(obj.nominal_lembur==null || obj.nominal_lembur==""){
             msg += "<b>Nominal Lembur</b> belum diisi </br>";
           }
+          if(obj.jenis_bayar_lembur==null || obj.jenis_bayar_lembur==""){
+          msg += "<b>Jenis Bayar Lembur</b> belum diisi </br>";
+        }
         }
       }
     }
   }
 
-  
   if(msg == ""){
     form.submit();
   }else{

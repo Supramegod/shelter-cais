@@ -25,6 +25,12 @@
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+            <div data-i18n="Customer">Customer</div>
+            </a>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
             <a href="{{route('customer-activity')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
@@ -152,6 +158,12 @@
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+            <div data-i18n="Customer">Customer</div>
+            </a>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
             <a href="{{route('customer-activity')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
@@ -165,6 +177,12 @@
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
@@ -220,6 +238,12 @@
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">

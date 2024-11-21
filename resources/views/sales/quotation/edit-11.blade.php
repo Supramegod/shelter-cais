@@ -136,7 +136,7 @@
                       @if($quotation->tunjangan_holiday=="Normatif" || $quotation->tunjangan_holiday=="Flat")
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Tunjangan Hari Libur <b>( {{$quotation->tunjangan_holiday}} )</b></td>
+                        <td style="text-align:left" class="">Tunjangan Hari Libur Nasional <b>( {{$quotation->tunjangan_holiday}} )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif"){{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}}@elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($quotation->nominal_tunjangan_holiday,2,",",".")}} @endif</td>
@@ -408,7 +408,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                       @endif
                       @if($quotation->tunjangan_holiday=="Flat" || $quotation->tunjangan_holiday=="Normatif")
                       <tr>
-                        <td>Tunjangan Hari Libur</th>
+                        <td>Tunjangan Hari Libur Nasional</th>
                         <td class="text-center"></th>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}}</th>

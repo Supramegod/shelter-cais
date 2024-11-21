@@ -74,7 +74,17 @@ class QuotationController extends Controller
             }
 
             $tipe = $request->tipe;
-            return view('sales.quotation.add',compact('now','company','province','tipe'));
+
+            $view = "";
+            if($tipe=="Quotation Baru"){
+                $view = 'sales.quotation.add';
+            }else if($tipe=="Adendum"){
+                $view = 'sales.quotation.add-adendum';
+            }else if($tipe=="Quotation Lanjutan"){
+                $view = 'sales.quotation.add-quotation-lanjutan';
+            }
+
+            return view($view,compact('now','company','province','tipe'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -1367,12 +1377,14 @@ class QuotationController extends Controller
             
             if($request->lembur!="Flat"){
                 $request->nominal_lembur = null;
+                $request->jenis_bayar_lembur = null;
             }else{
                 $request->nominal_lembur = str_replace(".","",$request->nominal_lembur);
             }
 
             if($request->tunjangan_holiday!="Flat"){
                 $request->nominal_tunjangan_holiday = null;
+                $request->jenis_bayar_tunjangan_holiday = null;
             }else{
                 $request->nominal_tunjangan_holiday = str_replace(".","",$request->nominal_tunjangan_holiday);
             }
@@ -1404,6 +1416,8 @@ class QuotationController extends Controller
                 'tunjangan_holiday' => $request->tunjangan_holiday,
                 'nominal_lembur' => $request->nominal_lembur,
                 'nominal_tunjangan_holiday' => $request->nominal_tunjangan_holiday,
+                'jenis_bayar_tunjangan_holiday' => $request->jenis_bayar_tunjangan_holiday,
+                'jenis_bayar_lembur' => $request->jenis_bayar_lembur,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
