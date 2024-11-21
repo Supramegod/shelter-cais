@@ -343,6 +343,12 @@
                         <div data-i18n="Tunjangan Jabatan">Tunjangan Jabatan</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('ump'))) active @endif">
+                    <a href="{{route('ump')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="UMP">UMP</div>
+                    </a>
+                </li>
                 
             </ul>
         </li> 
