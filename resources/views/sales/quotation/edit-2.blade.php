@@ -78,7 +78,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                   <label class="form-label" for="evaluasi_karyawan">Evaluasi Karyawan</label>
                   <select id="evaluasi_karyawan" name="evaluasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->evaluasi_karyawan=='') selected @endif>- Pilih Data -</option>  
@@ -89,21 +89,7 @@
                     <option value="2 Tahun" @if($quotation->evaluasi_karyawan=='2 Tahun') selected @endif>2 Tahun</option>
                   </select>
                 </div>
-                <div class="col-sm-6">
-                  <label class="form-label" for="basic-default-password42">Salary Rule</label>
-                  <select id="salary_rule" name="salary_rule" class="form-select @if($errors->has('salary_rule')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
-                      @foreach($salaryRule as $value)
-                      <option value="{{$value->id}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->cutoff}} | Tgl Gajian : {{$value->rilis_payroll}} | Pengiriman Invoice : {{$value->pengiriman_invoice}}</option>  
-                      @endforeach
-                    </select>
-                    @if($errors->has('salary_rule'))
-                      <span class="text-danger">{{$errors->first('salary_rule')}}</span>
-                    @endif
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                   <label class="form-label" for="shift_kerja">Hari Kerja dan Jam Kerja</label>
                   <select id="shift_kerja" name="shift_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->shift_kerja=='') selected @endif>- Pilih Data -</option>  
@@ -112,7 +98,7 @@
                     <option value="3 Shift" @if($quotation->shift_kerja=='3 Shift') selected @endif>3 Shift</option>  
                   </select>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                 <label class="form-label">&nbsp;</label>
                   <select id="jam_kerja" name="jam_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->jam_kerja=='') selected @endif>- Pilih Data -</option>  
@@ -120,6 +106,60 @@
                     <option value="8 Jam Kerja" @if($quotation->jam_kerja=='8 Jam Kerja') selected @endif>8 Jam Kerja</option>  
                     <option value="12 Jam Kerja" @if($quotation->jam_kerja=='12 Jam Kerja') selected @endif>12 Jam Kerja</option>  
                   </select>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label" for="basic-default-password42">Salary Rule</label>
+                  <select id="salary_rule" name="salary_rule" class="form-select" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($salaryRule as $value)
+                      <option value="{{$value->id}}" data-rilispayroll="{{$value->rilis_payroll}}" data-pembayaraninvoice="{{$value->pembayaran_invoice}}" data-perkiraaninvoice="{{$value->perkiraan_invoice_diterima}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-cutoff="{{$value->cutoff}}" data-crosscheckabsensi="{{$value->crosscheck_absen}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->cutoff}} | Tgl Gajian : {{$value->rilis_payroll}} | Pengiriman Invoice : {{$value->pengiriman_invoice}}</option>  
+                      @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                  <table class="table table-bordered" style="width:100%">
+                    <thead>
+                      <tr>
+                        <th class="text-center"><b>No.</b></th>
+                        <th class="text-center"><b>Schedule Plan</b></th>
+                        <th class="text-center"><b>Periode</b></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-center">1</td>
+                        <td>Cut Off</td>
+                        <td id="cut-off"></td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">2</td>
+                        <td>Crosscheck Absensi</td>
+                        <td id="crosscheck-absensi"></td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">3</td>
+                        <td>Pengiriman <i>Invoice</i></td>
+                        <td id="pengiriman-invoice"></td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">4</td>
+                        <td>Perkiraan <i>Invoice</i> Diterima Pelanggan</td>
+                        <td id="perkiraan-invoice"></td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">5</td>
+                        <td>Pembayaran <i>Invoice</i></td>
+                        <td id="pembayaran-invoice"></td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">6</td>
+                        <td>Rilis <i>Payroll</i> / Gaji</td>
+                        <td id="rilis-payroll"></td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
               <!-- <div class="row mb-3">
@@ -513,6 +553,14 @@ $('#jumlah_hari_invoice').on('change', function() {
   showDTipeHari(2);
 });
 
+$('#salary_rule').on('change', function() {
+  $('#cut-off').text($("#salary_rule option:selected").data("cutoff"));
+  $('#pembayaran-invoice').text($("#salary_rule option:selected").data("pembayaraninvoice"));
+  $('#perkiraan-invoice').text($("#salary_rule option:selected").data("perkiraaninvoice"));
+  $('#pengiriman-invoice').text($("#salary_rule option:selected").data("pengirimaninvoice"));
+  $('#crosscheck-absensi').text($("#salary_rule option:selected").data("crosscheckabsensi"));
+  $('#rilis-payroll').text($("#salary_rule option:selected").data("rilispayroll"));
+});
 
 // script sendiri
 showCuti(1);

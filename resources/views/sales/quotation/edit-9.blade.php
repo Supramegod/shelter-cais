@@ -156,8 +156,8 @@
           orderable:false
       },
       {
-          data : 'data',
-          name : 'data',
+          data : 'jumlah',
+          name : 'jumlah',
           className:'text-center',
           orderable:false
       },
@@ -181,13 +181,8 @@
         msg += "Barang Belum Diisi <br />";
       }
       
-      let isJumlahKeisi = false;
-      if(jumlah !=null && jumlah !=""){
-        isJumlahKeisi = true;
-      }
-      
-      if(!isJumlahKeisi){
-        msg += "Masukkan salah satu jumlah <br />";
+      if(jumlah ==""){
+        msg += "Jumlah Belum Diisi <br />";
       }
 
       if(msg!=""){
