@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title','UMP')
+@section('title','UMK')
 @section('content')
 <!--/ Content -->
 <div class="container-fluid flex-grow-1 container-p-y">
-  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Master/ </span> Lihat UMP</h4>
+  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Master/ </span> Lihat UMK</h4>
   <!-- Multi Column with Form Separator -->
   <div class="row">
     <!-- Form Label Alignment -->
@@ -11,10 +11,10 @@
       <div class="card mb-4">
         <div class="card-header">
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h4>Detail UMP</h4>
-                <h6 class="mt-0">Provinsi : {{$data->province_name}}</h6>
-                <input type="text" id="province_id" value="{{$data->province_id}}" hidden>
-                <input type="text" id="province_name" value="{{$data->province_name}}" hidden>
+                <h4>Detail UMK</h4>
+                <h6 class="mt-0">Kota : {{$data->city_name}}</h6>
+                <input type="text" id="city_id" value="{{$data->city_id}}" hidden>
+                <input type="text" id="city_name" value="{{$data->city_name}}" hidden>
                 <input type="text" id="id" value="{{$data->id}}" hidden>
             </div>
         </div>
@@ -31,8 +31,8 @@
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center">Provinsi</th>
-                            <th class="text-center">UMP</th>
+                            <th class="text-center">Kota</th>
+                            <th class="text-center">UMK</th>
                             <th class="text-center">Tanggal Berlaku</th>
                             <th class="text-center">Sumber</th>
                             <th class="text-center">Status</th>
@@ -58,16 +58,16 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="updateDataLabel">Update Data UMP</h5>
+          <h5 class="modal-title" id="updateDataLabel">Update Data UMK</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">UMP <span class="text-danger">*</span></label>
+                <label class="col-sm-2 col-form-label text-sm-end">UMK <span class="text-danger">*</span></label>
                 <div class="col-sm-10">
-                    <input type="text" id="ump" name="ump" value="{{old('ump')}}" class="form-control @if ($errors->any()) @if($errors->has('ump')) is-invalid @else   @endif @endif">
-                    @if($errors->has('ump'))
-                        <div class="invalid-feedback">{{$errors->first('ump')}}</div>
+                    <input type="text" id="umk" name="umk" value="{{old('umk')}}" class="form-control @if ($errors->any()) @if($errors->has('umk')) is-invalid @else   @endif @endif">
+                    @if($errors->has('umk'))
+                        <div class="invalid-feedback">{{$errors->first('umk')}}</div>
                     @endif
                 </div>
             </div>
@@ -100,7 +100,7 @@
 @section('pageScript')
     <script>
         $('#btn-kembali').on('click',function () {
-          window.location.replace("{{route('ump')}}");
+          window.location.replace("{{route('umk')}}");
         });
 
         @if(session()->has('success'))  
@@ -137,9 +137,9 @@
             'processing': 'Loading...'
         },
                 ajax: {
-                    url: "{{ route('ump.list-ump') }}",
+                    url: "{{ route('umk.list-umk') }}",
                     data: function (d) {
-                      d.id = {{$data->province_id}};
+                      d.id = {{$data->city_id}};
                     },
                 },   
                 "order":[
@@ -151,12 +151,12 @@
                     visible: false,
                     searchable: false
                 },{
-                    data : 'province_name',
-                    name : 'province_name',
+                    data : 'city_name',
+                    name : 'city_name',
                     className:'dt-body-left'
                 },{
-                    data : 'ump',
-                    name : 'ump',
+                    data : 'umk',
+                    name : 'umk',
                     className:'dt-body-right',
                     render: $.fn.dataTable.render.number('.','.', 0,'')
                 },{
@@ -188,15 +188,15 @@
 
             $('#btn-simpan').on('click',function(){
                 let msg="";
-                let ump = $("#ump").val();
+                let umk = $("#umk").val();
                 let tgl_berlaku = $("#tgl_berlaku").val();
                 let sumber = $("#sumber").val();
-                let province_id = $("#province_id").val();
-                let province_name = $("#province_name").val();
+                let city_id = $("#city_id").val();
+                let city_name = $("#city_name").val();
                 let id = $("#id").val();
 
-                if(ump==null || ump==""){
-                    msg += "<b>UMP</b> belum diisi </br>";
+                if(umk==null || umk==""){
+                    msg += "<b>umk</b> belum diisi </br>";
                 };
                 if(tgl_berlaku==null || tgl_berlaku==""){
                     msg += "<b>Tanggal Berlaku</b> belum diisi </br>";
@@ -217,9 +217,9 @@
 
                 let formData = {
                     "id":id,
-                    "province_id":province_id,
-                    "province_name":province_name,
-                    "ump":ump,
+                    "city_id":city_id,
+                    "city_name":city_name,
+                    "umk":umk,
                     "tgl_berlaku":tgl_berlaku,
                     "sumber":sumber,
                     "_token": "{{ csrf_token() }}"
@@ -227,7 +227,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "{{route('ump.save')}}",
+                    url: "{{route('umk.save')}}",
                     data:formData,
                     success: function(response){
                         if(response=="Data Berhasil Ditambahkan"){
@@ -253,7 +253,7 @@
             });
     </script>
     <script>
-        var elem = document.getElementById("ump");
+        var elem = document.getElementById("umk");
       
         elem.addEventListener("keydown",function(event){
             var key = event.which;
