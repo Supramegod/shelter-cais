@@ -16,9 +16,16 @@
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
-
         <!-- SALES , TELESALES , SPV SALES , MAN SALES -->
-        @elseif(in_array(Auth::user()->role_id,[29,30,31,32,33]))
+        @elseif(in_array(Auth::user()->role_id,[30]))
+        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
+            <a href="{{route('leads')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+            <div data-i18n="Leads">Leads</div>
+            </a>
+        </li>
+        <!-- SALES , TELESALES , SPV SALES , MAN SALES -->
+        @elseif(in_array(Auth::user()->role_id,[29,31,32,33]))
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
@@ -252,6 +259,25 @@
             <div data-i18n="Customer Activity">Customer Activity</div>
             </a>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
+            <a href="{{route('quotation')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
+            <div data-i18n="Quotation">Quotation</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
+            <a href="{{route('spk')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
+            <div data-i18n="SPK">SPK</div>
+            </a>
+        </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
+            <a href="{{route('pks')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
+            <div data-i18n="PKS">PKS</div>
+            </a>
+        </li>
+
         <!-- MASTER DATA -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
