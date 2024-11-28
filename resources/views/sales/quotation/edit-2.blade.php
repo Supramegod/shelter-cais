@@ -55,7 +55,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                   <label class="form-label" for="tgl_penempatan">Tanggal Penempatan</label>
                   <input type="date" name="tgl_penempatan" value="{{$quotation->tgl_penempatan}}" class="form-control @if($errors->has('tgl_penempatan')) is-invalid @endif" id="tgl-penempatan">
                   @if($errors->has('tgl_penempatan'))
@@ -65,7 +65,7 @@
                     <span class="text-danger">{{$errors->first('tgl_penempatan_kurang')}}</span>
                   @endif
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                   <label class="form-label" for="durasi_karyawan">Durasi Karyawan</label>
                   <select id="durasi_karyawan" name="durasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->durasi_karyawan=='') selected @endif>- Pilih Data -</option>  
@@ -76,8 +76,6 @@
                     <option value="2 Tahun" @if($quotation->durasi_karyawan=='2 Tahun') selected @endif>2 Tahun</option>
                   </select>
                 </div>
-              </div>
-              <div class="row mb-3">
                 <div class="col-sm-4">
                   <label class="form-label" for="evaluasi_karyawan">Evaluasi Karyawan</label>
                   <select id="evaluasi_karyawan" name="evaluasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -89,7 +87,9 @@
                     <option value="2 Tahun" @if($quotation->evaluasi_karyawan=='2 Tahun') selected @endif>2 Tahun</option>
                   </select>
                 </div>
-                <div class="col-sm-4">
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm-6">
                   <label class="form-label" for="shift_kerja">Hari Kerja dan Jam Kerja</label>
                   <select id="shift_kerja" name="shift_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->shift_kerja=='') selected @endif>- Pilih Data -</option>  
@@ -98,7 +98,7 @@
                     <option value="3 Shift" @if($quotation->shift_kerja=='3 Shift') selected @endif>3 Shift</option>  
                   </select>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                 <label class="form-label">&nbsp;</label>
                   <select id="jam_kerja" name="jam_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->jam_kerja=='') selected @endif>- Pilih Data -</option>  
@@ -109,7 +109,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-6">
+                <div class="col-sm-12">
                   <label class="form-label" for="basic-default-password42">Salary Rule</label>
                   <select id="salary_rule" name="salary_rule" class="form-select" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
@@ -118,7 +118,9 @@
                       @endforeach
                     </select>
                 </div>
-                <div class="col-sm-6">
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm-8">
                   <table class="table table-bordered" style="width:100%">
                     <thead>
                       <tr>

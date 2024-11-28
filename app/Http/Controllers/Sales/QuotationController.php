@@ -610,18 +610,29 @@ class QuotationController extends Controller
                         $kbd->kompensasi = $quotation->nominal_upah/$provisi;
                     }
                     
+                    $umk = 0;
+                    $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$quotation->kota_id)->first();
+
+                    if($dataUmk!=null){
+                        $umk = $dataUmk->umk;
+                    }
+                    
                     $kbd->tunjangan_holiday = 0;
                     if($quotation->tunjangan_holiday=="Flat"){
                         $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
                     }else{
-                        $kbd->tunjangan_holiday = ($quotation->nominal_upah/173*(14))*15/$provisi;
+                        $quotation->tunjangan_holiday_display = ($umk/173*(14))*15;
                     }
 
                     $kbd->lembur = 0;
                     if($quotation->lembur=="Flat"){
+                        $kbd->lembur_per_jam = null;
                         $kbd->lembur = $quotation->nominal_lembur;
                     }else{
                         $kbd->lembur = 0;
+                        $kbd->lembur_per_jam = 0;
+
+                        $quotation->lembur_per_jam = ($umk/173*1.5)*1;
                     }
 
                     $personilKaporlap = 0;
@@ -633,9 +644,9 @@ class QuotationController extends Controller
                     $kbd->personil_kaporlap = $personilKaporlap;
 
                     $personilDevices = 0;
-                    $kbddevices = DB::table('sl_quotation_devices')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->where('quotation_detail_id',$kbd->id)->get();
+                    $kbddevices = DB::table('sl_quotation_devices')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
                     foreach ($kbddevices as $ikdbdev => $kdbdev) {
-                        $personilDevices += ($kdbdev->harga*$kdbdev->jumlah)/$provisi;
+                        $personilDevices += ($kdbdev->harga*$kdbdev->jumlah/$jumlahHc)/$provisi;
                     };
                     $appPendukung = DB::table('sl_quotation_aplikasi')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
                     foreach ($appPendukung as $kapp => $app) {
@@ -646,11 +657,14 @@ class QuotationController extends Controller
 
                     $personilOhc = 0;
                     $totalOhc = 0;
-                    $kbdOhc = DB::table('sl_quotation_ohc')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
-                    foreach ($kbdOhc as $ikdbohc => $kdbohc) {
+                    $listOhc = DB::table('sl_quotation_ohc')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
+                    foreach ($listOhc as $ikdbohc => $kdbohc) {
                         $personilOhc += ($kdbohc->harga*$kdbohc->jumlah/$jumlahHc)/$provisi;
                         $totalOhc += ($kdbohc->harga*$kdbohc->jumlah);
+                        $kdbohc->total = $kdbohc->harga*$kdbohc->jumlah/$jumlahHc;
                     };
+
+                    $kbd->list_ohc = $listOhc;
 
                     $kbd->personil_ohc = $personilOhc;
                     $kbd->total_ohc = $totalOhc;
@@ -668,13 +682,9 @@ class QuotationController extends Controller
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
-                    // bunga bank dan insentif
-                    $kbd->bunga_bank = $kbd->sub_total_personil*$quotation->persen_bunga_bank/100;
-                    $kbd->insentif = $kbd->sub_total_personil*$quotation->persen_insentif/100;
-
                     $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100;
 
-                    $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee+$kbd->bunga_bank+$kbd->insentif;
+                    $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee;
 
                     $kbd->ppn = 0;
                     $kbd->pph = 0;
@@ -703,8 +713,11 @@ class QuotationController extends Controller
 
                     $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
 
-                    // Permintaan pak yaser Management Fee untuk COST STRUCTURE DITAMBAH TOTAL OHC 
-                    $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$quotation->persentase/100);
+                    // bunga bank dan insentif
+                    $kbd->bunga_bank = $kbd->sub_total_personil*$quotation->persen_bunga_bank/100;
+                    $kbd->insentif = $kbd->sub_total_personil*$quotation->persen_insentif/100;
+
+                    $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$quotation->persentase/100)+$kbd->bunga_bank+$kbd->insentif;
 
                     $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss+$kbd->total_ohc;
                     
@@ -922,10 +935,12 @@ class QuotationController extends Controller
                 }
                 
                 $kbd->tunjangan_holiday = 0;
-                if($quotation->tunjangan_holiday=="Flat"){
-                    $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
-                }else{
-                    $kbd->tunjangan_holiday = ($quotation->nominal_upah/173*(14))*15/$provisi;
+                if($quotation->tunjangan_holiday != "Tidak Ada" && $quotation->tunjangan_holiday != "" && $quotation->tunjangan_holiday != null) {
+                    if($quotation->tunjangan_holiday=="Flat"){
+                        $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
+                    }else{
+                        $kbd->tunjangan_holiday = ($quotation->nominal_upah/173*(14))*15/$provisi;
+                    }
                 }
 
                 $kbd->lembur = 0;
@@ -975,7 +990,7 @@ class QuotationController extends Controller
                 $kbd->personil_chemical = $personilChemical;
 
                 // dd($kbd->personil_kaporlap);
-                $kbd->total_personil = $quotation->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
+                $kbd->total_personil = $quotation->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc;
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
@@ -1363,10 +1378,18 @@ class QuotationController extends Controller
             $upah = $request['upah'];
             $manfee = $request['manajemen_fee'];
             $presentase = $request['persentase'];
+            $hitunganUpah = "Per Bulan";
 
             $customUpah = 0;
             if($upah == "Custom"){
+                $hitunganUpah = $request['hitungan_upah'];
                 $customUpah = str_replace(".","",$request['custom-upah']);
+
+                if($hitunganUpah=="Per Hari"){
+                    $customUpah = $customUpah*21;
+                }else if ($hitunganUpah=="Per Jam") {
+                    $customUpah = $customUpah*21*8;
+                }
             }else{
                 //cari ump / umk
                 if($upah =="UMP"){
@@ -2206,8 +2229,10 @@ class QuotationController extends Controller
             ]);
             
             $arrTrainingId = explode(",",$request->training_id);
+            $total = 0;
             foreach ($arrTrainingId as $key => $value) {
                 $dTraining = DB::table('m_training')->where('id',$value)->first();
+                $total += $dTraining->harga;
                 DB::table('sl_quotation_training')->insert([
                     'training_id' => $value,
                     'quotation_id' =>$request->quotation_id,
@@ -2217,18 +2242,44 @@ class QuotationController extends Controller
                     'created_by' => Auth::user()->full_name
                 ]);
             }
+            // cari training dari ohc kalau ada update kalau tidak ada update
+            $detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$request->quotation_id)->get();
+            $checkExist = DB::table('sl_quotation_ohc')->whereNull('deleted_at')->where('barang_id',999)->where('quotation_id',$request->quotation_id)->first();
+                if($checkExist == null){
+                    DB::table('sl_quotation_ohc')->insert([
+                        'quotation_id' => $request->quotation_id,
+                        'barang_id' => 999,
+                        'jumlah' => 1,
+                        'nama' => 'Training',
+                        'jenis_barang' => 'Direct Site Operational',
+                        'harga' => $total,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+                }else{
+                    DB::table('sl_quotation_ohc')->whereNull('deleted_at')->where('barang_id',999)->where('quotation_id',$request->quotation_id)->update([
+                        'quotation_id' => $request->quotation_id,
+                        'barang_id' => 999,
+                        'jumlah' => 1,
+                        'nama' => 'Training',
+                        'jenis_barang' => 'Direct Site Operational',
+                        'harga' => $total,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+                }
 
-            $listTrain = "";
+            $listTraning = "";
             $dataTraining = DB::table('sl_quotation_training')->whereNull('deleted_at')->where('quotation_id',$request->quotation_id)->get();
             foreach ($dataTraining as $key => $value) {
                 if($key != 0){
-                    $listTrain .= ", ";
+                    $listTraning .= ", ";
                 };
                 
-                $listTrain .= $value->nama;
+                $listTraning .= $value->nama;
             }
 
-            return $listTrain;
+            return $listTraning;
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -2758,44 +2809,46 @@ class QuotationController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             $data = DB::table('sl_quotation_detail')->where('quotation_id',$request->quotation_id)->get();
 
-            foreach ($data as $key => $value) {
-                if($request->jumlah !=null && $request->jumlah !=""){
-                    $dataExist = DB::table("sl_quotation_ohc")
-                    ->whereNull('deleted_at')
-                    ->where('quotation_id',$value->quotation_id)
-                    ->where('barang_id',$request->barang)
-                    ->first();
+            if($request->jumlah !=null && $request->jumlah !=""){
+                $dataExist = DB::table("sl_quotation_ohc")
+                ->whereNull('deleted_at')
+                ->where('quotation_id',$request->quotation_id)
+                ->where('barang_id',$request->barang)
+                ->first();
 
-                    $barang = DB::table('m_barang')->where('id',$request->barang)->first();
-                    $harga = str_replace(".","",$request->harga);
-                    if($dataExist!=null){
-                        DB::table("sl_quotation_ohc")
-                            ->whereNull('deleted_at')
-                            ->where('quotation_id',$value->quotation_id)
-                            ->where('quotation_detail_id',$value->id)
-                            ->where('barang_id',$request->barang)->update([
-                                    'jumlah' => $dataExist->jumlah+(int)$request->jumlah,
-                                    'harga' => $harga,
-                                    'nama' => $barang->nama,
-                                    'jenis_barang' => $barang->jenis_barang,
-                                    'updated_at' => $current_date_time,
-                                    'updated_by' => Auth::user()->full_name
-                            ]);
-                    }else{
-                        DB::table('sl_quotation_ohc')->insert([
-                            'quotation_detail_id' => $value->id,
-                            'quotation_id' => $value->quotation_id,
-                            'barang_id' => $request->barang,
-                            'jumlah' => $request->jumlah,
-                            'harga' => $harga,
-                            'nama' => $barang->nama,
-                            'jenis_barang' => $barang->jenis_barang,
-                            'created_at' => $current_date_time,
-                            'created_by' => Auth::user()->full_name
+                $barang = DB::table('m_barang')->where('id',$request->barang)->first();
+                $harga = str_replace(".","",$request->harga);
+                if($dataExist!=null){
+                    DB::table("sl_quotation_ohc")
+                        ->whereNull('deleted_at')
+                        ->where('quotation_id',$request->quotation_id)
+                        // ->where('quotation_detail_id',$value->id)
+                        ->where('barang_id',$request->barang)->update([
+                                'jumlah' => $dataExist->jumlah+(int)$request->jumlah,
+                                'harga' => $harga,
+                                'nama' => $barang->nama,
+                                'jenis_barang' => $barang->jenis_barang,
+                                'updated_at' => $current_date_time,
+                                'updated_by' => Auth::user()->full_name
                         ]);
-                    }
+                }else{
+                    DB::table('sl_quotation_ohc')->insert([
+                        'quotation_detail_id' => $request->quotation_id,
+                        // 'quotation_id' => $value->quotation_id,
+                        'barang_id' => $request->barang,
+                        'jumlah' => $request->jumlah,
+                        'harga' => $harga,
+                        'nama' => $barang->nama,
+                        'jenis_barang' => $barang->jenis_barang,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
                 }
             }
+
+            // foreach ($data as $key => $value) {
+                
+            // }
 
             return "Data Berhasil Ditambahkan";
         } catch (\Exception $e) {
@@ -2808,7 +2861,7 @@ class QuotationController extends Controller
 
     public function listOhc (Request $request){
         $raw = ['aksi'];
-        $data = DB::select("SELECT DISTINCT m_barang.jenis_barang_id,sl_quotation_ohc.jumlah,sl_quotation_ohc.quotation_id,sl_quotation_ohc.barang_id,sl_quotation_ohc.jenis_barang,sl_quotation_ohc.nama,sl_quotation_ohc.harga 
+        $data = DB::select("SELECT m_barang.jenis_barang_id,sl_quotation_ohc.jumlah,sl_quotation_ohc.quotation_id,sl_quotation_ohc.barang_id,sl_quotation_ohc.jenis_barang,sl_quotation_ohc.nama,sl_quotation_ohc.harga 
 from sl_quotation_ohc 
 INNER JOIN m_barang ON sl_quotation_ohc.barang_id = m_barang.id
 WHERE sl_quotation_ohc.deleted_at is null 
@@ -2828,6 +2881,9 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         $dt = DataTables::of($data)
         ->addColumn('aksi', function ($data){
             if($data->barang_id==0){
+                return null;
+            }
+            if ($data->barang_id==999) {
                 return null;
             }
             return '<div class="justify-content-center d-flex">

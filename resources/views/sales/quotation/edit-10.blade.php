@@ -253,8 +253,10 @@
                 <td>{{$tr->id}}</td>
                 <td>{{$tr->jenis}}</td>
                 <td>{{$tr->nama}}</td>
-                <td>{{$tr->harga}}</td>
-                <td><input class="form-check-input training-pilihan" type="checkbox" value="{{$tr->id}}" name="trainingList[]" @foreach($listTrainingQ as $trq) @if($trq->training_id==$tr->id) checked @endif @endforeach></td>
+                <td style="text-align:right" class="">{{number_format($tr->harga,2,",",".")}}</td>
+                <td>
+                  <input class="form-check-input training-pilihan" type="checkbox" value="{{$tr->id}}" name="trainingList[]" @foreach($listTrainingQ as $trq) @if($trq->training_id==$tr->id) checked @endif @endforeach>
+                </td>
               </tr>
               @endforeach
             </tbody>
@@ -329,6 +331,7 @@ $(document).ready(function(){
       url: "{{route('quotation.add-quotation-training')}}",
       data:formData,
       success: function(response){
+        location.reload();
         $('#data-list-training').text(response);
           $('#basicModalTraining').modal('toggle');
       },

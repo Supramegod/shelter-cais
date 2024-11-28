@@ -63,10 +63,23 @@
                   </div>
                 </div>
                 <div class="row mb-3 d-none" id="d-custom-upah">
-                  <div class="col-sm-12">
+                  <div class="col-sm-6">
                     <label class="form-label" for="custom-upah">Masukkan Upah</label>
                     <div class="input-group">
-                      <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_upah}}" name="custom-upah" id="custom-upah">
+                      <input type="text" class="form-control mask-nominal" value="@if($quotation->hitungan_upah=='Per Jam') {{$quotation->nominal_upah/21/8}} @elseif($quotation->hitungan_upah=='Per Hari') {{$quotation->nominal_upah/21}} @elseif($quotation->hitungan_upah=='Per Bulan') {{$quotation->nominal_upah}} @endif" name="custom-upah" id="custom-upah">
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="custom-upah">Hitungan Upah</label>
+                    <div class="input-group">
+                      <select id="hitungan_upah" name="hitungan_upah" class="form-select" data-allow-clear="true" tabindex="-1">
+                          <option value="">- Pilih data -</option>
+                          @if($quotation->jenis_kontrak == "PKHL" || $quotation->jenis_kontrak == "Reguler")
+                          <option value="Per Jam" @if($quotation->hitungan_upah == "Per Jam") selected @endif>Per Jam</option>
+                          <option value="Per Hari" @if($quotation->hitungan_upah == "Per Hari") selected @endif>Per Hari</option>  
+                          @endif
+                          <option value="Per Bulan" @if($quotation->hitungan_upah == "Per Bulan") selected @elseif($quotation->jenis_kontrak == "PKWT") selected @endif>Per Bulan</option>  
+                      </select>
                     </div>
                   </div>
                   <span class="text-warning">*Gaji dibawah UMK membutuhkan persetujuan</span>
@@ -258,6 +271,9 @@ $('.show-custom').on('click',function(){
   }
   if(obj['manajemen_fee'] == null || obj['manajemen_fee'] == ""){
     msg += "<b>Manajemen Fee </b> belum dipilih </br>";
+  }
+  if(obj['hitungan_upah'] == null || obj['hitungan_upah'] == ""){
+    msg += "<b>Hitungan Upah </b> belum dipilih </br>";
   }
   if(obj['persentase'] == null || obj['persentase'] == ""){
     msg += "<b>Persentase </b> belum diisi </br>";
