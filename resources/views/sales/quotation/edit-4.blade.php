@@ -73,12 +73,11 @@
                     <label class="form-label" for="custom-upah">Hitungan Upah</label>
                     <div class="input-group">
                       <select id="hitungan_upah" name="hitungan_upah" class="form-select" data-allow-clear="true" tabindex="-1">
-                          <option value="">- Pilih data -</option>
-                          @if($quotation->jenis_kontrak == "PKHL" || $quotation->jenis_kontrak == "Reguler")
+                          @if($quotation->jenis_kontrak == "PKHL" || $quotation->jenis_kontrak == "Borongan")
                           <option value="Per Jam" @if($quotation->hitungan_upah == "Per Jam") selected @endif>Per Jam</option>
                           <option value="Per Hari" @if($quotation->hitungan_upah == "Per Hari") selected @endif>Per Hari</option>  
                           @endif
-                          <option value="Per Bulan" @if($quotation->hitungan_upah == "Per Bulan") selected @elseif($quotation->jenis_kontrak == "PKWT") selected @endif>Per Bulan</option>  
+                          <option value="Per Bulan" @if($quotation->hitungan_upah == "Per Bulan") selected @elseif($quotation->jenis_kontrak == "PKWT") selected @elseif($quotation->hitungan_upah == null) selected @endif>Per Bulan</option>  
                       </select>
                     </div>
                   </div>

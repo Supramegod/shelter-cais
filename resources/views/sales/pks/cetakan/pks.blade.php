@@ -90,7 +90,7 @@ td, th {
 				<strong><span style="font-family:Arial; ">&#xa0;</span></strong>
 			</p>
 			<p class="NoSpacing" style="margin-left:211.5pt; text-indent:-211.5pt; text-align:justify; widows:2; orphans:2; font-size:12pt">
-				<strong><span style="font-family:Arial;text-transform:uppercase">{{$data->nama_perusahaan}}</span></strong><strong><span style="width:52.49pt; text-indent:0pt; font-family:Arial; display:inline-block">&#xa0;</span></strong><span style="font-family:Arial">:</span><strong><span style="width:5.67pt; text-indent:0pt; font-family:Arial; display:inline-block">&#xa0;</span></strong><span style="font-family:Arial">Dalam hal ini diwakili oleh </span><strong><span style="font-family:Arial;text-transform:uppercase ">{{$quotation[0]->pic->nama}} </span></strong><span style="font-family:Arial">sebagai </span><strong><span style="font-family:Arial;text-transform:uppercase ">{{$quotation[0]->pic->jabatan}} </span></strong><span style="font-family:Arial">yang berkedudukan di </span><span style="font-family:Arial; color:#202124; background-color:#ffffff"> {{$leads->alamat}} </span><span style="font-family:Arial; color:#202124; background-color:#ffffff">dan bertindak untuk dan atas nama </span><strong><span style="font-family:Arial; ">{{$data->nama_perusahaan}}</span></strong><span style="font-family:Arial">, untuk selanjutnya dalam perjanjian ini disebut sebagai </span><strong><span style="font-family:Arial; ">PIHAK PERTAMA</span></strong><span style="font-family:Arial">.</span>
+				<strong><span style="font-family:Arial;text-transform:uppercase">{{$leads->nama_perusahaan}}</span></strong><strong><span style="width:52.49pt; text-indent:0pt; font-family:Arial; display:inline-block">&#xa0;</span></strong><span style="font-family:Arial">:</span><strong><span style="width:5.67pt; text-indent:0pt; font-family:Arial; display:inline-block">&#xa0;</span></strong><span style="font-family:Arial">Dalam hal ini diwakili oleh </span><strong><span style="font-family:Arial;text-transform:uppercase ">@if(!$quotation[0]->pic==null) {{$quotation[0]->pic->nama}} @endif</span></strong><span style="font-family:Arial">sebagai </span><strong><span style="font-family:Arial;text-transform:uppercase ">@if(!$quotation[0]->pic==null) {{$quotation[0]->pic->jabatan}} @endif</span></strong><span style="font-family:Arial">yang berkedudukan di </span><span style="font-family:Arial; color:#202124; background-color:#ffffff"> {{$leads->alamat}} </span><span style="font-family:Arial; color:#202124; background-color:#ffffff">dan bertindak untuk dan atas nama </span><strong><span style="font-family:Arial; ">{{$data->nama_perusahaan}}</span></strong><span style="font-family:Arial">, untuk selanjutnya dalam perjanjian ini disebut sebagai </span><strong><span style="font-family:Arial; ">PIHAK PERTAMA</span></strong><span style="font-family:Arial">.</span>
 			</p>
 			<p class="NoSpacing" style="margin-left:247.5pt; text-indent:-247.5pt; widows:2; orphans:2; font-size:12pt">
 				<span style="font-family:Arial; color:#202124">&#xa0;</span>
@@ -558,10 +558,10 @@ td, th {
 							<strong><span style="font-family:Arial; ">&#xa0;</span></strong>
 						</p>
 						<p class="NoSpacing1" style="widows:2; orphans:2; font-size:12pt">
-							<strong><u><span style="font-family:Arial; ">{{$quotation[0]->pic->nama}}</span></u></strong>
+							<strong><u><span style="font-family:Arial; ">@if(!$quotation[0]->pic==null) {{$quotation[0]->pic->nama}} @endif</span></u></strong>
 						</p>
 						<p class="NoSpacing1" style="widows:2; orphans:2; font-size:12pt">
-							<strong><span style="font-family:Arial; ">{{$quotation[0]->pic->jabatan}}</span></strong>
+							<strong><span style="font-family:Arial; ">@if(!$quotation[0]->pic==null) {{$quotation[0]->pic->jabatan}} @endif</span></strong>
 						</p>
 					</td>
 					<td style="width:160.2pt; padding-right:5.4pt; padding-left:5.4pt; vertical-align:top">

@@ -136,7 +136,7 @@
                       @if($quotation->tunjangan_holiday=="Normatif" || $quotation->tunjangan_holiday=="Flat")
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Tunjangan Hari Libur Nasional <b>( {{$quotation->tunjangan_holiday}} @if($quotation->lembur=="Normatif") : {{"Rp. ".number_format($quotation->tunjangan_holiday_display,2,",",".")}} @endif )</b></td>
+                        <td style="text-align:left" class="">Tunjangan Hari Libur Nasional <b>( {{$quotation->tunjangan_holiday}} @if($quotation->tunjangan_holiday=="Normatif") : {{"Rp. ".number_format($quotation->tunjangan_holiday_display,2,",",".")}} @endif )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif"){{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}}@elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($quotation->nominal_tunjangan_holiday,2,",",".")}} @endif</td>

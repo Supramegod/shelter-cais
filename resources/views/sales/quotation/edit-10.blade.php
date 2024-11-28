@@ -279,68 +279,6 @@
 
 @section('pageScript')
 <script>
-$(document).ready(function(){
-  $('#btn-simpan-training').on('click',function(){
-    var checkedCount = $('.training-pilihan:checked').length;
-    var jumlahTraining = $('#training').val();
-
-    if(jumlahTraining==""){
-      Swal.fire({
-            title: "Pemberitahuan",
-            html: "Belum memasukkan jumlah training per tahun",
-            icon: "warning",
-          });
-          $('#basicModalTraining').modal('toggle');
-
-      return null;
-    }
-    
-    if (jumlahTraining<checkedCount) {
-      Swal.fire({
-            title: "Pemberitahuan",
-            html: "Training yang dipilih lebih dari jumlah training dalam 1 tahun",
-            icon: "warning",
-          });
-          $('#basicModalTraining').modal('toggle');
-
-      return null;
-    }
-    
-    var checkedValues = [];
-    $('.training-pilihan:checked').each(function() {
-        checkedValues.push($(this).val());
-    });
-
-    if(checkedValues.length==0){
-      Swal.fire({
-            title: "Pemberitahuan",
-            html: "Belum ada training yang dipilih",
-            icon: "warning",
-          });
-      return null;
-    };
-
-    let formData = {
-      "training_id":checkedValues.join(", "),
-      "quotation_id":$('#quotation_id').val(),
-      "_token": "{{ csrf_token() }}"
-    };
-
-    $.ajax({
-      type: "POST",
-      url: "{{route('quotation.add-quotation-training')}}",
-      data:formData,
-      success: function(response){
-        location.reload();
-        $('#data-list-training').text(response);
-          $('#basicModalTraining').modal('toggle');
-      },
-      error:function(error){
-        console.log(error);
-      }
-    });
-  });
-});
   $('#btn-save-tambah-item').on('click',function(){
       let msg="";
       let barang = $('#nama-barang').val();
@@ -507,6 +445,71 @@ $(document).ready(function(){
     ],
       "language": datatableLang,
     });
+
+    $(document).ready(function(){
+
+  $('#btn-simpan-training').on('click',function(){
+    var checkedCount = $('.training-pilihan:checked').length;
+    var jumlahTraining = $('#training').val();
+
+    if(jumlahTraining==""){
+      Swal.fire({
+            title: "Pemberitahuan",
+            html: "Belum memasukkan jumlah training per tahun",
+            icon: "warning",
+          });
+          $('#basicModalTraining').modal('toggle');
+
+      return null;
+    }
+    
+    if (jumlahTraining<checkedCount) {
+      Swal.fire({
+            title: "Pemberitahuan",
+            html: "Training yang dipilih lebih dari jumlah training dalam 1 tahun",
+            icon: "warning",
+          });
+          $('#basicModalTraining').modal('toggle');
+
+      return null;
+    }
+    
+    var checkedValues = [];
+    $('.training-pilihan:checked').each(function() {
+        checkedValues.push($(this).val());
+    });
+
+    if(checkedValues.length==0){
+      Swal.fire({
+            title: "Pemberitahuan",
+            html: "Belum ada training yang dipilih",
+            icon: "warning",
+          });
+      return null;
+    };
+
+    let formData = {
+      "training_id":checkedValues.join(", "),
+      "quotation_id":$('#quotation_id').val(),
+      "_token": "{{ csrf_token() }}"
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "{{route('quotation.add-quotation-training')}}",
+      data:formData,
+      success: function(response){
+        table.ajax.reload();
+        // location.reload();
+        $('#data-list-training').text(response);
+          $('#basicModalTraining').modal('toggle');
+      },
+      error:function(error){
+        console.log(error);
+      }
+    });
+  });
+});
 
     $('#btn-tambah-detail').on('click',function () {
       let barang = $('#barang').val();

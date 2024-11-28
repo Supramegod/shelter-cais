@@ -618,6 +618,7 @@ class QuotationController extends Controller
                     }
                     
                     $kbd->tunjangan_holiday = 0;
+                    $quotation->tunjangan_holiday_display = 0;
                     if($quotation->tunjangan_holiday=="Flat"){
                         $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
                     }else{
@@ -625,6 +626,7 @@ class QuotationController extends Controller
                     }
 
                     $kbd->lembur = 0;
+                    $quotation->lembur_per_jam = 0;
                     if($quotation->lembur=="Flat"){
                         $kbd->lembur_per_jam = null;
                         $kbd->lembur = $quotation->nominal_lembur;
@@ -1443,6 +1445,7 @@ class QuotationController extends Controller
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'upah' => $upah,
                 'nominal_upah' => $customUpah,
+                'hitungan_upah' => $hitunganUpah,
                 'management_fee_id' => $manfee,
                 'is_aktif' => 0,
                 'persentase' => $presentase,
@@ -2624,6 +2627,7 @@ class QuotationController extends Controller
     public function approveQuotation(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
+
             if(in_array(Auth::user()->role_id,[96])){
                 DB::table('sl_quotation')->where('id',$request->id)->update([
                     'ot1' => Auth::user()->full_name,
@@ -2632,8 +2636,6 @@ class QuotationController extends Controller
                 ]);
 
                 //ambil quotation
-                $data = DB::table('sl_quotation')->where('id',$request->id)->first();
-                $master = DB::table('sl_quotation')->where('id',$data->id)->first();
                 if($master->top=="Kurang Dari 7 Hari"){
                     DB::table('sl_quotation')->where('id',$request->id)->update([
                         'is_aktif' => 1,
@@ -2641,7 +2643,7 @@ class QuotationController extends Controller
                         'updated_by' => Auth::user()->full_name
                     ]);
 
-                    DB::table('sl_quotation')->where('id',$data->id)->update([
+                    DB::table('sl_quotation')->where('id',$request->id)->update([
                         'status_quotation_id' => 3,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
@@ -2661,7 +2663,7 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->full_name
                 ]);
 
-                DB::table('sl_quotation')->where('id',$data->id)->update([
+                DB::table('sl_quotation')->where('id',$request->id)->update([
                     'status_quotation_id' => 3,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -2833,7 +2835,7 @@ class QuotationController extends Controller
                         ]);
                 }else{
                     DB::table('sl_quotation_ohc')->insert([
-                        'quotation_detail_id' => $request->quotation_id,
+                        'quotation_id' => $request->quotation_id,
                         // 'quotation_id' => $value->quotation_id,
                         'barang_id' => $request->barang,
                         'jumlah' => $request->jumlah,

@@ -32,7 +32,7 @@
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('customer')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Customer">Customer</div>
@@ -165,7 +165,7 @@
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('customer')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Customer">Customer</div>
@@ -186,7 +186,7 @@
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('customer')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Customer">Customer</div>
@@ -247,7 +247,7 @@
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer'))) active @endif">
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('customer')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Customer">Customer</div>
