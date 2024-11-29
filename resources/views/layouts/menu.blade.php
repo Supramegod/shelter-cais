@@ -337,16 +337,16 @@
                         <div data-i18n="Tunjangan">Tunjangan</div>
                     </a>
                 </li>
-                <li class="menu-item @if(str_contains(Request::url(), route('tunjangan-jabatan'))) active @endif">
-                    <a href="{{route('tunjangan-jabatan')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Tunjangan Jabatan">Tunjangan Jabatan</div>
-                    </a>
-                </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('ump'))) active @endif">
                     <a href="{{route('ump')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="UMP">UMP</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('umk'))) active @endif">
+                    <a href="{{route('umk')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="UMK">UMK</div>
                     </a>
                 </li>
                 

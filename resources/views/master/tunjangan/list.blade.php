@@ -27,7 +27,10 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th class="text-center">Nama</th>
+                                    <th class="text-center">Nama Kebutuhan</th>
+                                    <th class="text-center">Nama Jabatan</th>
+                                    <th class="text-center">Nama Tunjangan</th>
+                                    <th class="text-center">Nominal</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
                                     <th class="text-center">Aksi</th>
@@ -98,9 +101,22 @@
                     visible: false,
                     searchable: false
                 },{
-                    data : 'nama',
-                    name : 'nama',
+                    data : 'nama_kebutuhan',
+                    name : 'nama_kebutuhan',
                     className:'text-center'
+                },{
+                    data : 'nama_jabatan',
+                    name : 'nama_jabatan',
+                    className:'text-center'
+                },{
+                    data : 'nama_tunjangan',
+                    name : 'nama_tunjangan',
+                    className:'text-center'
+                },{
+                    data : 'nominal',
+                    name : 'nominal',
+                    className:'text-center',
+                    render: $.fn.dataTable.render.number('.','.', 0,'')
                 },{
                     data : 'created_at',
                     name : 'created_at',

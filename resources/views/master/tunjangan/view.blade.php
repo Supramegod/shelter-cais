@@ -18,11 +18,52 @@
           @csrf
           <input type="hidden" name="id" value="{{$data->id}}">
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
+            <label class="col-sm-3 col-form-label text-sm-end">Nama Kebutuhan <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <div class="position-relative">
+                <select id="kebutuhan_id" name="kebutuhan_id" class="form-select @if ($errors->any()) @if($errors->has('kebutuhan_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                <option value="">- Pilih Kebutuhan -</option>  
+                  @foreach($listKebutuhan as $value)
+                  <option value="{{$value->id}}" @if($data->kebutuhan_id == $value->id) selected @endif>{{$value->nama}}</option>
+                  @endforeach
+                </select>
+                @if($errors->has('kebutuhan_id'))
+                  <div class="invalid-feedback">{{$errors->first('kebutuhan_id')}}</div>
+                @endif
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label text-sm-end">Nama Jabatan <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <div class="position-relative">
+                <select id="position_id" name="position_id" class="form-select @if ($errors->any()) @if($errors->has('position_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                <option value="">- Pilih Jabatan -</option>  
+                  @foreach($listPosition as $value)
+                  <option value="{{$value->id}}" @if($data->position_id == $value->id) selected @endif>{{$value->name}}</option>
+                  @endforeach
+                </select>
+                @if($errors->has('position_id'))
+                  <div class="invalid-feedback">{{$errors->first('position_id')}}</div>
+                @endif
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label text-sm-end">Nama Tunjangan <span class="text-danger">*</span></label>
             <div class="col-sm-9">
               <input type="text" id="nama" name="nama" value="{{$data->nama}}" class="form-control @if ($errors->any()) @if($errors->has('nama')) is-invalid @else   @endif @endif">
               @if($errors->has('nama'))
                   <div class="invalid-feedback">{{$errors->first('nama')}}</div>
+              @endif
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label text-sm-end">Nominal <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" id="nominal" name="nominal" value="{{$data->nominal}}" class="form-control @if ($errors->any()) @if($errors->has('nominal')) is-invalid @else   @endif @endif">
+              @if($errors->has('nominal'))
+                  <div class="invalid-feedback">{{$errors->first('nominal')}}</div>
               @endif
             </div>
           </div>
@@ -87,6 +128,39 @@
   
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('tunjangan')}}");
+  });
+</script>
+<script>
+  var elem = document.getElementById("nominal");
+  let harga = elem.value;
+  var caret = harga.length-1;
+  while((caret-3)>-1)
+  {
+    caret -= 3;
+    harga = harga.split('');
+    harga.splice(caret+1,0,",");
+    harga = harga.join('');
+  }
+  this.harga = harga;
+  $("#nominal").val(harga);
+
+  elem.addEventListener("keydown",function(event){
+      var key = event.which;
+      if((key<48 || key>57) && key != 8) event.preventDefault();
+  });
+
+  elem.addEventListener("keyup",function(event){
+      var value = this.value.replace(/,/g,"");
+      this.dataset.currentValue=parseInt(value);
+      var caret = value.length-1;
+      while((caret-3)>-1)
+      {
+          caret -= 3;
+          value = value.split('');
+          value.splice(caret+1,0,",");
+          value = value.join('');
+      }
+      this.value = value;
   });
 </script>
 @endsection
