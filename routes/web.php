@@ -344,9 +344,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/kebutuhan/view/{id}', 'view')->name('kebutuhan.view');
 
         Route::get('/master/kebutuhan/list', 'list')->name('kebutuhan.list'); // ajax
+        Route::get('/master/kebutuhan/list-detail', 'listDetail')->name('kebutuhan.list-detail'); // ajax
         
-        Route::post('/master/kebutuhan/add-detail', 'addDetail')->name('kebutuhan.add-detail');
-
         Route::get('/master/kebutuhan/list-detail-tunjangan', 'listDetailTunjangan')->name('kebutuhan.list-detail-tunjangan'); // ajax
         Route::post('/master/kebutuhan/delete-detail-tunjangan', 'deleteDetailTunjangan')->name('kebutuhan.delete-detail-tunjangan');
         Route::post('/master/kebutuhan/add-detail-tunjangan', 'addDetailTunjangan')->name('kebutuhan.add-detail-tunjangan');
