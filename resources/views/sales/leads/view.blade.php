@@ -97,7 +97,7 @@
           <hr class="my-4 mx-4">
           <h6>3. Informasi PIC</h6>
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">PIC <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <input type="text" id="pic" name="pic" value="{{$data->pic}}" class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
               @if($errors->has('pic'))

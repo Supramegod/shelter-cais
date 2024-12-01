@@ -98,7 +98,7 @@
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Perusahaan</th>
                                     <th class="text-center">Telp. Perusahaan</th>
-                                    <th class="text-center">PIC</th>
+                                    <th class="text-center">Nama PIC</th>
                                     <th class="text-center">Telp. PIC</th>
                                     <th class="text-center">Email PIC</th>
                                     <th class="text-center">Status</th>

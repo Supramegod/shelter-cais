@@ -84,7 +84,7 @@
                         <th>Nama Perusahaan</th>
                         <th>Jenis Perusahaan</th>
                         <th>No Telp Perusahaan</th>
-                        <th>PIC</th>
+                        <th>Nama PIC</th>
                         <th>Jabatan PIC</th>
                         <th>No. Telp PIC</th>
                         <th>Email PIC</th>
