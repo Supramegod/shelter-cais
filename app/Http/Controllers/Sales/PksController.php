@@ -55,7 +55,7 @@ class PksController extends Controller
             $now = Carbon::now()->isoFormat('DD MMMM Y');
 
             $data=null;
-            $quotation =null;
+            $spk =null;
             if($request->id!=null){
                 $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->id)->first();
             }
@@ -131,7 +131,7 @@ class PksController extends Controller
                 'tgl_pks' => $current_date_time,
                 'nama_perusahaan' => $dataSpk->nama_perusahaan,
                 'link_pks_disetujui' => null,
-                'status_pks_id' => 1,
+                'status_pks_id' => 5,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -260,6 +260,9 @@ class PksController extends Controller
 
     public function aktifkanSite(Request $request){
         try {
+            DB::beginTransaction();
+            DB::connection('mysqlhris')->beginTransaction();
+
             $current_date_time = Carbon::now()->toDateTimeString();
             $pks = DB::table('sl_pks')->where('id',$request->id)->first();
             DB::table('sl_pks')->where('id',$request->id)->update([
@@ -280,7 +283,142 @@ class PksController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
+
+            // dimasukkan ke customer dan site
+            $quotationClient = DB::table('sl_quotation_client')->whereNull('deleted_at')->where('id',$pks->quotation_client_id)->first();
+            $quotation = DB::table('sl_quotation')->where('quotation_client_id',$pks->quotation_client_id)->whereNull('deleted_at')->get();
+            $leads = DB::table('sl_leads')->where('id',$quotationClient->leads_id)->first();
+
+            $custId = DB::table('sl_customer')->insertGetId([
+                'leads_id' => $leads->id,
+                'nomor' =>  $leads->nomor,
+                'tgl_customer' => $current_date_time,
+                'nama_perusahaan' => $leads->nama_perusahaan,
+                'tim_sales_id' => $leads->tim_sales_id,
+                'tim_sales_d_id' => $leads->tim_sales_d_id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            DB::table('sl_leads')->where('id',$leads->id)->update([
+                'customer_id' => $custId,
+                'status_leads_id' => 102,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+            // SINGKRON KE CLIENT HRIS
+            $clientId = DB::connection('mysqlhris')->table('m_client')->insertGetId([
+                'customer_id' => $custId,
+                'name' => $leads->nama_perusahaan,
+                'address' => $leads->alamat,
+                'is_active' => 1,
+                'created_at' => $current_date_time, 
+                'created_by' => Auth::user()->id,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            foreach ($quotation as $key => $value) {
+                $siteId = DB::table('sl_site')->insertGetId([
+                    'quotation_id' => $value->id,
+                    'leads_id' =>  $leads->id,
+                    'customer_id' => $custId,
+                    'nama_site' => $value->nama_site,
+                    'provinsi_id' => $value->provinsi_id,
+                    'provinsi' => $value->provinsi,
+                    'kota_id' => $value->kota_id,
+                    'kota' => $value->kota,
+                    'penempatan' => $value->penempatan,
+                    'tim_sales_id' => $leads->tim_sales_id,
+                    'tim_sales_d_id' => $leads->tim_sales_d_id,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name,
+                ]);
+
+                // SINGKRON KE SITE HRIS
+                $siteHrisId = DB::connection('mysqlhris')->table('m_site')->insertGetId([
+                    'site_id' => $siteId,
+                    'code' => $leads->nomor,
+                    'proyek_id' => 0, // ACCURATE
+                    'contract_number' => $pks->nomor,
+                    'name' => $value->nama_site,
+                    'address' => $value->penempatan,
+                    'layanan_id' => $value->kebutuhan_id,
+                    'client_id' => $clientId,
+                    'city_id' => $value->kota_id,
+                    'branch_id' => $leads->branch_id,
+                    'company_id' => $value->company_id,
+                    'pic_id_1' => 0,
+                    'pic_id_2' => 0,
+                    'pic_id_3' => 0,
+                    'supervisor_id' => 0,
+                    'reliever' => $value->joker_reliever,
+                    'contract_value' => 0,
+                    'contract_start' => $value->mulai_kontrak,
+                    'contract_end' => $value->kontrak_selesai,
+                    'contract_terminated' => null,
+                    'note_terminated' => '',
+                    'contract_status' => 'Aktif',
+                    'health_insurance_status' => 'Terdaftar',
+                    'labor_insurance_status' => 'Terdaftar',
+                    'vacation' => 0,
+                    'attendance_machine' => '',
+                    'is_active' => 1,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->id,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                // BUAT VACANCY
+                $detailQuotation = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$value->id)->get();
+
+                foreach ($detailQuotation as $kd => $d) {
+                    $icon = 1;
+                    if ($value->kebutuhan_id == 1) {
+                        $icon = 6;
+                    } else if ($value->kebutuhan_id == 2) {
+                        $icon = 4;
+                    } else if ($value->kebutuhan_id == 3) {
+                        $icon = 2;
+                    } else if ($value->kebutuhan_id == 4) {
+                        $icon = 3;
+                    };
+
+                    DB::connection('mysqlhris')->table('m_vacancy')->insert([
+                        'icon_id' => $icon,
+                        'start_date' => $current_date_time,
+                        'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
+                        'company_id' => $value->company_id,
+                        'site_id' => $siteHrisId,
+                        'position_id' => $d->position_id,
+                        'province_id' => $value->provinsi_id,
+                        'city_id' => $value->kota_id,
+                        'title' => $d->jabatan_kebutuhan,
+                        'type' => '',
+                        'content' => '',
+                        'needs' => $d->jumlah_hc,
+                        'phone_number1' => '',
+                        'phone_number2' => '',
+                        'flyer' => '',
+                        'is_active' => 1,
+                        'durasi_ketelitian' => 0,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->id,
+                        'updated_at' => $current_date_time,
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }
+            }
+
+            // SINGKRON KE ACCURATE
+
+
+            DB::commit();
+            DB::connection('mysqlhris')->commit();
         } catch (\Exception $e) {
+            DB::rollback();
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);

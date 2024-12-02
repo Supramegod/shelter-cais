@@ -93,15 +93,15 @@
             </div> -->
             @if(Auth::user()->role_id==29)
             <div class="col-12 text-center mt-2">
-              <a href="{{route('pks.isi-checklist',$data->id)}}" class="btn btn-primary w-100"><i class="mdi mdi-pencil"></i>&nbsp;  Isi Checklist</a>
+              <a href="{{route('pks.isi-checklist',$data->id)}}" class="btn btn-primary w-100">Isi Checklist &nbsp; <i class="mdi mdi-pencil"></i></a>
             </div>
             @endif
-
-            @if($dataQuotation->kunjungan_operasional !=null)
-          <div class="col-12 text-center mt-2">
-            <a onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-info w-100" ><i class="mdi mdi-print"></i>&nbsp;  Cetak Checklist</a>
+            @if($dataQuotation->materai !=null)
+            <div class="col-12 text-center mt-2">
+            <a onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-warning w-100" >Cetak Checklist &nbsp; <i class="mdi mdi-printer"></i></a>
           </div>
           @endif
+          <hr class="my-4 mx-4">
           @if($data->status_pks_id == 1 && Auth::user()->role_id==96)
           <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="1"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Sales</button>
@@ -120,7 +120,7 @@
           </div>
           @elseif($data->status_pks_id == 5 && Auth::user()->role_id==29)
           <div class="col-12 text-center mt-2">
-            <button id="btn-upload-pks" class="btn btn-info w-100 waves-effect waves-light">
+            <button id="btn-upload-pks" class="btn btn-primary w-100 waves-effect waves-light">
               <span class="me-1">Upload PKS</span>
               <i class="mdi mdi-upload scaleX-n1-rtl"></i>
             </button>
@@ -148,6 +148,7 @@
               </a>
           </div>
           @endif
+          <hr class="my-4 mx-4">
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
@@ -302,6 +303,15 @@
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Now loading',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        });
+        
         let formData = {
           "id":$(this).data('id'),
           "_token": "{{ csrf_token() }}"
@@ -312,6 +322,7 @@
           url: "{{route('pks.aktifkan-site')}}",
           data:formData,
           success: function(response){
+            Swal.close();
             let timerInterval;
             Swal.fire({
               title: "Pemberitahuan",
@@ -338,6 +349,7 @@
           },
           error:function(error){
             console.log(error);
+            Swal.close();
           }
         });
       }
