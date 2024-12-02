@@ -11,17 +11,17 @@ use App\Http\Controllers\SystemController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class UmpController extends Controller
+class UmkController extends Controller
 {
     public function index(Request $request){
 
-        return view('master.ump.list');
+        return view('master.umk.list');
     }
 
     public function list(Request $request){
         try {
             
-            $data = DB::table('m_ump')->where('is_aktif',1)->get();
+            $data = DB::table('m_umk')->where('is_aktif',1)->get();
             return DataTables::of($data)
                 ->addColumn('sumber', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -30,7 +30,7 @@ class UmpController extends Controller
                 })
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                        <a href="'.route('ump.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <a href="'.route('umk.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
                     </div>';
                 })
                 ->rawColumns(['aksi', 'sumber'])
@@ -44,23 +44,23 @@ class UmpController extends Controller
     public function add(Request $request){
         $now = Carbon::now()->isoFormat('DD MMMM Y');
 
-        return view('master.ump.add',compact('now'));
+        return view('master.umk.add',compact('now'));
     }
 
     public function view(Request $request,$id){
         try {
-            $data = DB::table('m_ump')->where('id',$id)->first();
+            $data = DB::table('m_umk')->where('id',$id)->first();
 
-            return view('master.ump.view',compact('data'));
+            return view('master.umk.view',compact('data'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
     }
     
-    public function listUmp(Request $request){
+    public function listUmk(Request $request){
         try {
-            $data = DB::table('m_ump')->where('province_id',$request->id)->whereNull('deleted_at')->get();
+            $data = DB::table('m_umk')->where('city_id',$request->id)->whereNull('deleted_at')->get();
                 return DataTables::of($data)
                 ->addColumn('sumber', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -89,18 +89,18 @@ class UmpController extends Controller
     public function save(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $ump = str_replace(",", "",$request->ump);
+            $umk = str_replace(",", "",$request->umk);
 
-            DB::table('m_ump')->where('province_id',$request->province_id)->update([
+            DB::table('m_umk')->where('city_id',$request->city_id)->update([
                 'is_aktif' => 0,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            DB::table('m_ump')->insert([
-                'province_id'       => $request->province_id,
-                'province_name'     => $request->province_name,
-                'ump'               => $ump,
+            DB::table('m_umk')->insert([
+                'city_id'       => $request->city_id,
+                'city_name'     => $request->city_name,
+                'umk'               => $umk,
                 'tgl_berlaku'       => $request->tgl_berlaku,
                 'sumber'            => $request->sumber,
                 'is_aktif'          => 1,

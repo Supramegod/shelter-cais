@@ -15,82 +15,23 @@
                 <p class="mt-0">Kebutuhan : {{$kebutuhan->nama}}</p>
                 <input type="text" id="kebutuhan_id" value="{{$kebutuhan->id}}" hidden>
             </div>
-            <table class="w-100 mb-3">
-                <tr>
-                  <td style="display:flex;justify-content:end">
-                    <button class="btn btn-primary btn-tambah-detail" id="btn-tambah-detail"><i class="mdi mdi-plus"></i>&nbsp; Tambah Detail</button>
-                  </td>
-                </tr>
-            </table>
-            <div class="nav-align-top">
-                <ul class="nav nav-tabs nav-fill" role="tablist">
-                    @foreach($detailKebutuhan as $kkd => $detail)
-                        <li class="nav-item" role="presentation">
-                            <button type="button" class="nav-link waves-effect @if($loop->first) active @endif" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-{{$detail->id}}" aria-controls="navs-top-{{$detail->id}}" aria-selected="true">
-                            {{$detail->nama}}
-                            </button>
-                        </li>
-                    @endforeach
-                    <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span>
-                </ul>
-            </div>
         </div>
         <div class="card-body">
-            <div class="tab-content p-0">
-                @foreach($detailKebutuhan as $kkd => $detail)
-                <div class="tab-pane fade @if($loop->first) active show @endif" id="navs-top-{{$detail->id}}" role="tabpanel">
-                  <div class="mb-3">
-                    <table class="w-100 mb-3">
-                      <tr>
-                        <td style="display:flex;justify-content:space-between">
-                          <h4>Tunjangan</h4>
-                          <button class="btn btn-secondary btn-input-tunjangan" id="btn-input-tunjangan-{{$detail->id}}" data-id="{{$detail->id}}"><i class="mdi mdi-plus"></i>&nbsp; Tambah Tunjangan</button>
-                        </td>
-                      </tr>
-                    </table>
-                    <div class="table-responsive overflow-hidden table-data-tunjangan-{{$detail->id}}">
-                      <table id="table-data-tunjangan-{{$detail->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                          <thead>
-                              <tr>
-                                  <th class="text-center">ID</th>
-                                  <th class="text-center">Nama Tunjangan</th>
-                                  <th class="text-center">Nominal</th>
-                                  <th class="text-center">Aksi</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              {{-- data table ajax --}}
-                          </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div class="mt-5">
-                    <table class="w-100 mb-3">
-                      <tr>
-                        <td style="display:flex;justify-content:space-between">
-                          <h4>Requirement</h4>
-                          <button class="btn btn-secondary btn-input-requirement" id="btn-input-requirement-{{$detail->id}}" data-id="{{$detail->id}}"><i class="mdi mdi-plus"></i>&nbsp; Tambah Requirement</button>
-                        </td>
-                      </tr>
-                    </table>
-                    <div class="table-responsive overflow-hidden table-data-requirement-{{$detail->id}}">
-                      <table id="table-data-requirement-{{$detail->id}}" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                          <thead>
-                              <tr>
-                                  <th class="text-center">ID</th>
-                                  <th class="text-center">Requirement</th>
-                                  <th class="text-center">Aksi</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              {{-- data table ajax --}}
-                          </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-                @endforeach
-            </div>
+          <div class="table-responsive overflow-hidden table-data">
+            <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Nama Jabatan</th>
+                        <th class="text-center">Tunjangan</th>
+                        <th class="text-center">Requirement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{-- data table ajax --}}
+                </tbody>
+            </table>
+          </div>
         </div>
         <div class="pt-4">
         </div>
@@ -99,297 +40,566 @@
   </div>
 </div>
 <!--/ Content -->
+
+
+<div class="modal fade" id="modal-tunjangan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Detail Tunjangan : <p id="nama"></p></h4>
+        </div>
+        <button id="btn-add-tunjangan" class="btn btn-primary waves-effect waves-light">
+          <span class="me-1">Tambah Tunjangan</span>
+          <i class="mdi mdi-plus scaleX-n1-rtl"></i>
+        </button>
+        <div class="row">
+          <div class="table-responsive overflow-hidden table-data-tunjangan">
+            <table id="table-data-tunjangan" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
+                  <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Nama Tunjangan</th>
+                    <th class="text-center">Nominal</th>
+                    <th class="text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {{-- data table ajax --}}
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-add-tunjangan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Add Tunjangan : <p id="nama-2"></p></h4>
+        </div>
+        <div class="row">
+          <label class="col-sm-12 col-form-label text-sm-start">Nama Tunjangan <span class="text-danger">*</span></label>
+          <div class="col-sm-12">
+            <input autofocus type="text" id="tunjangan" name="tunjangan" value="{{old('tunjangan')}}" class="form-control @if ($errors->any()) @if($errors->has('tunjangan')) is-invalid @else   @endif @endif">
+            @if($errors->has('tunjangan'))
+                <div class="invalid-feedback">{{$errors->first('tunjangan')}}</div>
+            @endif
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label class="col-sm-12 col-form-label text-sm-start">Nominal <span class="text-danger">*</span></label>
+          <div class="col-sm-12">
+            <input type="text" id="nominal" name="nominal" value="{{old('nominal')}}" class="form-control @if ($errors->any()) @if($errors->has('nominal')) is-invalid @else   @endif @endif">
+            @if($errors->has('nominal'))
+                <div class="invalid-feedback">{{$errors->first('nominal')}}</div>
+            @endif
+          </div>
+        </div>
+        <center>
+          <button id="btn-save-tunjangan" class="btn btn-primary mt-5">
+            <span class="me-1">SIMPAN</span>
+          </button>
+        </center>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-requirement" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Detail Requirement : <p id="nama-2"></p></h4>
+        </div>
+        <button id="btn-add-req" class="btn btn-primary waves-effect waves-light">
+          <span class="me-1">Tambah Requirement</span>
+          <i class="mdi mdi-plus scaleX-n1-rtl"></i>
+        </button>
+        <div class="row">
+          <div class="table-responsive overflow-hidden table-data-requirement">
+            <table id="table-data-requirement" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
+                  <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Requirement</th>
+                    <th class="text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {{-- data table ajax --}}
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-add-requirement" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Add Requirement : <p id="nama-2"></p></h4>
+        </div>
+        <div class="row">
+          <label class="col-sm-12 col-form-label text-sm-start">Requirement <span class="text-danger">*</span></label>
+          <div class="col-sm-12">
+            <input autofocus type="text" id="requirement" name="requirement" value="{{old('requirement')}}" class="form-control @if ($errors->any()) @if($errors->has('requirement')) is-invalid @else   @endif @endif">
+            @if($errors->has('requirement'))
+                <div class="invalid-feedback">{{$errors->first('requirement')}}</div>
+            @endif
+          </div>
+        </div>
+        <center>
+          <button id="btn-save-req" class="btn btn-primary mt-5">
+            <span class="me-1">SIMPAN</span>
+          </button>
+        </center>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('pageScript')
-    <script>
-        $('#btn-kembali').on('click',function () {
-          window.location.replace("{{route('kebutuhan')}}");
+  <script>
+      $('#btn-kembali').on('click',function () {
+        window.location.replace("{{route('kebutuhan')}}");
+      });
+
+      @if(session()->has('success'))  
+          Swal.fire({
+              title: 'Pemberitahuan',
+              html: '{{session()->get('success')}}',
+              icon: 'success',
+              customClass: {
+              confirmButton: 'btn btn-primary waves-effect waves-light'
+              },
+              buttonsStyling: false
+          });
+      @endif
+      @if(session()->has('error'))  
+          Swal.fire({
+              title: 'Pemberitahuan',
+              html: '{{session()->has('error')}}',
+              icon: 'warning',
+              customClass: {
+              confirmButton: 'btn btn-warning waves-effect waves-light'
+              },
+              buttonsStyling: false
+          });
+      @endif
+
+      let dt_filter_table = $('.dt-column-search');
+
+            var table = $('#table-data').DataTable({
+                scrollX: true,
+                "iDisplayLength": 25,
+                'processing': true,
+        'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': 'Loading...'
+        },
+                ajax: {
+                    url: "{{ route('kebutuhan.list-detail') }}",
+                    data: function (d) {
+                        d.kebutuhan_id = {{$kebutuhan->id}};
+                    },
+                },   
+                "order":[
+                    [0,'desc']
+                ],
+                columns:[{
+                    data : 'id',
+                    name : 'id',
+                    visible: false,
+                    searchable: false
+                },{
+                    data : 'nama',
+                    name : 'nama',
+                    className:'dt-body-left'
+                },{
+                    data : 'tunjangan',
+                    name : 'tunjangan',
+                    className:'text-center'
+                },{
+                    data : 'requirement',
+                    name : 'requirement',
+                    orderable: false,
+                    searchable: false,
+                }],
+                "language": datatableLang,
+                dom: 'frtip',
+                buttons: [
+                ],
+            });
+
+        $('body').on('click', '.btn-view-tunjangan', function() {
+            let nama = $(this).data('nama');
+            $('#nama').text(nama);
+
+            let dt_filter_tables = $('.dt-column-search');
+            var tables = $('#table-data-tunjangan').DataTable({
+                retrieve: true,
+                scrollX: true,
+                "iDisplayLength": 25,
+                'processing': true,
+            'language': {
+                'loadingRecords': '&nbsp;',
+                'processing': 'Loading...'
+            },
+                ajax: {
+                    url: "{{ route('kebutuhan.list-detail-tunjangan') }}",
+                    data: function (d) {
+                        d.kebutuhan_id = {{$kebutuhan->id}};
+                    },
+                },   
+                "order":[
+                    [0,'desc']
+                ],
+                columns:[{
+                    data : 'id',
+                    name : 'id',
+                    visible: false,
+                    searchable: false
+                },{
+                    data : 'nama',
+                    name : 'nama',
+                    className:'dt-body-left'
+                },{
+                    data : 'nominal',
+                    name : 'nominal',
+                    className:'dt-body-right',
+                    render: $.fn.dataTable.render.number('.','.', 0,'')
+                },{
+                    data : 'aksi',
+                    name : 'aksi',
+                    className:'text-center'
+                }],
+                "language": datatableLang,
+                dom: 'frtip',
+                buttons: [
+                ],
+            });
+            
+            // tables.destroy();
+            $('#modal-tunjangan').modal('toggle');
+            
+        });
+        
+        $('body').on('click', '.btn-view-requirement', function() {
+            let id = $(this).data('id');
+            let nama = $(this).data('nama');
+            $('#nama-2').text(nama);
+
+            let dt_filter_tables = $('.dt-column-search');
+            var tables = $('#table-data-requirement').DataTable({
+                retrieve: true,
+                scrollX: true,
+                "iDisplayLength": 25,
+                'processing': true,
+            'language': {
+                'loadingRecords': '&nbsp;',
+                'processing': 'Loading...'
+            },
+                ajax: {
+                    url: "{{ route('kebutuhan.list-detail-requirement') }}",
+                    data: function (d) {
+                        d.kebutuhan_id = {{$kebutuhan->id}};
+                    },
+                },   
+                "order":[
+                    [0,'desc']
+                ],
+                columns:[{
+                    data : 'id',
+                    name : 'id',
+                    visible: false,
+                    searchable: false
+                },{
+                    data : 'requirement',
+                    name : 'requirement',
+                    className:'dt-body-left'
+                },{
+                    data : 'aksi',
+                    name : 'aksi',
+                    className:'text-center'
+                }],
+                "language": datatableLang,
+                dom: 'frtip',
+                buttons: [
+                ],
+            });
+
+            $('#modal-requirement').modal('toggle');
+            
         });
 
-        @if(session()->has('success'))  
+        $('#table-data-requirement').on('click', '.btn-delete', function() {
+          let id = $(this).data('id');
+          $('#modal-requirement').modal('toggle');
+          
+          Swal.fire({
+              title: 'Konfirmasi',
+              text: 'Apakah anda ingin hapus data ini ?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonColor: 'primary',
+              cancelButtonColor: 'warning',
+              confirmButtonText: 'Hapus'
+          }).then(function (result) {
+              if (result.isConfirmed) {
+                  let formData = {
+                      "id":id,
+                      "_token": "{{ csrf_token() }}"
+                  };
+
+                  let table ='#table-data-requirement';
+                  $.ajax({
+                      type: "POST",
+                      url: "{{route('kebutuhan.delete-detail-requirement')}}",
+                      data:formData,
+                      success: function(response){
+                          if (response.success) {
+                              Swal.fire({
+                                  title: 'Pemberitahuan',
+                                  text: response.message,
+                                  icon: 'success',
+                                  timer: 1000,
+                                  timerProgressBar: true,
+                                  willClose: () => {
+                                    $('#modal-requirement').modal('toggle');
+                                    $(table).DataTable().ajax.reload();
+                                  }
+                              })
+                          } else {
+                              Swal.fire({
+                                  title: 'Pemberitahuan',
+                                  text: response.message,
+                                  icon: 'error'
+                              })
+                          }
+                      },
+                      error:function(error){
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: error,
+                              icon: 'error'
+                          })
+                      }
+                  });
+              }
+          });
+        });
+        
+        $('#table-data-tunjangan').on('click', '.btn-delete', function() {
+          let id = $(this).data('id');
+          $('#modal-tunjangan').modal('toggle');
+          
+          Swal.fire({
+              title: 'Konfirmasi',
+              text: 'Apakah anda ingin hapus data ini ?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonColor: 'primary',
+              cancelButtonColor: 'warning',
+              confirmButtonText: 'Hapus'
+          }).then(function (result) {
+              if (result.isConfirmed) {
+                  let formData = {
+                      "id":id,
+                      "_token": "{{ csrf_token() }}"
+                  };
+
+                  let table ='#table-data-tunjangan';
+                  $.ajax({
+                      type: "POST",
+                      url: "{{route('kebutuhan.delete-detail-tunjangan')}}",
+                      data:formData,
+                      success: function(response){
+                          if (response.success) {
+                              Swal.fire({
+                                  title: 'Pemberitahuan',
+                                  text: response.message,
+                                  icon: 'success',
+                                  timer: 1000,
+                                  timerProgressBar: true,
+                                  willClose: () => {
+                                    $('#modal-tunjangan').modal('toggle');
+                                    $(table).DataTable().ajax.reload();
+                                  }
+                              })
+                          } else {
+                              Swal.fire({
+                                  title: 'Pemberitahuan',
+                                  text: response.message,
+                                  icon: 'error'
+                              })
+                          }
+                      },
+                      error:function(error){
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: error,
+                              icon: 'error'
+                          })
+                      }
+                  });
+              }
+          });
+        });
+
+        $('#btn-add-tunjangan').on('click', function() {
+          $('#modal-tunjangan').modal('toggle');
+          $('#modal-add-tunjangan').modal('toggle');
+        });
+
+        $('#btn-save-tunjangan').on('click', function() {
+          let table ='#table-data-tunjangan';
+          const tunjangan = $('#tunjangan').val();
+          const nominal = $('#nominal').val();
+
+          if(tunjangan == '' || tunjangan == null || nominal == '' || nominal == null){
+            $('#modal-add-tunjangan').modal('toggle');
             Swal.fire({
-                title: 'Pemberitahuan',
-                html: '{{session()->get('success')}}',
-                icon: 'success',
-                customClass: {
-                confirmButton: 'btn btn-primary waves-effect waves-light'
-                },
-                buttonsStyling: false
+              title: "Pemberitahuan",
+              html: 'Field tidak boleh kosong',
+              icon: "warning",
             });
-        @endif
-        @if(session()->has('error'))  
+          }else{
+            $('#modal-add-tunjangan').modal('toggle');
+            $.ajax({
+              type: "POST",
+              url: "{{route('kebutuhan.add-detail-tunjangan')}}",
+              data: {
+                "_token": "{{ csrf_token() }}",
+                nama: tunjangan,
+                nominal: nominal,
+                kebutuhan_id: {{$kebutuhan->id}}
+              },
+              success: function(response){
+                if (response.success) {
+                  Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: response.message,
+                    icon: 'success',
+                    timer: 1000,
+                    timerProgressBar: true,
+                    willClose: () => {
+                      $('#modal-tunjangan').modal('toggle');
+                      $('#table-data-tunjangan').DataTable().ajax.reload();
+                    }
+                  })
+                } else {
+                  Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: response.message,
+                    icon: 'error'
+                  })
+                }
+              },
+              error:function(error){
+                Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: error,
+                  icon: 'error'
+                })
+              }
+            });
+          }
+        });
+        
+        $('#btn-add-req').on('click', function() {
+          $('#modal-requirement').modal('toggle');
+          $('#modal-add-requirement').modal('toggle');
+        });
+
+        $('#btn-save-req').on('click', function() {
+          let table ='#table-data-requirement';
+          const requirement = $('#requirement').val();
+
+          if(requirement == '' || requirement == null){
+            $('#modal-add-requirement').modal('toggle');
             Swal.fire({
-                title: 'Pemberitahuan',
-                html: '{{session()->has('error')}}',
-                icon: 'warning',
-                customClass: {
-                confirmButton: 'btn btn-warning waves-effect waves-light'
-                },
-                buttonsStyling: false
+              title: "Pemberitahuan",
+              html: 'Field tidak boleh kosong',
+              icon: "warning",
             });
-        @endif
-
-    @foreach($detailKebutuhan as $kkd => $detail)
-      let tableTunjangan{{$detail->id}} = $('#table-data-tunjangan-{{$detail->id}}').DataTable({
-        scrollX: true,
-        "bPaginate": false,
-      "bLengthChange": false,
-      "sScrollXInner": "100%",
-      "bFilter": false,
-      "bInfo": false,
-        'processing': true,
-        'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...'
-        },
-        ajax: {
-            url: "{{ route('kebutuhan.list-detail-tunjangan') }}",
-            data: function (d) {
-                d.kebutuhan_detail_id = {{$detail->id}};
-            },
-        },   
-        "order":[
-            [0,'asc']
-        ],
-        columns:[{
-            data : 'id',
-            name : 'id',
-            visible: false,
-            searchable: false
-        },{
-            data : 'nama',
-            name : 'nama',
-            className:'text-center',
-        },{
-            data : 'nominal',
-            name : 'nominal',
-            className:'text-center',
-            render: $.fn.dataTable.render.number('.','.', 0,'')
-        },{
-            data : 'aksi',
-            name : 'aksi',
-            width: "10%",
-            orderable: false,
-            searchable: false,
-        }],
-        "language": datatableLang,
-      });
-
-      $('#btn-input-tunjangan-{{$detail->id}}').on('click', function() {
-        Swal.fire({
-            title: 'Tambah Tunjangan',
-            html: '<input type="text" id="nama" class="form-control" placeholder="Masukkan Nama Tunjangan"><br></input><input type="text" id="nominal" name="nominal" class="form-control" placeholder="Masukkan nominal"></input>',
-            showCancelButton: true,
-            confirmButtonText: 'Submit',
-            preConfirm: () => {
-                const nama = $('#nama').val();
-                const nominal = $('#nominal').val();
-                if (!nama) {
-                    Swal.showValidationMessage('Nama Tunjangan Harus Diisi !');
+          }else{
+            $('#modal-add-requirement').modal('toggle');
+            $.ajax({
+              type: "POST",
+              url: "{{route('kebutuhan.add-detail-requirement')}}",
+              data: {
+                "_token": "{{ csrf_token() }}",
+                requirement: requirement,
+                kebutuhan_id: {{$kebutuhan->id}}
+              },
+              success: function(response){
+                if (response.success) {
+                  Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: response.message,
+                    icon: 'success',
+                    timer: 1000,
+                    timerProgressBar: true,
+                    willClose: () => {
+                      $('#modal-requirement').modal('toggle');
+                      $('#table-data-requirement').DataTable().ajax.reload();
+                    }
+                  })
+                } else {
+                  Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: response.message,
+                    icon: 'error'
+                  })
                 }
-                if (!nominal) {
-                    Swal.showValidationMessage('Nominal Harus Diisi !');
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-              $.ajax({
-                type: "POST",
-                url: "{{route('kebutuhan.add-detail-tunjangan')}}",
-                data: { 
-                  "_token": "{{ csrf_token() }}",
-                  nama: nama.value,
-                  nominal: nominal.value,
-                  kebutuhan_detail_id:{{$detail->id}}
-                },
-                success: function(response){
-                  if(response=="Data Berhasil Ditambahkan"){
-                    $('#table-data-tunjangan-{{$detail->id}}').DataTable().ajax.reload();
-                  }else{
-                    Swal.fire({
-                      title: "Pemberitahuan",
-                      html: response,
-                      icon: "warning",
-                    });
-                  }
-                },
-                error:function(error){
-                  console.log(error);
-                }
-              });
-            }
-          });
-      });
-    @endforeach
+              },
+              error:function(error){
+                Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: error,
+                  icon: 'error'
+                })
+              }
+            });
+          }
+        });
+  </script>
+  
+<script>
+  var elem = document.getElementById("nominal");
 
-    @foreach($detailKebutuhan as $kkd => $detail)
-      let tableRequirement{{$detail->id}} = $('#table-data-requirement-{{$detail->id}}').DataTable({
-        scrollX: true,
-        "bPaginate": false,
-      "bLengthChange": false,
-      "sScrollXInner": "100%",
-      "bFilter": false,
-      "bInfo": false,
-        'processing': true,
-        'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...'
-        },
-        ajax: {
-            url: "{{ route('kebutuhan.list-detail-requirement') }}",
-            data: function (d) {
-                d.kebutuhan_detail_id = {{$detail->id}};
-            },
-        },   
-        "order":[
-            [0,'asc']
-        ],
-        columns:[{
-            data : 'id',
-            name : 'id',
-            visible: false,
-            searchable: false
-        },{
-            data : 'requirement',
-            name : 'requirement',
-            className:'text-center',
-        },{
-            data : 'aksi',
-            name : 'aksi',
-            width: "10%",
-            orderable: false,
-            searchable: false,
-        }],
-        "language": datatableLang,
-      });
+  elem.addEventListener("keydown",function(event){
+      var key = event.which;
+      if((key<48 || key>57) && key != 8) event.preventDefault();
+  });
 
-      $('#btn-input-requirement-{{$detail->id}}').on('click', function() {
-        Swal.fire({
-            title: 'requirement',
-            html: '<textarea id="textareaInput" class="swal2-textarea" placeholder="Masukkan requirement" style="height: 100px;"></textarea>',
-            showCancelButton: true,
-            confirmButtonText: 'Submit',
-            preConfirm: () => {
-                const text = $('#textareaInput').val();
-                if (!text) {
-                    Swal.showValidationMessage('Requirement Harus Diisi !');
-                }
-                return text;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-              $.ajax({
-                type: "POST",
-                url: "{{route('kebutuhan.add-detail-requirement')}}",
-                data: { 
-                  "_token": "{{ csrf_token() }}",
-                  requirement: result.value,
-                  kebutuhan_detail_id:{{$detail->id}}
-                },
-                success: function(response){
-                  if(response=="Data Berhasil Ditambahkan"){
-                    $('#table-data-requirement-{{$detail->id}}').DataTable().ajax.reload();
-                  }else{
-                    Swal.fire({
-                      title: "Pemberitahuan",
-                      html: response,
-                      icon: "warning",
-                    });
-                  }
-                },
-                error:function(error){
-                  console.log(error);
-                }
-              });
-            }
-          });
-      });
-    @endforeach
-
-    $('body').on('click', '.btn-delete-requirement', function() {
-      let formData = {
-        "id":$(this).data('id'),
-        "_token": "{{ csrf_token() }}"
-      };
-
-      let table ='#table-data-requirement-'+$(this).data('detail');
-      $.ajax({
-        type: "POST",
-        url: "{{route('kebutuhan.delete-detail-requirement')}}",
-        data:formData,
-        success: function(response){
-          $(table).DataTable().ajax.reload();
-        },
-        error:function(error){
-          console.log(error);
-        }
-      });
-    });
-
-    $('body').on('click', '.btn-delete-tunjangan', function() {
-      let formData = {
-        "id":$(this).data('id'),
-        "_token": "{{ csrf_token() }}"
-      };
-
-      let table ='#table-data-tunjangan-'+$(this).data('detail');
-      $.ajax({
-        type: "POST",
-        url: "{{route('kebutuhan.delete-detail-tunjangan')}}",
-        data:formData,
-        success: function(response){
-          $(table).DataTable().ajax.reload();
-        },
-        error:function(error){
-          console.log(error);
-        }
-      });
-    });
-
-    $('#btn-tambah-detail').on('click', function() {
-        const kebutuhanId = $('#kebutuhan_id').val();
-        console.log(kebutuhanId)
-        Swal.fire({
-            title: 'Tambah Detail',
-            html: '<textarea id="textareaInput" class="swal2-textarea" placeholder="Masukkan nama detail kebutuhan" style="height: 100px;"></textarea>',
-            showCancelButton: true,
-            confirmButtonText: 'Submit',
-            preConfirm: () => {
-                const text = $('#textareaInput').val();
-                if (!text) {
-                    Swal.showValidationMessage('Nama detail kebutuhan Harus Diisi !');
-                }
-                return text;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-              $.ajax({
-                type: "POST",
-                url: "{{route('kebutuhan.add-detail')}}",
-                data: { 
-                  "_token": "{{ csrf_token() }}",
-                  nama: result.value,
-                  kebutuhan_id: kebutuhanId
-                },
-                success: function(response){
-                  if(response=="Data Berhasil Ditambahkan"){
-                    window.location.reload();
-                  }else{
-                    Swal.fire({
-                      title: "Pemberitahuan",
-                      html: response,
-                      icon: "warning",
-                    });
-                  }
-                },
-                error:function(error){
-                  console.log(error);
-                }
-              });
-            }
-          });
-      });
-
-    </script>
+  elem.addEventListener("keyup",function(event){
+      var value = this.value.replace(/,/g,"");
+      this.dataset.currentValue=parseInt(value);
+      var caret = value.length-1;
+      while((caret-3)>-1)
+      {
+          caret -= 3;
+          value = value.split('');
+          value.splice(caret+1,0,",");
+          value = value.join('');
+      }
+      this.value = value;
+  });
+</script>
 @endsection

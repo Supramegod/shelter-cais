@@ -45,87 +45,88 @@ class KebutuhanController extends Controller
     public function view(Request $request,$id){
         try {
             $kebutuhan = DB::table('m_kebutuhan')->where('id', $id)->first();
-            $detailKebutuhan = DB::table('m_kebutuhan_detail')->where('kebutuhan_id', $id)->whereNull('deleted_at')->get();
+            
+            $listPosition = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->get();
 
-            return view('master.kebutuhan.view',compact('detailKebutuhan', 'kebutuhan'));
+            return view('master.kebutuhan.view',compact('kebutuhan', 'listPosition'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
     }
 
-    // TAMBAH DETAIL
-    public function addDetail(Request $request){
+    public function listDetail(Request $request){
         try {
-            $current_date_time = Carbon::now()->toDateTimeString();
-            $nama = $request->nama;
-            $kebutuhanId = $request->kebutuhan_id;
-            $maxUrutan = DB::select("select MAX(urutan) as max from m_kebutuhan_detail WHERE kebutuhan_id = ".$kebutuhanId."")[0]->max;
+            $data = DB::table('m_kebutuhan_detail')->where('kebutuhan_id', $request->kebutuhan_id)->whereNull('deleted_at')->get();
 
-            DB::table('m_kebutuhan_detail')->insert([
-                'kebutuhan_id' => $kebutuhanId,
-                'nama' => $nama,
-                'urutan' => $maxUrutan + 1,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
-
-            return "Data Berhasil Ditambahkan";
+            return DataTables::of($data)
+                ->addColumn('tunjangan', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <button class="btn-view-tunjangan btn btn-info waves-effect btn-xs" data-id="'.$data->id.'" data-nama="'.$data->nama.'"><i class="mdi mdi-eye"></i>&nbsp;View</button>
+                    </div>';
+                })
+                ->addColumn('requirement', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <button class="btn-view-requirement btn btn-info waves-effect btn-xs" data-id="'.$data->id.'" data-nama="'.$data->nama.'"><i class="mdi mdi-eye"></i>&nbsp;View</button>
+                    </div>';
+                })
+                ->rawColumns(['requirement', 'tunjangan'])
+            ->make(true);
         } catch (\Exception $e) {
-            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
-            return "Data Gagal Ditambahkan";
         }
     }
 
     // DETAIL TUNJANGAN
-    public function listDetailTunjangan (Request $request){        
-        $data = DB::table('m_kebutuhan_detail_tunjangan')
-        ->where('kebutuhan_detail_id',$request->kebutuhan_detail_id)
-        ->whereNull('deleted_at')
-        ->get();
+    public function listDetailTunjangan(Request $request){
+        try {
+            $data = DB::table('m_kebutuhan_detail_tunjangan')->where('kebutuhan_id', $request->kebutuhan_id)->whereNull('deleted_at')->get();
 
-        foreach ($data as $key => $value) {
-            $value->nomor = $key+1;
-        }
-
-        return DataTables::of($data)
-        ->addColumn('aksi', function ($data) {
-            if ($data->id==0) {
-                return "";
-            }
-            return '<div class="justify-content-center d-flex">
-                        <a href="javascript:void(0)" class="btn-delete-tunjangan btn btn-danger waves-effect btn-xs" data-detail="'.$data->kebutuhan_detail_id.'" data-id="'.$data->id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+            return DataTables::of($data)
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
-        })
-        ->rawColumns(['aksi'])
-        ->make(true);
+                })
+                ->rawColumns(['aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
     }
 
     public function addDetailTunjangan(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             $nama = $request->nama;
-            $nominal = $request->nominal;
-            $kebutuhanDetailId = $request->kebutuhan_detail_id;
+            $nominal = str_replace(",", "",$request->nominal);;
+            $position_id = 0;
 
-            $data = DB::table('m_kebutuhan_detail')->where('id',$kebutuhanDetailId)->first();
             DB::table('m_kebutuhan_detail_tunjangan')->insert([
-                'kebutuhan_id' => $data->kebutuhan_id,
-                'kebutuhan_detail_id' => $data->id,
+                'kebutuhan_id' => $request->kebutuhan_id,
+                'position_id' => $position_id,
                 'nama' => $nama,
                 'nominal' => $nominal,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
 
-            return "Data Berhasil Ditambahkan";
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Data Berhasil Ditambahkan"
+            ], 200);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
-            return "Data Gagal Ditambahkan";
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Error '.$e.'"
+            ], 200);
         }
     }
 
@@ -136,57 +137,72 @@ class KebutuhanController extends Controller
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
+            
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Error '.$e.'"
+            ], 200);
         }
     }
 
     // DETAIL REQUIREMENT
     public function listDetailRequirement (Request $request){        
-        $data = DB::table('m_kebutuhan_detail_requirement')
-        ->where('position_id',$request->kebutuhan_detail_id)
-        ->whereNull('deleted_at')
-        ->get();
+        try {
+            $data = DB::table('m_kebutuhan_detail_requirement')->where('kebutuhan_id', $request->kebutuhan_id)->whereNull('deleted_at')->get();
 
-        foreach ($data as $key => $value) {
-            $value->nomor = $key+1;
-        }
-
-        return DataTables::of($data)
-        ->addColumn('aksi', function ($data) {
-            if ($data->id==0) {
-                return "";
-            }
-            return '<div class="justify-content-center d-flex">
-                        <a href="javascript:void(0)" class="btn-delete-requirement btn btn-danger waves-effect btn-xs" data-detail="'.$data->kebutuhan_detail_id.'" data-id="'.$data->id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+            return DataTables::of($data)
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
-        })
-        ->rawColumns(['aksi'])
-        ->make(true);
+                })
+                ->rawColumns(['aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Error '.$e.'"
+            ], 200);
+        }
     }
 
     public function addDetailRequirement(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $requirement = $request->requirement;
-            $kebutuhanDetailId = $request->kebutuhan_detail_id;
 
-            $data = DB::table('m_kebutuhan_detail')->where('id',$kebutuhanDetailId)->first();
             DB::table('m_kebutuhan_detail_requirement')->insert([
-                'kebutuhan_id' => $data->kebutuhan_id,
-                'position_id' => $data->id,
-                'requirement' => $requirement,
+                'kebutuhan_id' => $request->kebutuhan_id,
+                'position_id' => 0,
+                'requirement' => $request->requirement,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
 
-            return "Data Berhasil Ditambahkan";
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Data Berhasil Ditambahkan"
+            ], 200);
         } catch (\Exception $e) {
-            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
-            return "Data Gagal Ditambahkan";
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Error '.$e.'"
+            ], 200);
         }
     }
 
@@ -197,88 +213,15 @@ class KebutuhanController extends Controller
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
+            
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
     }
-
-    // public function save(Request $request){
-    //     try {
-    //         DB::beginTransaction();
-
-    //         $validator = Validator::make($request->all(), [
-    //             'nama' => 'required',
-    //             'jenis_barang_id' => 'required',
-    //             'harga' => 'required',
-    //         ], [
-    //             'min' => 'Masukkan :attribute minimal :min',
-    //             'max' => 'Masukkan :attribute maksimal :max',
-    //             'required' => ':attribute harus di isi',
-    //         ]);
-    
-    //         if ($validator->fails()) {
-    //             return back()->withErrors($validator->errors())->withInput();
-    //         }else{
-    //             $current_date_time = Carbon::now()->toDateTimeString();
-    //             $harga = str_replace(",", "",$request->harga);
-    //             $jenisBarang = DB::table('m_jenis_barang')->where('id',$request->jenis_barang_id)->first();
-
-    //             $msgSave = '';
-    //             if(!empty($request->id)){
-    //                 DB::table('m_barang')->where('id',$request->id)->update([
-    //                     'nama' => $request->nama,
-    //                     'jenis_barang_id' => $request->jenis_barang_id,
-    //                     'jenis_barang' => $jenisBarang->nama,
-    //                     'harga' => $harga,
-    //                     'satuan' => $request->satuan,
-    //                     'masa_pakai' => $request->masa_pakai,
-    //                     'merk' => $request->merk,
-    //                     'jumlah_default' => $request->jumlah_default,
-    //                     'updated_at' => $current_date_time,
-    //                     'updated_by' => Auth::user()->full_name
-    //                 ]);
-    //             }else{
-    //                 DB::table('m_barang')->insert([
-    //                     'nama' => $request->nama,
-    //                     'jenis_barang_id' => $request->jenis_barang_id,
-    //                     'jenis_barang' => $jenisBarang->nama,
-    //                     'harga' => $harga,
-    //                     'satuan' => $request->satuan,
-    //                     'masa_pakai' => $request->masa_pakai,
-    //                     'merk' => $request->merk,
-    //                     'jumlah_default' => $request->jumlah_default,
-    //                     'created_at' => $current_date_time,
-    //                     'created_by' => Auth::user()->full_name
-    //                 ]);
-    //             }
-    //             $msgSave = 'Barang '.$request->nama.' berhasil disimpan.';
-    //         }
-    //         DB::commit();
-    //         return redirect()->back()->with('success', $msgSave);
-    //     } catch (\Exception $e) {
-    //         SystemController::saveError($e,Auth::user(),$request);
-    //         abort(500);
-    //     }
-    // }
-
-    // public function delete(Request $request){
-    //     try {
-    //         DB::beginTransaction();
-
-    //         $current_date_time = Carbon::now()->toDateTimeString();
-    //         DB::table('m_barang')->where('id',$request->id)->update([
-    //             'deleted_at' => $current_date_time,
-    //             'deleted_by' => Auth::user()->name
-    //         ]);
-
-    //         $msgSave = 'Barang '.$request->nama.' berhasil dihapus.';
-            
-    //         DB::commit();
-    //         return redirect()->route('barang')->with('success', $msgSave);
-    //     } catch (\Exception $e) {
-    //         SystemController::saveError($e,Auth::user(),$request);
-    //         abort(500);
-    //     }
-    // }
 }

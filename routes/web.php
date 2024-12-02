@@ -28,6 +28,7 @@ use App\Http\Controllers\Master\KebutuhanController;
 use App\Http\Controllers\Master\TimSalesController;
 use App\Http\Controllers\Master\TrainingController;
 use App\Http\Controllers\Master\UmpController;
+use App\Http\Controllers\Master\UmkController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -343,9 +344,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/kebutuhan/view/{id}', 'view')->name('kebutuhan.view');
 
         Route::get('/master/kebutuhan/list', 'list')->name('kebutuhan.list'); // ajax
+        Route::get('/master/kebutuhan/list-detail', 'listDetail')->name('kebutuhan.list-detail'); // ajax
         
-        Route::post('/master/kebutuhan/add-detail', 'addDetail')->name('kebutuhan.add-detail');
-
         Route::get('/master/kebutuhan/list-detail-tunjangan', 'listDetailTunjangan')->name('kebutuhan.list-detail-tunjangan'); // ajax
         Route::post('/master/kebutuhan/delete-detail-tunjangan', 'deleteDetailTunjangan')->name('kebutuhan.delete-detail-tunjangan');
         Route::post('/master/kebutuhan/add-detail-tunjangan', 'addDetailTunjangan')->name('kebutuhan.add-detail-tunjangan');
@@ -391,5 +391,15 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/ump/list', 'list')->name('ump.list'); // ajax
         Route::get('/master/ump/list-ump', 'listUmp')->name('ump.list-ump'); // ajax
+    });
+
+    Route::controller(UmkController::class)->group(function() {
+        Route::get('/master/umk', 'index')->name('umk');
+        Route::get('/master/umk/add', 'add')->name('umk.add');
+        Route::get('/master/umk/view/{id}', 'view')->name('umk.view');
+        Route::post('/master/umk/save', 'save')->name('umk.save');
+
+        Route::get('/master/umk/list', 'list')->name('umk.list'); // ajax
+        Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
     });
 });
