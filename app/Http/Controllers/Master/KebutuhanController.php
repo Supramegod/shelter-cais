@@ -101,7 +101,7 @@ class KebutuhanController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             $nama = $request->nama;
-            $nominal = $request->nominal;
+            $nominal = str_replace(",", "",$request->nominal);;
             $position_id = 0;
 
             DB::table('m_kebutuhan_detail_tunjangan')->insert([
@@ -113,12 +113,20 @@ class KebutuhanController extends Controller
                 'created_by' => Auth::user()->full_name
             ]);
 
-            return "Data Berhasil Ditambahkan";
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Data Berhasil Ditambahkan"
+            ], 200);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
-            return "Data Gagal Ditambahkan";
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Error '.$e.'"
+            ], 200);
         }
     }
 
@@ -138,6 +146,11 @@ class KebutuhanController extends Controller
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Error '.$e.'"
+            ], 200);
         }
     }
 
@@ -157,6 +170,11 @@ class KebutuhanController extends Controller
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Error '.$e.'"
+            ], 200);
         }
     }
 

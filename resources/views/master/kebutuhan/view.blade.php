@@ -50,6 +50,10 @@
         <div class="text-center mb-4">
           <h4 class="mb-2">Detail Tunjangan : <p id="nama"></p></h4>
         </div>
+        <button id="btn-add-tunjangan" class="btn btn-primary waves-effect waves-light">
+          <span class="me-1">Tambah Tunjangan</span>
+          <i class="mdi mdi-plus scaleX-n1-rtl"></i>
+        </button>
         <div class="row">
           <div class="table-responsive overflow-hidden table-data-tunjangan">
             <table id="table-data-tunjangan" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
@@ -72,6 +76,41 @@
   </div>
 </div>
 
+<div class="modal fade" id="modal-add-tunjangan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Add Tunjangan : <p id="nama-2"></p></h4>
+        </div>
+        <div class="row">
+          <label class="col-sm-12 col-form-label text-sm-start">Nama Tunjangan <span class="text-danger">*</span></label>
+          <div class="col-sm-12">
+            <input autofocus type="text" id="tunjangan" name="tunjangan" value="{{old('tunjangan')}}" class="form-control @if ($errors->any()) @if($errors->has('tunjangan')) is-invalid @else   @endif @endif">
+            @if($errors->has('tunjangan'))
+                <div class="invalid-feedback">{{$errors->first('tunjangan')}}</div>
+            @endif
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label class="col-sm-12 col-form-label text-sm-start">Nominal <span class="text-danger">*</span></label>
+          <div class="col-sm-12">
+            <input type="text" id="nominal" name="nominal" value="{{old('nominal')}}" class="form-control @if ($errors->any()) @if($errors->has('nominal')) is-invalid @else   @endif @endif">
+            @if($errors->has('nominal'))
+                <div class="invalid-feedback">{{$errors->first('nominal')}}</div>
+            @endif
+          </div>
+        </div>
+        <center>
+          <button id="btn-save-tunjangan" class="btn btn-primary mt-5">
+            <span class="me-1">SIMPAN</span>
+          </button>
+        </center>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="modal-requirement" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
@@ -421,6 +460,66 @@
               }
           });
         });
+
+        $('#btn-add-tunjangan').on('click', function() {
+          $('#modal-tunjangan').modal('toggle');
+          $('#modal-add-tunjangan').modal('toggle');
+        });
+
+        $('#btn-save-tunjangan').on('click', function() {
+          let table ='#table-data-tunjangan';
+          const tunjangan = $('#tunjangan').val();
+          const nominal = $('#nominal').val();
+
+          if(tunjangan == '' || tunjangan == null || nominal == '' || nominal == null){
+            $('#modal-add-tunjangan').modal('toggle');
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: 'Field tidak boleh kosong',
+              icon: "warning",
+            });
+          }else{
+            $('#modal-add-tunjangan').modal('toggle');
+            $.ajax({
+              type: "POST",
+              url: "{{route('kebutuhan.add-detail-tunjangan')}}",
+              data: {
+                "_token": "{{ csrf_token() }}",
+                nama: tunjangan,
+                nominal: nominal,
+                kebutuhan_id: {{$kebutuhan->id}}
+              },
+              success: function(response){
+                if (response.success) {
+                  Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: response.message,
+                    icon: 'success',
+                    timer: 1000,
+                    timerProgressBar: true,
+                    willClose: () => {
+                      $('#modal-tunjangan').modal('toggle');
+                      $('#table-data-tunjangan').DataTable().ajax.reload();
+                    }
+                  })
+                } else {
+                  Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: response.message,
+                    icon: 'error'
+                  })
+                }
+              },
+              error:function(error){
+                Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: error,
+                  icon: 'error'
+                })
+              }
+            });
+          }
+        });
         
         $('#btn-add-req').on('click', function() {
           $('#modal-requirement').modal('toggle');
@@ -470,10 +569,37 @@
                 }
               },
               error:function(error){
-                console.log("ERROR");
+                Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: error,
+                  icon: 'error'
+                })
               }
             });
           }
         });
   </script>
+  
+<script>
+  var elem = document.getElementById("nominal");
+
+  elem.addEventListener("keydown",function(event){
+      var key = event.which;
+      if((key<48 || key>57) && key != 8) event.preventDefault();
+  });
+
+  elem.addEventListener("keyup",function(event){
+      var value = this.value.replace(/,/g,"");
+      this.dataset.currentValue=parseInt(value);
+      var caret = value.length-1;
+      while((caret-3)>-1)
+      {
+          caret -= 3;
+          value = value.split('');
+          value.splice(caret+1,0,",");
+          value = value.join('');
+      }
+      this.value = value;
+  });
+</script>
 @endsection
