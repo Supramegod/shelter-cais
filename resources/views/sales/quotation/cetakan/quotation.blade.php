@@ -390,7 +390,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
         <div class="content">
             <div class="pendahuluan">
                 <h1>KETENTUAN PENAWARAN HARGA</h1>
-                <h1>Jasa {{$data->kebutuhan}}</h1>
+                <h1>JASA {{strtoupper($data->kebutuhan)}}</h1>
                 <div style="margin-top:20px">
                     <table>
                         @foreach($listKerjasama as $kker => $valker)

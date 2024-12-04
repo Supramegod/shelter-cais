@@ -81,7 +81,7 @@
                         </tr>
                         <tr>
                           <td>Hal Kerjasama</td>
-                          <td colspan="3">PERJANJIAN KERJASAMA ALIH DAYA JASA {{strtoupper($quotation->kebutuhan)}}</td>
+                          <td colspan="3">SYARAT DAN KETENTUAN KERJASAMA ALIH DAYA JASA {{strtoupper($quotation->kebutuhan)}}</td>
                         </tr>
                         <tr>
                           <td>Jumlah Personel</td>

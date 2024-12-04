@@ -17,7 +17,7 @@
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">PERJANJIAN</h6>
+                <h6 class="mb-3">SYARAT DAN KETENTUAN</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
                 <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
               </div>

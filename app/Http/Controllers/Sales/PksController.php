@@ -484,14 +484,14 @@ class PksController extends Controller
             $ro = DB::connection('mysqlhris')->table('m_user')->where('id',$request->ro)->first();
             $crm = DB::connection('mysqlhris')->table('m_user')->where('id',$request->crm)->first();
         
-            DB::table('sl_pks')->where('id',$request->pks_id)->update([
-                'ro_id' => $ro->id,
-                'ro' => $ro->full_name,
-                'crm_id' => $crm->id,
-                'crm' => $crm->full_name,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
+            // DB::table('sl_pks')->where('id',$request->pks_id)->update([
+            //     'ro_id' => $ro->id,
+            //     'ro' => $ro->full_name,
+            //     'crm_id' => $crm->id,
+            //     'crm' => $crm->full_name,
+            //     'updated_at' => $current_date_time,
+            //     'updated_by' => Auth::user()->full_name
+            // ]);
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'npwp' => $request->npwp ,

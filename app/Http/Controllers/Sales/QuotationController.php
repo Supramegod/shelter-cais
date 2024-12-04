@@ -534,6 +534,10 @@ class QuotationController extends Controller
             $listTrainingQ = [];
 
             if($request->step==11){
+                $qmanajemenFee = DB::table('m_management_fee')->where('id',$quotation->management_fee_id)->first();
+
+                $quotation->management_fee = $qmanajemenFee->nama;
+
                 $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
 
                 $jumlahHc = 0;
@@ -561,6 +565,13 @@ class QuotationController extends Controller
                         }
                     }
 
+                    $umk = 0;
+                    $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$quotation->kota_id)->first();
+
+                    if($dataUmk!=null){
+                        $umk = $dataUmk->umk;
+                    }
+
                     $kbd->nominal_takaful = 0;
                     $kbd->bpjs_jkm = 0;
                     $kbd->bpjs_jkk = 0;
@@ -571,37 +582,43 @@ class QuotationController extends Controller
                     if($quotation->penjamin=="Takaful"){
                         $kbd->nominal_takaful = $quotation->nominal_takaful;
                     }else{
+                        $upahBpjs = $quotation->nominal_upah;
+                        if($quotation->nominal_upah<$umk){
+                            $upahBpjs = $umk;
+                        }
+
                         // hitung JKK
                         if($quotation->resiko=="Sangat Rendah"){
-                            $kbd->bpjs_jkk = $quotation->nominal_upah*0.24/100;
+                            $kbd->bpjs_jkk = $upahBpjs*0.24/100;
                         }else if($quotation->resiko=="Rendah"){
-                            $kbd->bpjs_jkk = $quotation->nominal_upah*0.54/100;
+                            $kbd->bpjs_jkk = $upahBpjs*0.54/100;
                         }else if($quotation->resiko=="Sedang"){
-                            $kbd->bpjs_jkk = $quotation->nominal_upah*0.89/100;
+                            $kbd->bpjs_jkk = $upahBpjs*0.89/100;
                         }else if($quotation->resiko=="Tinggi"){
-                            $kbd->bpjs_jkk = $quotation->nominal_upah*1.27/100;
+                            $kbd->bpjs_jkk = $upahBpjs*1.27/100;
                         }else if($quotation->resiko=="Sangat Tinggi"){
-                            $kbd->bpjs_jkk = $quotation->nominal_upah*1.74/100;
+                            $kbd->bpjs_jkk = $upahBpjs*1.74/100;
                         };
 
                         //hitung JKM
-                        $kbd->bpjs_jkm = $quotation->nominal_upah*0.3/100;
+                        $kbd->bpjs_jkm = $upahBpjs*0.3/100;
 
                         //Hitung JHT
                         if($quotation->program_bpjs=="3 BPJS" || $quotation->program_bpjs=="4 BPJS" ){
-                            $kbd->bpjs_jht = $quotation->nominal_upah*3.7/100;
+                            $kbd->bpjs_jht = $upahBpjs*3.7/100;
                         }else{
                             $kbd->bpjs_jht = 0;
                         }
 
                         //Hitung JP
                         if($quotation->program_bpjs=="4 BPJS" ){
-                            $kbd->bpjs_jp = $quotation->nominal_upah*2/100;
+                            $kbd->bpjs_jp = $upahBpjs*2/100;
                         }else {
                             $kbd->bpjs_jp = 0;
                         }
 
-                        $kbd->bpjs_kes = $quotation->nominal_upah*4/100;
+                        //diganti UMK
+                        $kbd->bpjs_kes = $umk*4/100;
 
                     }
 
@@ -613,13 +630,6 @@ class QuotationController extends Controller
                     $kbd->kompensasi = 0;
                     if($quotation->kompensasi=="Diprovisikan"){
                         $kbd->kompensasi = $quotation->nominal_upah/$provisi;
-                    }
-                    
-                    $umk = 0;
-                    $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$quotation->kota_id)->first();
-
-                    if($dataUmk!=null){
-                        $umk = $dataUmk->umk;
                     }
                     
                     $kbd->tunjangan_holiday = 0;
@@ -689,7 +699,14 @@ class QuotationController extends Controller
 
                     $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                     
-                    $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100;
+                    $kbd->management_fee = 0;
+                    if($quotation->management_fee_id==1){
+                        $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100; 
+                    }else if($quotation->management_fee_id==4){
+                        $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100; 
+                    }else if($quotation->management_fee_id==5){
+                        $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
+                    }
 
                     $kbd->grand_total = $kbd->sub_total_personil+$kbd->management_fee;
 
@@ -2627,7 +2644,8 @@ class QuotationController extends Controller
     public function approveQuotation(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-
+            $master = DB::table('sl_quotation')->where('id',$request->id)->first();
+            
             if(in_array(Auth::user()->role_id,[96])){
                 DB::table('sl_quotation')->where('id',$request->id)->update([
                     'ot1' => Auth::user()->full_name,
@@ -2636,7 +2654,7 @@ class QuotationController extends Controller
                 ]);
 
                 //ambil quotation
-                if($master->top=="Kurang Dari 7 Hari"){
+                if($master->top=="Kurang Dari 7 Hari" || $master->top=="Non TOP"){
                     DB::table('sl_quotation')->where('id',$request->id)->update([
                         'is_aktif' => 1,
                         'updated_at' => $current_date_time,
@@ -2670,6 +2688,7 @@ class QuotationController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

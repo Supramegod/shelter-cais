@@ -263,7 +263,7 @@
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td colspan="2" style="text-align:right" class="">Management Fee (MF)</td>
+                        <td colspan="2" style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari {{$quotation->management_fee}}</span></td>
                         <td style="text-align:center">{{$quotation->persentase}} %</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->management_fee,2,",",".")}}</td>
@@ -611,7 +611,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         @endforeach
                       </tr>
                       <tr class="">
-                        <td style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari sub total biaya</span></td>
+                        <td style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari {{$quotation->management_fee}}</span></td>
                         <td style="text-align:center">{{$quotation->persentase}} %</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->management_fee_coss,2,",",".")}}</td>

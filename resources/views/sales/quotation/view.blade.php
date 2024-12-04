@@ -1674,7 +1674,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
       <div class="col-12 col-lg-12">
         <div class="card mb-4">
           <div class="card-header d-flex justify-content-between align-items-center pb-0">
-          <h5 class="card-title m-0">Perjanjian Kerjasama</h5>
+          <h5 class="card-title m-0">Syarat Dan Ketentuan Kerjasama</h5>
           @if($master->step == 100 && $data->is_aktif == 0)
           <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$data->id,'step'=>'13','edit'=>1])}}">Edit</a></h6>
             @endif

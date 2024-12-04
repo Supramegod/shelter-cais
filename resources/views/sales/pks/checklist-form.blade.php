@@ -15,7 +15,7 @@
         <!-- Account Details -->
         <div id="account-details-1" class="content active">
           <div class="content-header mb-5 text-center">
-            <h6 class="mb-3">FORM CHECKLIST NEW SITE & PERJANJIAN KERJA SAMA</h6>
+            <h6 class="mb-3">FORM CHECKLIST NEW SITE , SYARAT DAN KETENTUAN KERJA SAMA</h6>
             <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
             <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
           </div>
@@ -272,7 +272,7 @@
                         </select>
                       </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                       <td>RO <span class="text-danger fw-bold">*</span></td>
                       <td colspan="3">
                         <select id="ro" name="ro" class="form-select w-100" data-allow-clear="true" tabindex="-1">
@@ -293,7 +293,7 @@
                           @endforeach
                         </select>
                       </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                       <td>Syarat Invoice <span class="text-danger fw-bold">*</span></td>
                       <td colspan="3">
@@ -516,12 +516,12 @@
       if(obj.catatan_site==null || obj.catatan_site==""){
         msg += "<b>Catatan Site</b> belum diisi </br>";
       }
-      if(obj.ro==null || obj.ro==""){
-        msg += "<b>RO</b> belum dipilih </br>";
-      }
-      if(obj.crm==null || obj.crm==""){
-        msg += "<b>CRM</b> belum diisi </br>";
-      }
+      // if(obj.ro==null || obj.ro==""){
+      //   msg += "<b>RO</b> belum dipilih </br>";
+      // }
+      // if(obj.crm==null || obj.crm==""){
+      //   msg += "<b>CRM</b> belum diisi </br>";
+      // }
       if(obj.ada_serikat==null || obj.ada_serikat==""){
         msg += "<b>Serikat</b> belum dipilih </br>";
       }else{
