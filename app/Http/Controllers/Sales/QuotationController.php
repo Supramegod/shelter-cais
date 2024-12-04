@@ -74,6 +74,11 @@ class QuotationController extends Controller
 
             $tipe = $request->tipe;
 
+            $leads = null;
+            if($request->leads_id != null) {
+                $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
+            };
+            
             $view = "";
             if($tipe=="Quotation Baru"){
                 $view = 'sales.quotation.add';
@@ -83,7 +88,7 @@ class QuotationController extends Controller
                 $view = 'sales.quotation.add-quotation-lanjutan';
             }
 
-            return view($view,compact('now','company','province','tipe'));
+            return view($view,compact('now','company','province','tipe','leads'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -1932,11 +1937,6 @@ class QuotationController extends Controller
                                   <td class="text-center">2</td>
                                   <td>Pengiriman <i>Invoice</i></td>
                                   <td>'.$salaryRuleQ->pengiriman_invoice.'</td>
-                                </tr>
-                                <tr>
-                                  <td class="text-center">3</td>
-                                  <td>Pembayaran <i>Invoice</i></td>
-                                  <td>'.$salaryRuleQ->pembayaran_invoice.'</td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">6</td>

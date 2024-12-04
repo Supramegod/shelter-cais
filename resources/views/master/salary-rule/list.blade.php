@@ -32,7 +32,7 @@
                                     <th class="text-center">Crosscheck Absen</th>
                                     <th class="text-center">Pengiriman Invoice</th>
                                     <th class="text-center">Perkiraan Invoice Diterima</th>
-                                    <th class="text-center">Pembayaran Invoice</th>
+                                    <!-- <th class="text-center">Pembayaran Invoice</th> -->
                                     <th class="text-center">Rilis Payroll</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
@@ -123,11 +123,13 @@
                     data : 'perkiraan_invoice_diterima',
                     name : 'perkiraan_invoice_diterima',
                     className:'text-center'
-                },{
-                    data : 'pembayaran_invoice',
-                    name : 'pembayaran_invoice',
-                    className:'text-center'
-                },{
+                },
+                // {
+                //     data : 'pembayaran_invoice',
+                //     name : 'pembayaran_invoice',
+                //     className:'text-center'
+                // },
+                {
                     data : 'rilis_payroll',
                     name : 'rilis_payroll',
                     className:'text-center'

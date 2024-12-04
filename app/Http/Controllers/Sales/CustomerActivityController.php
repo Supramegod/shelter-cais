@@ -60,19 +60,28 @@ class CustomerActivityController extends Controller
                 $branchLeads = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('id',$leads->branch_id)->first();
                 if($branchLeads !=null){
                     $leads->branch = $branchLeads->name;
+                }else{
+                    $leads->branch = "";
                 }
                 $kebutuhanLeads = DB::table('m_kebutuhan')->where('id',$leads->kebutuhan_id)->first();
                 if($kebutuhanLeads !=null){
                     $leads->kebutuhan = $kebutuhanLeads->nama;
+                }else{
+                    $leads->kebutuhan = "";
                 }
                 
                 $timSalesId = DB::table('m_tim_sales')->where('id',$leads->tim_sales_id)->first();
                 $timSalesDId = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
                 if($timSalesId !=null){
                     $leads->timSalesName = $timSalesId->nama;
+                }else{
+                    $leads->timSalesName = "";
                 }
+
                 if($timSalesDId !=null){
                     $leads->salesName = $timSalesDId->nama;
+                }else{
+                    $leads->salesName = "";
                 }
             }
             

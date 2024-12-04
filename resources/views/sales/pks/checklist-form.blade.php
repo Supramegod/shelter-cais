@@ -347,13 +347,13 @@
                               <td>Perkiraan <i>Invoice</i> Diterima Pelanggan</td>
                               <td>{{$salaryRuleQ->perkiraan_invoice_diterima}}</td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                               <td class="text-center">5</td>
                               <td>Pembayaran <i>Invoice</i></td>
                               <td>{{$salaryRuleQ->pembayaran_invoice}}</td>
-                            </tr>
+                            </tr> -->
                             <tr>
-                              <td class="text-center">6</td>
+                              <td class="text-center">5</td>
                               <td>Rilis <i>Payroll</i> / Gaji</td>
                               <td>{{$salaryRuleQ->rilis_payroll}}</td>
                             </tr>

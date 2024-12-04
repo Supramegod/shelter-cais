@@ -114,7 +114,7 @@
                   <select id="salary_rule" name="salary_rule" class="form-select" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($salaryRule as $value)
-                      <option value="{{$value->id}}" data-rilispayroll="{{$value->rilis_payroll}}" data-pembayaraninvoice="{{$value->pembayaran_invoice}}" data-perkiraaninvoice="{{$value->perkiraan_invoice_diterima}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-cutoff="{{$value->cutoff}}" data-crosscheckabsensi="{{$value->crosscheck_absen}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->cutoff}} | Tgl Gajian : {{$value->rilis_payroll}} | Pengiriman Invoice : {{$value->pengiriman_invoice}}</option>  
+                      <option value="{{$value->id}}" data-rilispayroll="{{$value->rilis_payroll}}" data-perkiraaninvoice="{{$value->perkiraan_invoice_diterima}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-cutoff="{{$value->cutoff}}" data-crosscheckabsensi="{{$value->crosscheck_absen}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->cutoff}} | Tgl Gajian : {{$value->rilis_payroll}} | Pengiriman Invoice : {{$value->pengiriman_invoice}}</option>  
                       @endforeach
                     </select>
                 </div>
@@ -150,13 +150,13 @@
                         <td>Perkiraan <i>Invoice</i> Diterima Pelanggan</td>
                         <td id="perkiraan-invoice"></td>
                       </tr>
-                      <tr>
+                      <!-- <tr>
                         <td class="text-center">5</td>
                         <td>Pembayaran <i>Invoice</i></td>
                         <td id="pembayaran-invoice"></td>
-                      </tr>
+                      </tr> -->
                       <tr>
-                        <td class="text-center">6</td>
+                        <td class="text-center">5</td>
                         <td>Rilis <i>Payroll</i> / Gaji</td>
                         <td id="rilis-payroll"></td>
                       </tr>
@@ -177,6 +177,7 @@
                 <div class="col-sm-4">
                   <label class="form-label" for="basic-default-password42">TOP Invoice</label>
                     <select id="top" name="top" class="form-select @if($errors->has('top')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
+                    <option value="Non TOP" @if($quotation->top=='Non TOP') selected @endif>Non TOP</option>  
                     <option value="Kurang Dari 7 Hari" @if($quotation->top=='Kurang Dari 7 Hari') selected @endif>Kurang Dari 7 Hari</option>  
                     <option value="Lebih Dari 7 Hari" @if($quotation->top=='Lebih Dari 7 Hari') selected @endif>Lebih Dari 7 Hari</option>  
                     </select>
@@ -557,7 +558,7 @@ $('#jumlah_hari_invoice').on('change', function() {
 
 $('#salary_rule').on('change', function() {
   $('#cut-off').text($("#salary_rule option:selected").data("cutoff"));
-  $('#pembayaran-invoice').text($("#salary_rule option:selected").data("pembayaraninvoice"));
+  // $('#pembayaran-invoice').text($("#salary_rule option:selected").data("pembayaraninvoice"));
   $('#perkiraan-invoice').text($("#salary_rule option:selected").data("perkiraaninvoice"));
   $('#pengiriman-invoice').text($("#salary_rule option:selected").data("pengirimaninvoice"));
   $('#crosscheck-absensi').text($("#salary_rule option:selected").data("crosscheckabsensi"));

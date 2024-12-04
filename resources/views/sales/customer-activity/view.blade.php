@@ -83,13 +83,13 @@
           <h6>2. Customer Activity</h6>
           <input type="hidden" name="tipe" value="" />
           <div class="row mb-3">
-            <div class="offset-sm-2 col-sm-2">
-              <!-- <div class="form-check">
+            <!-- <div class="offset-sm-2 col-sm-2">
+              <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="ubah-status" value="Ubah Status" @if($data->tipe=="Ubah Status") checked @endif disabled>
                 <label class="form-check-label" for="ubah-status" style="color: black;font-weight: bold;">
                   Ubah Status
                 </label>
-              </div> -->
+              </div>
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-sales" value="Pilih Sales" @if($data->tipe=="Pilih Sales") checked @endif disabled>
                 <label class="form-check-label" for="pilih-sales" style="color: black;font-weight: bold;">
@@ -138,8 +138,14 @@
                   Visit
                 </label>
               </div>
-            </div>
-            <div class="col-sm-8">
+            </div> -->
+            <div class="offset-sm-2 col-sm-10">
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Tipe</label>
+                <div class="col-sm-10">
+                  <input type="text" id="tipe" name="tipe" value="{{$data->tipe}}" class="form-control" readonly>
+                </div>
+              </div>
               @if($data->tipe=="Ubah Status")
               <!-- <div class="d-status">
                 <div class="row">

@@ -26,10 +26,10 @@
               <label class="col-sm-2 col-form-label text-sm-end">Leads <span class="text-danger">*</span></label>
               <div class="col-sm-10">
                 <input type="hidden" id="tipe" name="tipe" class="form-control">
-                <input type="hidden" id="leads_id" name="leads_id" class="form-control">
+                <input type="hidden" id="leads_id" name="leads_id" value="@if($leads!=null) {{$leads->id}} @endif" class="form-control">
                 <input type="hidden" id="quotation_id" name="quotation_id" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="leads" name="leads"  class="form-control" readonly>
+                  <input type="text" id="leads" name="leads" value="@if($leads!=null) {{$leads->nama_perusahaan}} @endif" class="form-control" readonly>
                   <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
                 </div>
               </div>
@@ -39,10 +39,10 @@
               <div class="col-sm-10">
                 <select id="layanan" name="layanan" class="form-select" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
-                  <option value="1">Security</option>
-                  <option value="2">Direct Labour</option>
-                  <option value="3">Cleaning Service</option>
-                  <option value="4">Logistik</option>
+                  <option value="1" @if($leads!=null) @if($leads->kebutuhan_id =="1") selected @endif @endif>Security</option>
+                  <option value="2" @if($leads!=null) @if($leads->kebutuhan_id =="2") selected @endif @endif>Direct Labour</option>
+                  <option value="3" @if($leads!=null) @if($leads->kebutuhan_id =="3") selected @endif @endif>Cleaning Service</option>
+                  <option value="4" @if($leads!=null) @if($leads->kebutuhan_id =="4") selected @endif @endif>Logistik</option>
                 </select>
               </div>
             </div>
@@ -431,24 +431,27 @@ function showJumlahSite() {
 }
 
 $(document).ready(function() {
+  @if($leads!=null)
+    pilihLayanan($('#layanan').find(":selected")[0]);
+  @endif
 
-  $('#layanan').on('change', function() {
+  function pilihLayanan(element) {    
     $('#entitas').find('option').remove();
     $('#entitas').append('<option value="">- Pilih data -</option>');
-    if(this.value!=""){
-      if (this.value == 1) {
+    if(element.value!=""){
+      if (element.value == 1) {
         @foreach($company as $value)
           @if($value->code=="GSU" || $value->code=="SN")
           $('#entitas').append('<option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>');
           @endif
           @endforeach
-      } else if (this.value == 2 || this.value == 4) {
+      } else if (element.value == 2 || element.value == 4) {
         @foreach($company as $value)
           @if($value->code=="SIG" || $value->code=="SNI")
           $('#entitas').append('<option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>');
           @endif
         @endforeach
-      } else if (this.value == 3) {
+      } else if (element.value == 3) {
         @foreach($company as $value)
           @if($value->code=="RCI" || $value->code=="SNI")
           $('#entitas').append('<option value="{{$value->id}}">{{$value->code}} | {{$value->name}}</option>');
@@ -456,6 +459,9 @@ $(document).ready(function() {
         @endforeach
       }
     }
+  }
+  $('#layanan').on('change', function() {
+    pilihLayanan(this);
   });
 
 

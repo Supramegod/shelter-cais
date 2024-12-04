@@ -58,7 +58,7 @@
               @endif
             </div>
           </div>
-          <div class="row mb-3">
+          <!-- <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Pembayaran Invoice <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <input type="text" placeholder="Tanggal XX bulan berikutnya" id="pembayaran_invoice" name="pembayaran_invoice" value="{{$data->pembayaran_invoice}}" class="form-control @if ($errors->any()) @if($errors->has('pembayaran_invoice')) is-invalid @else   @endif @endif">
@@ -73,7 +73,7 @@
                   <div class="invalid-feedback">{{$errors->first('rilis_payroll')}}</div>
               @endif
             </div>
-          </div>
+          </div> -->
           <div class="pt-4">
           </div>
         </form>

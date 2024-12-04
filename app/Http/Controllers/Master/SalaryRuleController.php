@@ -63,7 +63,7 @@ class SalaryRuleController extends Controller
                 'crosscheck_absen' => 'required',
                 'pengiriman_invoice' => 'required',
                 'perkiraan_invoice_diterima' => 'required',
-                'pembayaran_invoice' => 'required',
+                // 'pembayaran_invoice' => 'required',
                 'rilis_payroll' => 'required',
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
@@ -84,7 +84,7 @@ class SalaryRuleController extends Controller
                         'crosscheck_absen' => $request->crosscheck_absen,
                         'pengiriman_invoice' => $request->pengiriman_invoice,
                         'perkiraan_invoice_diterima' => $request->perkiraan_invoice_diterima,
-                        'pembayaran_invoice' => $request->pembayaran_invoice,
+                        // 'pembayaran_invoice' => $request->pembayaran_invoice,
                         'rilis_payroll' => $request->rilis_payroll,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
@@ -96,7 +96,7 @@ class SalaryRuleController extends Controller
                         'crosscheck_absen' => $request->crosscheck_absen,
                         'pengiriman_invoice' => $request->pengiriman_invoice,
                         'perkiraan_invoice_diterima' => $request->perkiraan_invoice_diterima,
-                        'pembayaran_invoice' => $request->pembayaran_invoice,
+                        // 'pembayaran_invoice' => $request->pembayaran_invoice,
                         'rilis_payroll' => $request->rilis_payroll,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name

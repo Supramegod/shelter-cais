@@ -96,6 +96,7 @@
                                     <th class="text-center">No.</th>
                                     <th class="text-center">Wilayah</th>
                                     <th class="text-center">Tanggal</th>
+                                    <th class="text-center">Sales</th>
                                     <th class="text-center">Perusahaan</th>
                                     <th class="text-center">Telp. Perusahaan</th>
                                     <th class="text-center">Nama PIC</th>
@@ -190,6 +191,10 @@
             },{
                 data : 'tgl',
                 name : 'tgl',
+                className:'text-center'
+            },{
+                data : 'sales',
+                name : 'sales',
                 className:'text-center'
             },{
                 data : 'nama_perusahaan',
@@ -362,7 +367,19 @@
 
         $('#table-data').on('click', 'tbody tr', function() {
             let rdata = table.row(this).data();
-            window.location.href = "leads/view/"+rdata.id;
+            if(rdata.can_view){
+                window.location.href = "leads/view/"+rdata.id;
+            }else{
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    html: 'Anda tidak bisa melihat data ini',
+                    icon: 'warning',
+                    customClass: {
+                    confirmButton: 'btn btn-warning waves-effect waves-light'
+                    },
+                    buttonsStyling: false
+                });
+            }
         })
 
     // Setup - add a text input to each footer cell

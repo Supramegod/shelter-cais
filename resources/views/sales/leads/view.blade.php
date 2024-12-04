@@ -166,13 +166,15 @@
               </button>
             </div>
             @endif
-            <!-- <div class="col-12 text-center mt-2">
+            @if(in_array(Auth::user()->role_id,[29]))
+            <div class="col-12 text-center mt-2">
               <button id="btn-quotation" class="btn btn-success w-100 waves-effect waves-light">
                 <span class="me-1">Create Quotation</span>
                 <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
               </button>
-            </div> -->
-            @if(in_array(Auth::user()->role_id,[30]))
+            </div>
+            @endif
+            @if(in_array(Auth::user()->role_id,[29,30]))
             <div class="col-12 text-center mt-2">
               <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
                 <span class="me-1">Create Activity</span>
@@ -312,6 +314,12 @@
   $('#btn-activity').on('click',function () {
     window.location.replace("{{route('customer-activity.add',['leads_id'=>$data->id])}}");
   });
+
+  
+  $('#btn-quotation').on('click',function () {
+    window.location.replace("{!! route('quotation.add', ['leads_id' => $data->id, 'tipe' => 'Quotation Baru']) !!}");
+  });
+
 
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('leads')}}");
