@@ -127,26 +127,26 @@
 @section('pageScript')
 <script>
     @if(isset($success) || session()->has('success'))  
-        Swal.fire({
-            title: 'Pemberitahuan',
-            html: '{{$success}} {{session()->get('success')}}',
-            icon: 'success',
-            customClass: {
-            confirmButton: 'btn btn-primary waves-effect waves-light'
-            },
-            buttonsStyling: false
-        });
+        // Swal.fire({
+        //     title: 'Pemberitahuan',
+        //     html: '{{$success}} {{session()->get('success')}}',
+        //     icon: 'success',
+        //     customClass: {
+        //     confirmButton: 'btn btn-primary waves-effect waves-light'
+        //     },
+        //     buttonsStyling: false
+        // });
     @endif
     @if(isset($error) || session()->has('error'))  
-        Swal.fire({
-            title: 'Pemberitahuan',
-            html: '{{$error}} {{session()->has('error')}}',
-            icon: 'warning',
-            customClass: {
-            confirmButton: 'btn btn-warning waves-effect waves-light'
-            },
-            buttonsStyling: false
-        });
+        // Swal.fire({
+        //     title: 'Pemberitahuan',
+        //     html: '{{$error}} {{session()->has('error')}}',
+        //     icon: 'warning',
+        //     customClass: {
+        //     confirmButton: 'btn btn-warning waves-effect waves-light'
+        //     },
+        //     buttonsStyling: false
+        // });
     @endif
     let dt_filter_table = $('.dt-column-search');
 
@@ -244,7 +244,7 @@
             buttons: [
                 {
                 extend: 'collection',
-                className: 'btn btn-label-success dropdown-toggle me-2 waves-effect waves-light',
+                className: 'btn btn-label-success dropdown-toggle me-2 me-sm-1 waves-effect waves-light',
                 text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
                 buttons: [
                     {
@@ -325,6 +325,15 @@
                             }
                     }
                 ]
+                },
+                {
+                text: '<i class="mdi mdi-delete me-sm-1"></i> <span class="d-none d-sm-inline-block">Arsip</span>',
+                className: 'btn btn-label-danger waves-effect waves-light',
+                action: function (e, dt, node, config)
+                    {
+                        //This will send the page to the location specified
+                        window.location.href = '{{route("leads.index-terhapus")}}';
+                    }
                 },
                 @if(in_array(Auth::user()->role_id,[29,30,48,49]))
                 {

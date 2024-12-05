@@ -50,6 +50,9 @@ class LeadsController extends Controller
         }
         return view('sales.leads.list',compact('branch','platform','status','tglDari','tglSampai','request','error','success'));
     }
+    public function indexTerhapus (Request $request){
+        return view('sales.leads.list-terhapus');
+    }
 
     public function add (Request $request){
         try {
@@ -211,6 +214,34 @@ class LeadsController extends Controller
             //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';
             // })
             ->rawColumns(['can_view','aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function listTerhapus (Request $request){
+        try {
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
+            $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+
+            $data = DB::table('sl_leads')
+                        ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
+                        ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
+                        ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
+                        ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                        ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
+                        ->whereNotNull('sl_leads.deleted_at')
+                        ->whereNull('sl_leads.customer_id');
+            
+            $data = $data->get();          
+
+            foreach ($data as $key => $value) {
+                $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
+            }
+
+            return DataTables::of($data)
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);

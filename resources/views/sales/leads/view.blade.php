@@ -189,14 +189,12 @@
               </button>
             </div>
             <hr class="my-4 mx-4">
-            @if(in_array(Auth::user()->role_id,[30,48,49]))
             <div class="col-12 text-center mt-2">
               <button id="btn-delete" class="btn btn-danger w-100 waves-effect waves-light">
                 <span class="me-1">Delete Leads</span>
                 <i class="mdi mdi-trash-can scaleX-n1-rtl"></i>
               </button>
             </div>
-            @endif
           </div>
         </div>
       </div>

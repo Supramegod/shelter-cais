@@ -55,6 +55,7 @@ Route::group(['middleware' => ['verify_leads_api']], function () {
 Route::group(['middleware' => ['auth']], function () {
     Route::controller(LeadsController::class)->group(function() {
         Route::get('/sales/leads', 'index')->name('leads');
+        Route::get('/sales/leads/index-terhapus', 'indexTerhapus')->name('leads.index-terhapus');
         Route::get('/sales/leads/add', 'add')->name('leads.add');
         Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
         Route::get('/sales/leads/import', 'import')->name('leads.import');
@@ -68,6 +69,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/leads/export-excel', 'exportExcel')->name('leads.export-excel');
 
         Route::get('/sales/leads/list', 'list')->name('leads.list'); // ajax
+        Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
         Route::get('/sales/leads/leads.available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
 
     });
