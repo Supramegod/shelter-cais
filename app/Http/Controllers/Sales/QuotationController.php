@@ -738,7 +738,14 @@ class QuotationController extends Controller
                     $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
 
                     // bunga bank dan insentif
-                    $kbd->bunga_bank = $kbd->sub_total_personil*$quotation->persen_bunga_bank/100;
+                    $pengaliTop = 0;
+                    if ($quotation->top == "Kurang Dari 7 Hari") {
+                        $pengaliTop = 7;
+                    }else if($quotation->top == "Lebih Dari 7 Hari"){
+                        $pengaliTop = $quotation->jumlah_hari_invoice;
+                    };
+
+                    $kbd->bunga_bank = $kbd->sub_total_personil*$pengaliTop*$quotation->persen_bunga_bank/100;
                     $kbd->insentif = $kbd->sub_total_personil*$quotation->persen_insentif/100;
 
                     $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$quotation->persentase/100)+$kbd->bunga_bank+$kbd->insentif;
@@ -1873,6 +1880,11 @@ class QuotationController extends Controller
                 $request->training ="0";
             }
 
+            $persenBungaBank = $dataQuotation->persen_bunga_bank; 
+            if($dataQuotation->persen_bunga_bank != 0 && $dataQuotation->persen_bunga_bank != null){
+                $persenBungaBank = 1.3;
+            };
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
                 'kunjungan_operasional' => $request->jumlah_kunjungan_operasional." ".$request->bulan_tahun_kunjungan_operasional ,
@@ -1880,6 +1892,7 @@ class QuotationController extends Controller
                 'keterangan_kunjungan_operasional' => $request->keterangan_kunjungan_operasional ,
                 'keterangan_kunjungan_tim_crm' => $request->keterangan_kunjungan_tim_crm ,
                 'training' => $request->training ,
+                'persen_bunga_bank' => $persenBungaBank,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
