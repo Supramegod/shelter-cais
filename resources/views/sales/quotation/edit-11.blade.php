@@ -315,6 +315,20 @@
                         <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Total Biaya Per Personil</td>
                         <td class="text-end fw-bold">
                         @php
+                          $totalBiayaPerPersonil=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalBiayaPerPersonil+=$detailJabatan->total_personil;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalBiayaPerPersonil,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Total Biaya All Personil</td>
+                        <td class="text-end fw-bold">
+                        @php
                           $totalBiayaPersonil=0;
                         @endphp
                         @foreach($quotation->quotation_detail as $detailJabatan)
@@ -571,15 +585,6 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="text-end">{{"Rp. ".number_format($detailJabatan->total_ohc,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      <!-- @foreach($listOhc as $ohc)
-                      <tr class="">
-                        <td style="text-align:right" class="fw-bold">{{$ohc->nama}}</td>
-                        <td style="text-align:center"></td>
-                        @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td style="text-align:right" class="">{{"Rp. ".number_format($ohc->total*$detailJabatan->jumlah_hc,2,",",".")}}</td>
-                        @endforeach
-                      </tr>
-                      @endforeach -->
                       <tr class="">
                         <td style="" class="">Bunga Bank ( {{$quotation->top}} )</td>
                         <td style="text-align:center">{{$quotation->persen_bunga_bank}} %   &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-persen-bunga-bank"></i></a></td>
@@ -646,17 +651,31 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="text-center fw-bold" colspan="2" style="vertical-align: middle;">TOTAL KESELURUHAN</td>
                       </tr>
                       <tr class="">
-                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Total Biaya Per Personil</td>
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Total Base Manpower Cost Per Month</td>
                         <td class="text-end fw-bold">
                         @php
-                          $totalBiayaPersonil=0;
+                          $totalBaseManPowerCostPerMonth=0;
                         @endphp
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         @php
-                          $totalBiayaPersonil+=$detailJabatan->sub_total_personil_coss;
+                          $totalBaseManPowerCostPerMonth+=$detailJabatan->total_base_manpower;
                         @endphp
                         @endforeach
-                        {{"Rp. ".number_format($totalBiayaPersonil,2,",",".")}}
+                        {{"Rp. ".number_format($totalBaseManPowerCostPerMonth,2,",",".")}}
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td class="text-end fw-bold" colspan="" style="vertical-align: middle;">Total Exclude Base Manpower Per Month</td>
+                        <td class="text-end fw-bold">
+                        @php
+                          $totalExcludeBaseManPowerCostPerMonth=0;
+                        @endphp
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        @php
+                          $totalExcludeBaseManPowerCostPerMonth+=$detailJabatan->total_exclude_base_manpower;
+                        @endphp
+                        @endforeach
+                        {{"Rp. ".number_format($totalExcludeBaseManPowerCostPerMonth,2,",",".")}}
                         </td>
                       </tr>
                       <tr class="">

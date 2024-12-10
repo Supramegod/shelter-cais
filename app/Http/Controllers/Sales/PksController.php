@@ -419,6 +419,7 @@ class PksController extends Controller
             DB::connection('mysqlhris')->commit();
         } catch (\Exception $e) {
             DB::rollback();
+            DB::connection('mysqlhris')->rollback();
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);

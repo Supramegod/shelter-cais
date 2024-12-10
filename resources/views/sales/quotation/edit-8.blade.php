@@ -44,18 +44,16 @@
                             </thead>
                             <tbody>
                               @foreach($listDevices as $detail)
-                              @if($detail->jenis_barang_id == 17 && $data->id ==17)
-                                @if($detail->jumlah==1)
-                                <tr>
-                                  <td>{{$detail->nama}}</td>
-                                  <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}<input type="hidden" name="barang[]" value="{{$detail->id}}">                          </td>
-                                  <td class="text-center" colspan="{{count($quotation->quotation_detail)}}">1</td>
-                                </tr>
+                                @if($detail->jenis_barang_id == $data->id)
+                                @if($data->id==17 && $detail->jumlah==0)
+                                @continue
                                 @endif
-                              @elseif($detail->jenis_barang_id == $data->id)
                                 <tr>
                                   <td>{{$detail->nama}}</td>
                                   <td style="text-align:right">Rp {{number_format($detail->harga,0,",",".")}}<input type="hidden" name="barang[]" value="{{$detail->id}}">                          </td>
+                                  @if($data->id == 17)
+                                    <td class="text-center" colspan="{{count($quotation->quotation_detail)}}">{{$detail->jumlah}}</td>
+                                  @else
                                   <td class="jumlah" style="min-width:150px">
                                     <button type="button" type="button" class="min-jumlah btn rounded-pill btn-danger waves-effect waves-light">
                                       <span class="mdi mdi-minus"></span> &nbsp;
@@ -65,8 +63,9 @@
                                       <span class="mdi mdi-plus"></span> &nbsp;
                                     </button>
                                   </td>
+                                  @endif
                                 </tr>
-                              @endif
+                                @endif
                               @endforeach
                             </tbody>
                           </table>
@@ -140,10 +139,8 @@
     });
 
     @foreach($listDevices as $detail)
-      @if($detail->jenis_barang_id == 17)
-        @if($detail->jumlah==1)
-          jumlahAplikasi += {{$detail->harga}};
-        @endif
+      @if($detail->jenis_barang_id == 17 && $detail->jumlah>0)
+        jumlahAplikasi += {{$detail->harga*$detail->jumlah}};
       @endif
     @endforeach
 
