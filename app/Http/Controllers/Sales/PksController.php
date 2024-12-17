@@ -350,10 +350,10 @@ class PksController extends Controller
                     'city_id' => $value->kota_id,
                     'branch_id' => $leads->branch_id,
                     'company_id' => $value->company_id,
-                    'pic_id_1' => 0,
-                    'pic_id_2' => 0,
-                    'pic_id_3' => 0,
-                    'supervisor_id' => 0,
+                    'pic_id_1' => $leads->ro_id_1,
+                    'pic_id_2' => $leads->ro_id_2,
+                    'pic_id_3' => $leads->ro_id_3,
+                    'supervisor_id' => $leads->ro_id,
                     'reliever' => $value->joker_reliever,
                     'contract_value' => 0,
                     'contract_start' => $value->mulai_kontrak,
@@ -605,8 +605,8 @@ class PksController extends Controller
                 $request->status_serikat ="Tidak Ada";
             }
 
-            $ro = DB::connection('mysqlhris')->table('m_user')->where('id',$request->ro)->first();
-            $crm = DB::connection('mysqlhris')->table('m_user')->where('id',$request->crm)->first();
+            // $ro = DB::connection('mysqlhris')->table('m_user')->where('id',$request->ro)->first();
+            // $crm = DB::connection('mysqlhris')->table('m_user')->where('id',$request->crm)->first();
         
             // DB::table('sl_pks')->where('id',$request->pks_id)->update([
             //     'ro_id' => $ro->id,
@@ -617,7 +617,7 @@ class PksController extends Controller
             //     'updated_by' => Auth::user()->full_name
             // ]);
 
-            DB::table('sl_quotation')->where('id',$request->id)->update([
+            DB::table('sl_quotation')->where('quotation_client_id',$request->quotation_client_id)->update([
                 'npwp' => $request->npwp ,
                 'alamat_npwp' => $request->alamat_npwp,
                 'pic_invoice' => $request->pic_invoice ,

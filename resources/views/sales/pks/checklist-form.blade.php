@@ -12,6 +12,7 @@
         @csrf
         <input type="hidden" name="id" value="{{$quotation->id}}">
         <input type="hidden" name="pks_id" value="{{$pks->id}}">
+        <input type="hidden" name="quotation_client_id" value="{{$pks->quotation_client_id}}">
         <!-- Account Details -->
         <div id="account-details-1" class="content active">
           <div class="content-header mb-5 text-center">
