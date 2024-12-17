@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\VerifyFastApiKey;
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\Fitur\ContactController;
 
 use App\Http\Controllers\Sales\LeadsController;
@@ -53,6 +54,11 @@ Route::group(['middleware' => ['verify_leads_api']], function () {
 });
 
 Route::group(['middleware' => ['auth']], function () {
+    Route::controller(DashboardController::class)->group(function() {
+        Route::get('/dashboard/approval', 'dashboardApproval')->name('dashboard-approval');
+        Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
+    });
+
     Route::controller(LeadsController::class)->group(function() {
         Route::get('/sales/leads', 'index')->name('leads');
         Route::get('/sales/leads/index-terhapus', 'indexTerhapus')->name('leads.index-terhapus');

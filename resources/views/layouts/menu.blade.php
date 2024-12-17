@@ -168,6 +168,20 @@
 
         <!-- SUPER USER -->
         @elseif(Auth::user()->role_id==2)
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
+                <div data-i18n="Master Data">Dashboard</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
+                    <a href="{{route('dashboard-approval')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Dashboard Approval">Approval</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
