@@ -9,13 +9,14 @@ class QuotationService
     public function calculateQuotation($quotation)
     {
         // PERHITUNGAN HPP DAN COSS
+        $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
         $qmanajemenFee = DB::table('m_management_fee')->where('id', $quotation->management_fee_id)->first();
         $quotation->management_fee = $qmanajemenFee->nama;
 
         $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM sl_quotation_detail_tunjangan WHERE deleted_at IS NULL AND quotation_id = ?", [$quotation->id]);
 
         $jumlahHc = $quotation->quotation_detail->sum('jumlah_hc');
-
+        $quotation->jumlah_hc = $jumlahHc;
         $provisi = 12;
         if (!strpos($quotation->durasi_kerjasama, 'tahun')) {
             $provisi = (int)str_replace(" bulan", "", $quotation->durasi_kerjasama);
@@ -82,6 +83,12 @@ class QuotationService
         $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
         $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
+        $isPembulatan = 0;
+        if($quotation->penagihan=="Dengan Pembulatan"){
+            $isPembulatan = 1;
+        }
+        $kbd->is_pembulatan = $isPembulatan;
+
         $this->calculateCoss($kbd, $quotation, $jumlahHc, $provisi,$quotation);
 
     }
@@ -95,6 +102,11 @@ class QuotationService
         $kbd->bpjs_jht = 0;
         $kbd->bpjs_jp = 0;
         $kbd->bpjs_kes = 0;
+        $kbd->persen_bpjs_jkm = 0;
+        $kbd->persen_bpjs_jkk = 0;
+        $kbd->persen_bpjs_jht = 0;
+        $kbd->persen_bpjs_jp = 0;
+        $kbd->persen_bpjs_kes = 0;
 
         if ($quotation->penjamin == "Takaful") {
             $kbd->nominal_takaful = $quotation->nominal_takaful;
@@ -105,32 +117,41 @@ class QuotationService
             switch ($quotation->resiko) {
                 case "Sangat Rendah":
                     $kbd->bpjs_jkk = $upahBpjs * 0.24 / 100;
+                    $kbd->persen_bpjs_jkk = 0.24;
                     break;
                 case "Rendah":
                     $kbd->bpjs_jkk = $upahBpjs * 0.54 / 100;
+                    $kbd->persen_bpjs_jkk = 0.54;
                     break;
                 case "Sedang":
                     $kbd->bpjs_jkk = $upahBpjs * 0.89 / 100;
+                    $kbd->persen_bpjs_jkk = 0.89;
                     break;
                 case "Tinggi":
                     $kbd->bpjs_jkk = $upahBpjs * 1.27 / 100;
+                    $kbd->persen_bpjs_jkk = 1.27;
                     break;
                 case "Sangat Tinggi":
                     $kbd->bpjs_jkk = $upahBpjs * 1.74 / 100;
+                    $kbd->persen_bpjs_jkk = 1.74;
                     break;
             }
 
             // Hitung JKM
             $kbd->bpjs_jkm = $upahBpjs * 0.3 / 100;
+            $kbd->persen_bpjs_jkm = 0.3;
 
             // Hitung JHT (jika program BPJS mencakup JHT)
             $kbd->bpjs_jht = in_array($quotation->program_bpjs, ["3 BPJS", "4 BPJS"]) ? $upahBpjs * 3.7 / 100 : 0;
+            $kbd->persen_bpjs_jht = in_array($quotation->program_bpjs, ["3 BPJS", "4 BPJS"]) ? 3.7 : 0;
 
             // Hitung JP (jika program BPJS mencakup JP)
             $kbd->bpjs_jp = $quotation->program_bpjs == "4 BPJS" ? $upahBpjs * 2 / 100 : 0;
+            $kbd->persen_bpjs_jp = $quotation->program_bpjs == "4 BPJS" ? 2 : 0;
 
             // Hitung BPJS Kesehatan berdasarkan UMK
             $kbd->bpjs_kes = $umk * 4 / 100;
+            $kbd->persen_bpjs_kes = 4;
         }
     }
 

@@ -17,7 +17,6 @@ use App\Exports\LeadsExport;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Helper\QuotationService;
 
-
 class QuotationController extends Controller
 {
     public function index (Request $request){
