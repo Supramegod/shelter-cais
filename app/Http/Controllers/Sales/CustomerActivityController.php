@@ -92,8 +92,9 @@ class CustomerActivityController extends Controller
             $tim_sales_id = null;
             $tim_sales_d_id = null;
 
-            $roList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 4,5,6,7,8 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
-            $crmList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 54,55,56 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
+            $roList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 4,5 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
+            $spvRoList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 6 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
+            $crmList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 54 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
 
             if(Auth::user()->role_id == 29){
                 $dataSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->whereNull('deleted_at')->first();
@@ -101,7 +102,7 @@ class CustomerActivityController extends Controller
                 $tim_sales_d_id = $dataSalesD->id;
             }
             
-            return view('sales.customer-activity.add',compact('roList','crmList','leads','now','nowd','statusLeads','timSales','tim_sales_id','tim_sales_d_id'));
+            return view('sales.customer-activity.add',compact('spvRoList','roList','crmList','leads','now','nowd','statusLeads','timSales','tim_sales_id','tim_sales_d_id'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -262,26 +263,10 @@ class CustomerActivityController extends Controller
                         'max' => 'Masukkan :attribute maksimal :max',
                         'required' => ':attribute harus di isi',
                     ]);
-                }else if($request->tipe=="Pilih RO"){
-                    $validator = Validator::make($request->all(), [
-                        'ro' => 'required',
-                    ], [
-                        'min' => 'Masukkan :attribute minimal :min',
-                        'max' => 'Masukkan :attribute maksimal :max',
-                        'required' => ':attribute harus di isi',
-                    ]);
-                }else if($request->tipe=="Pilih CRM"){
-                    $validator = Validator::make($request->all(), [
-                        'crm' => 'required',
-                    ], [
-                        'min' => 'Masukkan :attribute minimal :min',
-                        'max' => 'Masukkan :attribute maksimal :max',
-                        'required' => ':attribute harus di isi',
-                    ]);
                 }
 
                 //validator role
-                if(!in_array(Auth::user()->role_id,[4,5])){
+                if(!in_array(Auth::user()->role_id,[4,5,6,8,55,56])){
                     $validator = Validator::make($request->all(), [
                         'status_leads_id' => 'required',
                     ], [
@@ -379,16 +364,22 @@ class CustomerActivityController extends Controller
                     $timSalesDId = $request->tim_sales_d_id;
                 }
                 
-                if($request->ro !=null){
-                    $roId = $request->ro;
+                if($request->spv_ro !=null){
+                    $roId = $request->spv_ro;
                     $roName = DB::connection('mysqlhris')->table('m_user')->where('id',$roId)->first();
                     $roName = $roName->full_name;
                 }
 
-                if($request->crm !=null){
-                    $crmId = $request->crm;
-                    $crmName = DB::connection('mysqlhris')->table('m_user')->where('id',$crmId)->first();
-                    $crmName = $crmName->full_name;
+                if($request->selected_crm !=null){
+                    foreach ($request->selected_crm as $key => $value) {
+                        if ($key==0) {
+                            $crmId = $value;
+                            $crmName = DB::connection('mysqlhris')->table('m_user')->where('id',$crmId)->first();
+                            $crmName = $crmName->full_name;
+                        }else{
+                            break;
+                        }
+                    }
                 }
 
                 if(!empty($request->id)){
@@ -502,16 +493,46 @@ class CustomerActivityController extends Controller
                         'updated_by' => Auth::user()->name
                     ]);
                 }else if($request->tipe=="Pilih RO"){
+                    $roId1 = null;
+                    $roId2 = null;
+                    $roId3 = null;
+                    foreach ($request->selected_ro as $key => $value) {
+                        if ($key==0) {
+                            $roId1 = $value;
+                        } else if ($key==1) {
+                            $roId2 = $value;
+                        } else if ($key==2) {
+                            $roId3 = $value;
+                        }
+                    }
+                    
                     DB::table('sl_leads')->where('id',$request->leads_id)->update([
                         'ro_id' => $roId,
                         'ro' => $roName,
+                        'ro_id_1' => $roId1,
+                        'ro_id_2' => $roId2,
+                        'ro_id_3' => $roId3,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->name
                     ]);
                 }else if($request->tipe=="Pilih CRM"){
+                    $crmId1 = null;
+                    $crmId2 = null;
+                    foreach ($request->selected_crm as $key => $value) {
+                        if ($key==0) {
+                            continue;
+                        } else if ($key==1) {
+                            $crmId1 = $value;
+                        } else if ($key==2) {
+                            $crmId2 = $value;
+                        }
+                    }
+
                     DB::table('sl_leads')->where('id',$request->leads_id)->update([
                         'crm_id' => $crmId,
                         'crm' => $crmName,
+                        'crm_id_1' => $crmId1,
+                        'crm_id_2' => $crmId2,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->name
                     ]);

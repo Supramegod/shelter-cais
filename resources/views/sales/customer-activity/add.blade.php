@@ -68,7 +68,7 @@
               <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
             </div>
           </div>
-          @if(!in_array(Auth::user()->role_id,[4,5]))
+          @if(!in_array(Auth::user()->role_id,[4,5,8,55,56]))
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Status Leads <span class="text-danger">*</span></label>
             <div class="col-sm-10">
@@ -214,30 +214,81 @@
               </div>
               <div class="d-ro">
                 <div class="row">
-                  <label class="col-sm-2 col-form-label text-sm-end">RO</label>
+                  <label class="col-sm-2 col-form-label text-sm-end">Supervisor</label>
                   <div class="col-sm-10">
-                    <select id="ro" name="ro" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                    <select id="spv_ro" name="spv_ro" class="form-select @if ($errors->any()) @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
-                      @foreach($roList as $value)
+                      @foreach($spvRoList as $value)
                       <option value="{{$value->id}}" @if(old('ro') == $value->id) selected @endif>{{$value->full_name}}</option>
                       @endforeach
                     </select>
                   </div>
                 </div>
+                <div class="row mt-3">
+                  <label class="col-sm-2 col-form-label text-sm-end">RO</label>
+                  <div class="col-sm-10">
+                    <div class="row">
+                      <div class="col-md-8">
+                      <select id="ro" name="ro" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($roList as $value)
+                        <option value="{{$value->id}}" @if(old('ro') == $value->id) selected @endif>{{$value->full_name}}</option>
+                        @endforeach
+                      </select>
+                      </div>
+                      <div class="col-md-4">
+                        <button type="button" id="addButton" class="btn btn-primary w-100">Tambah</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <table class="table table-bordered" style="">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Nama RO</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="itemTable">
+                      <!-- Data akan ditambahkan di sini -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div class="d-crm">
-                <div class="row">
-                  <label class="col-sm-2 col-form-label text-sm-end">CRM </label>
+                <div class="row mt-3">
+                  <label class="col-sm-2 col-form-label text-sm-end">CRM</label>
                   <div class="col-sm-10">
-                    <div class="position-relative">
+                    <div class="row">
+                      <div class="col-md-8">
                       <select id="crm" name="crm" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>  
+                        <option value="">- Pilih data -</option>
                         @foreach($crmList as $value)
                         <option value="{{$value->id}}" @if(old('crm') == $value->id) selected @endif>{{$value->full_name}}</option>
                         @endforeach
                       </select>
+                      </div>
+                      <div class="col-md-4">
+                        <button type="button" id="addButtonCrm" class="btn btn-primary w-100">Tambah</button>
+                      </div>
                     </div>
                   </div>
+                </div>
+                <div class="row mt-3">
+                  <table class="table table-bordered" style="">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Nama CRM</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="itemTableCrm">
+                      <!-- Data akan ditambahkan di sini -->
+                    </tbody>
+                  </table>
                 </div>
               </div>
               <div class="d-telepon">
@@ -399,7 +450,7 @@
           <div class="pt-4">
             <div class="row justify-content-end">
               <div class="col-sm-12 d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Simpan</button>
+                <button id="btn-submit" type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Simpan</button>
                 <button type="reset" class="btn btn-warning me-sm-2 me-1 waves-effect">Reset</button>
                 <a href="{{route('customer-activity')}}" class="btn btn-secondary waves-effect">Kembali</a>
               </div>
@@ -763,5 +814,179 @@
       }
   });
 
+</script>
+
+<script>
+  // Inisialisasi elemen
+  const itemSelect = document.getElementById('ro');
+  const addButton = document.getElementById('addButton');
+  const itemTable = document.getElementById('itemTable');
+  let itemCount = 0;
+
+  // Event untuk menambahkan item ke tabel
+  addButton.addEventListener('click', () => {
+    const selectedValue = itemSelect.value;    
+    const selectedText = itemSelect.options[itemSelect.selectedIndex].text;
+
+    if (selectedValue) {
+      // Cek apakah item sudah ada di tabel
+      const existingInputs = Array.from(itemTable.querySelectorAll('input[name="selected_ro[]"]'));
+      const isDuplicate = existingInputs.some(input => input.value === selectedValue);
+
+      if (isDuplicate) {
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: 'RO sudah ditambahkan!',
+          icon: "warning"
+        });
+        return;
+      }
+      
+      itemCount++;
+
+      if(itemCount > 3 ){
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: 'RO tidak bisa lebih dari 3',
+          icon: "warning"
+        });
+        return;
+      };
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${itemCount}</td>
+        <td> <input type="hidden" name="selected_ro[]" value="${selectedValue}"> ${selectedText}</td>
+        <td><button class="btn btn-danger btn-sm delete-button">Hapus</button></td>
+      `;
+      itemTable.appendChild(row);
+
+      // Event untuk tombol hapus
+      row.querySelector('.delete-button').addEventListener('click', () => {
+        row.remove();
+        itemCount--;
+        updateTableIndices();
+      });
+    } else {
+      Swal.fire({
+          title: "Pemberitahuan",
+          html: 'Silakan pilih Nama RO terlebih dahulu.',
+          icon: "warning"
+        });
+    }
+  });
+
+  // Fungsi untuk memperbarui nomor indeks tabel
+  function updateTableIndices() {
+    let index = 1;
+    itemTable.querySelectorAll('tr').forEach(row => {
+      row.querySelector('td:first-child').innerText = index++;
+    });
+  }
+</script>
+
+<script>
+  // Inisialisasi elemen
+  const itemSelectCrm = document.getElementById('crm');
+  const addButtonCrm = document.getElementById('addButtonCrm');
+  const itemTableCrm = document.getElementById('itemTableCrm');
+  let itemCountCrm = 0;
+
+  // Event untuk menambahkan item ke tabel
+  addButtonCrm.addEventListener('click', () => {
+    const selectedValue = itemSelectCrm.value;    
+    const selectedText = itemSelectCrm.options[itemSelectCrm.selectedIndex].text;
+
+    if (selectedValue) {
+      // Cek apakah item sudah ada di tabel
+      const existingInputs = Array.from(itemTableCrm.querySelectorAll('input[name="selected_crm[]"]'));
+      const isDuplicate = existingInputs.some(input => input.value === selectedValue);
+
+      if (isDuplicate) {
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: 'CRM sudah ditambahkan!',
+          icon: "warning"
+        });
+        return;
+      }
+      
+      itemCountCrm++;
+
+      if(itemCountCrm > 3 ){
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: 'CRM tidak bisa lebih dari 3',
+          icon: "warning"
+        });
+        return;
+      };
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${itemCountCrm}</td>
+        <td> <input type="hidden" name="selected_crm[]" value="${selectedValue}"> ${selectedText}</td>
+        <td><button class="btn btn-danger btn-sm delete-button-crm">Hapus</button></td>
+      `;
+      itemTableCrm.appendChild(row);
+
+      // Event untuk tombol hapus
+      row.querySelector('.delete-button-crm').addEventListener('click', () => {
+        row.remove();
+        itemCount--;
+        updateTableIndicesCrm();
+      });
+    } else {
+      Swal.fire({
+          title: "Pemberitahuan",
+          html: 'Silakan pilih Nama CRM terlebih dahulu.',
+          icon: "warning"
+        });
+    }
+  });
+
+  // Fungsi untuk memperbarui nomor indeks tabel
+  function updateTableIndicesCrm() {
+    let index = 1;
+    itemTableCrm.querySelectorAll('tr').forEach(row => {
+      row.querySelector('td:first-child').innerText = index++;
+    });
+  }
+</script>
+
+<script>
+  $('#btn-submit').on('click',function(e){
+    e.preventDefault();
+    var form = $(this).parents('form');
+    let msg = "";
+    let obj = $("form").serializeObject();
+      
+    if($('#pilih-ro').is(':checked')) { 
+      if($('#spv_ro').val()==""||$('#spv_ro').val()==null){
+        msg +="Belum memilih SPV </br>";
+      }else{
+        const rowCount = itemTable.querySelectorAll('tr').length;
+        if (rowCount==null || rowCount == 0) {
+          msg +="Belum memilih RO </br>";
+        }
+      }
+    }
+    if($('#pilih-crm').is(':checked')) { 
+      const rowCountCrm = itemTableCrm.querySelectorAll('tr').length;
+        if (rowCountCrm==null || rowCountCrm == 0) {
+          msg +="Belum memilih CRM </br>";
+        }
+    }
+    
+    if(msg == ""){
+      form.submit();
+    }else{
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: msg,
+        icon: "warning"
+      });
+    }
+  });
 </script>
 @endsection
