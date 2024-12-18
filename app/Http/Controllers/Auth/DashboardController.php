@@ -121,16 +121,7 @@ class DashboardController extends Controller
 
         return DataTables::of($arrData)
             ->addColumn('aksi', function ($data) {
-                if($data->step != 100){
-                    return '<div class="justify-content-center d-flex">
-                    <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
-        <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Quotation</a>
-                    </div>';
-                }else{
-                    return '<div class="justify-content-center d-flex">
-                    <a href="'.route('quotation.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
-        </div>';
-                }
+               return "";
             })
             ->editColumn('nomor', function ($data) {
                 $ref = "";
