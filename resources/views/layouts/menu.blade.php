@@ -4,7 +4,7 @@
         <li class="menu-item @if(Request::url() === route('home')||Request::url() === route('dashboard')) active @endif">
             <a href="{{route('home')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
-            <div data-i18n="Dashboards">Dashboards</div>
+            <div data-i18n="Dashboards">Home</div>
             </a>
         </li>
 
@@ -129,6 +129,20 @@
         </li>
         <!-- DIREKTUR -->
         @elseif(in_array(Auth::user()->role_id,[53,56,96,97,98,99,100]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
+                <div data-i18n="Master Data">Dashboard</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
+                    <a href="{{route('dashboard-approval')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Dashboard Approval">Approval</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>

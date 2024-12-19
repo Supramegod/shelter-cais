@@ -429,6 +429,7 @@ class PksController extends Controller
                     DB::table("sl_quotation_hpp")->insert([
                         'quotation_id' => $value->id,
                         'quotation_detail_id' => $kbd->id,
+                        'position_id' => $kbd->position_id,
                         'leads_id' =>  $leads->id,
                         'jumlah_hc' => $calcQuotation->jumlah_hc,
                         'gaji_pokok' => $calcQuotation->nominal_upah,
@@ -468,6 +469,7 @@ class PksController extends Controller
                     DB::table("sl_quotation_coss")->insert([
                         'quotation_id' => $value->id,
                         'quotation_detail_id' => $kbd->id,
+                        'position_id' => $kbd->position_id,
                         'leads_id' =>  $leads->id,
                         'jumlah_hc' => $calcQuotation->jumlah_hc,
                         'gaji_pokok' => $calcQuotation->nominal_upah,

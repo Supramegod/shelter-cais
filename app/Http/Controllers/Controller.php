@@ -4,97 +4,72 @@ namespace App\Http\Controllers;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-// use Illuminate\Support\Facades\Auth;
-// use DB;
+use Illuminate\Support\Facades\Auth;
+use DB;
+use Carbon\Carbon;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+
+    private $user;
+    private $signed_in;
+    private $menu;
+    private $notifikasi;
+    private $pesan;
+    private $approval;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            // if(Auth::check()){
-            //     $user = Auth::user();
-            //     $role = DB::table('sys_role')->where('id',$user->sys_role_id)->first();
-            //     $cabang = DB::table('sys_cabang')->where('id',$user->sys_cabang_id)->first();
-            //     $notif = DB::select("SELECT id,keterangan,tipe,doc_id,transaksi,tabel,'#' as link,(SELECT `name` from users WHERE id = user_id) as `user`,ftanggalwaktu_w_sec(created_at) as tgl,created_by
-            //     from sys_notifikasi 
-            //     WHERE 
-            //     deleted_at is null
-            //     and user_id = ".Auth::user()->id."
-            //     and is_read = 0
-            //     and tipe=1;");
-            //     $pesan = DB::select("SELECT id,keterangan,tipe,(select sal_pelanggan_id from sal_prospect where id= doc_id) as doc_id,transaksi,tabel,'#' as link,(SELECT `name` from users WHERE id = user_id) as `user`,ftanggalwaktu_w_sec(created_at) as tgl,created_by
-            //     from sys_notifikasi 
-            //     WHERE 
-            //     deleted_at is null
-            //     and user_id = ".Auth::user()->id."
-            //     and is_read = 0
-            //     and tipe=2;");
-            //     $approval = DB::select("
-            //     SELECT 
-            //         0 as id,
-            //         id as doc_id,
-            //         user_owner_id,
-            //         'sal_prospect' as tabel,
-            //         'Approval' as transaksi,
-            //         CONCAT('Leads : <b>',(SELECT nama_perusahaan from sal_pelanggan WHERE id = sal_prospect.sal_pelanggan_id),'</b> , Layanan : <b>',(select nama_service from mas_service WHERE id = sal_prospect.mas_service_id),'</b>') as txt 
-            //     FROM sal_prospect 
-            //         WHERE 
-            //             deleted_at is null 
-            //             and mas_status_prospect_id = 2 
-            //             and ot_now = (( SELECT tingkat_approve from sys_role WHERE id = $role->id limit 1 )-1)
-            //             ;");
-            //     $arrApproval = [];
-            //     if($role->id == 31){
-            //         foreach ($approval as $key => $value) {
-            //             $sales = DB::select("select * from sys_user_parent where deleted_at is null and parent_id = ".Auth::user()->id." and users_id = ".$value->user_owner_id);
-            //             if(count($sales)>0){
-            //                 array_push($arrApproval,$value);
-            //             }
-            //         }
-            //     }else{
-            //         $arrApproval = $approval;
-            //     }
+            if(Auth::check()){
+                $user = Auth::user();
+                $role = DB::connection('mysqlhris')->table('m_role')->where('id',$user->role_id)->first();
+                $cabang = DB::connection('mysqlhris')->table('m_branch')->where('id',$user->branch_id)->first();
+                $user->role = $role->name;
+                $user->cabang = $cabang->name;
+                $this->user = $user;
+                $this->signed_in = Auth::check();
+
+                $approval = [];
+                $arrRole = [96,97,98,99];
+                if(in_array($user->role_id,$arrRole)){
+                    $dataApproval = DB::table('sl_quotation')
+                    ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
+                    ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
+                    ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                    ->select('sl_quotation.step','sl_quotation.top','sl_quotation.ot3','sl_quotation.ot2','sl_quotation.ot1','sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->whereNull('sl_leads.deleted_at')
+                    ->whereNull('sl_quotation_client.deleted_at')
+                    ->whereNull('sl_quotation.deleted_at')
+                    ->where('sl_quotation.is_aktif',0)->get();
+
+                    $approval = [];
+                    foreach ($dataApproval as $key => $quotation) {   
+                        $quotation->tgl_quot = Carbon::createFromFormat('Y-m-d', $quotation->tgl_quotation)->toFormattedDateString();        
+                        if ($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot1 == null) {
+                            if(Auth::user()->role_id==96){
+                                array_push($approval,$quotation);
+                            }
+                        }else if($quotation->step == 100 && $data->is_aktif==0 && $data->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
+                            if(Auth::user()->role_id==97){
+                                array_push($approval,$quotation);
+                            }
+                        }else if ( $quotation->step == 100 && $data->is_aktif==0 && $data->ot2 != null && $data->ot1 != null && $data->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
+                            if(Auth::user()->role_id==99){
+                                array_push($approval,$quotation);
+                            }
+                        }
+                    }
+                }
+
+                $this->approval = $approval;
                 
-            //     $masterKoef = DB::select("SELECT id,nama_key,`key` from mas_koef_form where deleted_at is null;");
-
-            //     foreach ($notif as $key => $value) {
-            //         $value->link = route('system.notifikasi.read',['id' => $value->id, 'doc_id' => $value->doc_id, 'to' => 'approval']);
-            //     }
-            //     foreach ($pesan as $key => $value) {
-            //         $value->link = route('system.notifikasi.read',['id' => $value->id, 'doc_id' => $value->doc_id, 'to' => 'obrolan']);
-            //     }
-            //     foreach ($approval as $key => $value) {
-            //         $value->link = route('system.notifikasi.read',['id' => $value->id, 'doc_id' => $value->doc_id, 'to' => 'approval']);
-            //     }
-
-            //     $user->role = $role->nama;
-            //     $user->cabang = $cabang->nama_cabang;
-            //     $this->user = $user;
-            //     $this->signed_in = Auth::check();
-
-            //     $this->menu = DB::select("SELECT m.sys_menu_id,m.nama_menu,m.has_child,m.icon,m.kode,m.link,m.level,m.urutan,rm.is_view,rm.is_add,rm.is_edit,rm.is_delete,m.id,(select nama_grup_menu from sys_menu_grup where id = m.sys_menu_grup_id) as grup_menu,m.nama_route
-            //     FROM sys_role_menu rm
-            //     INNER JOIN sys_menu m ON m.id = rm.sys_menu_id
-            //     WHERE 
-            //     rm.deleted_at is null 
-            //     and rm.sys_role_id = ".Auth::user()->sys_role_id." and rm.is_view=1 and m.deleted_at is null
-            //     ORDER BY m.level asc , m.urutan asc ,m.kode asc;");
-            //     $this->notifikasi = $notif;
-            //     $this->pesan = $pesan;
-            //     $this->approval = $arrApproval;
-            //     $this->masterKoef = $masterKoef;
-
-            //     view()->share('signed_in', $this->signed_in);
-            //     view()->share('user', $this->user);
-            //     view()->share('menu', $this->menu);
-            //     view()->share('notifikasi', $this->notifikasi);
-            //     view()->share('pesan', $this->pesan);
-            //     view()->share('approval', $this->approval);
-            //     view()->share('master_koef', $this->masterKoef);
-
-            // }
+                view()->share('signed_in', $this->signed_in);
+                view()->share('user', $this->user);
+                view()->share('approval', $this->approval);
+            }
             return $next($request);
         });
     }
