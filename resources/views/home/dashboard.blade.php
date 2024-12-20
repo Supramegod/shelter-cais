@@ -6,8 +6,9 @@
         <!-- Congratulations card -->
         <div class="col-xl-12">
             <div class="card h-100">
-            <div class="card-body text-nowrap">
+            <div class="card-body">
                 <h4 class="card-title mb-5 d-flex gap-2 flex-wrap">Selamat Datang di CAIS ( Customer and Activity Information System ) 🎉</h4>
+                <br><br><br><br><br><br><br><br>
                 <a href="javascript:;" class="btn btn-sm btn-primary">Mulai Eksplorasi</a>
             </div>
             <img

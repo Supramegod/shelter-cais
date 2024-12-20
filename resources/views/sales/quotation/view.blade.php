@@ -18,14 +18,13 @@
         class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
           <div class="d-flex flex-column justify-content-center">
             <h5 class="mb-1 mt-3">
-              {{$data->nomor}} <span class="badge bg-label-info rounded-pill mt-1">{{$master->status}}</span>
+            {{$master->nama_perusahaan}} - {{$data->nomor}} - Revisi Ke : {{$master->revisi}} <span class="badge bg-label-info rounded-pill mt-1">{{$master->status}}</span>
                @if($master->step != 100)
                 <span class="badge bg-label-warning rounded-pill">Data Belum Terisi Lengkap</span>
                @endif
             </h5>
             <p class="mt-0"> Tanggal Quotation : {{$master->stgl_quotation}}</p>
-            <p class="text-body">{{$master->nama_perusahaan}} - {{$master->nama_site}}</p>
-            <p class="text-body">Revisi Ke : {{$master->revisi}}</p>
+            <p class="text-body">{{$master->nama_site}}</p>
             <div class="mt-2 mb-3">
               @if($data->is_aktif==1)
               <span class="badge bg-label-success rounded-pill mt-1">Quotation Telah Aktif</span>

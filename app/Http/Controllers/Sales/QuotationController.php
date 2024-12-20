@@ -1098,7 +1098,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation.deleted_at')
             ->whereNull('sl_leads.deleted_at')
             ->where("sl_quotation.step","!=",100)
-            ->where("sl_quotation.kebutuhan_id",$quotation->kebutuhan_id)
+            ->where("sl_quotation.quotation_client_id",$quotation->quotation_client_id)
             ->where('m_tim_sales_d.user_id',Auth::user()->id)
             ->get();
             
@@ -2092,7 +2092,7 @@ class QuotationController extends Controller
                     ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
                     ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->select('sl_quotation_client.jumlah_site','sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
                     ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation.deleted_at');
 
             if(!empty($request->tgl_dari)){
@@ -2166,10 +2166,14 @@ class QuotationController extends Controller
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
                 if($data->step != 100){
-                    return '<div class="justify-content-center d-flex">
-                    <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
-        <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Quotation</a>
-                    </div>';
+                    if($data->jumlah_site=="Multi Site"){
+                        return '<div class="justify-content-center d-flex">
+                        <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
+            <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Dari Existing</a>
+                        </div>';
+                    }else{
+                        return '<div class="justify-content-center d-flex"><a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a></div>';
+                    }
                 }else{
                     return '<div class="justify-content-center d-flex">
                     <a href="'.route('quotation.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
@@ -3577,7 +3581,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         ->whereNull('sl_leads.deleted_at')
         ->where("sl_quotation.step","=",100)
         ->where('m_tim_sales_d.user_id',Auth::user()->id)
-        ->where("sl_quotation.kebutuhan_id",$quotation->kebutuhan_id)
+        ->where("sl_quotation.quotation_client_id",$quotation->quotation_client_id)
         ->get();
 
         return $quotationAsal;

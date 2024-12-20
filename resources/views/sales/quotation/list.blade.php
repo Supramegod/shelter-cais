@@ -155,7 +155,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="quotationModalLabel2">Pilih Quotation Asal untuk Quotation : <span id="nomorQuotationTujuan"></span></h5>
+        <h5 class="modal-title" id="quotationModalLabel2">Pilih Quotation Asal untuk Quotation Ini <br><span id="nomorQuotationTujuan"></span></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -363,14 +363,14 @@
                     ]
                     },
                     @if(in_array(Auth::user()->role_id,[29]))
-                    {
-                    text: '<i class="mdi mdi-content-copy mr-1"></i> <span class="d-none d-sm-inline-block">Copy Quotation</span>',
-                    className: 'create-new btn btn-label-warning waves-effect waves-light',
-                    action: function (e, dt, node, config)
-                        {
-                            $("#quotationModal").modal("show");
-                        }
-                    },
+                    // {
+                    // text: '<i class="mdi mdi-content-copy mr-1"></i> <span class="d-none d-sm-inline-block">Copy Quotation</span>',
+                    // className: 'create-new btn btn-label-warning waves-effect waves-light',
+                    // action: function (e, dt, node, config)
+                    //     {
+                    //         $("#quotationModal").modal("show");
+                    //     }
+                    // },
                     {
                         text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Quotation</span>',
                         className: 'btn btn-label-primary waves-effect waves-light',
