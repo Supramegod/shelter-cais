@@ -128,7 +128,7 @@ class QuotationController extends Controller
                 "deleted_at" => $current_date_time ,
                 "deleted_by" => Auth::user()->full_name,
             ]);
-            
+
             foreach ($detail as $key => $value) {
                 $dataToInsert = (array) $value;
                 unset($dataToInsert['id']);
@@ -302,6 +302,224 @@ class QuotationController extends Controller
                 
                 DB::table("sl_quotation_training")->insert($dataToInsertD);
             }
+
+            DB::commit();
+
+            return redirect()->route('quotation.step',['id'=>$qtujuanId,'step'=>'1']);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+    public function ajukanUlangQuotation (Request $request,$qasalId){
+        $current_date_time = Carbon::now()->toDateTimeString();
+        $current_date = Carbon::now()->toDateString();
+        try {
+            DB::beginTransaction();
+            $qtujuan = DB::table("sl_quotation")->where('id',$qasalId)->first();
+            $qClient = DB::table("sl_quotation_client")->where('id',$qtujuan->quotation_client_id)->first();
+
+            $dataToInsertQuotation = (array) $qtujuan;
+            unset($dataToInsertQuotation['id']);
+            unset($dataToInsertQuotation['nomor']);
+
+            $dataToInsertQuotation['nomor'] = $this->generateNomor($qClient->leads_id,$qtujuan->company_id);
+            $dataToInsertQuotation['revisi'] = $qtujuan->revisi+1;
+            $dataToInsertQuotation['alasan_revisi'] = $request->alasan;            
+            $dataToInsertQuotation['quotation_asal_id'] = $qtujuan->id;
+            $dataToInsertQuotation['created_at'] = $current_date_time;
+            $dataToInsertQuotation['created_by'] = Auth::user()->full_name;
+            $qtujuanId = DB::table('sl_quotation')->insertGetId($dataToInsertQuotation);
+
+            // QUotation Detail
+            $detail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_detail")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+
+            foreach ($detail as $key => $value) {
+                $dataToInsert = (array) $value;
+                unset($dataToInsert['id']);
+                $dataToInsert['quotation_id'] = $qtujuanId;
+                $dataToInsert['created_at'] = $current_date_time;
+                $dataToInsert['created_by'] = Auth::user()->full_name;
+                
+                $newId = DB::table("sl_quotation_detail")->insertGetId($dataToInsert);
+
+                // Quotation Chemical
+                $chemical = DB::table("sl_quotation_chemical")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+                DB::table("sl_quotation_chemical")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
+                    "deleted_at" => $current_date_time ,
+                    "deleted_by" => Auth::user()->full_name,
+                ]);
+                foreach ($chemical as $keyd => $valued) {
+                    $dataToInsertD = (array) $valued;
+                    unset($dataToInsertD['id']);
+                    $dataToInsertD['quotation_id'] = $qtujuanId;
+                    $dataToInsertD['quotation_detail_id'] = $newId;
+                    $dataToInsertD['created_at'] = $current_date_time;
+                    $dataToInsertD['created_by'] = Auth::user()->full_name;
+                    
+                    DB::table("sl_quotation_chemical")->insert($dataToInsertD);
+                }
+
+                // Quotation Detail Requirement
+                $requirement = DB::table("sl_quotation_detail_requirement")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+                DB::table("sl_quotation_detail_requirement")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
+                    "deleted_at" => $current_date_time ,
+                    "deleted_by" => Auth::user()->full_name,
+                ]);
+                foreach ($requirement as $keyd => $valued) {
+                    $dataToInsertD = (array) $valued;
+                    unset($dataToInsertD['id']);
+                    $dataToInsertD['quotation_id'] = $qtujuanId;
+                    $dataToInsertD['quotation_detail_id'] = $newId;
+                    $dataToInsertD['created_at'] = $current_date_time;
+                    $dataToInsertD['created_by'] = Auth::user()->full_name;
+                    
+                    DB::table("sl_quotation_detail_requirement")->insert($dataToInsertD);
+                }
+                
+                // Quotation Detail Tunjangan
+                $tunjangan = DB::table("sl_quotation_detail_tunjangan")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+                DB::table("sl_quotation_detail_tunjangan")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
+                    "deleted_at" => $current_date_time ,
+                    "deleted_by" => Auth::user()->full_name,
+                ]);
+                foreach ($tunjangan as $keyd => $valued) {
+                    $dataToInsertD = (array) $valued;
+                    unset($dataToInsertD['id']);
+                    $dataToInsertD['quotation_id'] = $qtujuanId;
+                    $dataToInsertD['quotation_detail_id'] = $newId;
+                    $dataToInsertD['created_at'] = $current_date_time;
+                    $dataToInsertD['created_by'] = Auth::user()->full_name;
+                    
+                    DB::table("sl_quotation_detail_tunjangan")->insert($dataToInsertD);
+                }
+
+                // Quotation Kaporlap
+                $kaporlap = DB::table("sl_quotation_kaporlap")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+                DB::table("sl_quotation_kaporlap")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
+                    "deleted_at" => $current_date_time ,
+                    "deleted_by" => Auth::user()->full_name,
+                ]);
+                foreach ($kaporlap as $keyd => $valued) {
+                    $dataToInsertD = (array) $valued;
+                    unset($dataToInsertD['id']);
+                    $dataToInsertD['quotation_id'] = $qtujuanId;
+                    $dataToInsertD['quotation_detail_id'] = $newId;
+                    $dataToInsertD['created_at'] = $current_date_time;
+                    $dataToInsertD['created_by'] = Auth::user()->full_name;
+                    
+                    DB::table("sl_quotation_kaporlap")->insert($dataToInsertD);
+                }
+            }
+
+            // Quotation Devices
+            $devices = DB::table("sl_quotation_devices")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_devices")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+            foreach ($devices as $keyd => $valued) {
+                $dataToInsertD = (array) $valued;
+                unset($dataToInsertD['id']);
+                $dataToInsertD['quotation_id'] = $qtujuanId;
+                $dataToInsertD['created_at'] = $current_date_time;
+                $dataToInsertD['created_by'] = Auth::user()->full_name;
+                
+                DB::table("sl_quotation_devices")->insert($dataToInsertD);
+            }
+
+            // Quotation Ohc
+            $ohc = DB::table("sl_quotation_ohc")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_ohc")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+            foreach ($ohc as $keyd => $valued) {
+                $dataToInsertD = (array) $valued;
+                unset($dataToInsertD['id']);
+                $dataToInsertD['quotation_id'] = $qtujuanId;
+                $dataToInsertD['created_at'] = $current_date_time;
+                $dataToInsertD['created_by'] = Auth::user()->full_name;
+                
+                DB::table("sl_quotation_ohc")->insert($dataToInsertD);
+            }
+
+            // Quotation Aplikasi
+            $aplikasi = DB::table("sl_quotation_aplikasi")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_aplikasi")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+            foreach ($aplikasi as $key => $value) {
+                $dataToInsertD = (array) $value;
+                unset($dataToInsertD['id']);
+                $dataToInsertD['quotation_id'] = $qtujuanId;
+                $dataToInsertD['created_at'] = $current_date_time;
+                $dataToInsertD['created_by'] = Auth::user()->full_name;
+                
+                DB::table("sl_quotation_aplikasi")->insert($dataToInsertD);
+            }
+
+            // Quotation Kerjasama
+            $kerjasama = DB::table("sl_quotation_kerjasama")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_kerjasama")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+            foreach ($kerjasama as $key => $value) {
+                $dataToInsertD = (array) $value;
+                unset($dataToInsertD['id']);
+                $dataToInsertD['quotation_id'] = $qtujuanId;
+                $dataToInsertD['created_at'] = $current_date_time;
+                $dataToInsertD['created_by'] = Auth::user()->full_name;
+                
+                DB::table("sl_quotation_kerjasama")->insert($dataToInsertD);
+            }
+
+            // Quotation PIC
+            $pic = DB::table("sl_quotation_pic")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_pic")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+            foreach ($pic as $key => $value) {
+                $dataToInsertD = (array) $value;
+                unset($dataToInsertD['id']);
+                $dataToInsertD['quotation_id'] = $qtujuanId;
+                $dataToInsertD['created_at'] = $current_date_time;
+                $dataToInsertD['created_by'] = Auth::user()->full_name;
+                
+                DB::table("sl_quotation_pic")->insert($dataToInsertD);
+            }
+
+            // Quotation Training
+            $training = DB::table("sl_quotation_training")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_training")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+            foreach ($training as $key => $value) {
+                $dataToInsertD = (array) $value;
+                unset($dataToInsertD['id']);
+                $dataToInsertD['quotation_id'] = $qtujuanId;
+                $dataToInsertD['created_at'] = $current_date_time;
+                $dataToInsertD['created_by'] = Auth::user()->full_name;
+                
+                DB::table("sl_quotation_training")->insert($dataToInsertD);
+            }
+
+            // hapus data yang sudah di ajukan ulang
+            DB::table("sl_quotation")->where('id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
 
             DB::commit();
 

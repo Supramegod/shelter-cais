@@ -66,7 +66,7 @@
               @if($data->is_aktif==1)
                 <a href="javascript:void(0)" class="btn btn-secondary" id="btn-copy-quotation"><i class="mdi mdi-content-copy"></i>&nbsp; Copy Ke</a>
                 @if($data->spk==null)
-                <a href="javascript:void(0)" class="btn btn-danger"><i class="mdi mdi-refresh"></i>&nbsp; Ajukan Ulang</a>
+                <a href="javascript:void(0)" class="btn btn-danger" id="btn-ajukan-quotation"><i class="mdi mdi-refresh"></i>&nbsp; Ajukan Ulang</a>
                 <button type="button" onclick="window.location.href='{{route('spk.add',['id'=> $data->id])}}'" class="btn btn-info" @if($canCreateSpk==0) disabled @endif><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</button>
                 @endif
               @endif
@@ -2075,6 +2075,79 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
     
     $("#btn-copy-quotation").on("click",function(){
       $("#quotationModal").modal("show");
+    })
+    
+    $("#btn-ajukan-quotation").on("click",function(){
+      Swal.fire({
+        title: 'Konfirmasi',
+        text: `Apakah Anda ingin mengajukan quotation ulang untuk quotation nomor {{$quotation->nomor}}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Ajukan Ulang',
+        cancelButtonText: 'Batal',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Memunculkan prompt untuk mengisi alasan
+          Swal.fire({
+            title: 'Masukkan Alasan',
+            input: 'textarea',
+            inputPlaceholder: 'Tuliskan alasan pengajuan ulang...',
+            inputAttributes: {
+              'aria-label': 'Tuliskan alasan pengajuan ulang'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Ajukan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            preConfirm: (alasan) => {
+              if (!alasan) {
+                Swal.showValidationMessage('Alasan tidak boleh kosong');
+                return false;
+              }
+              return alasan;
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Logika untuk memproses pengajuan ulang
+              let alasan = result.value;
+              Swal.fire({
+                title: 'Berhasil!',
+                text: 'Quotation diajukan ulang.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              });
+
+              // Bangun URL dengan alasan
+              let baseUrl = "{{ route('quotation.ajukan-ulang-quotation', ['quotation' => ':quotation']) }}";
+              let url = baseUrl.replace(':quotation', {{$quotation->id}});
+              // Tambahkan alasan sebagai parameter URL
+              url += `?alasan=${encodeURIComponent(alasan)}`;
+                
+              location.href = url;
+              console.log("gogo");
+              
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+              Swal.fire({
+                title: 'Dibatalkan',
+                text: 'Pengajuan ulang dibatalkan.',
+                icon: 'info',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            }
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire({
+            title: 'Dibatalkan',
+            text: 'Pengajuan ulang dibatalkan.',
+            icon: 'info',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }
+      });
     })
 </script>
 @endsection
