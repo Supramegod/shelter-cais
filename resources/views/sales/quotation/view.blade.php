@@ -64,7 +64,7 @@
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$data->id}}" @if($data->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
               @endif
               @if($data->is_aktif==1)
-                <a href="javascript:void(0)" class="btn btn-secondary" id="btn-copy-quotation"><i class="mdi mdi-content-copy"></i>&nbsp; Copy</a>
+                <a href="javascript:void(0)" class="btn btn-secondary" id="btn-copy-quotation"><i class="mdi mdi-content-copy"></i>&nbsp; Copy Ke</a>
                 @if($data->spk==null)
                 <a href="javascript:void(0)" class="btn btn-danger"><i class="mdi mdi-refresh"></i>&nbsp; Ajukan Ulang</a>
                 <button type="button" onclick="window.location.href='{{route('spk.add',['id'=> $data->id])}}'" class="btn btn-info" @if($canCreateSpk==0) disabled @endif><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</button>
