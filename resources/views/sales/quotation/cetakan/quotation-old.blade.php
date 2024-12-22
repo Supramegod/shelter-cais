@@ -49,12 +49,6 @@
         .kata-pengantar {
             margin-top: 40mm; /* Margin atas untuk konten */
         }
-        .hasil-survey {
-            margin-top: 0mm; /* Margin atas untuk konten */
-        }
-        .solusi-alih-daya {
-            margin-top: 0mm; /* Margin atas untuk konten */
-        }
         .pendahuluan {
             margin-top: 20mm; /* Margin atas untuk konten */
         }
@@ -106,7 +100,7 @@
             PENGANTAR</h1>
             <br>
 <p>Dengan hormat,</p>
-<p>Kami, <b>Shelter Indonesia</b> mengucapkan salam sejahtera untuk Bpk/Ibu XXXXXXX dan seluruh jajaran
+<p>Kami, <b>Shelter Indonesia</b> mengucapkan salam sejahtera untuk Bpk/Ibu dan seluruh jajaran
 manajemen di <b>{{$leads->nama_perusahaan}}</b>. Sehubungan dengan semakin kompleksnya
 tuntutan bisnis dimasa sekarang, kami ingin menawarkan layanan yang dapat membantu
 meningkatkan efisiensi dan produktivitas operasional perusahaan Bpk/Ibu.</p>
@@ -128,34 +122,14 @@ mencapai tujuan bisnis perusahaan Bpk/Ibu.
 <p>
 Hormat kami,
 <br><br><br>
-<b>[NAMA PENGIRIM]</b>
-<br>[POSISI PENGIRIM]
+<b>Achmad Firmanto</b>
+<br>Business Development
+<br>+62 822 404 480 55
 </p>
 </div>
 </div>
-<!-- Halaman 3: HASIL SURVEY -->
-<div class="content">
-    <div class="hasil-survey">
-        <br><br><br>
-        <h1>HASIL <br>SURVEY</h1>
-        <br>
-    </div>
-</div>
-<!-- Halaman 4: SOLUSI ALIH DAYA -->
-<div class="content">
-    <div class="solusi-alih-daya">
-        <br><br><br>
-        <h1 style="text-align: left !important;">SOLUSI ALIH DAYA BESERTA FITUR LAYANANNYA</h1>
-        <br>
-    </div>
-</div>
 <div class="content">
     <div style="margin-top:50px;margin-right:20px;color:black !important;font-size:10pt !important">
-        <p style="text-align:center;color:#002060;">[Lampiran Penawaran Harga Jasa Alih Daya Sesuai dengan Solusi atas Hasil Survey]<br>
-        PENAWARAN HARGA JASA ALIH TENAGA OFFICE BOY/GIRL<br>
-        {{strtoupper($data->nama_site)}}<br>
-        TAHUN {{$master->tahun_quotation}}</p>
-
         <table class="bordered">
             <thead class="text-center">
                 <tr class="table-success">
@@ -202,7 +176,7 @@ Hormat kami,
                 </tr>
                 @endforeach
                 <tr class="table-success">
-                <td class="fw-bold text-center">TOTAL</th>
+                <td class="fw-bold text-center">Total Base Manpower Cost per Month (THP)</th>
                 @foreach($data->quotation_detail as $detailJabatan)
                 <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_base_manpower,2,",",".")}}</th>
                 @endforeach
@@ -307,18 +281,12 @@ Hormat kami,
                 @endforeach
                 </tr>
                 <tr class="table-success">
-                    <td class="fw-bold text-center">TOTAL</th>
-                    @foreach($data->quotation_detail as $detailJabatan)
-                    <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_exclude_base_manpower,2,",",".")}}</th>
-                    @endforeach
+                <td class="fw-bold text-center">Total Exclude Base Manpower Cost</th>
+                @foreach($data->quotation_detail as $detailJabatan)
+                <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_exclude_base_manpower,2,",",".")}}</th>
+                @endforeach
                 </tr>
-                <tr class="table-success">
-                    <td class="fw-bold text-center">Biaya Pembinaan & Monitoring</th>
-                    @foreach($data->quotation_detail as $detailJabatan)
-                    <td class="fw-bold" style="text-align:right"></th>
-                    @endforeach
-                </tr>
-                <!-- <tr> -->
+                <tr>
                 <!-- <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
                 @foreach($data->quotation_detail as $detailJabatan)
                 <td class="text-center fw-bold">Unit/Month</th>
@@ -401,7 +369,9 @@ Hormat kami,
     </div>
     <div class="mt-3" style="padding-left:40px;color:black !important;font-size:9pt !important">
         <p><b><i>Note :</i></b>	<br>
-        <b>Upah pokok base on Umk {{$master->tahun_quotation}} </b> <br>
+        <b>Upah pokok base on Umk 2024 </b> <br>
+        Tunjangan overtime flat total 75 jam. <span class="text-danger">*jika system jam kerja 12 jam </span> <br>
+        Tunjangan hari raya ditagihkan provisi setiap bulan. (upah/12) <br>
         @if($master->program_bpjs=="2 BPJS")
         BPJS Ketenagakerjaan 2 Program (JKK, JKM). 
         @elseif($master->program_bpjs=="3 BPJS")
@@ -410,12 +380,30 @@ Hormat kami,
         BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP). 
         @endif
 <span class="text-danger">Pengalian base on upah</span>		<br>
-BPJS Kesehatan. <span class="text-danger">*base on Umk {{$master->tahun_quotation}}</span> <br>
+BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
 <br>
 <span class="text-danger">*prosentase Bpjs Tk J. Kecelakaan Kerja disesuaikan dengan tingkat resiko sesuai ketentuan.</span>
 </p>
 </div>
 </div>
+        <!-- Halaman 4: Pendahuluan -->
+        <div class="content">
+            <div class="pendahuluan">
+                <h1>KETENTUAN PENAWARAN HARGA</h1>
+                <h1>JASA {{strtoupper($data->kebutuhan)}}</h1>
+                <div style="margin-top:20px">
+                    <table>
+                        @foreach($listKerjasama as $kker => $valker)
+                        <tr>
+                            <td style="width:10%;vertical-align: top;">{{$kker+1}}.</td>
+                            <td>{!! $valker->perjanjian !!}</td>
+                        </tr>
+                        @endforeach
+                    </table>
+                </div>
+            </div>
+        </div>
+
 </body>
 <script>
         window.print();

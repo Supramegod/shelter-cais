@@ -119,6 +119,7 @@ class PksController extends Controller
 
     public function save(Request $request){
         try {
+            DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
             $dataSpk = DB::table('sl_spk')->where('id',$request->spk_id)->first();
             $quotationClient = DB::table('sl_quotation_client')->where('id',$dataSpk->quotation_client_id)->first();
@@ -149,8 +150,24 @@ class PksController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
+            //insert perjanjian
+            $awalan = "";
+            $pasal1 = "";
+            $pasal2 = "";
+            $pasal3 = "";
+            $pasal4 = "";
+            $pasal5 = "";
+            $pasal6 = "";
+            $pasal7 = "";
+            $pasal8 = "";
+            $pasal9 = "";
+            $pasal10 = "";
+            $lampiran = "";
+
+            DB::commit();
             return redirect()->route('pks.view',$newId);
         } catch (\Exception $e) {
+            DB::rollback();
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -197,14 +214,14 @@ class PksController extends Controller
             $quotationClient = DB::table('sl_quotation_client')->where('id',$data->quotation_client_id)->first();
             $quotation = DB::table('sl_quotation')->where('quotation_client_id',$data->quotation_client_id)->get();
             $data->status = DB::table('m_status_pks')->where('id',$data->status_pks_id)->first()->nama;
+            $perjanjian = DB::table('sl_pks_perjanjian')->where('pks_id',$id)->whereNull('deleted_at')->get();
 
-            return view('sales.pks.view',compact('dataQuotation','spk','data','quotation','quotationClient'));
+            return view('sales.pks.view',compact('perjanjian','dataQuotation','spk','data','quotation','quotationClient'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
-        
     }
 
     public function uploadPks (Request $request) {
@@ -646,29 +663,46 @@ class PksController extends Controller
     public function cetakPks (Request $request,$id){
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
-            $data = DB::table("sl_pks")->where("id",$id)->first();
-            $quotationClient = DB::table("sl_quotation_client")->where("id",$data->quotation_client_id)->first();
-            $quotation = DB::table("sl_quotation")->where("quotation_client_id",$quotationClient->id)->get();
-            $leads = DB::table("sl_leads")->where("id",$data->leads_id)->first();
-            foreach ($quotation as $key => $value) {
-                $value->tgl_penempatan = Carbon::createFromFormat('Y-m-d',$value->tgl_penempatan)->isoFormat('D MMMM Y');
-                $value->detail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where("quotation_id",$value->id)->get();
-
-                $totalhc = 0;
-                foreach ($value->detail as $keyd => $valued) {
-                    $totalhc+=$valued->jumlah_hc;
-                }
-                $value->total_hc = $totalhc;
-                $value->pic = DB::table("sl_quotation_pic")->whereNull('deleted_at')->where('quotation_id',$value->id)->where('is_kuasa',1)->first();
-            }
-
-            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation[0]->company_id)->first();
-
-            return view('sales.pks.cetakan.pks',compact('now','data','quotation','quotationClient','leads','company'));
+            $data = DB::table('sl_pks_perjanjian')->where('pks_id',$id)->get();
+            return view('sales.pks.cetakan.pks',compact('now','data'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
     }
+
+    public function editPerjanjian ($id){
+        try {
+            $data = DB::table('sl_pks_perjanjian')->where('id',$id)->first();
+            $pks = DB::table('sl_pks')->where('id',$data->pks_id)->first();
+            
+            return view('sales.pks.edit-perjanjian',compact('data','pks'));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveEditPerjanjian(Request $request,$id){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $data = DB::table('sl_pks_perjanjian')->where('id',$id)->first();
+
+            DB::table('sl_pks_perjanjian')->where('id',$id)->update([
+                'pasal' => $request->pasal,
+                'judul' => $request->judul,
+                'raw_text' => $request->raw_text,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name 
+            ]);
+            return redirect()->route('pks.view',$data->pks_id);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
 }

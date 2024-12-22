@@ -7,7 +7,7 @@
   <!-- Multi Column with Form Separator -->
   <div class="row">
     <!-- Form Label Alignment -->
-    <div class="col-md-8">
+    <div class="col-md-9">
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
@@ -68,10 +68,32 @@
               </table>
             </div>
           </div>
+          <h6>3. Perjanjian Kerja Sama</h6>
+            @foreach($perjanjian as $key => $value)
+            <div class="row mb-1">
+              <div class="table-responsive overflow-hidden table-quotation">
+                <table id="table-quotation" class="dt-column-search table w-100 table-hover">
+                  <thead>
+                    <tr>
+                    <th style="text-align:center">{{$value->pasal}} &nbsp; &nbsp; <a href="{{route('pks.edit-perjanjian',$value->id)}}" class="btn btn-warning"><i class="mdi mdi-pencil"></i></a></th>
+                    </tr>
+                    <tr>
+                      <th style="text-align:center">{{$value->judul}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{!!$value->raw_text!!}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            @endforeach
         </form>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="row">
         <div class="card h-100">
           <div class="card-header d-flex align-items-center justify-content-between">

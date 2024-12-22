@@ -131,6 +131,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/pks/isi-checklist/{id}', 'isiChecklist')->name('pks.isi-checklist');
         Route::post('/sales/pks/save-checklist', 'saveChecklist')->name('pks.save-checklist');
 
+        Route::get('/sales/pks/edit-perjanjian/{id}', 'editPerjanjian')->name('pks.edit-perjanjian');
+        Route::post('/sales/pks/save-edit-perjanjian/{id}', 'saveEditPerjanjian')->name('pks.save-edit-perjanjian');
     });
 
     Route::controller(QuotationController::class)->group(function() {

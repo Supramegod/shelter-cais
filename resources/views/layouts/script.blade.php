@@ -32,6 +32,10 @@
     <!-- Main JS -->
     <script src="{{ asset('public/assets/js/main.js') }}"></script>
 
+    <!-- include summernote css/js -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
+
     <!-- <script src="{{ asset('public/assets/js/form-wizard-numbered.js') }}"></script> -->
     <!-- <script src="{{ asset('public/assets/js/form-wizard-validation.js') }}"></script> -->
     <script>
