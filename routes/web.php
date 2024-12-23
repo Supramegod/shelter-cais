@@ -113,6 +113,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/spk/upload-spk', 'uploadSPK')->name('spk.upload-spk');
         Route::get('/sales/spk/cetak-spk/{id}', 'cetakSpk')->name('spk.cetak-spk');
 
+        // Ajukan Ulang
+        Route::get('/sales/spk/ajukan-ulang-quotation/{spk}', 'ajukanUlangQuotation')->name('spk.ajukan-ulang-quotation');
+
     });
 
     Route::controller(PksController::class)->group(function() {

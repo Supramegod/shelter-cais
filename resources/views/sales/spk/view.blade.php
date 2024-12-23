@@ -147,9 +147,78 @@
     window.location.replace("{{route('spk')}}");
   });
   
-  $('#btn-ajukan-ulang').on('click',function () {
-    alert('Diajukan Ulang');
-  });
+  $("#btn-ajukan-ulang").on("click",function(){
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: `Apakah Anda ingin mengajukan quotation ulang untuk SPK nomor {{$data->nomor}}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Ajukan Ulang',
+      cancelButtonText: 'Batal',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Memunculkan prompt untuk mengisi alasan
+        Swal.fire({
+          title: 'Masukkan Alasan',
+          input: 'textarea',
+          inputPlaceholder: 'Tuliskan alasan pengajuan ulang...',
+          inputAttributes: {
+            'aria-label': 'Tuliskan alasan pengajuan ulang'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Ajukan',
+          cancelButtonText: 'Batal',
+          reverseButtons: true,
+          preConfirm: (alasan) => {
+            if (!alasan) {
+              Swal.showValidationMessage('Alasan tidak boleh kosong');
+              return false;
+            }
+            return alasan;
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Logika untuk memproses pengajuan ulang
+            let alasan = result.value;
+            Swal.fire({
+              title: 'Berhasil!',
+              text: 'Quotation diajukan ulang.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+            // Bangun URL dengan alasan
+            let baseUrl = "{{ route('spk.ajukan-ulang-quotation', ['spk' => ':spk']) }}";
+            let url = baseUrl.replace(':spk', {{$data->id}});
+            // Tambahkan alasan sebagai parameter URL
+            url += `?alasan=${encodeURIComponent(alasan)}`;
+              
+            location.href = url;
+            console.log("gogo");
+            
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire({
+              title: 'Dibatalkan',
+              text: 'Pengajuan ulang dibatalkan.',
+              icon: 'info',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          }
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire({
+          title: 'Dibatalkan',
+          text: 'Pengajuan ulang dibatalkan.',
+          icon: 'info',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    });
+  })
   
   $('#btn-upload-spk').on('click', function() {
         // Menampilkan SweetAlert dengan form upload
