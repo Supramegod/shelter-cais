@@ -52,11 +52,11 @@ class Controller extends BaseController
                             if(Auth::user()->role_id==96){
                                 array_push($approval,$quotation);
                             }
-                        }else if($quotation->step == 100 && $data->is_aktif==0 && $data->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
+                        }else if($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
                             if(Auth::user()->role_id==97){
                                 array_push($approval,$quotation);
                             }
-                        }else if ( $quotation->step == 100 && $data->is_aktif==0 && $data->ot2 != null && $data->ot1 != null && $data->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
+                        }else if ( $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
                             if(Auth::user()->role_id==99){
                                 array_push($approval,$quotation);
                             }

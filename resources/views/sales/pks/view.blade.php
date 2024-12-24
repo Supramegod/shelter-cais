@@ -179,7 +179,7 @@
             </div>
             <br>
             <hr>
-            @if($data->status_pks_id == 1)
+            @if($data->status_pks_id != 1)
             <div class="col-12 text-center mt-2">
               <button id="btn-ajukan-ulang" class="btn btn-danger w-100 waves-effect waves-light">
                 <span class="me-1">Ajukan Ulang Quotation</span>
@@ -214,7 +214,74 @@
   });
   
   $('#btn-ajukan-ulang').on('click',function () {
-    alert('Diajukan Ulang');
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: `Apakah Anda ingin mengajukan quotation ulang untuk PKS nomor {{$data->nomor}} ?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Ajukan Ulang',
+      cancelButtonText: 'Batal',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Memunculkan prompt untuk mengisi alasan
+        Swal.fire({
+          title: 'Masukkan Alasan',
+          input: 'textarea',
+          inputPlaceholder: 'Tuliskan alasan pengajuan ulang...',
+          inputAttributes: {
+            'aria-label': 'Tuliskan alasan pengajuan ulang'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Ajukan',
+          cancelButtonText: 'Batal',
+          reverseButtons: true,
+          preConfirm: (alasan) => {
+            if (!alasan) {
+              Swal.showValidationMessage('Alasan tidak boleh kosong');
+              return false;
+            }
+            return alasan;
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Logika untuk memproses pengajuan ulang
+            let alasan = result.value;
+            Swal.fire({
+              title: 'Berhasil!',
+              text: 'Quotation diajukan ulang.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+            // Bangun URL dengan alasan
+            let baseUrl = "{{ route('pks.ajukan-ulang-quotation', ['pks' => ':pks']) }}";
+            let url = baseUrl.replace(':pks', {{$data->id}});
+            // Tambahkan alasan sebagai parameter URL
+            url += `?alasan=${encodeURIComponent(alasan)}`;
+              
+            location.href = url;            
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire({
+              title: 'Dibatalkan',
+              text: 'Pengajuan ulang dibatalkan.',
+              icon: 'info',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          }
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire({
+          title: 'Dibatalkan',
+          text: 'Pengajuan ulang dibatalkan.',
+          icon: 'info',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    });
   });
   
 

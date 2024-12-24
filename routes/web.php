@@ -136,6 +136,9 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/pks/edit-perjanjian/{id}', 'editPerjanjian')->name('pks.edit-perjanjian');
         Route::post('/sales/pks/save-edit-perjanjian/{id}', 'saveEditPerjanjian')->name('pks.save-edit-perjanjian');
+
+        // Ajukan Ulang
+        Route::get('/sales/pks/ajukan-ulang-quotation/{pks}', 'ajukanUlangQuotation')->name('pks.ajukan-ulang-quotation');
     });
 
     Route::controller(QuotationController::class)->group(function() {

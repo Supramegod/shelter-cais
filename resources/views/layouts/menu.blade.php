@@ -32,16 +32,16 @@
         </li>
         <!-- SALES , SPV SALES , MAN SALES -->
         @elseif(in_array(Auth::user()->role_id,[29,31,32,33]))
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <div data-i18n="Customer">Customer</div>
+            </a>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
@@ -70,16 +70,16 @@
         </li>
         <!-- RO , SPV Operational , Man Operational -->
         @elseif(in_array(Auth::user()->role_id,[4,5,6,8]))
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <div data-i18n="Customer">Customer</div>
+            </a>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
@@ -91,16 +91,16 @@
 
         <!-- CRM , SPV CRM , Man CRM -->
         @elseif(in_array(Auth::user()->role_id,[54,55,56]))
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <div data-i18n="Customer">Customer</div>
+            </a>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
@@ -143,16 +143,16 @@
                 </li>
             </ul>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <div data-i18n="Customer">Customer</div>
+            </a>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
@@ -196,16 +196,16 @@
                 </li>
             </ul>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <div data-i18n="Customer">Customer</div>
+            </a>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">

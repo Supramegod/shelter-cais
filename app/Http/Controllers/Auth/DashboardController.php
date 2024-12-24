@@ -46,19 +46,23 @@ class DashboardController extends Controller
             $jumlahMenungguApproval++;
             array_push($dataMenungguApproval,$quotation);
 
-            if ($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot1 == null) {
-                $jumlahMenungguDirSales++;
-                if(Auth::user()->role_id==96){
-                    array_push($dataMenungguAnda,$quotation);
+            if ($quotation->step == 100 && $quotation->is_aktif==0){
+                if ($quotation->ot1 == null) {
+                    $jumlahMenungguDirSales++;
+                    if(Auth::user()->role_id==96){
+                        array_push($dataMenungguAnda,$quotation);
+                    }
                 }
-            }else if($quotation->step == 100 && $data->is_aktif==0 && $data->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
-                $jumlahMenungguDirkeu++;
-                if(Auth::user()->role_id==97){
-                    array_push($dataMenungguAnda,$quotation);
+                if($quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
+                    $jumlahMenungguDirkeu++;
+                    if(Auth::user()->role_id==97){
+                        array_push($dataMenungguAnda,$quotation);
+                    }
                 }
-            }else if ( $quotation->step == 100 && $data->is_aktif==0 && $data->ot2 != null && $data->ot1 != null && $data->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
-                $jumlahMenungguDirut++;
-            }else if ( $quotation->step != 100){
+                if ( $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
+                    $jumlahMenungguDirut++;
+                }
+            } else if ( $quotation->step != 100){
                 $quotationBelumLengkap++;
                 if(Auth::user()->role_id==99){
                     array_push($dataMenungguAnda,$quotation);
@@ -95,11 +99,11 @@ class DashboardController extends Controller
                     if(Auth::user()->role_id==96){
                         array_push($arrData,$quotation);
                     }
-                }else if($quotation->step == 100 && $data->is_aktif==0 && $data->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
+                }else if($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
                     if(Auth::user()->role_id==97){
                         array_push($arrData,$quotation);
                     }
-                }else if ( $quotation->step == 100 && $data->is_aktif==0 && $data->ot2 != null && $data->ot1 != null && $data->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
+                }else if ( $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
                     if(Auth::user()->role_id==99){
                         array_push($arrData,$quotation);
                     }
