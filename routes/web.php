@@ -47,6 +47,10 @@ Route::controller(ContactController::class)->group(function() {
     Route::post('/webhook-endpoint/{key}', 'handleWebhook')->name('webhook-endpoint');
 });
 
+Route::controller(QuotationController::class)->group(function() {
+    Route::get('/view/checklist/{id}/{key}', 'viewChecklist')->name('quotation.view-checklist');
+});
+
 Route::group(['middleware' => ['verify_leads_api']], function () {
     Route::controller(ContactController::class)->group(function() {
         Route::post('/api/contact-save', 'apiContactSave')->name('api.contact.save');

@@ -532,7 +532,7 @@ class QuotationController extends Controller
             abort(500);
         }
     }
-
+    
     public function cetakChecklist (Request $request,$id){
         try {
             $pks = DB::table('sl_pks')->where('id',$id)->first();
@@ -4088,4 +4088,65 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             abort(500);
         }
     }
+
+    public function viewChecklist ($id,$key){
+        try {
+            $strKey = md5($id."-SALESSHELTER");
+            if($strKey != $key){
+                return "Forbidden";
+            }
+
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            $spkD = DB::table('sl_spk_detail')->where('spk_id',$pks->spk_id)->whereNull('deleted_at')->first();
+            $quotation = DB::table('sl_quotation')->where('id',$spkD->quotation_id)->whereNull('deleted_at')->first();
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
+            $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
+            $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
+            $quotation = DB::table("sl_quotation")->where('id',$spkD->quotation_id)->first();
+            $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
+            $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$spkD->quotation_id)->whereNull('deleted_at')->get();
+
+            $quotation->mulai_kontrak = Carbon::parse($quotation->mulai_kontrak)->format('d F Y');
+            $quotation->kontrak_selesai = Carbon::parse($quotation->kontrak_selesai)->format('d F Y');
+            $quotation->tgl_quotation = Carbon::parse($quotation->tgl_quotation)->format('d F Y');
+            $quotation->tgl_penempatan = Carbon::parse($quotation->tgl_penempatan)->format('d F Y');
+
+            $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+            $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
+            $sPersonil = "";
+            $jPersonil = DB::select("SELECT sum(jumlah_hc) as jumlah_hc FROM sl_quotation_detail WHERE quotation_id = $quotation->id and deleted_at is null;");
+            if($jPersonil!=null){
+                if ($jPersonil[0]->jumlah_hc!=null && $jPersonil[0]->jumlah_hc!=0) {
+                    $sPersonil .= $jPersonil[0]->jumlah_hc." Manpower (";
+                    $detailPersonil = DB::table('sl_quotation_detail')
+                    ->whereNull('sl_quotation_detail.deleted_at')
+                    ->where('sl_quotation_detail.quotation_id',$quotation->id)
+                    ->get();
+                    foreach ($detailPersonil as $idp => $vdp) {
+                        if($idp !=0){
+                            $sPersonil .= ", ";
+                        }
+                        $sPersonil .= $vdp->jumlah_hc." ".$vdp->jabatan_kebutuhan;
+                    }
+
+                    $sPersonil .= " )";
+                }else{
+                    $sPersonil = "-";
+                }
+            }else{
+                $sPersonil = "-";
+            }
+            $quotation->jumlah_personel = $sPersonil;
+
+            $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+
+            $listPic = DB::table('sl_quotation_pic')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
+            return view('sales.quotation.cetakan.checklist',compact('listPic','listTraining','listTrainingQ','salaryRuleQ','salaryRule','leads','quotation','now'));
+        } catch (\Exception $e) {
+            return "Error";
+        }
+    }
+
+
 }
