@@ -91,6 +91,20 @@
 
         <!-- CRM , SPV CRM , Man CRM -->
         @elseif(in_array(Auth::user()->role_id,[54,55,56]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
+                <div data-i18n="Master Data">Dashboard</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
+                    <a href="{{route('dashboard-approval')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Dashboard Approval">Approval</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('customer')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>

@@ -19,6 +19,14 @@ use Illuminate\Support\Facades\Storage;
 class DashboardController extends Controller
 {
     public function dashboardApproval(Request $request){
+        $jumlahMenungguApproval = 0;
+        $jumlahMenungguDirSales = 0;
+        $jumlahMenungguDirkeu = 0;
+        $jumlahMenungguDirut = 0;
+        $quotationBelumLengkap = 0;
+        $jumlahMenungguManagerCrm = 0;
+        $error = 0;
+
         $data = DB::table('sl_quotation')
         ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
         ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
@@ -31,12 +39,7 @@ class DashboardController extends Controller
         ->where('sl_quotation.is_aktif',0)->get();
 
         $quotationExisting = DB::table('sl_quotation')->whereNull('deleted_at')->where('is_aktif',0)->get();
-        $jumlahMenungguApproval = 0;
-        $jumlahMenungguDirSales = 0;
-        $jumlahMenungguDirkeu = 0;
-        $jumlahMenungguDirut = 0;
-        $quotationBelumLengkap = 0;
-        $error =0;
+        
 
         $dataMenungguAnda = [];
         $dataMenungguApproval = [];
@@ -72,7 +75,7 @@ class DashboardController extends Controller
                 $error++;
             }
         }
-        return view('home.dashboard-approval',compact('dataBelumLengkap','dataMenungguApproval','dataMenungguAnda','jumlahMenungguApproval','jumlahMenungguDirSales','jumlahMenungguDirkeu','jumlahMenungguDirut','quotationBelumLengkap'));
+        return view('home.dashboard-approval',compact('jumlahMenungguManagerCrm','dataBelumLengkap','dataMenungguApproval','dataMenungguAnda','jumlahMenungguApproval','jumlahMenungguDirSales','jumlahMenungguDirkeu','jumlahMenungguDirut','quotationBelumLengkap'));
     }
 
     public function getListDashboardApprovalData(Request $request) {

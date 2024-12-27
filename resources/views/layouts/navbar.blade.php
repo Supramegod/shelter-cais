@@ -175,7 +175,7 @@
 
 
         <!-- Notification -->
-        <!-- <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-2 me-xl-1">
+        <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-2 me-xl-1">
             <a
             class="nav-link btn btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow"
             href="javascript:void(0);"
@@ -193,8 +193,8 @@
                 </div>
             </li>
             <li class="dropdown-notifications-list scrollable-container">
-                <ul class="list-group list-group-flush"> -->
-                <!-- <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action dropdown-notifications-item">
                     <div class="d-flex gap-2">
                     <div class="flex-shrink-0">
                         <div class="avatar me-1">
@@ -347,8 +347,8 @@
                         <small class="text-muted">5 days ago</small>
                     </div>
                     </div>
-                </li> -->
-                <!-- </ul>
+                </li>
+                </ul>
             </li>
             <li class="dropdown-menu-footer border-top p-2">
                 <a href="javascript:void(0);" class="btn btn-primary d-flex justify-content-center">
@@ -356,7 +356,7 @@
                 </a>
             </li>
             </ul>
-        </li> -->
+        </li>
         <!--/ Notification -->
 
         
