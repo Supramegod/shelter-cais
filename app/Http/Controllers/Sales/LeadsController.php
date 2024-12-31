@@ -668,6 +668,18 @@ class LeadsController extends Controller
         return Excel::download(new LeadsExport(), 'Leads-'.$dt.'.xlsx');
     }
 
+    public function childLeads (Request $request){
+        return DB::table('sl_leads')
+        ->whereNull('deleted_at')
+        ->where(function ($query) use ($request) {
+            $query->where('leads_id', $request->id)
+                  ->orWhere('id', $request->id);
+        })
+        ->OrderBy('id','asc')
+        ->get();
+    }
+    
+
     public function availableLeads (Request $request){
         try {
             $db2 = DB::connection('mysqlhris')->getDatabaseName();
@@ -681,6 +693,7 @@ class LeadsController extends Controller
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at')
+                        ->whereNull('sl_leads.leads_id')
                         ->whereNull('sl_leads.customer_id');
             
             //divisi sales
@@ -732,6 +745,53 @@ class LeadsController extends Controller
             ->make(true);
         } catch (\Exception $e) {
             dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveChildLeads(Request $request) {
+        try {
+            DB::beginTransaction();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $nomor = $this->generateNomor();
+            $leadsParent = DB::table('sl_leads')->where('id',$request->leads_id)->first();
+
+            $newId = DB::table('sl_leads')->insertGetId([
+                'nomor' =>  $nomor,
+                'leads_id' => $leadsParent->id,
+                'tgl_leads' => $current_date_time,
+                'nama_perusahaan' => $request->nama_perusahaan,
+                'telp_perusahaan' => null,
+                'jenis_perusahaan_id' => $leadsParent->jenis_perusahaan_id,
+                'branch_id' => $leadsParent->branch_id,
+                'platform_id' => 8,
+                'kebutuhan_id' => $leadsParent->kebutuhan_id,
+                'alamat' => null,
+                'pic' => $leadsParent->pic,
+                'jabatan' => $leadsParent->jabatan,
+                'no_telp' => $leadsParent->no_telp,
+                'email' => $leadsParent->email,
+                'status_leads_id' => 1,
+                'notes' => $leadsParent->notes,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            if (Auth::user()->role_id==29) {
+                //cari tim sales
+                $timSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+                if($timSalesD != null){
+                    DB::table('sl_leads')->where('id',$newId)->update([
+                        'tim_sales_id' => $timSalesD->tim_sales_id,
+                        'tim_sales_d_id' =>$timSalesD->id
+                    ]);
+                }
+            }
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Leads '.$request->nama_perusahaan.' berhasil disimpan.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

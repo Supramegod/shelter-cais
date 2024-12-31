@@ -11,7 +11,7 @@
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
-            <span class="text-center">Form Quotation ( {{$tipe}} )</span>
+            <span class="text-center">Quotation</span>
             <span class="text-center"><button class="btn btn-secondary waves-effect @if(old('leads_id')==null) d-none @endif" type="button" id="btn-lihat-leads"><span class="tf-icons mdi mdi-arrow-right-circle-outline me-1"></span>&nbsp; Lihat Leads</button>&nbsp;&nbsp;&nbsp;&nbsp; <span>{{$now}}</span></span>
           </div>
         </h5>
@@ -19,8 +19,8 @@
           @csrf
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
-              <h4 class="mb-0">LEADS</h4>
-              <h4>Pilih Leads</h4>
+              <h4 class="mb-0">QUOTATION</h4>
+              <h4>Form Tambah Quotation</h4>
             </div>
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Leads <span class="text-danger">*</span></label>
@@ -34,146 +34,159 @@
                 </div>
               </div>
             </div>
-            <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Layanan <span class="text-danger">*</span></label>
-              <div class="col-sm-10">
-                <select id="layanan" name="layanan" class="form-select" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  <option value="1" @if($leads!=null) @if($leads->kebutuhan_id =="1") selected @endif @endif>Security</option>
-                  <option value="2" @if($leads!=null) @if($leads->kebutuhan_id =="2") selected @endif @endif>Direct Labour</option>
-                  <option value="3" @if($leads!=null) @if($leads->kebutuhan_id =="3") selected @endif @endif>Cleaning Service</option>
-                  <option value="4" @if($leads!=null) @if($leads->kebutuhan_id =="4") selected @endif @endif>Logistik</option>
-                </select>
-              </div>
-            </div>
-            <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Entitas <span class="text-danger">*</span></label>
-              <div class="col-sm-4">
-                <select id="entitas" name="entitas" class="form-select" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                </select>
-              </div>
-              <label class="col-sm-2 col-form-label text-sm-end">Jumlah Site <span class="text-danger">*</span></label>
-              <div class="col-sm-4">
-                <select id="jumlah_site" name="jumlah_site" class="form-select" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  <option value="Single Site">Single Site</option>
-                  <option value="Multi Site">Multi Site</option>
-                </select>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Wilayah</label>
-              <div class="col-sm-4">
-                <input type="text" id="branch" name="branch" value="{{old('branch')}}" class="form-control" readonly>
-              </div>
-              <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
-              <div class="col-sm-4">
-                <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('kebutuhan')}}" class="form-control" readonly>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Tim Sales</label>
-              <div class="col-sm-4">
-                <input type="text" id="tim_sales_name" name="tim_sales_name" value="{{old('tim_sales_name')}}" class="form-control" readonly>
-              </div>
-              <label class="col-sm-2 col-form-label text-sm-end">Sales</label>
-              <div class="col-sm-4">
-                <input type="text" id="sales_name" name="sales_name" value="{{old('sales_name')}}" class="form-control" readonly>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">CRM</label>
-              <div class="col-sm-4">
-                <input type="text" id="crm_name" name="crm_name" value="{{old('crm_name')}}" class="form-control" readonly>
-              </div>
-              <label class="col-sm-2 col-form-label text-sm-end">RO</label>
-              <div class="col-sm-4">
-                <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
-              </div>
-            </div>
-            <div class="d-single-site">
+            <div class="d-none" id="show_isian">
               <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Provinsi  <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-4">
-                  <select id="provinsi" name="provinsi" class="form-select" data-allow-clear="true" tabindex="-1">
+                <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan  <span class="text-danger fw-bold">*</span></label>
+                <div class="col-sm-10">
+                  <div class="input-group">
+                    <select id="perusahaan_id" name="perusahaan_id" class="form-select" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                    </select>
+                    <button class="btn btn-info waves-effect" type="button" id="btn_add_perusahaan"><span class="tf-icons mdi mdi-plus me-1"></span>&nbsp;Tambah Perusahaan</button>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Layanan <span class="text-danger">*</span></label>
+                <div class="col-sm-10">
+                  <select id="layanan" name="layanan" class="form-select" data-allow-clear="true" tabindex="-1">
                     <option value="">- Pilih data -</option>
-                    @foreach($province as $data)
-                      <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
-                    @endforeach
-                  </select>
-                </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-4">
-                  <select id="kota" name="kota" class="form-select" data-allow-clear="true" tabindex="-1">
+                    <option value="1" @if($leads!=null) @if($leads->kebutuhan_id =="1") selected @endif @endif>Security</option>
+                    <option value="2" @if($leads!=null) @if($leads->kebutuhan_id =="2") selected @endif @endif>Direct Labour</option>
+                    <option value="3" @if($leads!=null) @if($leads->kebutuhan_id =="3") selected @endif @endif>Cleaning Service</option>
+                    <option value="4" @if($leads!=null) @if($leads->kebutuhan_id =="4") selected @endif @endif>Logistik</option>
                   </select>
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-10">
-                  <input type="text" id="nama_site" name="nama_site" value="" class="form-control">
+                <label class="col-sm-2 col-form-label text-sm-end">Entitas <span class="text-danger">*</span></label>
+                  <div class="col-sm-4">
+                    <select id="entitas" name="entitas" class="form-select" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                    </select>
+                  </div>
+                  <label class="col-sm-2 col-form-label text-sm-end">Jumlah Site <span class="text-danger">*</span></label>
+                  <div class="col-sm-4">
+                    <select id="jumlah_site" name="jumlah_site" class="form-select" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      <option value="Single Site">Single Site</option>
+                      <option value="Multi Site">Multi Site</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Alamat Penempatan <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-10">
-                  <input type="text" id="penempatan" name="penempatan" value="" class="form-control">
+                <!-- <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label text-sm-end">Wilayah</label>
+                  <div class="col-sm-4">
+                    <input type="text" id="branch" name="branch" value="{{old('branch')}}" class="form-control" readonly>
+                  </div>
+                  <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
+                  <div class="col-sm-4">
+                    <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('kebutuhan')}}" class="form-control" readonly>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="row mb-3 d-multi-site">
-              <hr class="mb-3">
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Provinsi  <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-4">
-                  <select id="provinsiMulti" name="provinsiMulti" class="form-select" data-allow-clear="true" tabindex="-1">
-                    <option value="">- Pilih data -</option>
-                    @foreach($province as $data)
-                      <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
-                    @endforeach
-                  </select>
+                <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label text-sm-end">Tim Sales</label>
+                  <div class="col-sm-4">
+                    <input type="text" id="tim_sales_name" name="tim_sales_name" value="{{old('tim_sales_name')}}" class="form-control" readonly>
+                  </div>
+                  <label class="col-sm-2 col-form-label text-sm-end">Sales</label>
+                  <div class="col-sm-4">
+                    <input type="text" id="sales_name" name="sales_name" value="{{old('sales_name')}}" class="form-control" readonly>
+                  </div>
                 </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-4">
-                  <select id="kotaMulti" name="kotaMulti" class="form-select" data-allow-clear="true" tabindex="-1">
-                  </select>
+                <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label text-sm-end">CRM</label>
+                  <div class="col-sm-4">
+                    <input type="text" id="crm_name" name="crm_name" value="{{old('crm_name')}}" class="form-control" readonly>
+                  </div>
+                  <label class="col-sm-2 col-form-label text-sm-end">RO</label>
+                  <div class="col-sm-4">
+                    <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
+                  </div>
+                </div> -->
+                <div class="d-single-site">
+                  <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Provinsi  <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-4">
+                      <select id="provinsi" name="provinsi" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($province as $data)
+                          <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
+                        @endforeach
+                      </select>
+                    </div>
+                    <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-4">
+                      <select id="kota" name="kota" class="form-select" data-allow-clear="true" tabindex="-1">
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-10">
+                      <input type="text" id="nama_site" name="nama_site" value="" class="form-control">
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Alamat Penempatan <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-10">
+                      <input type="text" id="penempatan" name="penempatan" value="" class="form-control">
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-10 col-form-label text-sm-end">
-                  <input type="text" class="form-control" id="siteName" placeholder="Nama Site">
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Alamat Penempatan <span class="text-danger fw-bold">*</span></label>
-                <div class="col-sm-10">
-                  <input type="text" id="penempatanMulti" name="penempatanMulti" value="" class="form-control">
-                </div>
-              </div>
-              <div class="col-sm-12 d-flex justify-content-center">
-                <button type="button" id="addSiteBtn" class="btn btn-info w-50 mt-2">Tambah Site</button>
-              </div>
+                <div class="row mb-3 d-multi-site">
+                  <hr class="mb-3">
+                  <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-10 col-form-label text-sm-end">
+                      <input type="text" id="siteName" name="siteName" value="" class="form-control">
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Provinsi  <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-4">
+                      <select id="provinsiMulti" name="provinsiMulti" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($province as $data)
+                          <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
+                        @endforeach
+                      </select>
+                    </div>
+                    <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-4">
+                      <select id="kotaMulti" name="kotaMulti" class="form-select" data-allow-clear="true" tabindex="-1">
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Alamat Penempatan <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-10">
+                      <input type="text" id="penempatanMulti" name="penempatanMulti" value="" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-sm-12 d-flex justify-content-center">
+                    <button type="button" id="addSiteBtn" class="btn btn-info w-50 mt-2">Tambah Site</button>
+                  </div>
 
-              <div class="row mt-4">
-              <div class="offset-sm-2 col-sm-10 d-flex">
-                <table class="table table-bordered mt-4">
-                  <thead>
-                      <tr>
-                          <th>Nama Site</th>
-                          <th>Provinsi</th>
-                          <th>Kota</th>
-                          <th>Penempatan</th>
-                          <th>Aksi</th>
-                      </tr>
-                  </thead>
-                  <tbody id="siteTableBody">
-                      <!-- Rows will be added here -->
-                  </tbody>
-              </table>
+                  <div class="row mt-4">
+                  <div class="offset-sm-2 col-sm-10 d-flex">
+                    <table class="table table-bordered mt-4">
+                      <thead>
+                          <tr>
+                              <th>Nama Site</th>
+                              <th>Provinsi</th>
+                              <th>Kota</th>
+                              <th>Penempatan</th>
+                              <th>Aksi</th>
+                          </tr>
+                      </thead>
+                      <tbody id="siteTableBody">
+                          <!-- Rows will be added here -->
+                      </tbody>
+                  </table>
+                  </div>
+                </div>
               </div>
-            </div>
             </div>
             <div class="row mt-5">
               <div class="col-12 d-flex flex-row-reverse">
@@ -191,7 +204,7 @@
   <hr class="container-m-nx mb-5" />
 </div>
 
-<div class="modal fade" id="modal-leads" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modal-leads">
   <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
     <div class="modal-content p-3 p-md-5">
       <div class="modal-body">
@@ -224,6 +237,32 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="modal-add-perusahaan">
+  <div class="modal-dialog modal-xl modal-simple modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h3 class="mb-2">Tambah Perusahaan</h3>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan  <span class="text-danger fw-bold">*</span></label>
+              <div class="col-sm-10">
+                <input type="text" id="modal_nama_perusahaan" value="" class="form-control">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn_save_add_perusahaan" class="btn btn-primary">Tambah Perusahaan</button>
+    </div>
+  </div>
+</div>
+
 <!--/ Content -->
 @endsection
 
@@ -234,6 +273,10 @@
   });
   
   let dt_filter_table = $('.dt-column-search');
+
+  function showIsian() {
+    $('#show_isian').removeClass('d-none');
+  }
 
   var table = $('#table-data').DataTable({
       "initComplete": function (settings, json) {  
@@ -298,20 +341,21 @@
       $('#branch').val(rdata.branch);
       $('#leads').val(rdata.nama_perusahaan);
       $('#leads_id').val(rdata.id);
-      $('#kebutuhan').val(rdata.kebutuhan);
-      $('#tim_sales_name').val(rdata.tim_sales);
-      $('#sales_name').val(rdata.sales);
-      $('#ro_name').val(rdata.ro);
-      $('#crm_name').val(rdata.crm);
+      // $('#kebutuhan').val(rdata.kebutuhan);
+      // $('#tim_sales_name').val(rdata.tim_sales);
+      // $('#sales_name').val(rdata.sales);
+      // $('#ro_name').val(rdata.ro);
+      // $('#crm_name').val(rdata.crm);
+      // $('#sales_d').val("");
 
-      $('#sales_d').val("");
-
-      if(rdata.tim_sales_id !=null){
-        $('#tim_sales_id').val(rdata.tim_sales_id).change();
-        if(rdata.tim_sales_d_id != null){
-          $('#sales_d').val(rdata.tim_sales_d_id);
-        }
-      }
+      // if(rdata.tim_sales_id !=null){
+      //   $('#tim_sales_id').val(rdata.tim_sales_id).change();
+      //   if(rdata.tim_sales_d_id != null){
+      //     $('#sales_d').val(rdata.tim_sales_d_id);
+      //   }
+      // }
+      listPerusahaan();
+      showIsian();
     });
 
     generateNama();
@@ -322,55 +366,55 @@
     }
   });
 
-$('#btn-submit').on('click',function(e){
-  e.preventDefault();
-  var form = $(this).parents('form');
-  let msg = "";
-  let obj = $("form").serializeObject();
+  $('#btn-submit').on('click',function(e){
+    e.preventDefault();
+    var form = $(this).parents('form');
+    let msg = "";
+    let obj = $("form").serializeObject();
 
-  if(obj.leads_id == null || obj.leads_id == "" ){
-    msg += "<b>Leads</b> belum dipilih </br>";
-  };
-  if(obj.entitas == null || obj.entitas == "" ){
-    msg += "<b>Entitas</b> belum dipilih </br>";
-  };
-  if(obj.kebutuhan == null || obj.kebutuhan == "" ){
-    msg += "<b>Kebutuhan</b> belum dipilih </br>";
-  }; 
-  if(obj.jumlah_site == null || obj.jumlah_site == "" ){
-      msg += "<b>Jumlah Site</b> belum dipilih </br>";
-    }else{
-      if(obj.jumlah_site =="Single Site"){
-        if(obj.nama_site == null || obj.nama_site == "" ){
-          msg += "<b>Nama Site</b> belum diisi </br>";
-        }
-        if(obj.provinsi == null || obj.provinsi == "" ){
-          msg += "<b>Provinsi</b> belum diisi </br>";
-        }
-        if(obj.kota == null || obj.kota == "" ){
-          msg += "<b>Kota</b> belum diisi </br>";
-        }
-        if(obj.penempatan == null || obj.penempatan == "" ){
-          msg += "<b>Penempatan</b> belum diisi </br>";
-        }
-      }else{
-        if(obj["multisite[]"] == null || obj["multisite[]"] == "" ){
-          msg += "Isikan minimal 1 <b>Site</b></br>";
-        }
-      }
+    if(obj.leads_id == null || obj.leads_id == "" ){
+      msg += "<b>Leads</b> belum dipilih </br>";
     };
-  if(msg == ""){
-    form.submit();
-  }else{
-    Swal.fire({
-      title: "Pemberitahuan",
-      html: msg,
-      icon: "warning"
-    });
-  }
-});
+    if(obj.layanan == null || obj.layanan == "" ){
+      msg += "<b>Layanan</b> belum dipilih </br>";
+    }; 
+    if(obj.entitas == null || obj.entitas == "" ){
+      msg += "<b>Entitas</b> belum dipilih </br>";
+    };
+    if(obj.jumlah_site == null || obj.jumlah_site == "" ){
+        msg += "<b>Jumlah Site</b> belum dipilih </br>";
+      }else{
+        if(obj.jumlah_site =="Single Site"){
+          if(obj.nama_site == null || obj.nama_site == "" ){
+            msg += "<b>Nama Site</b> belum diisi </br>";
+          }
+          if(obj.provinsi == null || obj.provinsi == "" ){
+            msg += "<b>Provinsi</b> belum diisi </br>";
+          }
+          if(obj.kota == null || obj.kota == "" ){
+            msg += "<b>Kota</b> belum diisi </br>";
+          }
+          if(obj.penempatan == null || obj.penempatan == "" ){
+            msg += "<b>Penempatan</b> belum diisi </br>";
+          }
+        }else{
+          if(obj["multisite[]"] == null || obj["multisite[]"] == "" ){
+            msg += "Isikan minimal 1 <b>Site</b></br>";
+          }
+        }
+      };
+    if(msg == ""){
+      form.submit();
+    }else{
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: msg,
+        icon: "warning"
+      });
+    }
+  });
 
-$('#provinsi').on('change', function() {
+  $('#provinsi').on('change', function() {
     $('#kota').find('option').remove();
     $('#kota').append('<option value="">- Pilih data -</option>');
     if(this.value!=""){
@@ -415,6 +459,24 @@ $('#provinsi').on('change', function() {
     }
   });
 
+  $('#modal_provinsi_site').on('change', function() {
+    $('#modal_kota_site').find('option').remove();
+    $('#modal_kota_site').append('<option value="">- Pilih data -</option>');
+    if(this.value!=""){
+      var param = "province_id="+this.value;
+      $.ajax({
+        url: "{{route('quotation.change-kota')}}",
+        type: 'GET',
+        data: param,
+        success: function(res) {
+          res.forEach(element => {
+            let selected = "";
+            $('#modal_kota_site').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+          });
+        }
+      });
+    }
+  });
  
 function showJumlahSite() {
   let selected = $("#jumlah_site option:selected").val();
@@ -470,6 +532,15 @@ $(document).ready(function() {
   $('.d-multi-site').addClass('d-none');
 
   $('#jumlah_site').on('change', function() {
+    if($('#leads').val() == ""){
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: "Pilih <b>Leads</b> terlebih dahulu",
+        icon: "warning"
+      });
+      $(this).val("");
+      return;
+    }
     showJumlahSite();
   });
 
@@ -546,9 +617,87 @@ function generateNama() {
     let nama = "";
     nama += $("#leads").val();
     nama += " - ";
-
+    if($('#layanan option:selected').val() == ""){
+      nama += " - ";
+    }else{
+      nama += $('#layanan option:selected').text();
+      nama += " - ";
+    }
     $("#nama_site").val(nama+$('#kota option:selected').text());
     $("#siteName").val(nama+$('#kotaMulti option:selected').text());
   }
+
+  $('#btn_add_perusahaan').on('click',function(){
+    $('#modal_nama_perusahaan').val("");
+    $('#modal-add-perusahaan').modal('show');
+  });
+
+  $('#btn_save_add_perusahaan').on('click',function(){
+    let nama_perusahaan = $('#modal_nama_perusahaan').val();
+    let leads_id = $('#leads_id').val();
+    if(nama_perusahaan == ""){
+      Swal.fire({
+        title: "Pemberitahuan",
+        html: "Nama Perusahaan tidak boleh kosong",
+        icon: "warning"
+      });
+      $('#modal-add-perusahaan').modal('hide');
+      return;
+    }
+
+    $('#modal-add-perusahaan').modal('hide');
+    Swal.fire({
+      title: "Menyimpan data",
+      html: "Mohon tunggu sebentar",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      willOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    
+    $.ajax({
+      url: "{{route('leads.save-leads')}}",
+      type: 'POST',
+      data : {"_token": "{{ csrf_token() }}",nama_perusahaan:nama_perusahaan,leads_id:leads_id},
+      success: function(res) {
+        if(res.status == "success"){
+          listPerusahaan();
+          Swal.fire({
+            title: "Pemberitahuan",
+            html: "Berhasil menambahkan perusahaan",
+            icon: "success",
+            timer: 2000,
+          });
+        }else{          
+          Swal.fire({
+            title: "Pemberitahuan",
+            html: res.message,
+            icon: "warning"
+          });
+        }
+      }
+    });
+  });
+
+function listPerusahaan() {
+  $.ajax({
+    url: "{{route('leads.child-leads')}}",
+    type: 'GET',
+    data : {id:$('#leads_id').val()},
+    success: function(res) {
+      // clear dulu selectnya
+      $('#perusahaan_id').find('option').remove();
+      res.forEach(element => {
+        let selected = "";
+        if(element.id == $('#leads_id').val()){
+          selected = "selected";
+        }
+        $('#perusahaan_id').append('<option value="'+element.id+'" '+selected+'>'+element.nama_perusahaan+'</option>');
+      });
+    }
+  });
+  
+}
 </script>
 @endsection

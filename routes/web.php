@@ -82,6 +82,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
         Route::get('/sales/leads/leads.available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
 
+        Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads'); // ajax
+        Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads'); // ajax
     });
 
     Route::controller(CustomerController::class)->group(function() {
@@ -234,6 +236,10 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Ajukan Ulang Quotation
         Route::get('/sales/quotation/ajukan-ulang-quotation/{quotation}', 'ajukanUlangQuotation')->name('quotation.ajukan-ulang-quotation');
+
+        // Site
+        Route::post('/sales/quotation/save-add-site', 'saveAddSite')->name('quotation.save-add-site');
+
     });
 
 

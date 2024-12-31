@@ -1318,38 +1318,47 @@ class QuotationController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             $current_date = Carbon::now()->toDateString();
             $kebutuhan = DB::table('m_kebutuhan')->where('id',$request->layanan)->first();
-            $qClientId = DB::table('sl_quotation_client')->insertGetId([
-                'tgl' => $current_date,
-                'leads_id' => $request->leads_id,
+            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
+            $leads = DB::table('sl_leads')->where('id',$request->perusahaan_id)->first();
+
+            $newId = DB::table('sl_quotation')->insertGetId([
+                'nomor' => $this->generateNomor($request->perusahaan_id,$request->entitas),
+                'quotation_client_id' => $qClientId,
+                'tgl_quotation' => $current_date,
+                'leads_id' => $request->perusahaan_id,
                 'jumlah_site' =>  $request->jumlah_site,
-                'nama_perusahaan' => $request->leads,
-                'layanan_id' => $request->layanan,
-                'layanan' => $kebutuhan->nama,
+                'nama_perusahaan' => $leads->nama_perusahaan,
+                'kebutuhan_id' => $request->layanan,
+                'kebutuhan' => $kebutuhan->nama,
+                'company_id' => $request->entitas,
+                'company' => $company->name,
+                'step' => 1,
+                'status_quotation_id' =>1,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
 
-            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
-            $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
+            DB::table('sl_quotation_pic')->insert([
+                'quotation_id' => $newId,
+                'leads_id' => $request->perusahaan_id,
+                'nama' => $leads->pic,
+                'jabatan_id' => $leads->jabatan_id,
+                'jabatan' => $leads->jabatan,
+                'no_telp' => $leads->no_telp,
+                'email' => $leads->email,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
             if ($request->jumlah_site=="Multi Site") {
                 foreach ($request->multisite as $key => $value) {
                     $province = DB::connection('mysqlhris')->table('m_province')->where('id',$request->provinsi_multi[$key])->first();
                     $city = DB::connection('mysqlhris')->table('m_city')->where('id',$request->kota_multi[$key])->first();
 
-                    $newId = DB::table('sl_quotation')->insertGetId([
-                        'nomor' => $this->generateNomor($request->leads_id,$request->entitas),
-                        'quotation_client_id' => $qClientId,
-                        'tgl_quotation' => $current_date,
-                        'leads_id' => $request->leads_id,
-                        'nama_perusahaan' => $request->leads,
-                        'kebutuhan_id' => $request->layanan,
-                        'kebutuhan' => $kebutuhan->nama,
-                        'company_id' => $request->entitas,
-                        'company' => $company->name,
-                        'nama_perusahaan' => $request->leads,
+                    DB::table('sl_quotation_site')->insert([
+                        'quotation_id' => $newId,
+                        'leads_id' => $request->perusahaan_id,
                         'nama_site' => $value,
-                        'step' => 1,
-                        'status_quotation_id' =>1,
                         'provinsi_id' => $province->id,
                         'provinsi' => $province->name,
                         'kota_id' => $city->id,
@@ -1358,65 +1367,27 @@ class QuotationController extends Controller
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
-
-                    DB::table('sl_quotation_pic')->insert([
-                        'quotation_id' => $newId,
-                        'leads_id' => $request->leads_id,
-                        'nama' => $leads->pic,
-                        'jabatan_id' => $leads->jabatan_id,
-                        'jabatan' => $leads->jabatan,
-                        'no_telp' => $leads->no_telp,
-                        'email' => $leads->email,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->full_name
-                    ]);
                 }
             }else{
                 $province = DB::connection('mysqlhris')->table('m_province')->where('id',$request->provinsi)->first();
                 $city = DB::connection('mysqlhris')->table('m_city')->where('id',$request->kota)->first();
 
-                $newId = DB::table('sl_quotation')->insertGetId([
-                    'nomor' => $this->generateNomor($request->leads_id,$request->entitas),
-                    'quotation_client_id' => $qClientId,
-                    'tgl_quotation' => $current_date,
-                    'leads_id' => $request->leads_id,
-                    'nama_perusahaan' => $request->leads,
-                    'kebutuhan_id' => $request->layanan,
-                    'kebutuhan' => $kebutuhan->nama,
-                    'company_id' => $request->entitas,
-                    'company' => $company->name,
-                    'nama_perusahaan' => $request->leads,
+                DB::table('sl_quotation_site')->insert([
+                    'quotation_id' => $newId,
+                    'leads_id' => $request->perusahaan_id,
                     'nama_site' => $request->nama_site,
-                    'step' => 1,
-                    'status_quotation_id' =>1,
-                    'provinsi_id' => $request->provinsi,
+                    'provinsi_id' => $province->id,
                     'provinsi' => $province->name,
-                    'kota_id' => $request->kota,
+                    'kota_id' => $city->id,
                     'kota' => $city->name,
                     'penempatan' => $request->penempatan,
-                    'created_at' => $current_date_time,
-                    'created_by' => Auth::user()->full_name
-                ]);
-
-                DB::table('sl_quotation_pic')->insert([
-                    'quotation_id' => $newId,
-                    'leads_id' => $request->leads_id,
-                    'nama' => $leads->pic,
-                    'jabatan_id' => $leads->jabatan_id,
-                    'jabatan' => $leads->jabatan,
-                    'no_telp' => $leads->no_telp,
-                    'email' => $leads->email,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
             }
             DB::commit();
             
-            if($request->jumlah_site=="Multi Site"){
-                return redirect()->route('quotation');
-            }else{
-                return redirect()->route('quotation.step',['id'=>$newId,'step'=>'1']);
-            }
+            return redirect()->route('quotation.step',['id'=>$newId,'step'=>'1']);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
