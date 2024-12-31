@@ -7,7 +7,7 @@
   <!-- Default -->
   <div class="row">
     <!-- Vertical Wizard -->
-    <div class="col-12 mb-4">
+    <div class="mb-4 overflow-auto text-nowrap" style="max-width:fit-content !important;width:auto !important;">
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
@@ -77,6 +77,12 @@
                         <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}} ( Provisi = {{$quotation->provisi}} )</th>
                       </tr>
                       <tr class="table-success">
+                        <th colspan="3">&nbsp;</th>
+                        @foreach($quotation->quotation_site as $site)
+                        <th colspan="{{$site->jumlah_detail}}" style="vertical-align: middle;">{{$site->nama_site}}</th>
+                        @endforeach
+                      </tr>
+                      <tr class="table-success">
                         <th rowspan="2" style="vertical-align: middle;">No.</th>
                         <th>Structure</th>
                         <th rowspan="2" style="vertical-align: middle;">%</th>
@@ -98,7 +104,7 @@
                         <td style="text-align:left" class="">Gaji Pokok</td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($quotation->nominal_upah,2,",",".")}}</td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->nominal_upah,2,",",".")}}</td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
@@ -441,7 +447,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td>Upah/Gaji</td>
                         <td class="text-center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($quotation->nominal_upah,2,",",".")}}</td>
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->nominal_upah,2,",",".")}}</td>
                         @endforeach
                       </tr>
                       @foreach($daftarTunjangan as $it => $tunjangan)
@@ -490,7 +496,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td>Tunjangan Hari Libur Nasional</td>
                         <td class="text-center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}}</td>
+                        <td class="text-end">@if($quotation->tunjangan_holiday=="Normatif") <b>Normatif</b> @else {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @endif</td>
                         @endforeach
                       </tr>
                       @endif
@@ -977,7 +983,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
   <hr class="container-m-nx mb-5" />
 </div>
 
-<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+<div class="modal modal-lg fade" id="basicModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -996,7 +1002,11 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
                 <select id="quotation-detail" class="form-select">
                   <option value="">- Pilih Posisi -</option>
                   @foreach($quotation->quotation_detail as $detail)
-                    <option value="{{$detail->id}}">{{$detail->jabatan_kebutuhan}}</option> 
+                  @if($quotation->jumlah_site=="Multi Site")
+                  <option value="{{$detail->id}}">{{$detail->nama_site}} - {{$detail->jabatan_kebutuhan}}</option> 
+                  @else
+                  <option value="{{$detail->id}}">{{$detail->jabatan_kebutuhan}}</option> 
+                  @endif
                   @endforeach
                 </select>
               </div>

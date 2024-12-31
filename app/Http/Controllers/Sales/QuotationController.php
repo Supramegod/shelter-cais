@@ -721,6 +721,14 @@ class QuotationController extends Controller
                 $data = DB::table('sl_quotation')->where('id',$quotation->id)->first();
                 $data->detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
                 $data->totalHc = 0;
+                foreach ($quotation->quotation_site as $key => $site) {
+                    $site->jumlah_detail = 0;
+                    foreach ($quotation->quotation_detail as $kd => $vd) {
+                        if($vd->quotation_site_id == $site->id){
+                            $site->jumlah_detail += 1;
+                        }
+                    }
+                }
 
                 foreach ($data->detail as $key => $value) {
                     $data->totalHc += $value->jumlah_hc;
@@ -1095,7 +1103,7 @@ class QuotationController extends Controller
                     }
 
                     $umk = 0;
-                    $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$city->id)->first();
+                    $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('is_aktif',1)->where('city_id',$city->id)->first();
                     if($dataUmk !=null){
                         $umk = $dataUmk->umk;
                     }
@@ -1108,6 +1116,8 @@ class QuotationController extends Controller
                         'provinsi' => $province->name,
                         'kota_id' => $city->id,
                         'kota' => $city->name,
+                        'ump' => $ump,
+                        'umk' => $umk,
                         'penempatan' => $request->penempatan_multi[$key],
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
@@ -1352,19 +1362,6 @@ class QuotationController extends Controller
                 }else if ($hitunganUpah=="Per Jam") {
                     $customUpah = $customUpah*21*8;
                 }
-            }else{
-                //cari ump / umk
-                if($upah =="UMP"){
-                    $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$dataQuotation->provinsi_id)->first();
-                    if($dataUmp !=null){
-                        $customUpah = $dataUmp->ump;
-                    }
-                }else if ($upah =="UMK") {
-                    $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$dataQuotation->kota_id)->first();
-                    if($dataUmk !=null){
-                        $customUpah = $dataUmk->umk;
-                    }
-                }
             }
             
             $newStep = 5;
@@ -1402,9 +1399,36 @@ class QuotationController extends Controller
                 $request->tunjangan_holiday ="Tidak Ada";
             }
 
+            //rubah custom upah untuk quotation site
+            $quotationSite = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            foreach ($quotationSite as $key => $site) {
+                $nominalUpah = 0;
+                if($upah == "Custom"){
+                    $nominalUpah = $customUpah;
+                }else{
+                    //cari ump / umk
+                    if($upah =="UMP"){
+                        $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$site->provinsi_id)->first();
+                        if($dataUmp !=null){
+                            $nominalUpah = $dataUmp->ump;
+                        }
+                    }else if ($upah =="UMK") {
+                        $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$site->kota_id)->first();
+                        if($dataUmk !=null){
+                            $nominalUpah = $dataUmk->umk;
+                        }
+                    }
+                }
+                DB::table('sl_quotation_site')->where('id',$site->id)->update([
+                    'nominal_upah' => $nominalUpah,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'upah' => $upah,
-                'nominal_upah' => $customUpah,
+                'nominal_upah' => 0,
                 'hitungan_upah' => $hitunganUpah,
                 'management_fee_id' => $manfee,
                 'is_aktif' => 0,
@@ -1951,9 +1975,10 @@ class QuotationController extends Controller
 
     public function saveEdit12 (Request $request){
         try {
+            DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
             $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->id)->first();
-            $umk = DB::table('m_umk')->where('city_id',$quotation->kota_id)->whereNull('deleted_at')->first();
+            $quotationSite = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $isAktif = 1;
             $statusQuotation = 3;
 
@@ -1963,9 +1988,11 @@ class QuotationController extends Controller
                 $statusQuotation = 2;
             }
             // jika nominal kurang dari umk
-            if ($quotation->nominal_upah<$umk->umk) {
-                $isAktif = 0;
-                $statusQuotation = 2;
+            foreach ($quotationSite as $key => $site) {
+                if ($site->nominal_upah<$site->umk) {
+                    $isAktif = 0;
+                    $statusQuotation = 2;
+                }
             }
 
             // jika persentasi mf kurang dari 7
@@ -2002,6 +2029,7 @@ class QuotationController extends Controller
                 }
             }
 
+            DB::commit();
             return redirect()->route('quotation.view',$quotation->id);
         } catch (\Exception $e) {
             dd($e);

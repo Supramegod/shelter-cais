@@ -24,6 +24,10 @@ class QuotationService
         $quotation->provisi = $provisi;
 
         foreach ($quotation->quotation_detail as $kbd) {
+            $quotationSite = DB::table('sl_quotation_site')->whereNull('deleted_at')->where('id', $kbd->quotation_site_id)->first();
+            $kbd->nominal_upah = $quotationSite->nominal_upah;
+            $kbd->umk = $quotationSite->umk;
+            $kbd->ump = $quotationSite->ump;
             $this->processQuotationDetail($kbd, $daftarTunjangan, $quotation, $jumlahHc, $provisi);
         }
 
@@ -50,7 +54,7 @@ class QuotationService
 
         $kbd->total_tunjangan = $totalTunjangan;
 
-        $umk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id', $quotation->kota_id)->value('umk') ?? 0;
+        $umk = $kbd->umk;
 
         $this->calculateBpjs($kbd, $quotation, $umk);
         $this->calculateExtras($kbd, $quotation, $provisi, $jumlahHc,$umk);
@@ -75,7 +79,7 @@ class QuotationService
         }else if($quotation->management_fee_id==4){
             $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100; 
         }else if($quotation->management_fee_id==5){
-            $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
+            $kbd->management_fee = $kbd->nominal_upah*$quotation->persentase/100;
         }
 
         $kbd->grand_total = $kbd->sub_total_personil + $kbd->management_fee + $kbd->total_ohc;
@@ -111,7 +115,7 @@ class QuotationService
         if ($quotation->penjamin == "Takaful") {
             $kbd->nominal_takaful = $quotation->nominal_takaful;
         } else {
-            $upahBpjs = $quotation->nominal_upah < $umk ? $umk : $quotation->nominal_upah;
+            $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
 
             // Hitung JKK berdasarkan resiko
             switch ($quotation->resiko) {
@@ -161,13 +165,13 @@ class QuotationService
         // THR
         $kbd->tunjangan_hari_raya = 0;
         if ($quotation->thr == "Diprovisikan") {
-            $kbd->tunjangan_hari_raya = $quotation->nominal_upah / $provisi;
+            $kbd->tunjangan_hari_raya = $kbd->nominal_upah / $provisi;
         }
 
         // Kompensasi
         $kbd->kompensasi = 0;
         if ($quotation->kompensasi == "Diprovisikan") {
-            $kbd->kompensasi = $quotation->nominal_upah / $provisi;
+            $kbd->kompensasi = $kbd->nominal_upah / $provisi;
         }
 
         // Tunjangan Holiday
@@ -193,7 +197,7 @@ class QuotationService
     private function calculateTotalPersonnel($kbd, $quotation, $totalTunjangan)
     {
         // Hitung total personal seperti pada kode
-        return $quotation->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
+        return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
     }
 
     private function calculateTaxes(&$kbd, $quotation)
@@ -276,7 +280,7 @@ private function calculateChemical($kbd, $value, $provisi)
 private function calculateCoss($kbd, $value, $jumlahHc, $provisi,$quotation)
 {
     // Total Base Manpower
-    $kbd->total_base_manpower = round($value->nominal_upah + $kbd->total_tunjangan, 2);
+    $kbd->total_base_manpower = round($kbd->nominal_upah + $kbd->total_tunjangan, 2);
 
     // Total Exclude Base Manpower
     $kbd->total_exclude_base_manpower = round(
@@ -307,7 +311,7 @@ private function calculateCoss($kbd, $value, $jumlahHc, $provisi,$quotation)
     if ($value->management_fee_id == 1 || $value->management_fee_id == 4) {
         $kbd->management_fee_coss = round($kbd->sub_total_personil_coss * $value->persentase / 100, 2);
     } elseif ($value->management_fee_id == 5) {
-        $kbd->management_fee_coss = round($value->nominal_upah * $value->persentase / 100, 2);
+        $kbd->management_fee_coss = round($kbd->nominal_upah * $value->persentase / 100, 2);
     }
 
     // bunga bank dan insentif
