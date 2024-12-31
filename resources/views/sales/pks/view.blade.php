@@ -35,7 +35,7 @@
                   </tr>
                   <tr>
                     <td>Entitas</td>
-                    <td>: {{$quotation[0]->company}}</td>
+                    <td>: {{$quotation->company}}</td>
                     <td>Jumlah Site</td>
                     <td>: {{$quotation->jumlah_site}}</td>
                   </tr>
@@ -51,19 +51,16 @@
                   <tr>
                     <th>No.</th>
                     <th>Nomor</th>
-                    <th>Nama Site</th>
                     <th>Kebutuhan</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-quotation">
-                  @foreach($quotation as $key => $value)
                   <tr>
-                    <td>{{$key+1}}</td>
-                    <td><b><a href="{{route('quotation.view',[$value->id])}}">{{$value->nomor}}</a></b></td>
-                    <td>{{$value->nama_site}}</td>
-                    <td>{{$value->kebutuhan}}</td>
+                    <td>1</td>
+                    <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
+                    <td>{{$quotation->nama_site}}</td>
+                    <td>{{$quotation->kebutuhan}}</td>
                   </tr>
-                  @endforeach
                 </tbody>
               </table>
             </div>
@@ -118,7 +115,7 @@
               <a href="{{route('pks.isi-checklist',$data->id)}}" class="btn btn-primary w-100">Isi Checklist &nbsp; <i class="mdi mdi-pencil"></i></a>
             </div>
             @endif
-            @if($dataQuotation->materai !=null)
+            @if($quotation->materai !=null)
             <div class="col-12 text-center mt-2">
             <a onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-warning w-100" >Cetak Checklist &nbsp; <i class="mdi mdi-printer"></i></a>
           </div>

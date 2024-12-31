@@ -121,13 +121,13 @@ class PksController extends Controller
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
             $dataSpk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->spk_id)->first();
-            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('quotation_id',$dataSpk->quotation_id)->get();
+            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$dataSpk->quotation_id)->first();
 
             $newId = DB::table('sl_pks')->insertGetId([
                 'quotation_id' => $dataSpk->quotation_id,
                 'spk_id' => $dataSpk->id,
                 'leads_id' => $dataSpk->leads_id,
-                'nomor' => $this->generateNomor($quotation->leads_id,$quotation[0]->company_id),
+                'nomor' => $this->generateNomor($quotation->leads_id,$quotation->company_id),
                 'tgl_pks' => $current_date_time,
                 'nama_perusahaan' => $dataSpk->nama_perusahaan,
                 'link_pks_disetujui' => null,
@@ -204,15 +204,14 @@ class PksController extends Controller
         try {
             $data = DB::table('sl_pks')->whereNull('deleted_at')->where('id',$id)->first();
             $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$data->spk_id)->first();
-            $dataQuotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->whereNull('deleted_at')->first();
+            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->whereNull('deleted_at')->first();
 
             $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
-            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('quotation_id',$data->quotation_id)->get();
             $data->status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$data->status_pks_id)->first()->nama;
             $perjanjian = DB::table('sl_pks_perjanjian')->whereNull('deleted_at')->where('pks_id',$id)->whereNull('deleted_at')->get();
 
-            return view('sales.pks.view',compact('perjanjian','dataQuotation','spk','data','quotation'));
+            return view('sales.pks.view',compact('perjanjian','quotation','spk','data'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -565,7 +564,7 @@ class PksController extends Controller
 
     public function isiChecklist(Request $request,$id){
         $pks = DB::table('sl_pks')->where('id',$id)->first();
-        $spk = DB::table('sl_spk')->where('spk_id',$pks->spk_id)->whereNull('deleted_at')->first();
+        $spk = DB::table('sl_spk')->where('id',$pks->spk_id)->whereNull('deleted_at')->first();
         $quotation = DB::table('sl_quotation')->where('id',$spk->quotation_id)->whereNull('deleted_at')->first();
 
         $listRo = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id',[4,5,6,8])->orderBy('full_name','asc')->get();
@@ -631,7 +630,7 @@ class PksController extends Controller
             //     'updated_by' => Auth::user()->full_name
             // ]);
 
-            DB::table('sl_quotation')->where('quotation_id',$request->quotation_id)->update([
+            DB::table('sl_quotation')->where('id',$request->quotation_id)->update([
                 'npwp' => $request->npwp ,
                 'alamat_npwp' => $request->alamat_npwp,
                 'pic_invoice' => $request->pic_invoice ,

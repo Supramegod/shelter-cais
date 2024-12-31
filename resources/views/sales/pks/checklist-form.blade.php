@@ -675,7 +675,7 @@
       "jabatan":jabatan,
       "no_telp":no_telp,
       "email":email,
-      "quotation_id":$('#quotation_id').val(),
+      "quotation_id":{{$quotation->id}},
       "_token": "{{ csrf_token() }}"
     };
 
@@ -714,7 +714,7 @@
       if ($(this).is(':checked')) {
         let formData = {
           "id":$(this).data('id'),
-          "quotation_id":$('#quotation_id').val(),
+          "quotation_id":{{$quotation->id}},
           "_token": "{{ csrf_token() }}"
         };
         $.ajax({
