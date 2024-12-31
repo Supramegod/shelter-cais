@@ -147,6 +147,12 @@
             <div data-i18n="PKS">PKS</div>
             </a>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
+            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
+            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
+            </a>
+        </li>
         <!-- DIREKTUR -->
         @elseif(in_array(Auth::user()->role_id,[53,56,96,97,98,99,100]))
         <li class="menu-item">
@@ -199,7 +205,12 @@
             <div data-i18n="PKS">PKS</div>
             </a>
         </li>
-
+        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
+            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
+            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
+            </a>
+        </li>
         <!-- SUPER USER -->
         @elseif(Auth::user()->role_id==2)
         <li class="menu-item">
@@ -252,7 +263,12 @@
             <div data-i18n="PKS">PKS</div>
             </a>
         </li>
-
+        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
+            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
+            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
+            </a>
+        </li>
         <!-- MASTER DATA -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
