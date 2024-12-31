@@ -20,7 +20,32 @@
                 <h6 class="mb-3">HEADCOUNT</h6>
                 <!--<h4>Pilih Site dan Jenis Kontrak</h4>-->
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
-                <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
+                @foreach($quotation->quotation_site as $site)
+                  <h6>{{$site->nama_site}}</h6>
+                @endforeach
+              </div>
+              <div class="row mb-3 mt-3">
+                <div class="col-sm-12">
+                  <label class="form-label" for="site">Site</label>
+                  <div class="input-group">
+                    @if($quotation->jumlah_site=="Single Site")
+                    <div class="d-none">
+                      <select id="site" name="site" class="form-select select2" data-allow-clear="true" tabindex="-1">
+                        @foreach($quotation->quotation_site as $site)
+                          <option value="{{$site->id}}" selected>{{$site->nama_site}}</option>  
+                        @endforeach  
+                      </select>
+                    </div>
+                    @else
+                      <select id="site" name="site" class="form-select select2" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($quotation->quotation_site as $site)
+                          <option value="{{$site->id}}">{{$site->nama_site}}</option>  
+                        @endforeach  
+                      </select>
+                    @endif
+                  </div>
+                </div>
               </div>
               <div class="row mb-3 mt-3">
                 <div class="col-sm-6">
@@ -55,6 +80,9 @@
                       <thead>
                           <tr>
                               <th class="text-center">ID</th>
+                              @if($quotation->jumlah_site=="Multi Site")
+                              <th class="text-center">Site</th>
+                              @endif
                               <th class="text-center">Kebutuhan</th>
                               <th class="text-center">Nama Posisi/Jabatan</th>
                               <th class="text-center">Jumlah Headcount</th>
@@ -107,7 +135,15 @@ let table = $('#table-data').DataTable({
           name : 'id',
           visible: false,
           searchable: false
-      },{
+      },
+      @if($quotation->jumlah_site=="Multi Site")
+      {
+          data : 'nama_site',
+          name : 'nama_site',
+          className:'text-center'
+      },
+      @endif
+      {
           data : 'kebutuhan',
           name : 'kebutuhan',
           className:'text-center'
@@ -136,13 +172,18 @@ let table = $('#table-data').DataTable({
     $('#btn-tambah-detail').on('click',function () {
       let jabatanDetailId = $('#jabatan_detail').val();
       let jumlahHc = $('#jumlah_hc').val();
-
+      let site = $('#site').val();
+      
       let msg="";
+      if(site ==""){
+        msg += "Site Belum Dipilih <br />";
+      }
+
       if(jabatanDetailId ==""){
         msg += "Nama Posisi / Jabatan Belum Diisi <br />";
       }
       if(jumlahHc ==""){
-        msg += "Jumlah HC Belum Diisi";
+        msg += "Jumlah HC Belum Diisi <br />";
       }
 
       if(msg!=""){
@@ -155,6 +196,7 @@ let table = $('#table-data').DataTable({
         let formData = {
           "position_id":jabatanDetailId,
           "jumlah_hc":jumlahHc,
+          "site_id":site,
           "quotation_id":{{$quotation->id}},
           "_token": "{{ csrf_token() }}"
         };

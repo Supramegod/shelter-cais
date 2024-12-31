@@ -615,7 +615,7 @@ $(document).ready(function() {
 
 function generateNama() {
     let nama = "";
-    nama += $("#leads").val();
+    nama += $('#perusahaan_id option:selected').text();
     nama += " - ";
     if($('#layanan option:selected').val() == ""){
       nama += " - ";

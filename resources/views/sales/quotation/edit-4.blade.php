@@ -19,7 +19,9 @@
               <div class="content-header mb-5 text-center">
                 <h6 class="mb-3">UPAH DAN MANAGEMENT FEE</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
-                <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
+                @foreach($quotation->quotation_site as $site)
+                  <h6>{{$site->nama_site}}</h6>
+                @endforeach
               </div>
               <div class="row mb-3">
                 <div class="row mb-2">

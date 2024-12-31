@@ -49,8 +49,7 @@ class QuotationController extends Controller
 
         $listStatus = DB::table('m_status_quotation')->whereNull('deleted_at')->get();
         $quotationAsal = DB::table('sl_quotation')
-        ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
-        ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
+        ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
         ->select('sl_quotation.nomor','sl_quotation.id')
         ->whereNull('sl_quotation.deleted_at')->whereNull('sl_leads.deleted_at')
@@ -320,13 +319,12 @@ class QuotationController extends Controller
         try {
             DB::beginTransaction();
             $qtujuan = DB::table("sl_quotation")->where('id',$qasalId)->first();
-            $qClient = DB::table("sl_quotation_client")->where('id',$qtujuan->quotation_client_id)->first();
 
             $dataToInsertQuotation = (array) $qtujuan;
             unset($dataToInsertQuotation['id']);
             unset($dataToInsertQuotation['nomor']);
 
-            $dataToInsertQuotation['nomor'] = $this->generateNomor($qClient->leads_id,$qtujuan->company_id);
+            $dataToInsertQuotation['nomor'] = $this->generateNomor($qtujuan->leads_id,$qtujuan->company_id);
             $dataToInsertQuotation['revisi'] = $qtujuan->revisi+1;
             $dataToInsertQuotation['alasan_revisi'] = $request->alasan;            
             $dataToInsertQuotation['quotation_asal_id'] = $qtujuan->id;
@@ -596,6 +594,7 @@ class QuotationController extends Controller
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
             $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
 
             $province = DB::connection('mysqlhris')->table('m_province')->get();
             // $dataProvinsi = DB::connection('mysqlhris')->table('m_province')->where('id',$quotation->provinsi_id)->first();
@@ -751,15 +750,8 @@ class QuotationController extends Controller
         try {
             $canCreateSpk = 1;
             $data = DB::table('sl_quotation')->where('id',$id)->first();
-            $quotationClient = DB::table('sl_quotation_client')->where('id',$data->quotation_client_id)->first();
-            if($quotationClient->jumlah_site=="Multi Site"){
-                $listQuotClient = DB::table('sl_quotation')->whereNull("deleted_at")->where('quotation_client_id',$quotationClient->id)->get();
-                foreach ($listQuotClient as $key => $value) {
-                    if ($value->is_aktif != 1 ) {
-                        $canCreateSpk = 0;
-                        break;
-                    }
-                }
+            if ($data->is_aktif != 1 ) {
+                $canCreateSpk = 0;
             }
             $data->detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$id)->get();
             $data->totalHc = 0;
@@ -787,7 +779,6 @@ class QuotationController extends Controller
             if($jabatanPic!=null){
                 $leads->jabatan = $jabatanPic->nama; 
             }
-            $master->jumlah_site = DB::table('sl_quotation_client')->whereNull('deleted_at')->where('id',$data->quotation_client_id)->first()->jumlah_site;
 
             $now = Carbon::now()->isoFormat('DD MMMM Y');
 
@@ -1036,8 +1027,7 @@ class QuotationController extends Controller
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$master->salary_rule_id)->first();
 
             $quotationTujuan = DB::table('sl_quotation')
-            ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
-            ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
+            ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
             ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
             ->select('sl_quotation.nomor','sl_quotation.id')
             ->whereNull('sl_quotation.deleted_at')
@@ -2027,11 +2017,10 @@ class QuotationController extends Controller
     public function list (Request $request){
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $data = DB::table('sl_quotation')
-                    ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
-                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
                     ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('sl_quotation_client.jumlah_site','sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->select('sl_quotation.jumlah_site','sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
                     ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation.deleted_at');
 
             if(!empty($request->tgl_dari)){
@@ -2145,11 +2134,12 @@ class QuotationController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             $position = DB::connection('mysqlhris')->table('m_position')->where('id',$request->position_id)->first();
             $quotation = DB::table('sl_quotation')->where('id',$request->quotation_id)->first();
+            $quotationSite = DB::table('sl_quotation_site')->where('id',$request->site_id)->first();
 
             // cek apakah data sudah ada
-            $checkExist = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->where('position_id',$request->position_id)->whereNull('deleted_at')->first();
+            $checkExist = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->where('position_id',$request->position_id)->where('quotation_site_id',$request->site_id)->whereNull('deleted_at')->first();
             if($checkExist !=null){
-                DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->where('position_id',$request->position_id)->whereNull('deleted_at')->update([
+                DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->where('position_id',$request->position_id)->where('quotation_site_id',$request->site_id)->whereNull('deleted_at')->update([
                     'jumlah_hc' => $checkExist->jumlah_hc+$request->jumlah_hc,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
@@ -2157,6 +2147,8 @@ class QuotationController extends Controller
             }else{
                 $detailIdBaru = DB::table('sl_quotation_detail')->insertGetId([
                     'quotation_id' => $quotation->id,
+                    'quotation_site_id' => $request->site_id,
+                    'nama_site' => $quotationSite->nama_site,
                     'position_id' => $request->position_id,
                     'kebutuhan' => $quotation->kebutuhan,
                     'jabatan_kebutuhan' => $position->name,
@@ -3480,8 +3472,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         $quotation = DB::table("sl_quotation")->where("id",$request->quotationAsal)->first();
 
         $quotationTujuan = DB::table('sl_quotation')
-        ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
-        ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
+        ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
         ->select('sl_quotation.nomor','sl_quotation.id')
         ->whereNull('sl_quotation.deleted_at')
@@ -3512,8 +3503,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         $quotation = DB::table("sl_quotation")->where("id",$request->quotationTujuan)->first();
 
         $quotationAsal = DB::table('sl_quotation')
-        ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
-        ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
+        ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
         ->select('sl_quotation.nomor','sl_quotation.id')
         ->whereNull('sl_quotation.deleted_at')
