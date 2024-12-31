@@ -29,15 +29,15 @@
                   </tr>
                   <tr>
                     <td>Nama Perusahaan</td>
-                    <td>: {{$quotationClient->nama_perusahaan}}</td>
+                    <td>: {{$quotation->nama_perusahaan}}</td>
                     <td>Kebutuhan</td>
-                    <td>: {{$quotationClient->layanan}}</td>
+                    <td>: {{$quotation->kebutuhan}}</td>
                   </tr>
                   <tr>
                     <td>Entitas</td>
                     <td>: {{$quotation[0]->company}}</td>
                     <td>Jumlah Site</td>
-                    <td>: {{$quotationClient->jumlah_site}}</td>
+                    <td>: {{$quotation->jumlah_site}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -61,7 +61,7 @@
                     <td>{{$key+1}}</td>
                     <td><b><a href="{{route('quotation.view',[$value->id])}}">{{$value->nomor}}</a></b></td>
                     <td>{{$value->nama_site}}</td>
-                    <td>{{$quotationClient->layanan}}</td>
+                    <td>{{$value->kebutuhan}}</td>
                   </tr>
                   @endforeach
                 </tbody>

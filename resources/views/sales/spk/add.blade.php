@@ -24,10 +24,10 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Quotation <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="hidden" id="quotation_client_id" name="quotation_client_id" value="@if($data !=null) {{$data->id}} @endif" class="form-control">
+                <input type="hidden" id="quotation_id" name="quotation_id" value="@if($quotation !=null) {{$quotation->id}} @endif" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="quotation" name="quotation" value="@if($data !=null) {{$data->nomor}} @endif" class="form-control" readonly>
-                  @if($data ==null)
+                  <input type="text" id="quotation" name="quotation" value="@if($quotation !=null) {{$quotation->nomor}} @endif" class="form-control" readonly>
+                  @if($quotation ==null)
                     <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-quotation"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Quotation</button>
                     @if($errors->has('quotation'))
                       <div class="invalid-feedback">{{$errors->first('quotation')}}</div>
@@ -39,12 +39,16 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
               <div class="col-sm-4">
-                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($data !=null) {{$data->nama_perusahaan}} @endif" class="form-control" readonly>
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($quotation !=null) {{$quotation->nama_perusahaan}} @endif" class="form-control" readonly>
               </div>
               <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
               <div class="col-sm-4">
-                <input type="text" id="layanan" name="layanan" value="@if($data !=null) {{$data->layanan}} @endif" class="form-control" readonly>
+                <input type="text" id="kebutuhan" name="kebutuhan" value="@if($quotation !=null) {{$quotation->kebutuhan}} @endif" class="form-control" readonly>
               </div>
+            </div>
+            <br>
+            <div class="content-header mb-3 text-center">
+              <h4>List Site</h4>
             </div>
             <div id="d-table-quotation" class="row mb-3 d-none">
               <div class="table-responsive overflow-hidden table-quotation">
@@ -52,9 +56,10 @@
                   <thead>
                     <tr>
                       <th>No.</th>
-                      <th>Nomor</th>
                       <th>Nama Site</th>
-                      <th>Kebutuhan</th>
+                      <th>Provinsi</th>
+                      <th>Kota</th>
+                      <th>Penempatan</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-quotation">
@@ -168,18 +173,18 @@
       "language": datatableLang,
   });
 
-  @if($data != null)
+  @if($quotation != null)
     $("#d-table-quotation").removeClass("d-none");
     $.ajax({
-      url: '{{route("quotation.get-quotation-list")}}',
+      url: '{{route("quotation.get-site-list")}}',
       type: 'GET',
-      data: { quotation_client_id: {{$data->id}} },
+      data: { quotation_id: {{$quotation->id}} },
       success: function(data) {
       $('#tbody-quotation').empty();
       $('#tbody-quotation').append('');
 
       $.each(data, function(key, value) {
-          $('#tbody-quotation').append('<tr><td>'+value.no+'</td><td>'+value.nomor+'</td><td>'+value.nama_site+'</td><td>'+value.kebutuhan+'</td></tr>');
+          $('#tbody-quotation').append('<tr><td>'+value.no+'</td><td>'+value.nama_site+'</td><td>'+value.provinsi+'</td><td>'+value.kota+'</td><td>'+value.penempatan+'</td></tr>');
       });
       },
       error: function() {
@@ -191,32 +196,28 @@
   $('#table-data').on('click', 'tbody tr', function() {
       $('#modal-quotation').modal('hide');
       var rdata = table.row(this).data();
-      $('#quotation_client_id').val(rdata.id);
+      $('#quotation_id').val(rdata.id);
       $('#quotation').val(rdata.quotation);
       $('#nama_perusahaan').val(rdata.nama_perusahaan);
       $('#layanan').val(rdata.layanan);
 
-      if(rdata.jumlah_site=="Multi Site"){
-        $("#d-table-quotation").removeClass("d-none");
-        $.ajax({
-          url: '{{route("quotation.get-quotation-list")}}',
-          type: 'GET',
-          data: { quotation_client_id: rdata.id },
-          success: function(data) {
-          $('#tbody-quotation').empty();
-          $('#tbody-quotation').append('');
+      $("#d-table-quotation").removeClass("d-none");
+      $.ajax({
+        url: '{{route("quotation.get-site-list")}}',
+        type: 'GET',
+        data: { quotation_id: rdata.id },
+        success: function(data) {
+        $('#tbody-quotation').empty();
+        $('#tbody-quotation').append('');
 
-          $.each(data, function(key, value) {
-              $('#tbody-quotation').append('<tr><td>'+value.no+'</td><td>'+value.nomor+'</td><td>'+value.nama_site+'</td><td>'+value.kebutuhan+'</td></tr>');
-          });
-          },
-          error: function() {
-           alert('Gagal mengambil data');
-          }
+        $.each(data, function(key, value) {
+          $('#tbody-quotation').append('<tr><td>'+value.no+'</td><td>'+value.nama_site+'</td><td>'+value.provinsi+'</td><td>'+value.kota+'</td><td>'+value.penempatan+'</td></tr>');
         });
-      }else{
-        $("#d-table-quotation").addClass("d-none");
-      }
+        },
+        error: function() {
+          alert('Gagal mengambil data');
+        }
+      });
     });
 
 
@@ -233,7 +234,7 @@
     let msg = "";
     let obj = $("form").serializeObject();
       
-    if(obj.quotation_client_id == null || obj.quotation_client_id == "" ){
+    if(obj.quotation_id == null || obj.quotation_id == "" ){
       msg += "<b>Quotation</b> belum dipilih </br>";
     };
 

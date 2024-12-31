@@ -534,15 +534,15 @@ class QuotationController extends Controller
     public function cetakChecklist (Request $request,$id){
         try {
             $pks = DB::table('sl_pks')->where('id',$id)->first();
-            $spkD = DB::table('sl_spk_detail')->where('spk_id',$pks->spk_id)->whereNull('deleted_at')->first();
-            $quotation = DB::table('sl_quotation')->where('id',$spkD->quotation_id)->whereNull('deleted_at')->first();
+            $spk = DB::table('sl_spk')->where('id',$pks->spk_id)->whereNull('deleted_at')->first();
+            $quotation = DB::table('sl_quotation')->where('id',$spk->quotation_id)->whereNull('deleted_at')->first();
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
-            $quotation = DB::table("sl_quotation")->where('id',$spkD->quotation_id)->first();
+            $quotation = DB::table("sl_quotation")->where('id',$spk->quotation_id)->first();
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
-            $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$spkD->quotation_id)->whereNull('deleted_at')->get();
+            $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$spk->quotation_id)->whereNull('deleted_at')->get();
 
             $quotation->mulai_kontrak = Carbon::parse($quotation->mulai_kontrak)->format('d F Y');
             $quotation->kontrak_selesai = Carbon::parse($quotation->kontrak_selesai)->format('d F Y');
@@ -764,8 +764,8 @@ class QuotationController extends Controller
             $data->detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$id)->get();
             $data->totalHc = 0;
             $data->umk = 0;
-            $data->spk = DB::table('sl_spk_detail')->whereNull('deleted_at')->where('quotation_id',$data->id)->first();
-            $data->pks = DB::table('sl_pks')->whereNull('deleted_at')->where('quotation_client_id',$data->quotation_client_id)->first();
+            $data->spk = DB::table('sl_spk')->whereNull('deleted_at')->where('quotation_id',$data->id)->first();
+            $data->pks = DB::table('sl_pks')->whereNull('deleted_at')->where('quotation_id',$data->id)->first();
             $quotationDetail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where('quotation_id',$id)->get();
             foreach ($data->detail as $key => $value) {
                 $data->totalHc += $value->jumlah_hc;
@@ -1041,7 +1041,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation.deleted_at')
             ->whereNull('sl_leads.deleted_at')
             ->where("sl_quotation.step","!=",100)
-            ->where("sl_quotation.quotation_client_id",$quotation->quotation_client_id)
+            ->where("sl_quotation.quotation_id",$quotation->id)
             ->where('m_tim_sales_d.user_id',Auth::user()->id)
             ->get();
             
@@ -2048,7 +2048,10 @@ class QuotationController extends Controller
                     ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
                     ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('sl_quotation.jumlah_site','sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+                    ->select('sl_quotation.jumlah_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation',
+                    DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
+                    FROM sl_quotation_site 
+                    WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site'))
                     ->whereNull('sl_quotation.deleted_at')->whereNull('sl_quotation.deleted_at');
 
             if(!empty($request->tgl_dari)){
@@ -2150,7 +2153,7 @@ class QuotationController extends Controller
             ->editColumn('nama_perusahaan', function ($data) {
                 return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
             })
-            ->rawColumns(['aksi','nomor','nama_perusahaan'])
+            ->rawColumns(['aksi','nomor','nama_perusahaan','nama_site'])
             ->make(true);
     }
 
@@ -3236,7 +3239,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             $master->detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$id)->get();
             $master->totalHc = 0;
             $master->umk = 0;
-            $master->spk = DB::table('sl_spk_detail')->whereNull('deleted_at')->where('quotation_id',$master->id)->first();
+            $master->spk = DB::table('sl_spk')->whereNull('deleted_at')->where('quotation_id',$master->id)->first();
 
             foreach ($master->detail as $key => $value) {
                 $master->totalHc += $value->jumlah_hc;
@@ -3513,19 +3516,19 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         return $quotationTujuan;
     }
     
-    public function getQuotationList(Request $request){
-        $quotation = DB::table("sl_quotation")
-        ->where("quotation_client_id",$request->quotation_client_id)
+    public function getSiteList(Request $request){
+        $site = DB::table("sl_quotation_site")
+        ->where("quotation_id",$request->quotation_id)
         ->whereNull('deleted_at')
         ->get();
         
-        foreach ($quotation as $key => $value) {
+        foreach ($site as $key => $value) {
             $value->no = $key+1;
         }
 
-        return $quotation;
+        return $site;
     }
-    
+
 
     public function getQuotationAsal(Request $request){
         $quotation = DB::table("sl_quotation")->where("id",$request->quotationTujuan)->first();
@@ -3538,7 +3541,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         ->whereNull('sl_leads.deleted_at')
         ->where("sl_quotation.step","=",100)
         ->where('m_tim_sales_d.user_id',Auth::user()->id)
-        ->where("sl_quotation.quotation_client_id",$quotation->quotation_client_id)
+        ->where("sl_quotation.quotation_id",$quotation->id)
         ->get();
 
         return $quotationAsal;
@@ -3552,7 +3555,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             $data->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$id)->whereNull('deleted_at')->get();
             $data->totalHc = 0;
             $data->umk = 0;
-            $data->spk = DB::table('sl_spk_detail')->whereNull('deleted_at')->where('quotation_id',$data->id)->first();
+            $data->spk = DB::table('sl_spk')->whereNull('deleted_at')->where('quotation_id',$data->id)->first();
             foreach ($data->detail as $key => $value) {
                 $data->totalHc += $value->jumlah_hc;
             }
@@ -3578,7 +3581,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             $master->detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$id)->get();
             $master->totalHc = 0;
             $master->umk = 0;
-            $master->spk = DB::table('sl_spk_detail')->whereNull('deleted_at')->where('quotation_id',$master->id)->first();
+            $master->spk = DB::table('sl_spk')->whereNull('deleted_at')->where('quotation_id',$master->id)->first();
 
             foreach ($master->detail as $key => $value) {
                 $master->totalHc += $value->jumlah_hc;
@@ -3853,15 +3856,15 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             }
 
             $pks = DB::table('sl_pks')->where('id',$id)->first();
-            $spkD = DB::table('sl_spk_detail')->where('spk_id',$pks->spk_id)->whereNull('deleted_at')->first();
-            $quotation = DB::table('sl_quotation')->where('id',$spkD->quotation_id)->whereNull('deleted_at')->first();
+            $spk = DB::table('sl_spk')->where('spk_id',$pks->spk_id)->whereNull('deleted_at')->first();
+            $quotation = DB::table('sl_quotation')->where('id',$spk->quotation_id)->whereNull('deleted_at')->first();
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
-            $quotation = DB::table("sl_quotation")->where('id',$spkD->quotation_id)->first();
+            $quotation = DB::table("sl_quotation")->where('id',$spk->quotation_id)->first();
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
-            $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$spkD->quotation_id)->whereNull('deleted_at')->get();
+            $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$spk->quotation_id)->whereNull('deleted_at')->get();
 
             $quotation->mulai_kontrak = Carbon::parse($quotation->mulai_kontrak)->format('d F Y');
             $quotation->kontrak_selesai = Carbon::parse($quotation->kontrak_selesai)->format('d F Y');

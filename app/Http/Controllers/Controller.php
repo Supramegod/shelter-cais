@@ -35,13 +35,11 @@ class Controller extends BaseController
                 $arrRole = [96,97,98,99];
                 if(in_array($user->role_id,$arrRole)){
                     $dataApproval = DB::table('sl_quotation')
-                    ->leftJoin('sl_quotation_client','sl_quotation_client.id','sl_quotation.quotation_client_id')
-                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation_client.leads_id')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
                     ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                     ->select('sl_quotation.step','sl_quotation.top','sl_quotation.ot3','sl_quotation.ot2','sl_quotation.ot1','sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
                     ->whereNull('sl_leads.deleted_at')
-                    ->whereNull('sl_quotation_client.deleted_at')
                     ->whereNull('sl_quotation.deleted_at')
                     ->where('sl_quotation.is_aktif',0)->get();
 

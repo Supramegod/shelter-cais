@@ -420,6 +420,12 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                       <tr class="table-success">
                         <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}  ( Provisi = {{$quotation->provisi}} )</th>
                       </tr>
+                      <tr class="table-success">
+                        <th colspan="2">&nbsp;</th>
+                        @foreach($quotation->quotation_site as $site)
+                        <th colspan="{{$site->jumlah_detail}}" style="vertical-align: middle;">{{$site->nama_site}}</th>
+                        @endforeach
+                      </tr>+
                     </thead>              
                     <tbody>
                       <tr>

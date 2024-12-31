@@ -231,7 +231,7 @@ Route::group(['middleware' => ['auth']], function () {
         // Copy Quotation
         Route::get('/sales/quotation/get-quotation-tujuan', 'getQuotationTujuan')->name('quotation.get-quotation-tujuan'); // ajax
         Route::get('/sales/quotation/get-quotation-asal', 'getQuotationAsal')->name('quotation.get-quotation-asal'); // ajax
-        Route::get('/sales/quotation/get-quotation-list', 'getQuotationList')->name('quotation.get-quotation-list'); // ajax
+        // Route::get('/sales/quotation/get-quotation-list', 'getQuotationList')->name('quotation.get-quotation-list'); // ajax
         Route::get('/sales/quotation/copy-quotation/{qasal}/{qtujuan}', 'copyQuotation')->name('quotation.copy-quotation');
 
         // Ajukan Ulang Quotation
@@ -239,6 +239,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Site
         Route::post('/sales/quotation/save-add-site', 'saveAddSite')->name('quotation.save-add-site');
+        Route::get('/sales/quotation/get-site-list', 'getSiteList')->name('quotation.get-site-list'); // ajax
 
     });
 
