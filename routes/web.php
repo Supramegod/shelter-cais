@@ -438,5 +438,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(MonitoringKontrakController::class)->group(function() {
         Route::get('/sales/monitoring-kontrak', 'index')->name('monitoring-kontrak');
         Route::get('/sales/monitoring-kontrak/list', 'list')->name('monitoring-kontrak.list');
+        Route::post('/sales/monitoring-kontrak/terminate', 'terminate')->name('monitoring-kontrak.terminate');
+        Route::get('/sales/monitoring-kontrak/index-terminate', 'indexTerminate')->name('monitoring-kontrak.index-terminate');
+        Route::get('/sales/monitoring-kontrak/list-terminate', 'listTerminate')->name('monitoring-kontrak.list-terminate');
     });
 });

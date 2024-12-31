@@ -30,6 +30,22 @@ class MonitoringKontrakController extends Controller
         
         return view('sales.monitoring-kontrak.list',compact('tglDari','tglSampai'));
     }
+    public function indexTerminate (Request $request){
+        $tglDari = $request->tgl_dari;
+        $tglSampai = $request->tgl_sampai;
+
+        if($tglDari==null){
+            $tglDari = carbon::now()->startOfMonth()->subMonths(3)->toDateString();
+        }
+        if($tglSampai==null){
+            $tglSampai = carbon::now()->toDateString();
+        }
+
+        $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
+        $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
+        
+        return view('sales.monitoring-kontrak.list-terminate',compact('tglDari','tglSampai'));
+    }
 
     public function list (Request $request){
         $data = DB::table('sl_pks')
@@ -65,17 +81,8 @@ class MonitoringKontrakController extends Controller
                 $aksi .= '&nbsp;<a href="'.route('quotation.add', ['leads_id' => $data->leads_id, 'tipe' => 'Quotation Lanjutan']).'" class="btn btn-sm btn-primary">Buat Quotation</a>';
             }
             if($selisih == 0){
-                $aksi .= '&nbsp;<a href="'.route('pks.view',$data->id).'" class="btn btn-sm btn-danger">Terminate Kontrak</a>';
+                $aksi .= '&nbsp;<a href="javscript:void(0)" class="btn btn-sm btn-danger btn-terminate-kontrak" data-id="'.$data->id.'">Terminate Kontrak</a>';
             }
-            // if($selisih<=0){
-            //     return '#636578';
-            // }else if($selisih<=60){
-            //     return '#636578';
-            // }else if($selisih<=90){
-            //     return '#636578';
-            // }else{
-            //     return '#636578';
-            // }
 
             return '<div class="justify-content-center d-flex">
                                 '.$aksi.'
@@ -118,6 +125,46 @@ class MonitoringKontrakController extends Controller
             return '<a href="'.route('quotation.view',$data->quotation_id).'" style="font-weight:bold;color:#000056">'.$data->nomor_quotation.'</a>';
         })
         ->rawColumns(['aksi','nomor','nama_site','nomor_spk','nomor_quotation'])
+        ->make(true);
+    }
+
+    public function listTerminate (Request $request){
+        $data = DB::table('sl_pks')
+                ->leftJoin('sl_spk','sl_spk.id','sl_pks.spk_id')
+                ->leftJoin('sl_quotation','sl_pks.quotation_id','sl_quotation.id')
+                ->where('sl_pks.status_pks_id',100)
+                ->select('sl_quotation.leads_id','sl_quotation.kontrak_selesai','sl_quotation.mulai_kontrak','sl_pks.spk_id','sl_pks.quotation_id','sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation.kebutuhan','sl_pks.status_pks_id','sl_quotation.nomor as nomor_quotation',
+                DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
+                    FROM sl_quotation_site 
+                    WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site')
+                )
+                ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
+            $value->mulai_kontrak = Carbon::createFromFormat('Y-m-d',$value->mulai_kontrak)->isoFormat('D MMMM Y');
+            $value->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$value->kontrak_selesai)->isoFormat('D MMMM Y');
+            $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
+            $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
+        }
+
+        return DataTables::of($data)
+        ->addColumn('warna_row', function ($data) {
+            return '#2c3e5040';
+        })
+        ->addColumn('warna_font', function ($data) {
+            return '#636578';
+        })
+        ->editColumn('nomor', function ($data) {
+            return '<a href="#" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+        })
+        ->editColumn('nomor_spk', function ($data) {
+            return '<a href="#" style="font-weight:bold;color:#000056">'.$data->nomor_spk.'</a>';
+        })
+        ->editColumn('nomor_quotation', function ($data) {
+            return '<a href="#" style="font-weight:bold;color:#000056">'.$data->nomor_quotation.'</a>';
+        })
+        ->rawColumns(['nomor','nama_site','nomor_spk','nomor_quotation'])
         ->make(true);
     }
 
@@ -169,4 +216,82 @@ class MonitoringKontrakController extends Controller
         
         return $selisihHari;
     }
+
+    public function terminate(Request $request){
+        try {
+            DB::beginTransaction();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $pksId = $request->id;
+            $pks = DB::table('sl_pks')->where('id',$pksId)->first();
+            $spkId = $pks->spk_id;
+            $quotationId = $pks->quotation_id;
+
+            DB::table('sl_pks')->where('id',$pksId)->update(
+                ['status_pks_id'=>100,'deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_spk')->where('id',$spkId)->update(
+                ['status_spk_id'=>100,'deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation')->where('id',$quotationId)->update(
+                ['status_quotation_id'=>100,'deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+
+            // update deleted at dan deleted by semua detail dari quotation
+            DB::table('sl_quotation_aplikasi')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            ); 
+            DB::table('sl_quotation_chemical')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_detail')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_detail_coss')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_detail_hpp')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_detail_requirement')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_detail_tunjangan')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_devices')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_kaporlap')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_kerjasama')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_margin')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_ohc')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_pic')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_site')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+            DB::table('sl_quotation_training')->where('quotation_id',$quotationId)->update(
+                ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
+            );
+
+            // HRIS belum di terminate
+
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Data berhasil di terminate']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
 }

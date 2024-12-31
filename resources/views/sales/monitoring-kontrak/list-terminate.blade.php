@@ -14,10 +14,10 @@
             <div class="card">
                 <div class="card-header d-flex" style="padding-bottom: 0px !important;">
                     <div class="col-md-6 text-left col-12 my-auto">
-                        <h3 class="page-title">Monitoring Kontrak</h3>
+                        <h3 class="page-title">Kontrak Terminated</h3>
                         <ol class="breadcrumb" style="background-color:white !important;padding:0 !important">
 							<li class="breadcrumb-item"><a href="javascript:void(0);">Sales</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Monitoring Kontrak</li>
+							<li class="breadcrumb-item active" aria-current="page">Kontrak Terminated</li>
 						</ol>
                     </div>
                 </div>
@@ -63,9 +63,7 @@
                                     <th class="text-center">Site</th>
                                     <th class="text-center">Mulai Kontrak</th>
                                     <th class="text-center">Akhir Kontrak</th>
-                                    <th class="text-center">Berakhir Dalam</th>
                                     <th class="text-center">Created By</th>
-                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -105,7 +103,7 @@
             'processing': 'Loading...'
         },
         ajax: {
-            url: "{{ route('monitoring-kontrak.list') }}",
+            url: "{{ route('monitoring-kontrak.list-terminate') }}",
             data: function (d) {
                 d.tgl_dari = $('#tgl_dari').val();
                 d.tgl_sampai = $('#tgl_sampai').val();
@@ -161,99 +159,20 @@
             name : 's_kontrak_selesai',
             className:'text-center'
         },{
-            data : 'berakhir_dalam',
-            name : 'berakhir_dalam',
-            className:'text-center'
-        },{
             data : 'created_by',
             name : 'created_by',
             className:'text-center'
-        },{
-            data : 'aksi',
-            name : 'aksi',
-            width: "10%",
-            orderable: false,
-            searchable: false,
         }],
         "language": datatableLang,
         dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
         buttons: [
             {
-            extend: 'collection',
-            className: 'btn btn-label-success dropdown-toggle me-2 waves-effect waves-light',
-            text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
-            buttons: [
-                {
-                extend: 'csv',
-                text: '<i class="mdi mdi-file-document-outline me-1" ></i>Csv',
-                className: 'dropdown-item',
-                exportOptions: {
-                    columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
-                    // prevent avatar to be display
-                    format: {
-                    body: function (inner, coldex, rowdex) {
-                        if (inner.length <= 0) return inner;
-                        var el = $.parseHTML(inner);
-                        var result = '';
-                        $.each(el, function (index, item) {
-                        if (item.classList !== undefined && item.classList.contains('user-name')) {
-                            result = result + item.lastChild.firstChild.textContent;
-                        } else if (item.innerText === undefined) {
-                            result = result + item.textContent;
-                        } else result = result + item.innerText;
-                        });
-                        return result;
-                    }
-                    }
-                }
-                },{
-                extend: 'excel',
-                text: '<i class="mdi mdi-file-document-outline me-1" ></i>Excel',
-                className: 'dropdown-item',
-                exportOptions: {
-                    columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
-                }
-                },
-                {
-                extend: 'pdf',
-                text: '<i class="mdi mdi-file-pdf-box me-1"></i>Pdf',
-                className: 'dropdown-item',
-                orientation: 'landscape',
-                customize: function(doc) {
-                        doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
-                    },
-                exportOptions: {
-                    columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
-                    orientation: 'landscape',
-                    customize: function(doc) {
-                        doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
-                    },
-                    // prevent avatar to be display
-                    format: {
-                    body: function (inner, coldex, rowdex) {
-                        if (inner.length <= 0) return inner;
-                        var el = $.parseHTML(inner);
-                        var result = '';
-                        $.each(el, function (index, item) {
-                        if (item.classList !== undefined && item.classList.contains('user-name')) {
-                            result = result + item.lastChild.firstChild.textContent;
-                        } else if (item.innerText === undefined) {
-                            result = result + item.textContent;
-                        } else result = result + item.innerText;
-                        });
-                        return result;
-                    }
-                    }
-                }
-                },
-            ]
-            },{
-                text: '<i class="mdi mdi-delete me-sm-1"></i> <span class="d-none d-sm-inline-block">Terminated Kontrak</span>',
-                className: 'btn btn-label-danger waves-effect waves-light',
+                text: '<i class="mdi mdi-arrow-left me-sm-1"></i> <span class="d-none d-sm-inline-block">Kembali</span>',
+                className: 'btn btn-label-secondary waves-effect waves-light',
                 action: function (e, dt, node, config)
                     {
+                        window.history.go(-1); return false;
                         //This will send the page to the location specified
-                        window.location.href = '{{route("monitoring-kontrak.index-terminate")}}';
                     }
                 },
         ],
@@ -272,66 +191,6 @@
             // Open this row
             // row.child(format(row.data())).show();
         }
-    });
-
-    // ajax terminate kontrak dengan swal konfirmasi terminate kontrak
-    function terminateKontrak(id){
-        Swal.fire({
-            title: 'Loading',
-            text: 'Melakukan Terminate kontrak...',
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            willOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        $.ajax({
-            url: "{{ route('monitoring-kontrak.terminate') }}",
-            type: "POST",
-            data: {
-                id: id,
-                _token: "{{ csrf_token() }}"
-            },
-            success: function(response){
-                if(response.status == 'success'){
-                    Swal.fire({
-                        title: 'Berhasil',
-                        text: response.message,
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            table.ajax.reload();
-                        }
-                    });
-                }else{
-                    Swal.fire({
-                        title: 'Gagal',
-                        text: response.message,
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            }
-        });
-    }
-    
-    $(document).on('click', '.btn-terminate-kontrak', function(){
-        let id = $(this).data('id');
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: "Apakah anda yakin ingin terminate kontrak ini?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, terminate'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                terminateKontrak(id);
-            }
-        });
     });
 </script>
 @endsection
