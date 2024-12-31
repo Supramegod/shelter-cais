@@ -485,7 +485,8 @@
   });
 
   $('#btn-kembali').on('click',function () {
-    window.location.replace("{{route('customer-activity')}}");
+    window.history.go(-1); return false;
+    // window.location.replace("{{route('customer-activity')}}");
   });
 </script>
 @endsection

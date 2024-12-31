@@ -320,7 +320,8 @@
 
 
   $('#btn-kembali').on('click',function () {
-    window.location.replace("{{route('leads')}}");
+    window.history.go(-1); return false;
+    // window.location.replace("{{route('leads')}}");
   });
 </script>
 @endsection

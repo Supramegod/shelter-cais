@@ -13,6 +13,7 @@ use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Http\Controllers\Sales\QuotationController;
 use App\Http\Controllers\Sales\SpkController;
 use App\Http\Controllers\Sales\PksController;
+use App\Http\Controllers\Sales\MonitoringKontrakController;
 
 use App\Http\Controllers\Master\PlatformController;
 use App\Http\Controllers\Master\AplikasiPendukungController;
@@ -432,5 +433,10 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/umk/list', 'list')->name('umk.list'); // ajax
         Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
+    });
+
+    Route::controller(MonitoringKontrakController::class)->group(function() {
+        Route::get('/sales/monitoring-kontrak', 'index')->name('monitoring-kontrak');
+        Route::get('/sales/monitoring-kontrak/list', 'list')->name('monitoring-kontrak.list');
     });
 });

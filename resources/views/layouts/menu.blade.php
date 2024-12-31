@@ -68,6 +68,12 @@
             <div data-i18n="PKS">PKS</div>
             </a>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
+            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
+            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
+            </a>
+        </li>
         <!-- RO , SPV Operational , Man Operational -->
         @elseif(in_array(Auth::user()->role_id,[4,5,6,8]))
         <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">

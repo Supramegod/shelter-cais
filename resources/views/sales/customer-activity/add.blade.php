@@ -452,7 +452,7 @@
               <div class="col-sm-12 d-flex justify-content-center">
                 <button id="btn-submit" type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Simpan</button>
                 <button type="reset" class="btn btn-warning me-sm-2 me-1 waves-effect">Reset</button>
-                <a href="{{route('customer-activity')}}" class="btn btn-secondary waves-effect">Kembali</a>
+                <a href="javascript:void(0)" onclick="window.history.go(-1); return false;" class="btn btn-secondary waves-effect">Kembali</a>
               </div>
             </div>
           </div>
