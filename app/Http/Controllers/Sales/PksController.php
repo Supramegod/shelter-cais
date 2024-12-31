@@ -275,7 +275,7 @@ class PksController extends Controller
         try {
             DB::beginTransaction();
             DB::connection('mysqlhris')->beginTransaction();
-
+            
             $current_date_time = Carbon::now()->toDateTimeString();
             $pks = DB::table('sl_pks')->where('id',$request->id)->first();
             DB::table('sl_pks')->where('id',$request->id)->update([
@@ -298,77 +298,109 @@ class PksController extends Controller
 
 
             // dimasukkan ke customer dan site
-            $quotation = DB::table('sl_quotation')->where('quotation_id',$pks->quotation_id)->whereNull('deleted_at')->get();
+            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->whereNull('deleted_at')->first();
             $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
 
-            $custId = DB::table('sl_customer')->insertGetId([
-                'leads_id' => $leads->id,
-                'nomor' =>  $leads->nomor,
-                'tgl_customer' => $current_date_time,
-                'nama_perusahaan' => $leads->nama_perusahaan,
-                'tim_sales_id' => $leads->tim_sales_id,
-                'tim_sales_d_id' => $leads->tim_sales_d_id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // cek leads dulu apakah ada pic_id_1,2,3 dan ro_id
+            if($leads->ro_id==null || ( $leads->ro_id_1==null && $leads->ro_id_2==null && $leads->ro_id_3==null)){
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Supervisor dan RO Belum Diisi'
+                ]);
+            }else{
+                if($leads->ro_id_1 == null){
+                    $leads->ro_id_1 = 0;
+                }
+                if($leads->ro_id_2 == null){
+                    $leads->ro_id_2 = 0;
+                }
+                if($leads->ro_id_3 == null){
+                    $leads->ro_id_3 = 0;
+                }
+            }
 
-            DB::table('sl_leads')->where('id',$leads->id)->update([
-                'customer_id' => $custId,
-                'status_leads_id' => 102,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
+            $custId = null;
+
+            if($leads->customer_id!=null){
+                $custId = $leads->customer_id;
+            }else{ 
+                $custId = DB::table('sl_customer')->insertGetId([
+                    'leads_id' => $leads->id,
+                    'nomor' =>  $leads->nomor,
+                    'tgl_customer' => $current_date_time,
+                    'nama_perusahaan' => $leads->nama_perusahaan,
+                    'tim_sales_id' => $leads->tim_sales_id,
+                    'tim_sales_d_id' => $leads->tim_sales_d_id,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+
+                DB::table('sl_leads')->where('id',$leads->id)->update([
+                    'customer_id' => $custId,
+                    'status_leads_id' => 102,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
+            }
 
             // SINGKRON KE CLIENT HRIS
-            $clientId = DB::connection('mysqlhris')->table('m_client')->insertGetId([
-                'customer_id' => $custId,
-                'name' => $leads->nama_perusahaan,
-                'address' => $leads->alamat,
-                'is_active' => 1,
-                'created_at' => $current_date_time, 
-                'created_by' => Auth::user()->id,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->id
-            ]);
+            $clientId = null;
+            if($leads->customer_id!=null){
+                $clientId = DB::connection('mysqlhris')->table('m_client')->where('customer_id',$custId)->first()->id;
+            }else{ 
+                $clientId = DB::connection('mysqlhris')->table('m_client')->insertGetId([
+                    'customer_id' => $custId,
+                    'name' => $leads->nama_perusahaan,
+                    'address' => $leads->alamat,
+                    'is_active' => 1,
+                    'created_at' => $current_date_time, 
+                    'created_by' => Auth::user()->id,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->id
+                ]);
+            }
 
-            foreach ($quotation as $key => $value) {
+            $quotationSite = DB::table('sl_quotation_site')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+
+            foreach ($quotationSite as $ks => $site) {
                 $siteId = DB::table('sl_site')->insertGetId([
-                    'quotation_id' => $value->id,
+                    'quotation_id' => $quotation->id,
+                    'quotation_site_id' => $site->id,
                     'leads_id' =>  $leads->id,
                     'customer_id' => $custId,
-                    'nama_site' => $value->nama_site,
-                    'provinsi_id' => $value->provinsi_id,
-                    'provinsi' => $value->provinsi,
-                    'kota_id' => $value->kota_id,
-                    'kota' => $value->kota,
-                    'penempatan' => $value->penempatan,
+                    'nama_site' => $site->nama_site,
+                    'provinsi_id' => $site->provinsi_id,
+                    'provinsi' => $site->provinsi,
+                    'kota_id' => $site->kota_id,
+                    'kota' => $site->kota,
+                    'penempatan' => $site->penempatan,
                     'tim_sales_id' => $leads->tim_sales_id,
                     'tim_sales_d_id' => $leads->tim_sales_d_id,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name,
                 ]);
-
+    
                 // SINGKRON KE SITE HRIS
                 $siteHrisId = DB::connection('mysqlhris')->table('m_site')->insertGetId([
                     'site_id' => $siteId,
                     'code' => $leads->nomor,
                     'proyek_id' => 0, // ACCURATE
                     'contract_number' => $pks->nomor,
-                    'name' => $value->nama_site,
-                    'address' => $value->penempatan,
-                    'layanan_id' => $value->kebutuhan_id,
+                    'name' => $site->nama_site,
+                    'address' => $site->penempatan,
+                    'layanan_id' => $quotation->kebutuhan_id,
                     'client_id' => $clientId,
-                    'city_id' => $value->kota_id,
+                    'city_id' => $site->kota_id,
                     'branch_id' => $leads->branch_id,
-                    'company_id' => $value->company_id,
+                    'company_id' => $quotation->company_id,
                     'pic_id_1' => $leads->ro_id_1,
                     'pic_id_2' => $leads->ro_id_2,
                     'pic_id_3' => $leads->ro_id_3,
                     'supervisor_id' => $leads->ro_id,
-                    'reliever' => $value->joker_reliever,
+                    'reliever' => $quotation->joker_reliever,
                     'contract_value' => 0,
-                    'contract_start' => $value->mulai_kontrak,
-                    'contract_end' => $value->kontrak_selesai,
+                    'contract_start' => $quotation->mulai_kontrak,
+                    'contract_end' => $quotation->kontrak_selesai,
                     'contract_terminated' => null,
                     'note_terminated' => '',
                     'contract_status' => 'Aktif',
@@ -382,177 +414,185 @@ class PksController extends Controller
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->id
                 ]);
+            }
+            
+            // BUAT VACANCY
+            $detailQuotation = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
 
-                // BUAT VACANCY
-                $detailQuotation = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$value->id)->get();
+            foreach ($detailQuotation as $kd => $d) {
+                $icon = 1;
+                if ($quotation->kebutuhan_id == 1) {
+                    $icon = 6;
+                } else if ($quotation->kebutuhan_id == 2) {
+                    $icon = 4;
+                } else if ($quotation->kebutuhan_id == 3) {
+                    $icon = 2;
+                } else if ($quotation->kebutuhan_id == 4) {
+                    $icon = 3;
+                };
 
-                foreach ($detailQuotation as $kd => $d) {
-                    $icon = 1;
-                    if ($value->kebutuhan_id == 1) {
-                        $icon = 6;
-                    } else if ($value->kebutuhan_id == 2) {
-                        $icon = 4;
-                    } else if ($value->kebutuhan_id == 3) {
-                        $icon = 2;
-                    } else if ($value->kebutuhan_id == 4) {
-                        $icon = 3;
-                    };
+                $siteCais = DB::table('sl_site')->where('quotation_site_id',$d->quotation_site_id)->first();
+                $siteHris = DB::connection('mysqlhris')->table('m_site')->where('site_id',$siteCais->id)->first();
 
-                    DB::connection('mysqlhris')->table('m_vacancy')->insert([
-                        'icon_id' => $icon,
-                        'start_date' => $current_date_time,
-                        'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
-                        'company_id' => $value->company_id,
-                        'site_id' => $siteHrisId,
-                        'position_id' => $d->position_id,
-                        'province_id' => $value->provinsi_id,
-                        'city_id' => $value->kota_id,
-                        'title' => $d->jabatan_kebutuhan,
-                        'type' => '',
-                        'content' => '',
-                        'needs' => $d->jumlah_hc,
-                        'phone_number1' => '',
-                        'phone_number2' => '',
-                        'flyer' => '',
-                        'is_active' => 1,
-                        'durasi_ketelitian' => 0,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->id,
-                        'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->id
-                    ]);
-                }
+                DB::connection('mysqlhris')->table('m_vacancy')->insert([
+                    'icon_id' => $icon,
+                    'start_date' => $current_date_time,
+                    'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
+                    'company_id' => $quotation->company_id,
+                    'site_id' => $siteHris->id,
+                    'position_id' => $d->position_id,
+                    'province_id' => $siteCais->provinsi_id,
+                    'city_id' => $siteCais->kota_id,
+                    'title' => $d->jabatan_kebutuhan,
+                    'type' => '',
+                    'content' => '',
+                    'needs' => $d->jumlah_hc,
+                    'phone_number1' => '',
+                    'phone_number2' => '',
+                    'flyer' => '',
+                    'is_active' => 1,
+                    'durasi_ketelitian' => 0,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->id,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->id
+                ]);
+            }
 
-                // masukkan COSS ke tabel 
-                $totalNominal = 0;
-                $totalNominalCoss = 0;
-                $ppn = 0;
-                $ppnCoss = 0;
-                $totalBiaya = 0;
-                $totalBiayaCoss = 0;
-                $margin = 0;
-                $marginCoss = 0;
-                $gpm = 0;
-                $gpmCoss = 0;
-                $quotationService = new QuotationService();
-                $calcQuotation = $quotationService->calculateQuotation($value);
-                foreach ($calcQuotation->quotation_detail as $kd => $kbd) {
-                    DB::table("sl_quotation_hpp")->insert([
-                        'quotation_id' => $value->id,
-                        'quotation_detail_id' => $kbd->id,
-                        'position_id' => $kbd->position_id,
-                        'leads_id' =>  $leads->id,
-                        'jumlah_hc' => $calcQuotation->jumlah_hc,
-                        'gaji_pokok' => $calcQuotation->nominal_upah,
-                        'total_tunjangan' => $kbd->total_tunjangan,
-                        'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
-                        'kompensasi' => $kbd->kompensasi,
-                        'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
-                        'lembur' => $kbd->lembur,
-                        'bpjs_jkk' => $kbd->bpjs_jkk,
-                        'bpjs_jkm' => $kbd->bpjs_jkm,
-                        'bpjs_jht' => $kbd->bpjs_jht,
-                        'bpjs_jp' => $kbd->bpjs_jp,
-                        'bpjs_ks' => $kbd->bpjs_kes,
-                        'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
-                        'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
-                        'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
-                        'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
-                        'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
-                        'provisi_seragam' =>  $kbd->personil_kaporlap,
-                        'provisi_peralatan' => $kbd->personil_devices ,
-                        'chemical' => $kbd->personil_chemical,
-                        'total_biaya_per_personil' => $kbd->total_personil,
-                        'total_biaya_all_personil' => $kbd->sub_total_personil,
-                        'management_fee' => $kbd->management_fee,
-                        'persen_management_fee' => $value->persentase,
-                        'ohc' => $kbd->total_ohc,
-                        'grand_total' => $kbd->grand_total,
-                        'ppn' => $kbd->ppn,
-                        'pph' => $kbd->pph,
-                        'total_invoice' => $kbd->total_invoice,
-                        'pembulatan' => $kbd->pembulatan,
-                        'is_pembulatan' => $kbd->is_pembulatan,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->full_name
-                    ]);
-
-                    DB::table("sl_quotation_coss")->insert([
-                        'quotation_id' => $value->id,
-                        'quotation_detail_id' => $kbd->id,
-                        'position_id' => $kbd->position_id,
-                        'leads_id' =>  $leads->id,
-                        'jumlah_hc' => $calcQuotation->jumlah_hc,
-                        'gaji_pokok' => $calcQuotation->nominal_upah,
-                        'total_tunjangan' => $kbd->total_tunjangan,
-                        'total_base_manpower' => $kbd->total_base_manpower,
-                        'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
-                        'kompensasi' => $kbd->kompensasi,
-                        'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
-                        'lembur' => $kbd->lembur,
-                        'bpjs_jkk' => $kbd->bpjs_jkk,
-                        'bpjs_jkm' => $kbd->bpjs_jkm,
-                        'bpjs_jht' => $kbd->bpjs_jht,
-                        'bpjs_jp' => $kbd->bpjs_jp,
-                        'bpjs_ks' => $kbd->bpjs_kes,
-                        'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
-                        'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
-                        'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
-                        'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
-                        'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
-                        'provisi_seragam' =>  $kbd->personil_kaporlap,
-                        'provisi_peralatan' => $kbd->personil_devices ,
-                        'chemical' => $kbd->personil_chemical,
-                        'total_exclude_base_manpower' => $kbd->total_exclude_base_manpower,
-                        'bunga_bank' => $kbd->bunga_bank,
-                        'insentif' => $kbd->insentif,
-                        'management_fee' => $kbd->management_fee_coss,
-                        'persen_bunga_bank' => $value->persen_bunga_bank,
-                        'persen_insentif' => $value->persen_insentif,
-                        'persen_management_fee' => $value->persentase,
-                        'grand_total' => $kbd->grand_total_coss,
-                        'ppn' => $kbd->ppn_coss,
-                        'pph' => $kbd->pph_coss,
-                        'total_invoice' => $kbd->total_invoice_coss,
-                        'pembulatan' => $kbd->pembulatan_coss,
-                        'is_pembulatan' => $kbd->is_pembulatan,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->full_name
-                    ]);
-
-                    $totalNominal += $kbd->total_invoice;
-                    $totalNominalCoss += $kbd->total_invoice_coss;
-                    $ppn += $kbd->ppn;
-                    $ppnCoss += $kbd->ppn_coss;
-                    $totalBiaya += $kbd->sub_total_personil;
-                    $totalBiayaCoss += $kbd->sub_total_personil;
-                    $margin = $totalNominal-$ppn-$totalBiaya;
-                    $marginCoss = $totalNominalCoss-$ppnCoss-$totalBiayaCoss;
-                    $gpm = ($margin/$totalBiaya)*100;
-                    $gpmCoss = ($marginCoss/$totalBiayaCoss)*100;
-                }
-                DB::table("sl_quotation_margin")->insert([
-                    'quotation_id' => $value->id,
+            // masukkan COSS ke tabel 
+            $totalNominal = 0;
+            $totalNominalCoss = 0;
+            $ppn = 0;
+            $ppnCoss = 0;
+            $totalBiaya = 0;
+            $totalBiayaCoss = 0;
+            $margin = 0;
+            $marginCoss = 0;
+            $gpm = 0;
+            $gpmCoss = 0;
+            $quotationService = new QuotationService();
+            $calcQuotation = $quotationService->calculateQuotation($quotation);
+            foreach ($calcQuotation->quotation_detail as $kd => $kbd) {
+                DB::table("sl_quotation_detail_hpp")->insert([
+                    'quotation_id' => $quotation->id,
+                    'quotation_detail_id' => $kbd->id,
+                    'position_id' => $kbd->position_id,
                     'leads_id' =>  $leads->id,
-                    'nominal_hpp' => $totalNominal,
-                    'nominal_harga_pokok' => $totalNominalCoss,
-                    'ppn_hpp' => $ppn,
-                    'ppn_harga_pokok' => $ppnCoss,
-                    'total_biaya_hpp' => $totalBiaya,
-                    'total_biaya_harga_pokok' => $totalBiayaCoss,
-                    'margin_hpp' => $margin,
-                    'margin_harga_pokok' => $marginCoss,
-                    'gpm_hpp' => $gpm,
-                    'gpm_harga_pokok' => $gpmCoss,
+                    'jumlah_hc' => $calcQuotation->jumlah_hc,
+                    'gaji_pokok' => $calcQuotation->nominal_upah,
+                    'total_tunjangan' => $kbd->total_tunjangan,
+                    'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
+                    'kompensasi' => $kbd->kompensasi,
+                    'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
+                    'lembur' => $kbd->lembur,
+                    'bpjs_jkk' => $kbd->bpjs_jkk,
+                    'bpjs_jkm' => $kbd->bpjs_jkm,
+                    'bpjs_jht' => $kbd->bpjs_jht,
+                    'bpjs_jp' => $kbd->bpjs_jp,
+                    'bpjs_ks' => $kbd->bpjs_kes,
+                    'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
+                    'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
+                    'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
+                    'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
+                    'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
+                    'provisi_seragam' =>  $kbd->personil_kaporlap,
+                    'provisi_peralatan' => $kbd->personil_devices ,
+                    'chemical' => $kbd->personil_chemical,
+                    'total_biaya_per_personil' => $kbd->total_personil,
+                    'total_biaya_all_personil' => $kbd->sub_total_personil,
+                    'management_fee' => $kbd->management_fee,
+                    'persen_management_fee' => $quotation->persentase,
+                    'ohc' => $kbd->total_ohc,
+                    'grand_total' => $kbd->grand_total,
+                    'ppn' => $kbd->ppn,
+                    'pph' => $kbd->pph,
+                    'total_invoice' => $kbd->total_invoice,
+                    'pembulatan' => $kbd->pembulatan,
+                    'is_pembulatan' => $kbd->is_pembulatan,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
+
+                DB::table("sl_quotation_detail_coss")->insert([
+                    'quotation_id' => $quotation->id,
+                    'quotation_detail_id' => $kbd->id,
+                    'position_id' => $kbd->position_id,
+                    'leads_id' =>  $leads->id,
+                    'jumlah_hc' => $calcQuotation->jumlah_hc,
+                    'gaji_pokok' => $calcQuotation->nominal_upah,
+                    'total_tunjangan' => $kbd->total_tunjangan,
+                    'total_base_manpower' => $kbd->total_base_manpower,
+                    'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
+                    'kompensasi' => $kbd->kompensasi,
+                    'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
+                    'lembur' => $kbd->lembur,
+                    'bpjs_jkk' => $kbd->bpjs_jkk,
+                    'bpjs_jkm' => $kbd->bpjs_jkm,
+                    'bpjs_jht' => $kbd->bpjs_jht,
+                    'bpjs_jp' => $kbd->bpjs_jp,
+                    'bpjs_ks' => $kbd->bpjs_kes,
+                    'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
+                    'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
+                    'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
+                    'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
+                    'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
+                    'provisi_seragam' =>  $kbd->personil_kaporlap,
+                    'provisi_peralatan' => $kbd->personil_devices ,
+                    'chemical' => $kbd->personil_chemical,
+                    'total_exclude_base_manpower' => $kbd->total_exclude_base_manpower,
+                    'bunga_bank' => $kbd->bunga_bank,
+                    'insentif' => $kbd->insentif,
+                    'management_fee' => $kbd->management_fee_coss,
+                    'persen_bunga_bank' => $quotation->persen_bunga_bank,
+                    'persen_insentif' => $quotation->persen_insentif,
+                    'persen_management_fee' => $quotation->persentase,
+                    'grand_total' => $kbd->grand_total_coss,
+                    'ppn' => $kbd->ppn_coss,
+                    'pph' => $kbd->pph_coss,
+                    'total_invoice' => $kbd->total_invoice_coss,
+                    'pembulatan' => $kbd->pembulatan_coss,
+                    'is_pembulatan' => $kbd->is_pembulatan,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+
+                $totalNominal += $kbd->total_invoice;
+                $totalNominalCoss += $kbd->total_invoice_coss;
+                $ppn += $kbd->ppn;
+                $ppnCoss += $kbd->ppn_coss;
+                $totalBiaya += $kbd->sub_total_personil;
+                $totalBiayaCoss += $kbd->sub_total_personil;
+                $margin = $totalNominal-$ppn-$totalBiaya;
+                $marginCoss = $totalNominalCoss-$ppnCoss-$totalBiayaCoss;
+                $gpm = ($margin/$totalBiaya)*100;
+                $gpmCoss = ($marginCoss/$totalBiayaCoss)*100;
             }
+            DB::table("sl_quotation_margin")->insert([
+                'quotation_id' => $quotation->id,
+                'leads_id' =>  $leads->id,
+                'nominal_hpp' => $totalNominal,
+                'nominal_harga_pokok' => $totalNominalCoss,
+                'ppn_hpp' => $ppn,
+                'ppn_harga_pokok' => $ppnCoss,
+                'total_biaya_hpp' => $totalBiaya,
+                'total_biaya_harga_pokok' => $totalBiayaCoss,
+                'margin_hpp' => $margin,
+                'margin_harga_pokok' => $marginCoss,
+                'gpm_hpp' => $gpm,
+                'gpm_harga_pokok' => $gpmCoss,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
             // SINGKRON KE ACCURATE
 
             DB::commit();
             DB::connection('mysqlhris')->commit();
+
+            return response()->json([
+                'status' => 'sukses',
+                'message' => 'berhasil mengaktifkan site'
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
             DB::connection('mysqlhris')->rollback();

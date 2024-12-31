@@ -247,7 +247,7 @@
           'processing': 'Loading...'
       },
       ajax: {
-          url: "{{ route('leads.available-leads') }}",
+          url: "{{ route('leads.available-quotation') }}",
           data: function (d) {
               
           },

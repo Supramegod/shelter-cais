@@ -61,6 +61,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(DashboardController::class)->group(function() {
         Route::get('/dashboard/approval', 'dashboardApproval')->name('dashboard-approval');
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
+        Route::get('/dashboard/aktifkan/list', 'getListDashboardAktifkanData')->name('dashboard-aktifkan.list');
     });
 
     Route::controller(LeadsController::class)->group(function() {
@@ -80,7 +81,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/leads/list', 'list')->name('leads.list'); // ajax
         Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
-        Route::get('/sales/leads/leads.available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
+        Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
+        Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation'); // ajax
 
         Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads'); // ajax
         Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads'); // ajax

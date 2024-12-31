@@ -408,6 +408,15 @@
           url: "{{route('pks.aktifkan-site')}}",
           data:formData,
           success: function(response){
+            if (response.status == 'error') {
+              Swal.fire({
+                title: "Pemberitahuan",
+                html: response.message,
+                icon: "error",
+              });
+              return;
+            }
+            
             Swal.close();
             let timerInterval;
             Swal.fire({
@@ -426,7 +435,7 @@
               willClose: () => {
                 clearInterval(timerInterval);
               }
-            }).then((result) => {
+            }).then((result) => {    
               /* Read more about handling dismissals below */
               if (result.dismiss === Swal.DismissReason.timer) {
                 location.reload();

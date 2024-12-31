@@ -17,8 +17,8 @@
                             class="nav-link active"
                             role="tab"
                             data-bs-toggle="tab"
-                            data-bs-target="#navs-approval-anda"
-                            aria-controls="navs-approval-anda"
+                            data-bs-target="#navs-aktifkan-anda"
+                            aria-controls="navs-aktifkan-anda"
                             aria-selected="true">
                             <i class="tf-icons mdi mdi-home-outline me-1"></i> Menunggu Aktifkan Site
                             <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-label-danger ms-1">
@@ -31,9 +31,9 @@
             </div>
             <div class="card-body">
                 <div class="tab-content p-0">
-                    <div class="tab-pane fade show active" id="navs-approval-anda" role="tabpanel">
-                        <div class="table-responsive overflow-hidden table-approval-anda">
-                            <table id="table-approval-anda" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                    <div class="tab-pane fade show active" id="navs-aktifkan-anda" role="tabpanel">
+                        <div class="table-responsive overflow-hidden table-aktifkan-anda">
+                            <table id="table-aktifkan-anda" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                                 <thead>
                                     <tr>
                                         <th class="text-center">ID</th>
@@ -274,7 +274,7 @@
             '</dl>'
         );
     }
-    var table = $('#table-approval-anda').DataTable({
+    var table = $('#table-aktifkan-anda').DataTable({
     scrollX: true,
     "iDisplayLength": 25,
     'processing': true,
@@ -283,10 +283,8 @@
         'processing': 'Loading...'
     },
     ajax: {
-        url: "{{ route('dashboard-approval.list') }}",
-        data: function (d) {
-            d.tipe = "menunggu-anda";
-        },
+        url: "{{ route('dashboard-aktifkan.list') }}",
+        data: function (d) {},
     },
     "createdRow": function( row, data, dataIndex){
         if(data.step!=100){

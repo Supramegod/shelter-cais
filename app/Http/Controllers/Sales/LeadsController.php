@@ -692,9 +692,76 @@ class LeadsController extends Controller
                         ->leftJoin('m_tim_sales','sl_leads.tim_sales_id','=','m_tim_sales.id')
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
+                        ->whereNull('sl_leads.deleted_at');
+            
+            //divisi sales
+            if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
+                // sales
+                if(Auth::user()->role_id==29){
+                    $data = $data->where('m_tim_sales_d.user_id',Auth::user()->id);
+                }else if(Auth::user()->role_id==30){
+                }
+                // spv sales
+                else if(Auth::user()->role_id==31){
+                    $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+                    $memberSales = [];
+                    $sales = DB::table('m_tim_sales_d')->whereNull('deleted_at')->where('tim_sales_id',$tim->tim_sales_id)->get();
+                    foreach ($sales as $key => $value) {
+                        array_push($memberSales,$value->user_id);
+                    }
+                    $data = $data->whereIn('m_tim_sales_d.user_id',$memberSales);
+                }
+                // Asisten Manager Sales , Manager Sales
+                else if(Auth::user()->role_id==32 || Auth::user()->role_id==33){
+
+                }
+            }
+            //divisi RO
+            else if(in_array(Auth::user()->role_id,[4,5,6,8])){
+                if(in_array(Auth::user()->role_id,[4,5])){
+                    $data = $data->where('sl_leads.ro_id',Auth::user()->id);
+                }else if(in_array(Auth::user()->role_id,[6,8])){
+
+                }
+            }
+            //divisi crm
+            else if(in_array(Auth::user()->role_id,[54,55,56])){
+                if(in_array(Auth::user()->role_id,[54])){
+                    $data = $data->where('sl_leads.crm_id',Auth::user()->id);
+                }else if(in_array(Auth::user()->role_id,[55,56])){
+
+                }
+            };
+            
+            $data = $data->get();
+                        
+
+            foreach ($data as $key => $value) {
+                $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
+            }
+            return DataTables::of($data)
+            ->make(true);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function availableQuotation (Request $request){
+        try {
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+            $data = DB::table('sl_leads')
+                        ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
+                        ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
+                        ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
+                        ->leftJoin('m_kebutuhan','sl_leads.kebutuhan_id','=','m_kebutuhan.id')
+                        ->leftJoin('m_tim_sales','sl_leads.tim_sales_id','=','m_tim_sales.id')
+                        ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                        ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at')
-                        ->whereNull('sl_leads.leads_id')
-                        ->whereNull('sl_leads.customer_id');
+                        ->whereNull('sl_leads.leads_id');
             
             //divisi sales
             if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
@@ -762,12 +829,12 @@ class LeadsController extends Controller
                 'leads_id' => $leadsParent->id,
                 'tgl_leads' => $current_date_time,
                 'nama_perusahaan' => $request->nama_perusahaan,
-                'telp_perusahaan' => null,
+                'telp_perusahaan' => $leadsParent->telp_perusahaan,
                 'jenis_perusahaan_id' => $leadsParent->jenis_perusahaan_id,
                 'branch_id' => $leadsParent->branch_id,
                 'platform_id' => 8,
                 'kebutuhan_id' => $leadsParent->kebutuhan_id,
-                'alamat' => null,
+                'alamat' => $leadsParent->alamat,
                 'pic' => $leadsParent->pic,
                 'jabatan' => $leadsParent->jabatan,
                 'no_telp' => $leadsParent->no_telp,

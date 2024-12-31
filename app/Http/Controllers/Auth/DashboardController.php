@@ -73,6 +73,20 @@ class DashboardController extends Controller
                 $error++;
             }
         }
+
+        // jika manager crm maka cari sl_pks yang siap untuk diaktifkan dengan status_pks_id = 6
+        if(Auth::user()->role_id==56){
+            $dataPks = DB::table('sl_pks')
+            ->leftJoin('m_status_pks','sl_pks.status_pks_id','m_status_pks.id')
+            ->select('sl_pks.id','sl_pks.nomor','sl_pks.tgl_pks','sl_pks.leads_id','sl_pks.status_pks_id','m_status_pks.nama as status_pks')
+            ->whereNull('sl_pks.deleted_at')
+            ->where('sl_pks.status_pks_id',6)->get();
+
+            foreach ($dataPks as $key => $pks) {
+                $jumlahMenungguManagerCrm++;
+            }
+        }
+
         return view('home.dashboard-approval',compact('jumlahMenungguManagerCrm','dataBelumLengkap','dataMenungguApproval','dataMenungguAnda','jumlahMenungguApproval','jumlahMenungguDirSales','jumlahMenungguDirkeu','jumlahMenungguDirut','quotationBelumLengkap'));
     }
 
@@ -83,7 +97,11 @@ class DashboardController extends Controller
         ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
         ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-        ->select('sl_quotation.step','sl_quotation.top','sl_quotation.ot3','sl_quotation.ot2','sl_quotation.ot1','sl_quotation.nama_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation')
+        ->select('sl_quotation.step','sl_quotation.top','sl_quotation.ot3','sl_quotation.ot2','sl_quotation.ot1','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation',
+        DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
+                    FROM sl_quotation_site 
+                    WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site')
+        )
         ->whereNull('sl_leads.deleted_at')
         ->whereNull('sl_quotation.deleted_at')
         ->where('sl_quotation.is_aktif',0)->get();
@@ -140,7 +158,46 @@ class DashboardController extends Controller
             ->editColumn('nama_perusahaan', function ($data) {
                 return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
             })
-            ->rawColumns(['aksi','nomor','nama_perusahaan'])
+            ->rawColumns(['aksi','nomor','nama_perusahaan','nama_site'])
             ->make(true);
     }
+
+    public function getListDashboardAktifkanData(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_pks')
+        ->leftJoin('sl_quotation','sl_quotation.id','sl_pks.quotation_id')
+        ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
+        ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
+        ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+        ->select('sl_pks.nomor','sl_quotation.step','sl_quotation.top','sl_quotation.ot3','sl_quotation.ot2','sl_quotation.ot1','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_pks.id','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation',
+        DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
+                    FROM sl_quotation_site 
+                    WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site')
+        )
+        ->whereNull('sl_leads.deleted_at')
+        ->whereNull('sl_quotation.deleted_at')
+        ->whereNull('sl_pks.deleted_at')
+        ->where('sl_pks.status_pks_id',6)->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
+        }
+
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->editColumn('nomor', function ($data) {
+                $ref = route('pks.view',$data->id);
+                return '<a href="'.$ref.'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+            })
+            ->editColumn('nama_perusahaan', function ($data) {
+                return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
+            })
+            ->rawColumns(['aksi','nomor','nama_perusahaan','nama_site'])
+            ->make(true);
+    }
+
 }
