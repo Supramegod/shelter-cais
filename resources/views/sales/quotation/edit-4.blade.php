@@ -33,8 +33,8 @@
                       <label class="form-check-label custom-option-content" for="ump">
                         <span class="custom-option-body">
                           <span class="custom-option-title">UMP</span>
-                          <span class="label-provinsi">{{$dataProvinsi->name}}</span><br>
-                          <span class="label-provinsi">{{$dataProvinsi->ump}}</span>
+                          <!-- <span class="label-provinsi">XXXXXXXXXXXX</span><br>
+                          <span class="label-provinsi">XXXXXXXXXXXX</span> -->
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="UMP" id="ump" @if($quotation->upah == 'UMP') checked @endif>
                       </label>
@@ -45,8 +45,6 @@
                       <label class="form-check-label custom-option-content" for="umk">
                         <span class="custom-option-body">
                           <span class="custom-option-title">UMK</span>
-                          <span class="label-kota">{{$dataKota->name}}</span><br>
-                          <span class="label-kota">{{$dataKota->umk}}</span>
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="UMK" id="umk" @if($quotation->upah == 'UMK') checked @endif>
                       </label>
@@ -56,8 +54,8 @@
                     <div class="form-check custom-option custom-option-icon show-custom @if($quotation->upah == 'Custom') checked @endif">
                       <label class="form-check-label custom-option-content" for="custom">
                         <span class="custom-option-body">
-                          <span class="custom-option-title">Custom</span><br>
-                          <span>&nbsp;</span>
+                          <span class="custom-option-title">Custom</span>
+                          <!-- <br><span>&nbsp;</span> -->
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="Custom" id="custom" @if($quotation->upah == 'Custom') checked @endif>
                       </label>
