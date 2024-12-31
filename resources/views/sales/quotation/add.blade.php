@@ -36,7 +36,7 @@
             </div>
             <div class="d-none" id="show_isian">
               <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan  <span class="text-danger fw-bold">*</span></label>
+                <label class="col-sm-2 col-form-label text-sm-end">Perusahaan  <span class="text-danger fw-bold">*</span></label>
                 <div class="col-sm-10">
                   <div class="input-group">
                     <select id="perusahaan_id" name="perusahaan_id" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -114,11 +114,13 @@
                           <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
                         @endforeach
                       </select>
+                      <div id="ump" class="form-text"></div>
                     </div>
                     <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
                     <div class="col-sm-4">
                       <select id="kota" name="kota" class="form-select" data-allow-clear="true" tabindex="-1">
                       </select>
+                      <div id="umk" class="form-text"></div>
                     </div>
                   </div>
                   <div class="row mb-3">
@@ -137,12 +139,6 @@
                 <div class="row mb-3 d-multi-site">
                   <hr class="mb-3">
                   <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
-                    <div class="col-sm-10 col-form-label text-sm-end">
-                      <input type="text" id="siteName" name="siteName" value="" class="form-control">
-                    </div>
-                  </div>
-                  <div class="row mb-3">
                     <label class="col-sm-2 col-form-label text-sm-end">Provinsi  <span class="text-danger fw-bold">*</span></label>
                     <div class="col-sm-4">
                       <select id="provinsiMulti" name="provinsiMulti" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -151,11 +147,19 @@
                           <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
                         @endforeach
                       </select>
+                      <div id="ump-multi" class="form-text"></div>
                     </div>
                     <label class="col-sm-2 col-form-label text-sm-end">Kabupaten/Kota  <span class="text-danger fw-bold">*</span></label>
                     <div class="col-sm-4">
                       <select id="kotaMulti" name="kotaMulti" class="form-select" data-allow-clear="true" tabindex="-1">
                       </select>
+                      <div id="umk-multi" class="form-text"></div>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Nama Site  <span class="text-danger fw-bold">*</span></label>
+                    <div class="col-sm-10 col-form-label text-sm-end">
+                      <input type="text" id="siteName" name="siteName" value="" class="form-control">
                     </div>
                   </div>
                   <div class="row mb-3">
@@ -218,7 +222,7 @@
                 <thead>
                   <tr>
                     <th class="text-center">ID</th>
-                    <th class="text-center">Nama Perusahaan</th>
+                    <th class="text-center">Perusahaan</th>
                     <th class="text-center">Tgl Leads</th>
                     <th class="text-center">Wilayah</th>
                     <th class="text-center">PIC</th>
@@ -249,7 +253,7 @@
         <div class="row">
           <div class="col-12">
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan  <span class="text-danger fw-bold">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">Perusahaan  <span class="text-danger fw-bold">*</span></label>
               <div class="col-sm-10">
                 <input type="text" id="modal_nama_perusahaan" value="" class="form-control">
               </div>
@@ -419,6 +423,8 @@
     $('#kota').append('<option value="">- Pilih data -</option>');
     if(this.value!=""){
       var param = "province_id="+this.value;
+      var ump = $(this).find(':selected').data('ump');
+      $('#ump').text(ump);
       $.ajax({
         url: "{{route('quotation.change-kota')}}",
         type: 'GET',
@@ -426,18 +432,25 @@
         success: function(res) {
           res.forEach(element => {
             let selected = "";
-            $('#kota').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+            $('#kota').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
           });
         }
       });
+    }else{
+      var ump = "";
+      $('#ump').text(ump);
     }
   });
 
   $('#kota').on('change', function() {
     generateNama();
+    var umk = $(this).find(':selected').data('umk');
+    $('#umk').text(umk);
   })
   $('#kotaMulti').on('change', function() {
     generateNama();
+    var umk = $(this).find(':selected').data('umk');
+    $('#umk-multi').text(umk);
   })
 
   $('#provinsiMulti').on('change', function() {
@@ -445,25 +458,9 @@
     $('#kotaMulti').append('<option value="">- Pilih data -</option>');
     if(this.value!=""){
       var param = "province_id="+this.value;
-      $.ajax({
-        url: "{{route('quotation.change-kota')}}",
-        type: 'GET',
-        data: param,
-        success: function(res) {
-          res.forEach(element => {
-            let selected = "";
-            $('#kotaMulti').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
-          });
-        }
-      });
-    }
-  });
+      var ump = $(this).find(':selected').data('ump');
+      $('#ump-multi').text(ump);
 
-  $('#modal_provinsi_site').on('change', function() {
-    $('#modal_kota_site').find('option').remove();
-    $('#modal_kota_site').append('<option value="">- Pilih data -</option>');
-    if(this.value!=""){
-      var param = "province_id="+this.value;
       $.ajax({
         url: "{{route('quotation.change-kota')}}",
         type: 'GET',
@@ -471,10 +468,13 @@
         success: function(res) {
           res.forEach(element => {
             let selected = "";
-            $('#modal_kota_site').append('<option value="'+element.id+'" '+selected+'>'+element.name+'</option>');
+            $('#kotaMulti').append('<option data-umk="'+element.umk+'" value="'+element.id+'" '+selected+'>'+element.name+'</option>');
           });
         }
       });
+    }else{
+      var ump = "";
+      $('#ump-multi').text(ump);
     }
   });
  
