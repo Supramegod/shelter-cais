@@ -289,7 +289,8 @@ class SpkController extends Controller
             unset($dataToInsertQuotation['id']);
             unset($dataToInsertQuotation['nomor']);
 
-            $dataToInsertQuotation['nomor'] = $this->generateNomorQuotation($qtujuan->leads_id,$qtujuan->company_id);
+            $nomorQuotationBaru = $this->generateNomorQuotation($qtujuan->leads_id,$qtujuan->company_id);
+            $dataToInsertQuotation['nomor'] = $nomorQuotationBaru;
             $dataToInsertQuotation['revisi'] = $qtujuan->revisi+1;
             $dataToInsertQuotation['alasan_revisi'] = $request->alasan;            
             $dataToInsertQuotation['quotation_asal_id'] = $qtujuan->id;
@@ -489,6 +490,40 @@ class SpkController extends Controller
             DB::table('sl_spk')->where('id',$spk->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
+            ]);
+
+            //insert ke activity sebagai activity pertama
+            $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
+            $customerActivityController = new CustomerActivityController();
+
+            // buat activity baru dari quotation yang diajukan ulang
+            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $qtujuan->leads_id,
+                'quotation_id' => $qasalId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            // buat activity baru dari quotation baru
+            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $qtujuan->leads_id,
+                'quotation_id' => $qtujuanId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
             ]);
 
             return redirect()->route('quotation');
