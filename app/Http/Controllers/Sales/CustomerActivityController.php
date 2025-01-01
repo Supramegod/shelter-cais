@@ -714,5 +714,32 @@ class CustomerActivityController extends Controller
 
         return $nomor;
     }
+    
+    public function trackActivity (Request $request,$leadsId){
+        try {
+            $data = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id',$leadsId)->orderBy('created_at','desc')->get();
+            foreach ($data as $key => $value) {
+                $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
+                $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+            }
 
+            $leads = DB::table('sl_leads')->where('id',$leadsId)->first();
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('id',$leads->jenis_perusahaan_id)->first();
+            if($jenisPerusahaan !=null){ $leads->jenis_perusahaan = $jenisPerusahaan->nama; }else{ $leads->jenis_perusahaan = ""; }
+
+            $quotation = DB::table('sl_quotation')->where('leads_id',$leadsId)->get();
+            foreach ($quotation as $key => $quot) {
+                $quot->spk = DB::table('sl_spk')->where('quotation_id',$quot->id)->first();
+                $quot->pks = DB::table('sl_pks')->where('quotation_id',$quot->id)->first();
+                $quot->detail = DB::table('sl_quotation_detail')->where('quotation_id',$quot->id)->get();
+                $quot->site = DB::table('sl_site')->where('quotation_id',$quot->id)->get();
+            }
+
+            return view('sales.customer-activity.track',compact('data','leads','quotation'));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
 }
