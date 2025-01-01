@@ -106,7 +106,7 @@
             PENGANTAR</h1>
             <br>
 <p>Dengan hormat,</p>
-<p>Kami, <b>Shelter Indonesia</b> mengucapkan salam sejahtera untuk Bpk/Ibu XXXXXXX dan seluruh jajaran
+<p>Kami, <b>Shelter Indonesia</b> mengucapkan salam sejahtera untuk Bpk/Ibu {{$leads->pic}} dan seluruh jajaran
 manajemen di <b>{{$leads->nama_perusahaan}}</b>. Sehubungan dengan semakin kompleksnya
 tuntutan bisnis dimasa sekarang, kami ingin menawarkan layanan yang dapat membantu
 meningkatkan efisiensi dan produktivitas operasional perusahaan Bpk/Ibu.</p>
@@ -128,8 +128,8 @@ mencapai tujuan bisnis perusahaan Bpk/Ibu.
 <p>
 Hormat kami,
 <br><br><br>
-<b>[NAMA PENGIRIM]</b>
-<br>[POSISI PENGIRIM]
+<b>{{Auth::user()->full_name}}</b>
+<br>{{Auth::user()->role}}
 </p>
 </div>
 </div>
@@ -152,8 +152,10 @@ Hormat kami,
 <div class="content">
     <div style="margin-top:50px;margin-right:20px;color:black !important;font-size:10pt !important">
         <p style="text-align:center;color:#002060;">[Lampiran Penawaran Harga Jasa Alih Daya Sesuai dengan Solusi atas Hasil Survey]<br>
-        PENAWARAN HARGA JASA ALIH TENAGA OFFICE BOY/GIRL<br>
-        {{strtoupper($data->nama_site)}}<br>
+        PENAWARAN HARGA JASA ALIH TENAGA {{strtoupper($data->kebutuhan)}}<br>
+        @foreach($data->site as $site)
+        {{strtoupper($site->nama_site)}}<br>
+        @endforeach
         TAHUN {{$master->tahun_quotation}}</p>
 
         <table class="bordered">
@@ -165,7 +167,10 @@ Hormat kami,
                 <th colspan="{{3+count($data->quotation_detail)}}" style="vertical-align: middle;text-align:center">{{$leads->nama_perusahaan}}</th>
                 </tr>
                 <tr class="table-success">
-                <th colspan="{{3+count($data->quotation_detail)}}" style="vertical-align: middle;text-align:center">{{$master->nama_site}}</th>
+                <th>&nbsp;</th>
+                @foreach($data->site as $site)
+                <th colspan="{{$site->jumlah_detail}}" style="vertical-align: middle;text-align:center">{{$site->nama_site}}</th>
+                @endforeach
                 </tr>
             </thead>              
             <tbody>
@@ -190,7 +195,7 @@ Hormat kami,
                 <tr>
                 <td>Upah/Gaji</th>
                 @foreach($data->quotation_detail as $detailJabatan)
-                <td class="text-end">{{"Rp. ".number_format($master->nominal_upah,2,",",".")}}</th>
+                <td class="text-end">{{"Rp. ".number_format($detailJabatan->nominal_upah,2,",",".")}}</th>
                 @endforeach
                 </tr>
                 @foreach($daftarTunjangan as $it => $tunjangan)
