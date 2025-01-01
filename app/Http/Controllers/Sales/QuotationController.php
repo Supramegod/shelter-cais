@@ -16,6 +16,7 @@ use App\Exports\LeadsTemplateExport;
 use App\Exports\LeadsExport;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Helper\QuotationService;
+use App\Http\Controllers\Sales\CustomerActivityController;
 
 class QuotationController extends Controller
 {
@@ -1041,7 +1042,7 @@ class QuotationController extends Controller
             ->whereNull('sl_quotation.deleted_at')
             ->whereNull('sl_leads.deleted_at')
             ->where("sl_quotation.step","!=",100)
-            ->where("sl_quotation.quotation_id",$quotation->id)
+            ->where("sl_quotation.id",$quotation->id)
             ->where('m_tim_sales_d.user_id',Auth::user()->id)
             ->get();
             
@@ -1063,8 +1064,9 @@ class QuotationController extends Controller
             $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
             $leads = DB::table('sl_leads')->where('id',$request->perusahaan_id)->first();
 
+            $quotationNomor = $this->generateNomor($request->perusahaan_id,$request->entitas);
             $newId = DB::table('sl_quotation')->insertGetId([
-                'nomor' => $this->generateNomor($request->perusahaan_id,$request->entitas),
+                'nomor' => $quotationNomor,
                 'tgl_quotation' => $current_date,
                 'leads_id' => $request->perusahaan_id,
                 'jumlah_site' =>  $request->jumlah_site,
@@ -1152,6 +1154,24 @@ class QuotationController extends Controller
                     'created_by' => Auth::user()->full_name
                 ]);
             }
+
+            //insert ke activity sebagai activity pertama
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($request->perusahaan_id);
+
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $request->perusahaan_id,
+                'quotation_id' => $newId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$quotationNomor.' terbentuk',
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
             DB::commit();
             
             return redirect()->route('quotation.step',['id'=>$newId,'step'=>'1']);
@@ -2618,6 +2638,8 @@ class QuotationController extends Controller
 
     public function approveQuotation(Request $request){
         try {
+            DB::beginTransaction();
+
             $current_date_time = Carbon::now()->toDateTimeString();
             $master = DB::table('sl_quotation')->where('id',$request->id)->first();
             
@@ -2662,6 +2684,25 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->full_name
                 ]);
             }
+
+            //insert ke activity sebagai activity pertama
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($master->leads_id);
+            $leads = DB::table('sl_leads')->where('id',$master->leads_id)->first();
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $master->leads_id,
+                'quotation_id' => $request->id,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$master->nomor.' di approve oleh '.Auth::user()->full_name,
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            DB::commit();
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

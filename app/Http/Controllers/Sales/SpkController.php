@@ -96,33 +96,18 @@ class SpkController extends Controller
         try {
             $data = DB::table('sl_quotation')
                 ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
+                ->leftJoin('sl_spk','sl_spk.quotation_id','=','sl_quotation.id')
                 ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                 ->whereNull('sl_quotation.deleted_at')
+                ->whereNull('sl_spk.id')
+                ->whereNull('sl_spk.deleted_at')
                 ->where('m_tim_sales_d.user_id',Auth::user()->id)
-                ->select("sl_quotation.id","sl_quotation.tgl_quotation","sl_quotation.nama_perusahaan","sl_quotation.jumlah_site","sl_quotation.kebutuhan")
+                ->select("sl_quotation.nomor","sl_quotation.id","sl_quotation.tgl_quotation","sl_quotation.nama_perusahaan","sl_quotation.jumlah_site","sl_quotation.kebutuhan","sl_quotation.kebutuhan as layanan")
                 ->distinct()
                 ->get();
             foreach ($data as $key => $value) {
-                $spk = DB::table('sl_spk')->where('quotation_id',$value->id)->first();
-                if($spk!=null){
-                    unset($data[$key]);
-                }else{
-                    $quotationList = DB::table("sl_quotation")->whereNull("deleted_at")->where("is_aktif",0)->where("id",$value->id)->get();
-                    if(count($quotationList)>0){
-                        unset($data[$key]);
-                    }else{
-                        $sQuotation = "";
-                        $quotationList = DB::table("sl_quotation")->whereNull("deleted_at")->where("is_aktif",1)->where("id",$value->id)->get();
-                        foreach ($quotationList as $keyd => $valued) {
-                            if($keyd>0){
-                                $sQuotation .= ", ";
-                            }
-                            $sQuotation .= $valued->nomor;
-                        }
-                        $value->quotation = $sQuotation;
-                        $value->tgl_quotation = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
-                    }
-                }
+                $value->quotation = $value->nomor;
+                $value->tgl_quotation = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
             }
             
             return DataTables::of($data)

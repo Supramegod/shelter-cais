@@ -374,22 +374,22 @@
             ],
         });
 
-        $('#table-data').on('click', 'tbody tr', function() {
-            let rdata = table.row(this).data();
-            if(rdata.can_view){
-                window.location.href = "leads/view/"+rdata.id;
-            }else{
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    html: 'Anda tidak bisa melihat data ini',
-                    icon: 'warning',
-                    customClass: {
-                    confirmButton: 'btn btn-warning waves-effect waves-light'
-                    },
-                    buttonsStyling: false
-                });
-            }
-        })
+        // $('#table-data').on('click', 'tbody tr', function() {
+        //     let rdata = table.row(this).data();
+        //     if(rdata.can_view){
+        //         window.location.href = "leads/view/"+rdata.id;
+        //     }else{
+        //         Swal.fire({
+        //             title: 'Pemberitahuan',
+        //             html: 'Anda tidak bisa melihat data ini',
+        //             icon: 'warning',
+        //             customClass: {
+        //             confirmButton: 'btn btn-warning waves-effect waves-light'
+        //             },
+        //             buttonsStyling: false
+        //         });
+        //     }
+        // })
 
     // Setup - add a text input to each footer cell
     // $('.dt-column-search thead tr').clone(true).appendTo('.dt-column-search thead');

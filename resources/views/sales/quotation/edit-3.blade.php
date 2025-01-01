@@ -26,7 +26,7 @@
               </div>
               <div class="row mb-3 mt-3">
                 <div class="col-sm-12">
-                  <label class="form-label" for="site">Site</label>
+                  <label class="form-label" for="site">@if($quotation->jumlah_site=="Multi Site") Site @endif</label>
                   <div class="input-group">
                     @if($quotation->jumlah_site=="Single Site")
                     <div class="d-none">

@@ -7,7 +7,7 @@
   <!-- Multi Column with Form Separator -->
   <div class="row">
     <!-- Form Label Alignment -->
-    <div class="col-md-8">
+    <div class="col-md-9">
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
@@ -20,14 +20,14 @@
           <input type="hidden" name="id" value="{{$data->id}}">
           <h6>1. Informasi Perusahaan</h6>
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{$data->nama_perusahaan}}" class="form-control @if ($errors->any()) @if($errors->has('nama_perusahaan')) is-invalid @else   @endif @endif">
               @if($errors->has('nama_perusahaan'))
                   <div class="invalid-feedback">{{$errors->first('nama_perusahaan')}}</div>
               @endif
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Jenis Perusahaan</label>
+            <label class="col-sm-2 col-form-label text-sm-end">Jenis</label>
             <div class="col-sm-4">
               <div class="position-relative">
                 <select id="jenis_perusahaan" name="jenis_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
@@ -54,11 +54,11 @@
                 @endif
               </div>
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Telpon Perusahaan</label>
+            <label class="col-sm-2 col-form-label text-sm-end">Telpon</label>
             <div class="col-sm-4">
               <input type="number" id="telp_perusahaan" name="telp_perusahaan" value="{{$data->telp_perusahaan}}" class="form-control @if ($errors->any())   @endif">
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Alamat Perusahaan</label>
+            <label class="col-sm-2 col-form-label text-sm-end">Alamat</label>
             <div class="col-sm-10">
               <div class="form-floating form-floating-outline mb-2">
                 <textarea class="form-control mt-3 h-px-100 @if ($errors->any())   @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{$data->alamat}}</textarea>
@@ -144,7 +144,7 @@
         </form>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="row">
         <div class="card h-100">
           <div class="card-header d-flex align-items-center justify-content-between">
@@ -158,7 +158,7 @@
             </div>
           </div>
           <div class="card-body">
-            @if(in_array(Auth::user()->role_id,[30,48,49]))
+            @if(in_array(Auth::user()->role_id,[29,30,48,49]))
             <div class="col-12 text-center">
               <button id="btn-update" class="btn btn-primary w-100 waves-effect waves-light">
                 <span class="me-1">Update Data</span>

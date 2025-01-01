@@ -9,6 +9,7 @@ use App\Http\Controllers\SystemController;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Carbon\Carbon;
+use App\Http\Controllers\Sales\CustomerActivityController;
 
 
 class ContactController extends Controller
@@ -55,7 +56,7 @@ class ContactController extends Controller
                     $platform = $qplatform->id;
                 }
 
-                DB::table('sl_leads')->insert([
+                $newId = DB::table('sl_leads')->insertGetId([
                     'nomor' =>  $nomor,
                     'tgl_leads' => $current_date_time,
                     'nama_perusahaan' => $request->nama_perusahaan,
@@ -70,7 +71,22 @@ class ContactController extends Controller
                     'notes' => $request->pesan,
                     'created_at' => $current_date_time,
                     'created_by' => 'form'
-                ]);    
+                ]);
+                $customerActivityController = new CustomerActivityController();
+                $nomorActivity = $customerActivityController->generateNomor($newId);
+
+                $activityId = DB::table('sl_customer_activity')->insertGetId([
+                    'leads_id' => $newId,
+                    'branch_id' => $request->branch,
+                    'tgl_activity' => $current_date_time,
+                    'nomor' => $nomorActivity,
+                    'notes' => 'Leads Terbentuk',
+                    'tipe' => 'Leads',
+                    'status_leads_id' => 1,
+                    'is_activity' => 0,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
                 DB::commit();
                 return redirect()->back()->with('success', "Terima kasih telah mengisi form.");
             } else {
@@ -96,7 +112,7 @@ class ContactController extends Controller
                 $platform = $qplatform->id;
             }
 
-            DB::table('sl_leads')->insert([
+            $newId = DB::table('sl_leads')->insertGetId([
                 'nomor' =>  $nomor,
                 'tgl_leads' => $current_date_time,
                 'nama_perusahaan' => $request->nama_perusahaan,
@@ -111,7 +127,24 @@ class ContactController extends Controller
                 'notes' => $request->pesan,
                 'created_at' => $current_date_time,
                 'created_by' => 'api'
-            ]);    
+            ]);
+
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($newId);
+
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $newId,
+                'branch_id' => $request->branch,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'notes' => 'Leads Terbentuk',
+                'tipe' => 'Leads',
+                'status_leads_id' => 1,
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+            
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -215,7 +248,7 @@ class ContactController extends Controller
                     $branch = $province->branch_id;
                 };
                 
-                DB::table('sl_leads')->insert([
+                $newId = DB::table('sl_leads')->insertGetId([
                     'nomor' =>  $nomor,
                     'tgl_leads' => $current_date_time,
                     'nama_perusahaan' => $namaPerusahaan,
@@ -232,6 +265,23 @@ class ContactController extends Controller
                     'created_by' => 'webhook'
                 ]);    
                 
+                //insert ke activity sebagai activity pertama
+                $customerActivityController = new CustomerActivityController();
+                $nomorActivity = $customerActivityController->generateNomor($newId);
+
+                $activityId = DB::table('sl_customer_activity')->insertGetId([
+                    'leads_id' => $newId,
+                    'branch_id' => $branch,
+                    'tgl_activity' => $current_date_time,
+                    'nomor' => $nomorActivity,
+                    'notes' => 'Leads baru dari web',
+                    'tipe' => 'Leads',
+                    'status_leads_id' => 1,
+                    'is_activity' => 0,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+
                 return response()->json(['success' => true]);
             }else{
                 return response()->json(['success' => false]);

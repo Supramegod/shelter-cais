@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use \stdClass;
 use App\Exports\LeadsTemplateExport;
 use App\Exports\LeadsExport;
+use App\Http\Controllers\Sales\CustomerActivityController;
 
 
 class LeadsController extends Controller
@@ -210,10 +211,13 @@ class LeadsController extends Controller
 
                 return $canView;
             })
+            ->editColumn('nomor', function ($data) {
+                return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
+            })
             // ->editColumn('nama_perusahaan', function ($data) {
             //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';
             // })
-            ->rawColumns(['can_view','aksi'])
+            ->rawColumns(['can_view','aksi','nomor'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -287,6 +291,23 @@ class LeadsController extends Controller
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->name
                     ]);
+
+                    //insert ke activity sebagai activity pertama
+                    $customerActivityController = new CustomerActivityController();
+                    $nomorActivity = $customerActivityController->generateNomor($request->id);
+
+                    $activityId = DB::table('sl_customer_activity')->insertGetId([
+                        'leads_id' => $request->id,
+                        'branch_id' => $request->branch,
+                        'tgl_activity' => $current_date_time,
+                        'nomor' => $nomorActivity,
+                        'notes' => 'Leads diubah',
+                        'tipe' => 'Leads',
+                        'is_activity' => 0,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+
                     $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
                 }else{
                     $nomor = $this->generateNomor();
@@ -310,11 +331,33 @@ class LeadsController extends Controller
                         'created_by' => Auth::user()->full_name
                     ]);
 
+                    //insert ke activity sebagai activity pertama
+                    $customerActivityController = new CustomerActivityController();
+                    $nomorActivity = $customerActivityController->generateNomor($newId);
+
+                    $activityId = DB::table('sl_customer_activity')->insertGetId([
+                        'leads_id' => $newId,
+                        'branch_id' => $request->branch,
+                        'tgl_activity' => $current_date_time,
+                        'nomor' => $nomorActivity,
+                        'notes' => 'Leads Terbentuk',
+                        'tipe' => 'Leads',
+                        'status_leads_id' => 1,
+                        'is_activity' => 0,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+
                     if (Auth::user()->role_id==29) {
                         //cari tim sales
                         $timSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
                         if($timSalesD != null){
                             DB::table('sl_leads')->where('id',$newId)->update([
+                                'tim_sales_id' => $timSalesD->tim_sales_id,
+                                'tim_sales_d_id' =>$timSalesD->id
+                            ]);
+
+                            DB::table('sl_customer_activity')->where('id',$activityId)->update([
                                 'tim_sales_id' => $timSalesD->tim_sales_id,
                                 'tim_sales_d_id' =>$timSalesD->id
                             ]);
@@ -623,7 +666,7 @@ class LeadsController extends Controller
                     $timSales = $ltimSalesD->tim_sales_id;
                 }
 
-                DB::table('sl_leads')->insert([
+                $newId = DB::table('sl_leads')->insertGetId([
                     'nomor' =>  $nomor,
                     'tgl_leads' => $dtgl,
                     'nama_perusahaan' => $dperusahaan,
@@ -641,6 +684,22 @@ class LeadsController extends Controller
                     'status_leads_id' => 1,
                     'tim_sales_id' => $timSales,
                     'tim_sales_d_id' => $timSalesD,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+                //insert ke activity sebagai activity pertama
+                $customerActivityController = new CustomerActivityController();
+                $nomorActivity = $customerActivityController->generateNomor($newId);
+
+                $activityId = DB::table('sl_customer_activity')->insertGetId([
+                    'leads_id' => $newId,
+                    'branch_id' => $branch,
+                    'tgl_activity' => $current_date_time,
+                    'nomor' => $nomorActivity,
+                    'notes' => 'Leads Import',
+                    'tipe' => 'Leads',
+                    'status_leads_id' => 1,
+                    'is_activity' => 0,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);    
@@ -845,11 +904,33 @@ class LeadsController extends Controller
                 'created_by' => Auth::user()->full_name
             ]);
 
+            //insert ke activity sebagai activity pertama
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($newId);
+
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $newId,
+                'branch_id' => $leadsParent->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'notes' => 'Leads Terbentuk',
+                'tipe' => 'Leads',
+                'status_leads_id' => 1,
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
             if (Auth::user()->role_id==29) {
                 //cari tim sales
                 $timSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
                 if($timSalesD != null){
                     DB::table('sl_leads')->where('id',$newId)->update([
+                        'tim_sales_id' => $timSalesD->tim_sales_id,
+                        'tim_sales_d_id' =>$timSalesD->id
+                    ]);
+
+                    DB::table('sl_customer_activity')->where('id',$activityId)->update([
                         'tim_sales_id' => $timSalesD->tim_sales_id,
                         'tim_sales_d_id' =>$timSalesD->id
                     ]);

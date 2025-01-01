@@ -441,6 +441,7 @@ class CustomerActivityController extends Controller
                         'crm' => $crmName,
                         'status_leads_id' => $statusLeads,
                         'jenis_visit' => $jenisVisit,
+                        'is_activity' => 1,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
