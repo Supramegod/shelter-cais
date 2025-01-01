@@ -7,7 +7,17 @@
         <div class="col-xl-12">
             <div class="card h-100">
                 <div class="card-header d-flex w-100" style="justify-content: space-between;">
-                    <h4 class="card-title mb-1 d-flex flex-wrap">Track Aktifitas Leads / Customer</h4>
+                    <h4 class="card-title mb-1 d-flex flex-wrap">Track Aktifitas 
+                        @if($tipe=='Leads')
+                            Leads / Customer
+                        @elseif($tipe=='Quotation')
+                            Quotation
+                        @elseif($tipe=='SPK')
+                            SPK
+                        @elseif($tipe=='PKS')
+                            PKS
+                        @endif
+                    </h4>
                     <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
                 </div>
                 <div class="card-body">

@@ -159,6 +159,12 @@
           </div>
           <div class="card-body">
             <div class="col-12 text-center mt-2">
+              <button id="btn-track-activity" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Track Activity</span>
+                <i class="mdi mdi-debug-step-over scaleX-n1-rtl"></i>
+              </button>
+            </div>
+            <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
                 <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
@@ -259,6 +265,11 @@
 
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('leads')}}");
+  });
+
+  
+  $('#btn-track-activity').on('click',function () {
+    window.location.replace("{{route('customer-activity.track',$data->id)}}");
   });
 </script>
 @endsection

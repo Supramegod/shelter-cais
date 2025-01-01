@@ -183,6 +183,12 @@
             </div>
             @endif
             <div class="col-12 text-center mt-2">
+              <button id="btn-track-activity" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Track Activity</span>
+                <i class="mdi mdi-debug-step-over scaleX-n1-rtl"></i>
+              </button>
+            </div>
+            <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
                 <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
@@ -313,7 +319,10 @@
     window.location.replace("{{route('customer-activity.add',['leads_id'=>$data->id])}}");
   });
 
-  
+  $('#btn-track-activity').on('click',function () {
+    window.location.replace("{{route('customer-activity.track',$data->id)}}");
+  });
+
   $('#btn-quotation').on('click',function () {
     window.location.replace("{!! route('quotation.add', ['leads_id' => $data->id, 'tipe' => 'Quotation Baru']) !!}");
   });

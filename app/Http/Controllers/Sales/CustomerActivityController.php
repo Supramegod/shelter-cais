@@ -717,6 +717,16 @@ class CustomerActivityController extends Controller
     
     public function trackActivity (Request $request,$leadsId){
         try {
+            $tipe = "Leads";
+
+            if ($request->quotation_id != null) {
+                $tipe = "Quotation";
+            }else if ($request->spk_id != null) {
+                $tipe = "SPK"; 
+            }else if ($request->pks_id != null) {
+                $tipe = "PKS";
+            }
+
             $data = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id',$leadsId)->orderBy('created_at','desc')->get();
             foreach ($data as $key => $value) {
                 $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
@@ -735,7 +745,7 @@ class CustomerActivityController extends Controller
                 $quot->site = DB::table('sl_site')->where('quotation_id',$quot->id)->get();
             }
 
-            return view('sales.customer-activity.track',compact('data','leads','quotation'));
+            return view('sales.customer-activity.track',compact('data','leads','quotation','tipe'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

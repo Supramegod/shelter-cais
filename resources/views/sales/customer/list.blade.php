@@ -310,9 +310,9 @@
             ],
         });
 
-        $('#table-data').on('click', 'tbody tr', function() {
-            let rdata = table.row(this).data();
-            window.location.href = "customer/view/"+rdata.id;
-        })
+        // $('#table-data').on('click', 'tbody tr', function() {
+        //     let rdata = table.row(this).data();
+        //     window.location.href = "customer/view/"+rdata.id;
+        // })
 </script>
 @endsection

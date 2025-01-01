@@ -161,10 +161,13 @@ class CustomerController extends Controller
                                     <a href="'.route('leads.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
                         </div>';
             })
+            ->editColumn('nomor', function ($data) {
+                return '<a href="'.route('customer.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
+            })
             // ->editColumn('nama_perusahaan', function ($data) {
             //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';
             // })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi','nomor'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
