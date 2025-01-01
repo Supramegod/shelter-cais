@@ -61,6 +61,10 @@ Route::group(['middleware' => ['verify_leads_api']], function () {
 Route::group(['middleware' => ['auth']], function () {
     Route::controller(DashboardController::class)->group(function() {
         Route::get('/dashboard/approval', 'dashboardApproval')->name('dashboard-approval');
+        Route::get('/dashboard/aktifitas-sales', 'dashboardAktifitasSales')->name('dashboard-aktifitas-sales');
+
+
+        // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
         Route::get('/dashboard/aktifkan/list', 'getListDashboardAktifkanData')->name('dashboard-aktifkan.list');
     });

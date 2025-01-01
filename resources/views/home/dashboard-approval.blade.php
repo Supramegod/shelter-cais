@@ -72,7 +72,7 @@
                 </div>
                 <h4 class="ms-1 mb-0 display-6">{{$jumlahMenungguApproval}} </h4>
                 </div>
-                <p class="mb-0 text-heading ">Menunggu Approval</p>
+                <p class="mb-0 text-heading ">Belum Selesai</p>
             </div>
             </div>
         </div>

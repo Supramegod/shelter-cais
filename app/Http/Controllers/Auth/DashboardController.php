@@ -44,7 +44,6 @@ class DashboardController extends Controller
         $dataBelumLengkap = [];
 
         foreach ($quotationExisting as $key => $quotation) {
-            $jumlahMenungguApproval++;
             array_push($dataMenungguApproval,$quotation);
 
             if ($quotation->step == 100 && $quotation->is_aktif==0){
@@ -65,6 +64,7 @@ class DashboardController extends Controller
                 }
             } else if ( $quotation->step != 100){
                 $quotationBelumLengkap++;
+                $jumlahMenungguApproval++;
                 if(Auth::user()->role_id==99){
                     array_push($dataMenungguAnda,$quotation);
                 }
@@ -89,6 +89,20 @@ class DashboardController extends Controller
 
         return view('home.dashboard-approval',compact('jumlahMenungguManagerCrm','dataBelumLengkap','dataMenungguApproval','dataMenungguAnda','jumlahMenungguApproval','jumlahMenungguDirSales','jumlahMenungguDirkeu','jumlahMenungguDirut','quotationBelumLengkap'));
     }
+
+    public function dashboardAktifitasSales(Request $request) {
+        $data = [
+            ['Category' => 'Electronics', 'Product' => 'Laptop', 'Sales' => 1500],
+            ['Category' => 'Electronics', 'Product' => 'Smartphone', 'Sales' => 2000],
+            ['Category' => 'Furniture', 'Product' => 'Table', 'Sales' => 800],
+            ['Category' => 'Furniture', 'Product' => 'Chair', 'Sales' => 500],
+            ['Category' => 'Appliances', 'Product' => 'Refrigerator', 'Sales' => 1000],
+            ['Category' => 'Appliances', 'Product' => 'Washing Machine', 'Sales' => 1200],
+        ];
+    
+        return view('home.dashboard-aktifitas-sales', compact('data'));
+    }
+
 
     public function getListDashboardApprovalData(Request $request) {
         $arrData = [];
@@ -199,5 +213,4 @@ class DashboardController extends Controller
             ->rawColumns(['aksi','nomor','nama_perusahaan','nama_site'])
             ->make(true);
     }
-
 }
