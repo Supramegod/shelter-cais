@@ -15,6 +15,7 @@ use \stdClass;
 use App\Exports\LeadsTemplateExport;
 use App\Exports\LeadsExport;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Sales\CustomerActivityController;
 
 class SpkController extends Controller
 {
@@ -121,14 +122,16 @@ class SpkController extends Controller
 
     public function save(Request $request){
         try {
+            DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
             $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->quotation_id)->first();
             $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
 
+            $spkNomor = $this->generateNomor($quotation->leads_id,$quotation->company_id);
             $newId = DB::table('sl_spk')->insertGetId([
                 'quotation_id' => $quotation->id,
                 'leads_id' => $quotation->leads_id,
-                'nomor' => $this->generateNomor($quotation->leads_id,$quotation->company_id),
+                'nomor' => $spkNomor,
                 'nomor_quotation' => $quotation->nomor,
                 'tgl_spk' => $current_date_time,
                 'nama_perusahaan' => $quotation->nama_perusahaan,
@@ -149,6 +152,24 @@ class SpkController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
+            //insert ke activity sebagai activity pertama
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $quotation->leads_id,
+                'quotation_id' => $quotation->id,
+                'spk_id' => $newId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'SPK',
+                'notes' => 'SPK dengan nomor :'.$spkNomor.' terbentuk dari Quotation dengan nomor :'.$quotation->nomor,
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+            DB::commit();
             return redirect()->route('spk.view',$newId);
         } catch (\Exception $e) {
             dd($e);

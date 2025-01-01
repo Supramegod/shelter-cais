@@ -292,21 +292,21 @@ class LeadsController extends Controller
                         'updated_by' => Auth::user()->name
                     ]);
 
-                    //insert ke activity sebagai activity pertama
-                    $customerActivityController = new CustomerActivityController();
-                    $nomorActivity = $customerActivityController->generateNomor($request->id);
+                    // //insert ke activity sebagai activity pertama
+                    // $customerActivityController = new CustomerActivityController();
+                    // $nomorActivity = $customerActivityController->generateNomor($request->id);
 
-                    $activityId = DB::table('sl_customer_activity')->insertGetId([
-                        'leads_id' => $request->id,
-                        'branch_id' => $request->branch,
-                        'tgl_activity' => $current_date_time,
-                        'nomor' => $nomorActivity,
-                        'notes' => 'Leads diubah',
-                        'tipe' => 'Leads',
-                        'is_activity' => 0,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->full_name
-                    ]);
+                    // $activityId = DB::table('sl_customer_activity')->insertGetId([
+                    //     'leads_id' => $request->id,
+                    //     'branch_id' => $request->branch,
+                    //     'tgl_activity' => $current_date_time,
+                    //     'nomor' => $nomorActivity,
+                    //     'notes' => 'Leads diubah',
+                    //     'tipe' => 'Leads',
+                    //     'is_activity' => 0,
+                    //     'created_at' => $current_date_time,
+                    //     'created_by' => Auth::user()->full_name
+                    // ]);
 
                     $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
                 }else{
