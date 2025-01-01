@@ -230,6 +230,11 @@ class SpkController extends Controller
             $data = DB::table("sl_spk")->where("id",$id)->first();
             $quotation = DB::table("sl_quotation")->where("id",$data->quotation_id)->get();
             $leads = DB::table("sl_leads")->where("id",$data->leads_id)->first();
+            $jabatanPic = DB::table("m_jabatan_pic")->where("id",$leads->jabatan)->first();
+            if($jabatanPic!=null){
+                $leads->jabatan = $jabatanPic->nama;
+            }
+
             foreach ($quotation as $key => $value) {
                 $value->tgl_penempatan = Carbon::createFromFormat('Y-m-d',$value->tgl_penempatan)->isoFormat('D MMMM Y');
                 $value->detail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where("quotation_id",$value->id)->get();
@@ -243,7 +248,7 @@ class SpkController extends Controller
             }
 
             $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation[0]->company_id)->first();
-
+            $quotation[0]->site = DB::table('sl_quotation_site')->where('quotation_id',$quotation[0]->id)->get();
             return view('sales.spk.cetakan.spk',compact('now','data','quotation','leads','company'));
         } catch (\Exception $e) {
             dd($e);

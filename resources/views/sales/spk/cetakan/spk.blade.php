@@ -53,11 +53,11 @@
             <table>
                 <tr>
                     <td class="label">Nama</td>
-                    <td>: @if($quotation[0]->pic!=null){{$quotation[0]->pic->nama}}@endif</td>
+                    <td>: @if($leads->pic!=null){{$leads->pic}}@endif</td>
                 </tr>
                 <tr>
                     <td>Jabatan</td>
-                    <td>: @if($quotation[0]->pic!=null){{$quotation[0]->pic->jabatan}}@endif</td>
+                    <td>: @if($leads->jabatan!=null){{$leads->jabatan}}@endif</td>
                 </tr>
                 <tr>
                     <td>Nama Perusahaan</td>
@@ -73,7 +73,7 @@
                 </tr>
             </table>
 
-            <p>Berdasarkan hasil diskusi & penawaran dari pihak SHELTER dengan {{$leads->nama_perusahaan}}, maka dilakukan penunjukan kerjasama untuk penyediaan tenaga @foreach($quotation[0]->detail as $key => $value) @if($key !=0) , @endif {{$value->jabatan_kebutuhan}} sebanyak {{$value->jumlah_hc}} @endforeach personil yang akan mulai ditempatkan pertanggal {{$quotation[0]->tgl_penempatan}} di lokasi @foreach($quotation as $key => $value) @if($key !=0) , @endif {{$value->penempatan}} @endforeach .</p>
+            <p>Berdasarkan hasil diskusi & penawaran dari pihak SHELTER dengan {{$leads->nama_perusahaan}}, maka dilakukan penunjukan kerjasama untuk penyediaan tenaga @foreach($quotation[0]->detail as $key => $value) @if($key !=0) , @endif {{$value->jabatan_kebutuhan}} sebanyak {{$value->jumlah_hc}} @endforeach personil yang akan mulai ditempatkan pertanggal {{$quotation[0]->tgl_penempatan}} di lokasi @foreach($quotation[0]->site as $key => $value) @if($key !=0) , @endif {{$value->penempatan}} @endforeach .</p>
 
             <p>Maka dengan ini mengeluarkan (SPK) Surat Perintah Kerjasama atau sebagai Confirmation Letter kepada:</p>
 
