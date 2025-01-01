@@ -176,7 +176,7 @@
             </div>
             <br>
             <hr>
-            @if($data->status_pks_id != 1)
+            @if($data->status_pks_id != 7)
             <div class="col-12 text-center mt-2">
               <button id="btn-ajukan-ulang" class="btn btn-danger w-100 waves-effect waves-light">
                 <span class="me-1">Ajukan Ulang Quotation</span>

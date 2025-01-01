@@ -16,6 +16,7 @@ use App\Exports\LeadsTemplateExport;
 use App\Exports\LeadsExport;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Helper\QuotationService;
+use App\Http\Controllers\Sales\CustomerActivityController;
 
 class PksController extends Controller
 {
@@ -122,12 +123,14 @@ class PksController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             $dataSpk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->spk_id)->first();
             $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$dataSpk->quotation_id)->first();
+            $leads = DB::table('sl_leads')->where('id',$dataSpk->leads_id)->first();
 
+            $pksNomor = $this->generateNomor($quotation->leads_id,$quotation->company_id);
             $newId = DB::table('sl_pks')->insertGetId([
                 'quotation_id' => $dataSpk->quotation_id,
                 'spk_id' => $dataSpk->id,
                 'leads_id' => $dataSpk->leads_id,
-                'nomor' => $this->generateNomor($quotation->leads_id,$quotation->company_id),
+                'nomor' => $pksNomor,
                 'tgl_pks' => $current_date_time,
                 'nama_perusahaan' => $dataSpk->nama_perusahaan,
                 'link_pks_disetujui' => null,
@@ -161,6 +164,25 @@ class PksController extends Controller
             $pasal9 = "";
             $pasal10 = "";
             $lampiran = "";
+
+            //insert ke activity sebagai activity pertama
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $quotation->leads_id,
+                'quotation_id' => $quotation->id,
+                'spk_id' => $dataSpk->id,
+                'pks_id' => $newId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'PKS',
+                'notes' => 'PKS dengan nomor :'.$pksNomor.' terbentuk dari SPK dengan nomor :'.$dataSpk->nomor,
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
             DB::commit();
             return redirect()->route('pks.view',$newId);
@@ -586,6 +608,26 @@ class PksController extends Controller
 
             // SINGKRON KE ACCURATE
 
+            // Masukkan ke activity
+            //insert ke activity sebagai activity pertama
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $quotation->leads_id,
+                'quotation_id' => $quotation->id,
+                'spk_id' => $pks->spk_id,
+                'pks_id' => $pks->id,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'PKS',
+                'notes' => 'PKS dengan nomor :'.$pks->nomor.' telah diaktifkan oleh '.Auth::user()->full_name,
+                'is_activity' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+            
             DB::commit();
             DB::connection('mysqlhris')->commit();
 
