@@ -1,12 +1,6 @@
 @extends('layouts.master')
 @section('title','Dashboard Aktifitas Sales')
 @section('pageStyle')
-    <!-- PivotTable CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.css">
-    <!-- C3 Chart CSS (Optional for charts) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.css">
-    <!-- jQuery UI CSS (Required for drag and drop functionality) -->
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 @endsection
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">

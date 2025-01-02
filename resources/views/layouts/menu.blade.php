@@ -231,6 +231,12 @@
                         <div>Dashboard Aktifitas Sales</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
+                    <a href="{{route('dashboard-leads')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Dashboard Leads</div>
+                    </a>
+                </li>
             </ul>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
