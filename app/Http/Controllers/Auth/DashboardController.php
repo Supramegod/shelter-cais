@@ -91,16 +91,138 @@ class DashboardController extends Controller
     }
 
     public function dashboardAktifitasSales(Request $request) {
-        $data = [
-            ['Category' => 'Electronics', 'Product' => 'Laptop', 'Sales' => 1500],
-            ['Category' => 'Electronics', 'Product' => 'Smartphone', 'Sales' => 2000],
-            ['Category' => 'Furniture', 'Product' => 'Table', 'Sales' => 800],
-            ['Category' => 'Furniture', 'Product' => 'Chair', 'Sales' => 500],
-            ['Category' => 'Appliances', 'Product' => 'Refrigerator', 'Sales' => 1000],
-            ['Category' => 'Appliances', 'Product' => 'Washing Machine', 'Sales' => 1200],
-        ];
-    
-        return view('home.dashboard-aktifitas-sales', compact('data'));
+        $aktifitasSalesHariIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereDate('created_at', Carbon::today()->toDateString())
+            ->count();
+
+            // dd(Carbon::now()->endOfWeek()->format('Y-m-d'));
+        $aktifitasSalesMingguIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->count();
+
+        $aktifitasSalesBulanIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->count();
+
+        $aktifitasSalesTahunIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        $aktifitasSalesUserIds = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->select('user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('user_id')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+        
+        $sales = [];
+        $jumlahAktifitas = [];
+        foreach ($aktifitasSalesUserIds as $key => $value) {
+            $user = DB::connection('mysqlhris')->table('m_user')->where('id',$value->user_id)->first();
+            array_push($sales,$user->full_name." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitas,$value->jumlah_aktifitas);
+        }
+
+        $aktifitasByTipe = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->select('tipe', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('tipe')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+        
+        $tipe = [];
+        $jumlahAktifitasTipe = [];
+        foreach ($aktifitasByTipe as $key => $value) {
+            array_push($tipe,$value->tipe);
+            array_push($jumlahAktifitasTipe,$value->jumlah_aktifitas);
+        };
+
+        $aktifitasSalesPerTanggal = [];
+
+        for ($i = 1; $i <= 31; $i++) {
+            $aktifitasSalesPerTanggal[$i] = 0;
+        }
+
+        $aktifitasSales = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->select(DB::raw('DAY(created_at) as tanggal'), 'user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('tanggal', 'user_id')
+            ->get();
+
+        $aktifitasSalesUser = [];
+
+        foreach ($aktifitasSales as $aktifitas) {
+            if (!isset($aktifitasSalesUser[$aktifitas->user_id])) {
+                $aktifitasSalesUser[$aktifitas->user_id] = [
+                    'user' => DB::connection('mysqlhris')->table('m_user')->where('id', $aktifitas->user_id)->value('full_name'),
+                    'jumlah_aktifitas' => []
+                ];
+            }
+
+            $aktifitasSalesUser[$aktifitas->user_id]['jumlah_aktifitas'][$aktifitas->tanggal] = $aktifitas->jumlah_aktifitas;
+        }
+
+        foreach ($aktifitasSalesUser as &$userAktifitas) {
+            for ($i = 1; $i <= 31; $i++) {
+                if (!isset($userAktifitas['jumlah_aktifitas'][$i])) {
+                    $userAktifitas['jumlah_aktifitas'][$i] = 0;
+                }
+            }
+            ksort($userAktifitas['jumlah_aktifitas']);
+        }
+
+        $aktifitasSalesPerTanggal = array_values($aktifitasSalesUser);
+
+        $aktifitasSalesByTipePerTanggal = [];
+
+        $aktifitasSalesByTipe = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->select('tipe', DB::raw('DAY(created_at) as tanggal'), DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('tipe', 'tanggal')
+            ->get();
+
+        foreach ($aktifitasSalesByTipe as $aktifitas) {
+            if (!isset($aktifitasSalesByTipePerTanggal[$aktifitas->tipe])) {
+                $aktifitasSalesByTipePerTanggal[$aktifitas->tipe] = [
+                    'tipe' => $aktifitas->tipe,
+                    'jumlah_aktifitas' => []
+                ];
+            }
+
+            $aktifitasSalesByTipePerTanggal[$aktifitas->tipe]['jumlah_aktifitas'][$aktifitas->tanggal] = $aktifitas->jumlah_aktifitas;
+        }
+
+        foreach ($aktifitasSalesByTipePerTanggal as &$tipeAktifitas) {
+            for ($i = 1; $i <= 31; $i++) {
+                if (!isset($tipeAktifitas['jumlah_aktifitas'][$i])) {
+                    $tipeAktifitas['jumlah_aktifitas'][$i] = 0;
+                }
+            }
+            ksort($tipeAktifitas['jumlah_aktifitas']);
+            $tipeAktifitas['jumlah_aktifitas'] = array_map(function($tanggal, $aktifitas) {
+                return ['tanggal' => $tanggal, 'aktifitas' => $aktifitas];
+            }, array_keys($tipeAktifitas['jumlah_aktifitas']), $tipeAktifitas['jumlah_aktifitas']);
+        }
+
+        $aktifitasSalesByTipePerTanggal = array_values($aktifitasSalesByTipePerTanggal);
+        
+        $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
+
+        return view('home.dashboard-aktifitas-sales', compact('aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
     }
 
 
