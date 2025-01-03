@@ -556,6 +556,7 @@ class QuotationController extends Controller
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -572,6 +573,7 @@ class QuotationController extends Controller
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -1225,6 +1227,7 @@ class QuotationController extends Controller
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$quotationNomor.' terbentuk',
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -2755,6 +2758,7 @@ class QuotationController extends Controller
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$master->nomor.' di approve oleh '.Auth::user()->full_name,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);

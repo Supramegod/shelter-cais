@@ -442,6 +442,7 @@ class CustomerActivityController extends Controller
                         'status_leads_id' => $statusLeads,
                         'jenis_visit' => $jenisVisit,
                         'is_activity' => 1,
+                        'user_id' => Auth::user()->id,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);

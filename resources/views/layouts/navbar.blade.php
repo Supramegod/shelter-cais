@@ -186,7 +186,7 @@
             <span class="position-absolute top-0 start-50 translate-middle-y badge badge-dot bg-danger mt-2 border"></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end py-0">
-            <li class="dropdown-menu-header border-bottom">
+            <!-- <li class="dropdown-menu-header border-bottom">
                 <div class="dropdown-header d-flex align-items-center py-3">
                 <h6 class="mb-0 me-auto">Notification</h6>
                 <span class="badge rounded-pill bg-label-primary">8 New</span>
@@ -354,7 +354,7 @@
                 <a href="javascript:void(0);" class="btn btn-primary d-flex justify-content-center">
                 View all notifications
                 </a>
-            </li>
+            </li> -->
             </ul>
         </li>
         <!--/ Notification -->

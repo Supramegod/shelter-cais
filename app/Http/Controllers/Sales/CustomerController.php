@@ -79,6 +79,7 @@ class CustomerController extends Controller
     public function list (Request $request){
         try {
             $db2 = DB::connection('mysqlhris')->getDatabaseName();
+            $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
 
             $data = DB::table('sl_leads')
                         ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
@@ -161,8 +162,22 @@ class CustomerController extends Controller
                                     <a href="'.route('leads.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
                         </div>';
             })
-            ->editColumn('nomor', function ($data) {
-                return '<a href="'.route('customer.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
+            ->editColumn('nomor', function ($data) use ($tim) {
+                $canView = false;
+                if(Auth::user()->role_id==29){
+                    if($data->tim_sales_d_id==$tim->id){
+                        $canView = true;
+                    }
+                }else{
+                    $canView = true;
+                }
+
+                $route = route('customer.view',$data->id);
+                if(!$canView){
+                    $route = "#";
+                }
+
+                return '<a href="'.$route.'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
             })
             // ->editColumn('nama_perusahaan', function ($data) {
             //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';

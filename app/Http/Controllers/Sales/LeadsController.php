@@ -211,8 +211,21 @@ class LeadsController extends Controller
 
                 return $canView;
             })
-            ->editColumn('nomor', function ($data) {
-                return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
+            ->editColumn('nomor', function ($data) use ($tim) {
+                $canView = false;
+                if(Auth::user()->role_id==29){
+                    if($data->tim_sales_d_id==$tim->id){
+                        $canView = true;
+                    }
+                }else{
+                    $canView = true;
+                }
+
+                $route = route('leads.view',$data->id);
+                if(!$canView){
+                    $route = "#";
+                }
+                return '<a href="'.$route.'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
             })
             // ->editColumn('nama_perusahaan', function ($data) {
             //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';
@@ -344,6 +357,7 @@ class LeadsController extends Controller
                         'tipe' => 'Leads',
                         'status_leads_id' => 1,
                         'is_activity' => 0,
+                        'user_id' => Auth::user()->id,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -700,6 +714,7 @@ class LeadsController extends Controller
                     'tipe' => 'Leads',
                     'status_leads_id' => 1,
                     'is_activity' => 0,
+                    'user_id' => Auth::user()->id,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);    
@@ -917,6 +932,7 @@ class LeadsController extends Controller
                 'tipe' => 'Leads',
                 'status_leads_id' => 1,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);

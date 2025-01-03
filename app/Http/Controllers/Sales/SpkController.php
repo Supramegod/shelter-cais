@@ -166,6 +166,7 @@ class SpkController extends Controller
                 'tipe' => 'SPK',
                 'notes' => 'SPK dengan nomor :'.$spkNomor.' terbentuk dari Quotation dengan nomor :'.$quotation->nomor,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -529,6 +530,7 @@ class SpkController extends Controller
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -544,6 +546,7 @@ class SpkController extends Controller
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);

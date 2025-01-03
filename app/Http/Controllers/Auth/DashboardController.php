@@ -95,6 +95,7 @@ class DashboardController extends Controller
             ->whereNull('deleted_at')
             ->where('is_activity',1)
             ->whereDate('created_at', Carbon::today()->toDateString())
+
             ->count();
 
             // dd(Carbon::now()->endOfWeek()->format('Y-m-d'));
@@ -128,6 +129,9 @@ class DashboardController extends Controller
         $jumlahAktifitas = [];
         foreach ($aktifitasSalesUserIds as $key => $value) {
             $user = DB::connection('mysqlhris')->table('m_user')->where('id',$value->user_id)->first();
+            if($user==null){
+                continue;
+            }
             array_push($sales,$user->full_name." ( ".$value->jumlah_aktifitas." )");
             array_push($jumlahAktifitas,$value->jumlah_aktifitas);
         }

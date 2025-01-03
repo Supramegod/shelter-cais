@@ -84,6 +84,7 @@ class ContactController extends Controller
                     'tipe' => 'Leads',
                     'status_leads_id' => 1,
                     'is_activity' => 0,
+                    'user_id' => Auth::user()->id,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
@@ -141,6 +142,7 @@ class ContactController extends Controller
                 'tipe' => 'Leads',
                 'status_leads_id' => 1,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -278,6 +280,7 @@ class ContactController extends Controller
                     'tipe' => 'Leads',
                     'status_leads_id' => 1,
                     'is_activity' => 0,
+                    'user_id' => Auth::user()->id,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
