@@ -225,7 +225,7 @@ class LeadsController extends Controller
                 if(!$canView){
                     $route = "#";
                 }
-                return '<a href="'.$route.'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
+                return '<a href="javascript:void(0)" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nomor.'</a>';
             })
             // ->editColumn('nama_perusahaan', function ($data) {
             //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';
@@ -765,7 +765,7 @@ class LeadsController extends Controller
                         ->leftJoin('m_kebutuhan','sl_leads.kebutuhan_id','=','m_kebutuhan.id')
                         ->leftJoin('m_tim_sales','sl_leads.tim_sales_id','=','m_tim_sales.id')
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                        ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
+                        ->select('sl_leads.email','sl_leads.branch_id','m_tim_sales_d.user_id','sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at');
             
             //divisi sales
@@ -812,6 +812,23 @@ class LeadsController extends Controller
 
             foreach ($data as $key => $value) {
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
+                $value->salesEmail = "";
+                if($value->user_id != null){
+                    $salesUser = DB::connection('mysqlhris')->table('m_user')->where('id',$value->user_id)->first();
+                    if($salesUser !=null){
+                        $value->salesEmail = $salesUser->email;
+                    }
+                }
+
+                // cari branch manager dari m_branch mysqlhris dimana branch_id = branch_id leads dan role = 52
+                $branchManager = DB::connection('mysqlhris')->table('m_user')->where('role_id',52)->where('branch_id',$value->branch_id)->first();
+                $value->branchManagerEmail = "";
+                $value->branchManager = "";
+                if($branchManager !=null){
+                    $value->branchManagerEmail = $branchManager->email;
+                    $value->branchManager = $branchManager->full_name;
+                }
+
             }
             return DataTables::of($data)
             ->make(true);

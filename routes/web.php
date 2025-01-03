@@ -115,6 +115,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/customer-activity/list', 'list')->name('customer-activity.list'); // ajax
         Route::get('/sales/customer-activity/member-tim-sales', 'memberTimSales')->name('customer-activity.member-tim-sales'); // ajax
+        Route::post('/sales/customer-activity/send-email', 'sendEmail')->name('customer-activity.send-email');
     });
 
     

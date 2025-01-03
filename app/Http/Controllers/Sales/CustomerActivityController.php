@@ -80,8 +80,22 @@ class CustomerActivityController extends Controller
 
                 if($timSalesDId !=null){
                     $leads->salesName = $timSalesDId->nama;
+                    $leads->salesEmail = "";
+                    $salesUser = DB::connection('mysqlhris')->table('m_user')->where('id',$timSalesDId->user_id)->first();
+                    if($salesUser !=null){
+                        $leads->salesEmail = $salesUser->email;
+                    }
                 }else{
                     $leads->salesName = "";
+                }
+
+                // cari branch manager dari m_branch mysqlhris dimana branch_id = branch_id leads dan role = 52
+                $branchManager = DB::connection('mysqlhris')->table('m_user')->where('role_id',52)->where('branch_id',$leads->branch_id)->first();
+                $leads->branchManagerEmail = "";
+                $leads->branchManager = "";
+                if($branchManager !=null){
+                    $leads->branchManagerEmail = $branchManager->email;
+                    $leads->branchManager = $branchManager->full_name;
                 }
             }
             
@@ -748,6 +762,16 @@ class CustomerActivityController extends Controller
 
             return view('sales.customer-activity.track',compact('data','leads','quotation','tipe'));
         } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function sendEmail (Request $request){
+        try {
+            dd($request);
+        } catch (\Throwable $th) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
