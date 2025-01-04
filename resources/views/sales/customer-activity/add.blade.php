@@ -1142,6 +1142,14 @@
       cancelButtonText: 'Batal'
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Mengirim Email',
+          text: 'Mohon tunggu...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        });
         // Logic to send email
         $.ajax({
           url: "{{ route('customer-activity.send-email') }}",

@@ -15,6 +15,8 @@ use \stdClass;
 use App\Exports\LeadsTemplateExport;
 use App\Exports\LeadsExport;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\CustomerActivityEmail;
+use Illuminate\Support\Facades\Mail;
 
 
 class CustomerActivityController extends Controller
@@ -770,9 +772,23 @@ class CustomerActivityController extends Controller
 
     public function sendEmail (Request $request){
         try {
-            dd($request);
+            // if ($request->is_kirim_leads =="true") {
+            //     Mail::to($request->email_leads)->send(new CustomerActivityEmail($request->subject,$request->body));
+            // }
+            // if ($request->is_kirim_sales =="true") {
+            //     Mail::to($request->email_sales)->send(new CustomerActivityEmail($request->subject,$request->body));
+            // }
+            // if ($request->is_kirim_branch_manager =="true") {
+            //     Mail::to($request->email_branch_manager)->send(new CustomerActivityEmail($request->subject,$request->body));
+            // }
+            Mail::to("firdaus280513@gmail.com")->send(new CustomerActivityEmail());
+            // dd($mail);
+            // Mail::to()->send(new CustomerActivityEmail("Pemberitahuan Dokumen Siap Close","5",$url,$data,$namaUser));
+            // dd($request);
+            return response()->json(['status' => 'success', 'message' => 'Email berhasil dikirim']);
         } catch (\Throwable $th) {
             dd($e);
+            return response()->json(['status' => 'gagal', 'message' => 'Email gagal dikirim']);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
