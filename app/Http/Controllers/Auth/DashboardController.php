@@ -147,7 +147,7 @@ class DashboardController extends Controller
         $tipe = [];
         $jumlahAktifitasTipe = [];
         foreach ($aktifitasByTipe as $key => $value) {
-            array_push($tipe,$value->tipe);
+            array_push($tipe,$value->tipe." ( ".$value->jumlah_aktifitas." )");
             array_push($jumlahAktifitasTipe,$value->jumlah_aktifitas);
         };
 
@@ -160,6 +160,7 @@ class DashboardController extends Controller
         $aktifitasSales = DB::table('sl_customer_activity')
             ->whereNull('deleted_at')
             ->where('is_activity', 1)
+            ->whereNotNull('user_id')
             ->whereMonth('created_at', Carbon::now()->month)
             ->select(DB::raw('DAY(created_at) as tanggal'), 'user_id', DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('tanggal', 'user_id')
@@ -489,7 +490,6 @@ class DashboardController extends Controller
                 'data' => $data
             ];
         });
-        
         
         $branchesWithCustomerData = $branches->map(function ($branch) use ($db2) {
             $branchId = DB::connection('mysqlhris')->table('m_branch')->where('name', $branch)->value('id');

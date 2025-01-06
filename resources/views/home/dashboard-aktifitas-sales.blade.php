@@ -94,21 +94,10 @@
             <h5 class="card-header">By Tipe Aktifitas Bulan Ini</h5>
             <div class="card-body">
                 <div class="d-flex justify-content-center">
-                    <div class="col-lg-4">
-                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="100"></canvas>
+                    <div class="col-lg-8">
+                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="100" height="200"></canvas>
                     </div>
                 </div>
-                <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
-                @foreach($tipe as $key => $value)
-                    <li class="ct-series-0 d-flex flex-column">
-                        <h5 class="mb-0">{{$value}}</h5>
-                        <span
-                        class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                        style="background-color: {{$warna[$key]}}; width: 35px; height: 6px"></span>
-                        <div class="text-muted">{{round($jumlahAktifitasTipe[$key]/array_sum($jumlahAktifitasTipe)*100,0)}} %</div>
-                    </li>
-                @endforeach
-                </ul>
             </div>
             </div>
         </div>
@@ -132,18 +121,6 @@
                         <div class="dropdown">
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <ul class="d-flex justify-content-around ps-0 mb-2 pt-1">
-                    @foreach($tipe as $key => $value)
-                        <li class="ct-series-0 d-flex flex-column">
-                            <h5 class="mb-0">{{$value}}</h5>
-                            <span
-                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                            style="background-color: {{$warna[$key]}}; width: 35px; height: 6px"></span>
-                        </li>
-                    @endforeach
-                    </ul>
                 </div>
                 <div class="card-body">
                     <canvas id="barChart" class="chartjs" data-height="400" height="400"></canvas>
@@ -246,7 +223,7 @@
                 });
             }
 
-            const doughnutChart = document.getElementById('doughnutChart');
+  const doughnutChart = document.getElementById('doughnutChart');
   if (doughnutChart) {
     const doughnutChartVar = new Chart(doughnutChart, {
       type: 'doughnut',
@@ -268,6 +245,9 @@
         },
         cutout: '68%',
         plugins: {
+          legend: {
+            position: 'right'
+          },
           tooltip: {
             callbacks: {
               label: function (context) {
@@ -385,12 +365,14 @@
   let dataSetBar = [];
   actByTipe.forEach(function(element, index) {
     let arrData = [];
-    element.jumlah_aktifitas.forEach(eld => {
+    element.jumlah_aktifitas.forEach(eld => {  
         arrData.push(eld.aktifitas);
     });
-
+    // console.log(element);
+    
     let objBar = {
         data: arrData,
+        label:element.tipe,
         backgroundColor: bankWarna[index],
         borderColor: 'transparent',
         maxBarThickness: 15,
@@ -407,7 +389,7 @@
     const barChartVar = new Chart(barChart, {
       type: 'bar',
       data: {
-        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,31],
         datasets: dataSetBar
       },
       options: {
