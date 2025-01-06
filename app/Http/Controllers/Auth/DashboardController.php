@@ -443,4 +443,74 @@ class DashboardController extends Controller
             ->rawColumns(['aksi','nomor','nama_perusahaan','nama_site'])
             ->make(true);
     }
+
+    public function dashboardGeneral (Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+        $branches = DB::connection('mysqlhris')->table('m_branch')->pluck('name');
+
+        $leadsByBranch = $branches->map(function ($branch) use ($db2) {
+            $jumlahLeads = DB::table('sl_leads')
+                ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+                ->whereNull('sl_leads.deleted_at')
+                ->whereNull('sl_leads.customer_id')
+                ->whereMonth('sl_leads.created_at', Carbon::now()->month)
+                ->where($db2.'.m_branch.name', $branch)
+                ->count();
+
+            return (object) [
+                'branch' => $branch,
+                'jumlah_leads' => $jumlahLeads
+            ];
+        });
+
+        $kebutuhanList = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+        $leadsByBranchAndKebutuhan = $branches->map(function ($branch) use ($db2) {
+            $kebutuhanIds = DB::table('m_kebutuhan')->pluck('id');
+            $data = $kebutuhanIds->map(function ($kebutuhanId) use ($branch, $db2) {
+                $jumlahLeads = DB::table('sl_leads')
+                    ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+                    ->whereNull('sl_leads.deleted_at')
+                    ->where('sl_leads.kebutuhan_id', $kebutuhanId)
+                    ->where($db2.'.m_branch.name', $branch)
+                    ->whereMonth('sl_leads.created_at', Carbon::now()->month)
+                    ->count();
+
+                $kebutuhan = DB::table('m_kebutuhan')->where('id', $kebutuhanId)->value('nama');
+
+                return (object) [
+                    'kebutuhan' => $kebutuhan,
+                    'jumlah_leads' => $jumlahLeads
+                ];
+            });
+
+            return (object) [
+                'branch' => $branch,
+                'data' => $data
+            ];
+        });
+        
+        
+        $branchesWithCustomerData = $branches->map(function ($branch) use ($db2) {
+            $branchId = DB::connection('mysqlhris')->table('m_branch')->where('name', $branch)->value('id');
+            $target = DB::connection('mysqlhris')->table('m_branch')->where('id', $branchId)->value('sales_target');
+            $actual = DB::table('sl_customer')
+                ->leftJoin('sl_leads', 'sl_customer.leads_id', '=', 'sl_leads.id')
+                ->whereNull('sl_customer.deleted_at')
+                ->where('sl_leads.branch_id', $branchId)
+                ->count();
+
+            return (object) [
+                'branch' => $branch,
+                'data' => (object) [
+                    'target' => $target,
+                    'actual' => $actual
+                ]
+            ];
+        });
+
+        $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
+        return view('home.dashboard-general',compact('branchesWithCustomerData','kebutuhanList','leadsByBranchAndKebutuhan','leadsByBranch','warna'));
+    }
+
 }

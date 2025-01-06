@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/approval', 'dashboardApproval')->name('dashboard-approval');
         Route::get('/dashboard/aktifitas-sales', 'dashboardAktifitasSales')->name('dashboard-aktifitas-sales');
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
+        Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
 
 
         // list

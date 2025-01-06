@@ -268,9 +268,6 @@
         },
         cutout: '68%',
         plugins: {
-          legend: {
-            display: false
-          },
           tooltip: {
             callbacks: {
               label: function (context) {
@@ -428,9 +425,6 @@
             borderWidth: 1,
             borderColor: borderColor
           },
-          legend: {
-            display: false
-          }
         },
         scales: {
           x: {

@@ -148,7 +148,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6 col-12 mb-4">
+      <div class="col-lg-4 col-12 mb-4">
         <div class="card">
           <div class="card-header header-elements">
             <h5 class="card-title mb-0">Summary Sumber Leads</h5>
@@ -171,46 +171,62 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-3 col-12 mb-4">
+      <div class="col-lg-4 col-12 mb-4">
         <div class="card">
           <h5 class="card-header">Persentase Menjadi Customer</h5>
           <div class="card-body">
-            <canvas id="doughnutChartCustomer" class="chartjs mb-4" data-height="350" height="200"></canvas>
-            <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
-              <li class="ct-series-0 d-flex flex-column">
-                <h5 class="mb-0">Masih Leads</h5>
-                <span
-                  class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                  style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"></span>
-                  <div class="text-muted">{{round($leadsWithoutCustomer/($leadsWithCustomer+$leadsWithoutCustomer)*100,0)}} %</div>
-                </li>
-              <li class="ct-series-1 d-flex flex-column">
-                <h5 class="mb-0">Sudah Customer</h5>
-                <span
-                  class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                  style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"></span>
-                <div class="text-muted">{{round($leadsWithCustomer/($leadsWithCustomer+$leadsWithoutCustomer)*100,0)}} %</div>
-              </li>
-            </ul>
+            <div class="row">
+              <div class="col-sm-8">
+                <canvas id="doughnutChartCustomer" class="chartjs mb-4" data-height="350" height="200"></canvas>
+              </div>
+              <div class="col-sm-4">
+                <ul class="ps-0 mb-2 pt-1">
+                    <li class="ct-series-0 d-flex flex-column align-items-center">
+                    <span
+                      class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                      style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"></span>
+                    <h6 class="mb-0 text-center">Masih Leads</h6>
+                    <div class="text-muted small">{{round($leadsWithoutCustomer/($leadsWithCustomer+$leadsWithoutCustomer)*100,0)}} %</div>
+                    </li>
+                    <li class="ct-series-1 d-flex flex-column align-items-center">
+                    <span
+                      class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                      style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"></span>
+                    <h6 class="mb-0 text-center">Sudah Customer</h6>
+                    <div class="text-muted small">{{round($leadsWithCustomer/($leadsWithCustomer+$leadsWithoutCustomer)*100,0)}} %</div>
+                    </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-3 col-12 mb-4">
+      <div class="col-lg-4 col-12 mb-4">
         <div class="card">
           <h5 class="card-header">Persentase Jenis Kebutuhan</h5>
           <div class="card-body">
-            <canvas id="doughnutChartKebutuhan" class="chartjs mb-4" data-height="350"></canvas>
-            <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
-              @foreach($leadsGroupKebutuhan as $key => $value)
-                  <li class="ct-series-0 d-flex flex-column">
-                      <h5 class="mb-0">{{$value->kebutuhan}}</h5>
-                      <span
+            <div class="row">
+              <div class="col-sm-8">
+                <canvas id="doughnutChartKebutuhan" class="chartjs mb-4" data-height="350"></canvas>
+              </div>
+              <div class="col-sm-4">
+                <ul class="ps-0 mb-2 pt-1">
+                  @foreach($leadsGroupKebutuhan as $key => $value)
+                    <li class="ct-series-0 d-flex flex-column align-items-center">
+                    <span
                       class="badge badge-dot my-2 cursor-pointer rounded-pill"
                       style="background-color: {{$warna[$key]}}; width: 35px; height: 6px"></span>
-                      <div class="text-muted">{{round($value->jumlah_leads/$totalLeadsKebutuhan*100,0)}} %</div>
-                  </li>
-              @endforeach
-            </ul>
+                      <h6 class="mb-0 text-center">{{$value->kebutuhan}}</h6>
+                        <h5 class="mb-0"></h5>
+                        <span
+                        class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                        style="background-color:  width: 35px; height: 6px"></span>
+                        <div class="text-muted">{{round($value->jumlah_leads/$totalLeadsKebutuhan*100,0)}} %</div>
+                    </li>
+                  @endforeach
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -447,15 +463,12 @@
         },
         cutout: '68%',
         plugins: {
-          legend: {
-            display: false
-          },
           tooltip: {
             callbacks: {
               label: function (context) {
                 const label = context.labels || '',
                   value = context.parsed;
-                const output = ' ' + label + ' : ' + value + ' %';
+                const output = ' ' + label + ' : ' + value + ' Leads';
                 return output;
               }
             },
@@ -506,15 +519,12 @@
         },
         cutout: '68%',
         plugins: {
-          legend: {
-            display: false
-          },
           tooltip: {
             callbacks: {
               label: function (context) {
                 const label = context.labels || '',
                   value = context.parsed;
-                const output = ' ' + label + ' : ' + value + ' %';
+                const output = ' ' + label + ' : ' + value + ' Leads';
                 return output;
               }
             },
