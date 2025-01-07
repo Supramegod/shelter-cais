@@ -158,6 +158,11 @@
 
 @section('pageScript')
 <script>
+  $(document).ready(function() {
+    $('#jenis_perusahaan').select2();
+  });
+</script>
+<script>
   @if(session()->has('success'))  
     Swal.fire({
       title: 'Pemberitahuan',
