@@ -362,21 +362,20 @@ class LeadsController extends Controller
                         'created_by' => Auth::user()->full_name
                     ]);
 
-                    if (Auth::user()->role_id==29) {
-                        //cari tim sales
-                        $timSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
-                        if($timSalesD != null){
-                            DB::table('sl_leads')->where('id',$newId)->update([
-                                'tim_sales_id' => $timSalesD->tim_sales_id,
-                                'tim_sales_d_id' =>$timSalesD->id
-                            ]);
+                    //cari tim sales
+                    $timSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+                    if($timSalesD != null){
+                        DB::table('sl_leads')->where('id',$newId)->update([
+                            'tim_sales_id' => $timSalesD->tim_sales_id,
+                            'tim_sales_d_id' =>$timSalesD->id
+                        ]);
 
-                            DB::table('sl_customer_activity')->where('id',$activityId)->update([
-                                'tim_sales_id' => $timSalesD->tim_sales_id,
-                                'tim_sales_d_id' =>$timSalesD->id
-                            ]);
-                        }
+                        DB::table('sl_customer_activity')->where('id',$activityId)->update([
+                            'tim_sales_id' => $timSalesD->tim_sales_id,
+                            'tim_sales_d_id' =>$timSalesD->id
+                        ]);
                     }
+                    
                     $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan dengan nomor : '.$nomor.' !';
                 }
             }
