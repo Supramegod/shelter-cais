@@ -335,7 +335,7 @@
                         window.location.href = '{{route("leads.index-terhapus")}}';
                     }
                 },
-                @if(in_array(Auth::user()->role_id,[29,30,48,49]))
+                @if(in_array(Auth::user()->role_id,[29,30,31,48,49]))
                 {
                 extend: 'collection',
                 className: 'btn btn-label-warning dropdown-toggle me-2 waves-effect waves-light',
