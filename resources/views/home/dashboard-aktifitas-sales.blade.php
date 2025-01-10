@@ -67,7 +67,7 @@
         </div>
     </div>
     <div class="row gy-4 mb-5">
-        <div class="col-lg-6 col-12 mb-4">
+        <div class="col-lg-4 col-12 mb-4">
             <div class="card">
             <div class="card-header header-elements">
                 <h5 class="card-title mb-0">Aktifitas Sales Bulan ini</h5>
@@ -89,13 +89,25 @@
             </div>
             </div>
         </div>
-        <div class="col-lg-6 col-12 mb-4">
-            <div class="card">
+        <div class="col-lg-4 col-12 mb-4">
+          <div class="card">
             <h5 class="card-header">By Tipe Aktifitas Bulan Ini</h5>
             <div class="card-body">
                 <div class="d-flex justify-content-center">
                     <div class="col-lg-8">
                         <canvas id="doughnutChart" class="chartjs mb-4" data-height="100" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-12 mb-4">
+          <div class="card">
+            <h5 class="card-header">By Status Leads Bulan Ini</h5>
+            <div class="card-body">
+                <div class="d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <canvas id="doughnutChartStatus" class="chartjs mb-4" data-height="100" height="200"></canvas>
                     </div>
                 </div>
             </div>
@@ -270,6 +282,52 @@
     });
   }
 
+  const doughnutChartStatus = document.getElementById('doughnutChartStatus');
+  if (doughnutChartStatus) {
+    const doughnutChartStatusVar = new Chart(doughnutChartStatus, {
+      type: 'doughnut',
+      data: {
+        labels: @json($statusLeads),
+        datasets: [
+          {
+            data: @json($jumlahAktifitasStatusLeads),
+            backgroundColor: backgroundColor,
+            borderWidth: 0,
+            pointStyle: 'rectRounded'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 500
+        },
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'right'
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const label = context.labels || '',
+                  value = context.parsed;
+                const output = ' ' + label + ' : ' + value;
+                return output;
+              }
+            },
+            // Updated default tooltip UI
+            rtl: isRtl,
+            backgroundColor: cardColor,
+            titleColor: headingColor,
+            bodyColor: legendColor,
+            borderWidth: 1,
+            borderColor: borderColor
+          }
+        }
+      }
+    });
+  }
   const arrAct = @json($aktifitasSalesPerTanggal);
   let arrDataSet = [];
   arrAct.forEach(function(element, index) {

@@ -151,6 +151,21 @@ class DashboardController extends Controller
             array_push($jumlahAktifitasTipe,$value->jumlah_aktifitas);
         };
 
+        $aktifitasByStatusLeads = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->select(DB::raw('(select nama from m_status_leads where id=sl_customer_activity.status_leads_id) as status_leads'), DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('status_leads')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+        
+        $statusLeads = [];
+        $jumlahAktifitasStatusLeads = [];
+        foreach ($aktifitasByStatusLeads as $key => $value) {
+            array_push($statusLeads,$value->status_leads." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitasStatusLeads,$value->jumlah_aktifitas);
+        };
+
         $aktifitasSalesPerTanggal = [];
 
         for ($i = 1; $i <= 31; $i++) {
@@ -227,7 +242,7 @@ class DashboardController extends Controller
         
         $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
 
-        return view('home.dashboard-aktifitas-sales', compact('aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
+        return view('home.dashboard-aktifitas-sales', compact('statusLeads','jumlahAktifitasStatusLeads','aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
     }
 
     public function dashboardLeads (Request $request){
