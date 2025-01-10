@@ -21,6 +21,7 @@ use App\Http\Controllers\Master\JenisBarangController;
 use App\Http\Controllers\Master\JabatanController;
 use App\Http\Controllers\Master\JenisPerusahaanController;
 use App\Http\Controllers\Master\ManagementFeeController;
+use App\Http\Controllers\Master\JenisVisitController;
 use App\Http\Controllers\Master\SalaryRuleController;
 use App\Http\Controllers\Master\StatusLeadsController;
 use App\Http\Controllers\Master\TunjanganController;
@@ -325,6 +326,18 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
     
+    Route::controller(JenisVisitController::class)->group(function() {
+        Route::get('/master/jenis-visit', 'index')->name('jenis-visit');
+        Route::get('/master/jenis-visit/add', 'add')->name('jenis-visit.add');
+        Route::get('/master/jenis-visit/view/{id}', 'view')->name('jenis-visit.view');
+
+        Route::post('/master/jenis-visit/save', 'save')->name('jenis-visit.save');
+        Route::post('/master/jenis-visit/delete', 'delete')->name('jenis-visit.delete');
+
+        Route::get('/master/jenis-visit/list', 'list')->name('jenis-visit.list'); // ajax
+
+    });
+
     Route::controller(SalaryRuleController::class)->group(function() {
         Route::get('/master/salary-rule', 'index')->name('salary-rule');
         Route::get('/master/salary-rule/add', 'add')->name('salary-rule.add');

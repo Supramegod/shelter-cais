@@ -117,9 +117,11 @@ class CustomerActivityController extends Controller
                 $tim_sales_id = $dataSalesD->tim_sales_id;
                 $tim_sales_d_id = $dataSalesD->id;
             }
+            $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
             
-            return view('sales.customer-activity.add',compact('spvRoList','roList','crmList','leads','now','nowd','statusLeads','timSales','tim_sales_id','tim_sales_d_id'));
+            return view('sales.customer-activity.add',compact('jenisVisit','spvRoList','roList','crmList','leads','now','nowd','statusLeads','timSales','tim_sales_id','tim_sales_d_id'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -282,15 +284,15 @@ class CustomerActivityController extends Controller
                 }
 
                 //validator role
-                if(!in_array(Auth::user()->role_id,[4,5,6,8,55,56])){
-                    $validator = Validator::make($request->all(), [
-                        'status_leads_id' => 'required',
-                    ], [
-                        'min' => 'Masukkan :attribute minimal :min',
-                        'max' => 'Masukkan :attribute maksimal :max',
-                        'required' => ':attribute harus di isi',
-                    ]);
-                }
+                // if(!in_array(Auth::user()->role_id,[4,5,6,8,55,56])){
+                //     $validator = Validator::make($request->all(), [
+                //         'status_leads_id' => 'required',
+                //     ], [
+                //         'min' => 'Masukkan :attribute minimal :min',
+                //         'max' => 'Masukkan :attribute maksimal :max',
+                //         'required' => ':attribute harus di isi',
+                //     ]);
+                // }
 
                 if ($validator->fails()) {
                     return back()->withErrors($validator->errors())->withInput();
@@ -355,7 +357,10 @@ class CustomerActivityController extends Controller
                 }
 
                 if($request->jenis_visit !=null){
-                    $jenisVisit = $request->jenis_visit;
+                    $djenisVisit = DB::table('m_jenis_visit')->where('id', $request->jenis_visit)->first();
+                    if($djenisVisit != null){
+                        $jenisVisit = $djenisVisit->nama;
+                    }
                 }
 
                 if($request->notulen !=null){
@@ -419,6 +424,7 @@ class CustomerActivityController extends Controller
                         'notes_tipe' => $notesTipe,
                         'notulen' => $notulen,
                         'jenis_visit' => $jenisVisit,
+                        'jenis_visit_id' => $request->jenis_visit,
                         'link_bukti_foto' => $linkBuktiFoto,
                         'email' => $email,
                         'ro_id' => $roId,
@@ -457,6 +463,7 @@ class CustomerActivityController extends Controller
                         'crm' => $crmName,
                         'status_leads_id' => $statusLeads,
                         'jenis_visit' => $jenisVisit,
+                        'jenis_visit_id' => $request->jenis_visit,
                         'is_activity' => 1,
                         'user_id' => Auth::user()->id,
                         'created_at' => $current_date_time,

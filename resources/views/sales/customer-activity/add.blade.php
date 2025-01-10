@@ -71,7 +71,7 @@
               <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
             </div>
           </div>
-          @if(!in_array(Auth::user()->role_id,[4,5,8,55,56]))
+          @if(!in_array(Auth::user()->role_id,[33,3,4,5,8,50,51,52,55,56,96,97,98,99,100]))
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Status Leads <span class="text-danger">*</span></label>
             <div class="col-sm-10">
@@ -107,7 +107,7 @@
           <input type="hidden" name="tipe" value="" />
           <div class="row mb-3">
             <div class="offset-sm-2 col-sm-2">
-              @if(in_array(Auth::user()->role_id,[30,31,32,33]))
+              @if(in_array(Auth::user()->role_id,[2,3,50,51,52,30,31,32,33,96,97,98,99,100]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-sales" value="Pilih Sales">
                 <label class="form-check-label" for="pilih-sales">
@@ -337,8 +337,9 @@
                     <div class="position-relative">
                       <select id="jenis_visit" name="jenis_visit" class="form-select @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>  
-                        <option value="Client Visit" @if(old('jenis_visit') == 'Client Visit') selected @endif>Client Visit</option>
-                        <option value="Offline Meeting" @if(old('jenis_visit') == 'Offline Meeting') selected @endif>Offline Meeting</option>  
+                        @foreach($jenisVisit as $data)
+                        <option value="{{$data->id}}" @if(old('jenis_visit') == $data->id) selected @endif>{{$data->nama}}</option>
+                        @endforeach
                       </select>
                       @if($errors->has('jenis_visit'))
                         <div class="invalid-feedback">{{$errors->first('jenis_visit')}}</div>
