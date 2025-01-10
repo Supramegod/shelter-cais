@@ -218,6 +218,12 @@
                 <div data-i18n="Master Data">Dashboard</div>
             </a>
             <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
+                    <a href="{{route('dashboard-approval')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Dashboard Approval">Approval</div>
+                    </a>
+                </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-sales'))) active @endif">
                     <a href="{{route('dashboard-aktifitas-sales')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
