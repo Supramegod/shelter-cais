@@ -119,6 +119,7 @@ class DashboardController extends Controller
 
         $aktifitasSalesUserIds = DB::table('sl_customer_activity')
             ->whereNull('deleted_at')
+            ->whereNotNull('user_id')
             ->select('user_id', DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('user_id')
             ->where('is_activity', 1)
@@ -240,9 +241,25 @@ class DashboardController extends Controller
 
         $aktifitasSalesByTipePerTanggal = array_values($aktifitasSalesByTipePerTanggal);
         
+        $aktifitasByVisit = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->whereNotNull('jenis_visit')
+            ->select('jenis_visit', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('jenis_visit')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+        
+        $jenisVisit = [];
+        $jumlahAktifitasVisit = [];
+        foreach ($aktifitasByVisit as $key => $value) {
+            array_push($jenisVisit,$value->jenis_visit." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitasVisit,$value->jumlah_aktifitas);
+        };
+
         $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
 
-        return view('home.dashboard-aktifitas-sales', compact('statusLeads','jumlahAktifitasStatusLeads','aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
+        return view('home.dashboard-aktifitas-sales', compact('jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
     }
 
     public function dashboardLeads (Request $request){

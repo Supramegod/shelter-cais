@@ -67,7 +67,7 @@
         </div>
     </div>
     <div class="row gy-4 mb-5">
-        <div class="col-lg-4 col-12 mb-4">
+        <div class="col-lg-6 col-12 mb-4">
             <div class="card">
             <div class="card-header header-elements">
                 <h5 class="card-title mb-0">Aktifitas Sales Bulan ini</h5>
@@ -89,7 +89,7 @@
             </div>
             </div>
         </div>
-        <div class="col-lg-4 col-12 mb-4">
+        <div class="col-lg-6 col-12 mb-4">
           <div class="card">
             <h5 class="card-header">By Tipe Aktifitas Bulan Ini</h5>
             <div class="card-body">
@@ -101,13 +101,25 @@
             </div>
             </div>
         </div>
-        <div class="col-lg-4 col-12 mb-4">
+        <div class="col-lg-6 col-12 mb-4">
           <div class="card">
             <h5 class="card-header">By Status Leads Bulan Ini</h5>
             <div class="card-body">
                 <div class="d-flex justify-content-center">
                     <div class="col-lg-8">
                         <canvas id="doughnutChartStatus" class="chartjs mb-4" data-height="100" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12 mb-4">
+          <div class="card">
+            <h5 class="card-header">Visit Bulan Ini</h5>
+            <div class="card-body">
+                <div class="d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <canvas id="doughnutChartVisit" class="chartjs mb-4" data-height="100" height="200"></canvas>
                     </div>
                 </div>
             </div>
@@ -218,7 +230,7 @@
                     },
                     legend: {
                         rtl: isRtl,
-                        position: 'right',
+                        position: 'bottom',
                         labels: {
                         usePointStyle: true,
                         padding: 25,
@@ -328,6 +340,54 @@
       }
     });
   }
+
+  const doughnutChartVisit = document.getElementById('doughnutChartVisit');
+  if (doughnutChartVisit) {
+    const doughnutChartVisitVar = new Chart(doughnutChartVisit, {
+      type: 'doughnut',
+      data: {
+        labels: @json($jenisVisit),
+        datasets: [
+          {
+            data: @json($jumlahAktifitasVisit),
+            backgroundColor: backgroundColor,
+            borderWidth: 0,
+            pointStyle: 'rectRounded'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 500
+        },
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'right'
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const label = context.labels || '',
+                  value = context.parsed;
+                const output = ' ' + label + ' : ' + value;
+                return output;
+              }
+            },
+            // Updated default tooltip UI
+            rtl: isRtl,
+            backgroundColor: cardColor,
+            titleColor: headingColor,
+            bodyColor: legendColor,
+            borderWidth: 1,
+            borderColor: borderColor
+          }
+        }
+      }
+    });
+  }
+
   const arrAct = @json($aktifitasSalesPerTanggal);
   let arrDataSet = [];
   arrAct.forEach(function(element, index) {
