@@ -190,8 +190,7 @@ mso-ansi-language:IN">&nbsp;</span></b></p>
 <p class="MsoNoSpacing" style="margin-left:211.5pt;text-align:justify;text-justify:
 inter-ideograph;text-indent:-211.5pt;tab-stops:202.5pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$quotation->nama_perusahaan.'</span></b><b><span lang="IN" style="font-size:12.0pt;
 font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></b><span lang="IN" style="font-size:12.0pt;
-font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">:<b>&nbsp; </b>Dalam hal ini diwakili oleh </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">YAKOBUS
-JIMMY SAPUTRO </span></b><span lang="IN" style="font-size:12.0pt;font-family:
+font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">:<b>&nbsp; </b>Dalam hal ini diwakili oleh </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.strtoupper($leads->pic).' </span></b><span lang="IN" style="font-size:12.0pt;font-family:
 &quot;Arial&quot;,sans-serif;mso-ansi-language:IN">sebagai</span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif"> </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">Direktur </span></b><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
 IN">yang berkedudukan di <span style="background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">Jala</span></span><span lang="EN-US" style="font-size: 12pt; font-family: Arial, sans-serif; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">n </span><span lang="EN-US" style="font-size: 12pt; font-family: Arial, sans-serif; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">Pos
 No. 2, Ps. Baru, Kecamatan Sawah Besar, Kota Jakarta Pusat, Daerah Khusus Ibukota
@@ -811,7 +810,7 @@ pihak.<o:p></o:p></span></p><p class="MsoNoSpacing"><span lang="EN-US" style="fo
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
   <p class="NoSpacing1" style="margin-left:-.9pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
-  <p class="NoSpacing1" style="margin-left:-.9pt"><b><u><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">YAKOBUS JIMMY SAPUTRO<o:p></o:p></span></u></b></p>
+  <p class="NoSpacing1" style="margin-left:-.9pt"><b><u><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.strtoupper($leads->pic).'<o:p></o:p></span></u></b></p>
   <p class="NoSpacing1" style="margin-left:-.9pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">Direktur<o:p></o:p></span></b></p>
   </td>
   <td width="228" valign="top" style="width: 171pt; border-width: initial; border-style: none; border-color: initial; padding: 0cm 5.4pt;">
