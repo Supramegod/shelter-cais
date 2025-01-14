@@ -362,7 +362,7 @@
                         }
                     ]
                     },
-                    @if(in_array(Auth::user()->role_id,[29]))
+                    @if(in_array(Auth::user()->role_id,[29,31,33]))
                     // {
                     // text: '<i class="mdi mdi-content-copy mr-1"></i> <span class="d-none d-sm-inline-block">Copy Quotation</span>',
                     // className: 'create-new btn btn-label-warning waves-effect waves-light',

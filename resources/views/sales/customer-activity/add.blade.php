@@ -21,6 +21,7 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Leads / customer <span class="text-danger">*</span></label>
             <div class="col-sm-4">
+              <input type="hidden" id="jumlah_site" name="jumlah_site" value="0" class="form-control">
               <input type="hidden" id="leads_id" name="leads_id" value="{{old('leads_id')}}" class="form-control">
               <input type="hidden" id="email_leads" name="email_leads" value="{{old('email_leads')}}" class="form-control">
               <input type="hidden" id="email_sales" name="email_sales" value="{{old('email_sales')}}" class="form-control">

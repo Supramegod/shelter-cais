@@ -72,6 +72,9 @@ class MonitoringKontrakController extends Controller
 
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
+            if (!in_array(Auth::user()->role_id,[2,54,55])) {
+                return "";
+            }
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
             $aksi = "";
 

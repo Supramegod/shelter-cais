@@ -7,407 +7,106 @@
             <div data-i18n="Dashboards">Home</div>
             </a>
         </li>
-
-        <!-- MARCOMM , MAN MARCOMM -->
-        @if(in_array(Auth::user()->role_id,[48,49]))
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <!-- TELESALES -->
-        @elseif(in_array(Auth::user()->role_id,[30]))
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
-            <a href="{{route('customer-activity')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
-            <div data-i18n="Customer Activity">Customer Activity</div>
-            </a>
-        </li>
-        <!-- SALES , SPV SALES , MAN SALES -->
-        @elseif(in_array(Auth::user()->role_id,[31,32,33]))
+        @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,98,99,100]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
                 <div data-i18n="Master Data">Dashboard</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-sales'))) active @endif">
-                    <a href="{{route('dashboard-aktifitas-sales')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard Aktifitas Sales</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
-            <div data-i18n="Customer">Customer</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
-            <a href="{{route('customer-activity')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
-            <div data-i18n="Customer Activity">Customer Activity</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
-            <a href="{{route('quotation')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
-            <div data-i18n="Quotation">Quotation</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
-            <a href="{{route('spk')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
-            <div data-i18n="SPK">SPK</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
-            <a href="{{route('pks')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
-            <div data-i18n="PKS">PKS</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
-            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
-            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
-            </a>
-        </li>
-        @elseif(in_array(Auth::user()->role_id,[29]))
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
-            <div data-i18n="Customer">Customer</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
-            <a href="{{route('customer-activity')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
-            <div data-i18n="Customer Activity">Customer Activity</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
-            <a href="{{route('quotation')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
-            <div data-i18n="Quotation">Quotation</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
-            <a href="{{route('spk')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
-            <div data-i18n="SPK">SPK</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
-            <a href="{{route('pks')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
-            <div data-i18n="PKS">PKS</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
-            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
-            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
-            </a>
-        </li>
-        <!-- RO , SPV Operational , Man Operational -->
-        @elseif(in_array(Auth::user()->role_id,[4,5,6,8]))
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
-            <div data-i18n="Customer">Customer</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
-            <a href="{{route('customer-activity')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
-            <div data-i18n="Customer Activity">Customer Activity</div>
-            </a>
-        </li>
-
-        <!-- CRM , SPV CRM , Man CRM -->
-        @elseif(in_array(Auth::user()->role_id,[54,55,56]))
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
-                <div data-i18n="Master Data">Dashboard</div>
-            </a>
-            <ul class="menu-sub">
+                @if(in_array(Auth::user()->role_id,[2,52,54,55,56,53,56,96,97,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
                     <a href="{{route('dashboard-approval')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Dashboard Approval">Approval</div>
                     </a>
                 </li>
-            </ul>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
-            <div data-i18n="Customer">Customer</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
-            <a href="{{route('customer-activity')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
-            <div data-i18n="Customer Activity">Customer Activity</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
-            <a href="{{route('quotation')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
-            <div data-i18n="Quotation">Quotation</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
-            <a href="{{route('spk')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
-            <div data-i18n="SPK">SPK</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
-            <a href="{{route('pks')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
-            <div data-i18n="PKS">PKS</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
-            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
-            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
-            </a>
-        </li>
-        <!-- BRANCH MANAGER -->
-        @elseif(in_array(Auth::user()->role_id,[52]))
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
-                <div data-i18n="Master Data">Dashboard</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
-                    <a href="{{route('dashboard-approval')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Dashboard Approval">Approval</div>
-                    </a>
-                </li>
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-sales'))) active @endif">
-                    <a href="{{route('dashboard-aktifitas-sales')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard Aktifitas Sales</div>
-                    </a>
-                </li>
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
-                    <a href="{{route('dashboard-leads')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard Leads</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
-            <div data-i18n="Customer">Customer</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
-            <a href="{{route('customer-activity')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
-            <div data-i18n="Customer Activity">Customer Activity</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
-            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
-            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
-            </a>
-        </li>
-        <!-- DIREKTUR -->
-        @elseif(in_array(Auth::user()->role_id,[53,56,96,97,98,99,100]))
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
-                <div data-i18n="Master Data">Dashboard</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
-                    <a href="{{route('dashboard-approval')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Dashboard Approval">Approval</div>
-                    </a>
-                </li>
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-sales'))) active @endif">
-                    <a href="{{route('dashboard-aktifitas-sales')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard Aktifitas Sales</div>
-                    </a>
-                </li>
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
-                    <a href="{{route('dashboard-leads')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard Leads</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
-            <div data-i18n="Customer">Customer</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
-            <a href="{{route('leads')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-            <div data-i18n="Leads">Leads</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
-            <a href="{{route('customer-activity')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
-            <div data-i18n="Customer Activity">Customer Activity</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
-            <a href="{{route('quotation')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
-            <div data-i18n="Quotation">Quotation</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
-            <a href="{{route('spk')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
-            <div data-i18n="SPK">SPK</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
-            <a href="{{route('pks')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
-            <div data-i18n="PKS">PKS</div>
-            </a>
-        </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
-            <a href="{{route('monitoring-kontrak')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
-            <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
-            </a>
-        </li>
-        <!-- SUPER USER -->
-        @elseif(Auth::user()->role_id==2)
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
-                <div data-i18n="Master Data">Dashboard</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
-                    <a href="{{route('dashboard-approval')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Dashboard Approval">Approval</div>
-                    </a>
-                </li>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-general'))) active @endif">
                     <a href="{{route('dashboard-general')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div>Dashboard General</div>
                     </a>
                 </li>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,31,32,33,52,53,56,96,97,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-sales'))) active @endif">
                     <a href="{{route('dashboard-aktifitas-sales')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div>Dashboard Aktifitas Sales</div>
                     </a>
                 </li>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,52,53,56,96,97,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
                     <a href="{{route('dashboard-leads')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div>Dashboard Leads</div>
                     </a>
                 </li>
+                @endif
             </ul>
         </li>
+        @endif
+
+        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('customer')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
             <div data-i18n="Customer">Customer</div>
             </a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
             <div data-i18n="Leads">Leads</div>
             </a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,29,30,31,33,52,96,97,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
             <a href="{{route('customer-activity')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
             <div data-i18n="Customer Activity">Customer Activity</div>
             </a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,29,31,33]))
         <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
             <a href="{{route('quotation')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
             <div data-i18n="Quotation">Quotation</div>
             </a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,29,31,33]))
         <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
             <a href="{{route('spk')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
             <div data-i18n="SPK">SPK</div>
             </a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,29,31,33]))
         <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
             <a href="{{route('pks')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
             <div data-i18n="PKS">PKS</div>
             </a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,4,5,6,8,52,53,10,96,97,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
             <a href="{{route('monitoring-kontrak')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
             <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
             </a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2]))
         <!-- MASTER DATA -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -515,16 +214,6 @@
             </ul>
         </li> 
         @endif
-
-
-
-
-
-
-
-
-
-
 
 
 
