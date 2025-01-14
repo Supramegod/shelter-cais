@@ -477,7 +477,7 @@
     <div class="col-12 col-lg-12">
       <div class="card mb-4">
         <div class="card-header">
-          <h5 class="card-title m-0">Cost Structure</h5>
+          <h5 class="card-title m-0">Harga Jual</h5>
         </div>
         <div class="card-body">
         <div class="card-header p-0">
@@ -490,7 +490,7 @@
               </li>
               <li class="nav-item" role="presentation">
                 <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-coss" aria-controls="navs-top-coss" aria-selected="false" tabindex="-1">
-                  Cost Structure
+                  Harga Jual
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -849,7 +849,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                   <table class="table" >
                     <thead class="text-center">
                       <tr class="table-success">
-                        <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">COST STRUCTURE {{$data->kebutuhan}}</th>
+                        <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">Harga Jual {{$data->kebutuhan}}</th>
                       </tr>
                       <tr class="table-success">
                         <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}  ( Provisi = {{$quotation->provisi}} )</th>
@@ -1425,7 +1425,7 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
       </div>
       <div class="card mb-4">
         <div class="card-header">
-          <h5 class="card-title m-0">Detail Cost Structure</h5>
+          <h5 class="card-title m-0">Detail Harga Jual</h5>
         </div>
         <div class="card-body">
           <div class="card-header p-0">

@@ -71,7 +71,7 @@
               <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
             </div>
           </div>
-          @if(!in_array(Auth::user()->role_id,[33,3,4,5,8,50,51,52,55,56,96,97,98,99,100]))
+          @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Status Leads <span class="text-danger">*</span></label>
             <div class="col-sm-10">

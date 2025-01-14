@@ -40,6 +40,7 @@ class CustomerActivityController extends Controller
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
         $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
 
+        $listUser = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id', [4,5,29,30,31,54])->where('is_active',1)->orderBy('full_name','asc')->get();
         $error = null;
         $success = null;
         if($ctglDari->gt($ctglSampai)){
@@ -50,7 +51,7 @@ class CustomerActivityController extends Controller
             $tglSampai = carbon::now()->toDateString();
             $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
         }
-        return view('sales.customer-activity.list',compact('branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
+        return view('sales.customer-activity.list',compact('listUser','branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
     }
 
     public function add (Request $request){
@@ -604,10 +605,12 @@ class CustomerActivityController extends Controller
             $data = DB::table('sl_customer_activity')
                         ->join('sl_leads','sl_leads.id','sl_customer_activity.leads_id')
                         ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
+                        ->leftJoin($db2.'.m_user','sl_leads.created_by','=',$db2.'.m_user.full_name')
+                        ->leftJoin($db2.'.m_role',$db2.'.m_user.role_id','=',$db2.'.m_role.id')
                         ->leftJoin('m_kebutuhan','m_kebutuhan.id','=','sl_leads.kebutuhan_id')
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
-                        ->select('sl_customer_activity.created_by','sl_customer_activity.email','sl_customer_activity.notulen','sl_customer_activity.jenis_visit','sl_customer_activity.link_bukti_foto','sl_customer_activity.penerima','sl_customer_activity.jam_realisasi','sl_customer_activity.tgl_realisasi','sl_customer_activity.notes_tipe','sl_customer_activity.start','sl_customer_activity.end','sl_customer_activity.durasi','m_status_leads.nama as status_leads','sl_customer_activity.leads_id','sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_leads.nama_perusahaan as nama', $db2.'.m_branch.name as branch', 'm_kebutuhan.nama as kebutuhan','m_tim_sales_d.nama as sales','sl_customer_activity.notes as keterangan')
+                        ->select($db2.'.m_role.name as role','sl_customer_activity.created_by','sl_customer_activity.email','sl_customer_activity.notulen','sl_customer_activity.jenis_visit','sl_customer_activity.link_bukti_foto','sl_customer_activity.penerima','sl_customer_activity.jam_realisasi','sl_customer_activity.tgl_realisasi','sl_customer_activity.notes_tipe','sl_customer_activity.start','sl_customer_activity.end','sl_customer_activity.durasi','m_status_leads.nama as status_leads','sl_customer_activity.leads_id','sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_leads.nama_perusahaan as nama', $db2.'.m_branch.name as branch', 'm_kebutuhan.nama as kebutuhan','m_tim_sales_d.nama as sales','sl_customer_activity.notes as keterangan')
                         ->whereNull('sl_customer_activity.deleted_at');
             
             if(!empty($request->tgl_dari)){
@@ -622,6 +625,9 @@ class CustomerActivityController extends Controller
             }
             if(!empty($request->branch)){
                 $data = $data->where('sl_leads.branch_id',$request->branch);
+            }
+            if(!empty($request->user)){
+                $data = $data->where($db2.'.m_user.id',$request->user);
             }
             // if(!empty($request->company)){
             //     $data = $data->where('sl_leads.company_id',$request->company);

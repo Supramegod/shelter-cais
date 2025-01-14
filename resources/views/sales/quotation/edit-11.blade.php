@@ -17,7 +17,7 @@
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">COST STRUCTURE</h6>
+                <h6 class="mb-3">Harga Jual</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
                 @foreach($quotation->quotation_site as $site)
                   <h6>{{$site->nama_site}}</h6>
@@ -52,7 +52,7 @@
               </li>
               <li class="nav-item" role="presentation">
                 <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-coss" aria-controls="navs-top-coss" aria-selected="false" tabindex="-1">
-                  Cost Structure
+                  Harga Jual
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -262,6 +262,20 @@
                         @endforeach
                       </tr>
                       <tr class="">
+                        <td colspan="2" style="text-align:right" class="">Bunga Bank ( {{$quotation->top}} )</td>
+                        <td style="text-align:center">{{$quotation->persen_bunga_bank}} %   &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-persen-bunga-bank"></i></a></td>
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bunga_bank,2,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
+                        <td colspan="2" style="text-align:right" class="">Insentif</td>
+                        <td style="text-align:center">{{$quotation->persen_insentif}} %  &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-persen-insentif"></i></a></td>
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->insentif,2,",",".")}}</td>
+                        @endforeach
+                      </tr>
+                      <tr class="">
                         <td colspan="2" style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari {{$quotation->management_fee}}</span></td>
                         <td style="text-align:center">{{$quotation->persentase}} %</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
@@ -415,7 +429,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                   <table class="table" >
                     <thead class="text-center">
                       <tr class="table-success">
-                        <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">COST STRUCTURE {{$data->kebutuhan}}</th>
+                        <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">Harga Jual {{$data->kebutuhan}}</th>
                       </tr>
                       <tr class="table-success">
                         <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}  ( Provisi = {{$quotation->provisi}} )</th>
@@ -599,7 +613,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="text-end">{{"Rp. ".number_format($detailJabatan->total_ohc,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      <tr class="">
+                      <!-- <tr class="">
                         <td style="" class="">Bunga Bank ( {{$quotation->top}} )</td>
                         <td style="text-align:center">{{$quotation->persen_bunga_bank}} %   &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-persen-bunga-bank"></i></a></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
@@ -612,7 +626,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->insentif,2,",",".")}}</td>
                         @endforeach
-                      </tr>
+                      </tr> -->
                       <tr class="">
                         <td style="" class="">Management Fee</td>
                         <td style="text-align:center">{{$quotation->persentase}} %</td>

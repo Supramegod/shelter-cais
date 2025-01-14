@@ -82,7 +82,19 @@ class QuotationService
             $kbd->management_fee = $kbd->nominal_upah*$quotation->persentase/100;
         }
 
-        $kbd->grand_total = $kbd->sub_total_personil + $kbd->management_fee + $kbd->total_ohc;
+        // bunga bank dan insentif
+        $pengaliTop = 0;
+        if ($quotation->top == "Kurang Dari 7 Hari") {
+            $pengaliTop = 7;
+        }else if($quotation->top == "Lebih Dari 7 Hari"){
+            $pengaliTop = $quotation->jumlah_hari_invoice;
+        };
+
+        
+        $kbd->bunga_bank = round($kbd->sub_total_personil*$pengaliTop*$quotation->persen_bunga_bank/100,2);
+        $kbd->insentif = round($kbd->sub_total_personil*$quotation->persen_insentif/100,2);
+
+        $kbd->grand_total = $kbd->sub_total_personil + $kbd->management_fee + $kbd->total_ohc + $kbd->bunga_bank + $kbd->insentif;
         $this->calculateTaxes($kbd, $quotation);
         $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
         $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
@@ -314,21 +326,21 @@ private function calculateCoss($kbd, $value, $jumlahHc, $provisi,$quotation)
         $kbd->management_fee_coss = round($kbd->nominal_upah * $value->persentase / 100, 2);
     }
 
-    // bunga bank dan insentif
-    $pengaliTop = 0;
-    if ($quotation->top == "Kurang Dari 7 Hari") {
-        $pengaliTop = 7;
-    }else if($quotation->top == "Lebih Dari 7 Hari"){
-        $pengaliTop = $quotation->jumlah_hari_invoice;
-    };
-    $kbd->bunga_bank = round($kbd->sub_total_personil_coss*$pengaliTop*$quotation->persen_bunga_bank/100,2);
-    $kbd->insentif = round($kbd->sub_total_personil_coss*$quotation->persen_insentif/100,2);
+    // // bunga bank dan insentif
+    // $pengaliTop = 0;
+    // if ($quotation->top == "Kurang Dari 7 Hari") {
+    //     $pengaliTop = 7;
+    // }else if($quotation->top == "Lebih Dari 7 Hari"){
+    //     $pengaliTop = $quotation->jumlah_hari_invoice;
+    // };
 
     // Grand Total COSS
+    // $kbd->grand_total_coss = round(
+    //     $kbd->sub_total_personil_coss + $kbd->total_ohc + $kbd->management_fee_coss + $kbd->bunga_bank + $kbd->insentif,
+    //     2
+    // );
     $kbd->grand_total_coss = round(
-        $kbd->sub_total_personil_coss + $kbd->total_ohc + $kbd->management_fee_coss + $kbd->bunga_bank + $kbd->insentif,
-        2
-    );
+        $kbd->sub_total_personil_coss + $kbd->total_ohc + $kbd->management_fee_coss,2);
 
     // PPN dan PPh COSS
     $kbd->ppn_coss = 0;

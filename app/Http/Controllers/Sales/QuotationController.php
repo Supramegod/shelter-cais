@@ -765,7 +765,7 @@ class QuotationController extends Controller
                 }
             }
             
-            // step 11 cost structure
+            // step 11 Harga Jual
             $leads = null;
             $data = null;
             $daftarTunjangan = null;
@@ -1055,7 +1055,7 @@ class QuotationController extends Controller
 
                 $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
-                // COST STRUCTURE
+                // Harga Jual
                 $kbd->total_base_manpower = $quotation->nominal_upah+$totalTunjangan;
 
                 //OHC DILEPAS
@@ -1066,7 +1066,7 @@ class QuotationController extends Controller
 
                 $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
 
-                // Permintaan pak yaser Management Fee untuk COST STRUCTURE DITAMBAH TOTAL OHC 
+                // Permintaan pak yaser Management Fee untuk Harga Jual DITAMBAH TOTAL OHC 
                 $kbd->management_fee_coss = ($kbd->sub_total_personil_coss*$quotation->persentase/100);
 
                 $kbd->grand_total_coss = $kbd->sub_total_personil_coss+$kbd->management_fee_coss+$kbd->total_ohc;
@@ -3558,7 +3558,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
                 $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
 
-                // COST STRUCTURE
+                // Harga Jual
                 $kbd->total_base_manpower = $master->nominal_upah+$totalTunjangan;
                 $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;;
 

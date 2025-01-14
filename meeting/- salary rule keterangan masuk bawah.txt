@@ -17,8 +17,8 @@ jenis kontrak Reguler , Harian lepas , Borongan
 jam kerja dihilangkan
 tambahkan cuti tahunan dan total cuti yang dia dapatkan
 analisa persentase GPM tidak berubah
-di cost structure semua provisi ( seragam , chemical , device , ohc ) di bulatkan ribuan
-di cost structure management fee ditambahkan OHC
+di Harga Jual semua provisi ( seragam , chemical , device , ohc ) di bulatkan ribuan
+di Harga Jual management fee ditambahkan OHC
 tingkatan customer ( diamond , platinum , gold , silver ) ada membership NOTE AJA perbedaan perlakuan kunjungan ( TAPI PER CLIENT )
 Edit pasal hanya bisa dilakukan oleh sales
 tampilkan lead time approval
