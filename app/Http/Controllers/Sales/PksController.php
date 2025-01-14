@@ -125,6 +125,7 @@ class PksController extends Controller
             $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$dataSpk->quotation_id)->first();
             $leads = DB::table('sl_leads')->where('id',$dataSpk->leads_id)->first();
             $quotation = DB::table('sl_quotation')->where('id',$dataSpk->quotation_id)->first();
+            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation->company_id)->first();
 
             $pksNomor = $this->generateNomor($quotation->leads_id,$quotation->company_id);
             $newId = DB::table('sl_pks')->insertGetId([
@@ -210,7 +211,7 @@ font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
 inter-ideograph;text-indent:-211.5pt;tab-stops:202.5pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$quotation->company.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></b><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
 IN;mso-bidi-font-weight:bold">:</span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp; </span></b><span lang="EN-US" style="font-size:
 12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-bidi-font-weight:bold">Dalam hal ini
-diwakili oleh </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">MARIN RISTANTI </span></b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-bidi-font-weight:
+diwakili oleh </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.strtoupper($company->nama_direktur).' </span></b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-bidi-font-weight:
 bold">sebagai </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">Direktur </span></b><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
 IN">yang</span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">
 </span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;
@@ -830,7 +831,7 @@ pihak.<o:p></o:p></span></p><p class="MsoNoSpacing"><span lang="EN-US" style="fo
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:
   &quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
   <p class="NoSpacing1"><b><u><span lang="EN-US" style="font-size:12.0pt;
-  font-family:&quot;Arial&quot;,sans-serif">MARIN RISTANTI<o:p></o:p></span></u></b></p>
+  font-family:&quot;Arial&quot;,sans-serif">'.strtoupper($company->nama_direktur).'<o:p></o:p></span></u></b></p>
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:
   &quot;Arial&quot;,sans-serif">Direktur<u><o:p></o:p></u></span></b></p>
   </td>

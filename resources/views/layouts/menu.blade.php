@@ -66,6 +66,14 @@
             </a>
         </li>
         @endif
+        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,99]))
+        <li class="menu-item @if(str_contains(Request::url(), route('site'))) active @endif">
+            <a href="{{route('site')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+            <div data-i18n="Site">Site</div>
+            </a>
+        </li>
+        @endif
         @if(in_array(Auth::user()->role_id,[2,29,30,31,33,52,96,97,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
             <a href="{{route('customer-activity')}}" class="menu-link">

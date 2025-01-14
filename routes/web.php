@@ -9,6 +9,7 @@ use App\Http\Controllers\Fitur\ContactController;
 
 use App\Http\Controllers\Sales\LeadsController;
 use App\Http\Controllers\Sales\CustomerController;
+use App\Http\Controllers\Sales\SiteController;
 use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Http\Controllers\Sales\QuotationController;
 use App\Http\Controllers\Sales\SpkController;
@@ -104,6 +105,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/customer/list', 'list')->name('customer.list'); // ajax
         Route::get('/sales/customer/available-customer', 'availableCustomer')->name('customer.available-customer'); // ajax
 
+    });
+
+    Route::controller(SiteController::class)->group(function() {
+        Route::get('/sales/site', 'index')->name('site');
+        Route::get('/sales/site/view/{id}', 'view')->name('site.view');
+
+        Route::get('/sales/site/list', 'list')->name('site.list'); // ajax
     });
 
     Route::controller(CustomerActivityController::class)->group(function() {
