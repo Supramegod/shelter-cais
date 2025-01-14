@@ -214,8 +214,22 @@
             </ul>
         </li> 
         @endif
-
-
+        @if(in_array(Auth::user()->role_id,[2]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-cogs"></i>
+                <div data-i18n="Master Data">Konfigurasi</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('entitas'))) active @endif">
+                    <a href="{{route('entitas')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Entitas">Entitas</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endif
 
 
 

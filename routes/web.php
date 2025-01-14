@@ -33,6 +33,7 @@ use App\Http\Controllers\Master\TrainingController;
 use App\Http\Controllers\Master\UmpController;
 use App\Http\Controllers\Master\UmkController;
 
+use App\Http\Controllers\Setting\EntitasController;
 
 Route::controller(AuthController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
@@ -463,5 +464,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/monitoring-kontrak/terminate', 'terminate')->name('monitoring-kontrak.terminate');
         Route::get('/sales/monitoring-kontrak/index-terminate', 'indexTerminate')->name('monitoring-kontrak.index-terminate');
         Route::get('/sales/monitoring-kontrak/list-terminate', 'listTerminate')->name('monitoring-kontrak.list-terminate');
+    });
+
+    Route::controller(EntitasController::class)->group(function() {
+        Route::get('/setting/entitas', 'index')->name('entitas');
+        Route::get('/setting/entitas/view/{id}', 'view')->name('entitas.view');
+
+        Route::post('/setting/entitas/save', 'save')->name('entitas.save');
+
+        Route::get('/setting/entitas/list', 'list')->name('entitas.list'); // ajax
+
     });
 });
