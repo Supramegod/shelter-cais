@@ -247,6 +247,15 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_chemical,2,",",".")}}</td>
                         @endforeach
                       </tr>
+                      @php $nomorUrut++; @endphp
+                      <tr class="">
+                        <td style="text-align:center">{{$nomorUrut}}</td>
+                        <td style="text-align:left" class="">Overhead Cost </td>
+                        <td style="text-align:center"></td>
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_ohc,2,",",".")}}</td>
+                        @endforeach
+                      </tr>
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">Total Biaya per Personil</td>
                         <td style="text-align:center"></td>
@@ -282,13 +291,13 @@
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->management_fee,2,",",".")}}</td>
                         @endforeach
                       </tr>
-                      <tr class="">
+                      <!-- <tr class="">
                         <td colspan="2" style="text-align:right" class="">Over Head Cost</td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->total_ohc,2,",",".")}}</td>
                         @endforeach
-                      </tr>
+                      </tr> -->
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
                         <td style="text-align:center"></td>
@@ -607,10 +616,17 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         @endforeach
                       </tr>
                       <tr>
-                        <td class="fw-bold">3. BIAYA PENGAWASAN DAN PELAKSANAAN LAPANGAN</th>
+                        <td class="fw-bold">3. BIAYA PENGAWASAN DAN PELAKSANAAN LAPANGAN ( UNIT / MONTH )</th>
                         <td class="text-center fw-bold"></th>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->total_ohc,2,",",".")}}</td>
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_ohc+$detailJabatan->biaya_monitoring_kontrol,2,",",".")}} <i class="mdi mdi-pencil text-warning edit-biaya-monitoring" data-id="{{$detailJabatan->id}}" data-total_ohc="{{$detailJabatan->total_ohc}}" data-biaya_monitoring="{{$detailJabatan->biaya_monitoring_kontrol}}"></i></a></td>
+                        @endforeach
+                      </tr>
+                      <tr class="table-success">
+                        <td class="fw-bold text-center">Total Biaya per Personil (1+2+3)</td>
+                        <td class="text-center fw-bold"></td>
+                        @foreach($quotation->quotation_detail as $detailJabatan)
+                        <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_personil_coss,2,",",".")}}</td>
                         @endforeach
                       </tr>
                       <!-- <tr class="">
@@ -1132,8 +1148,10 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
 
   $('.edit-biaya-monitoring').on('click',function(e){
     let quotationId = $(this).data('quotation_id');
-    let detailId = $(this).data('quotation_detail_id');
-    
+    let detailId = $(this).data('id');
+    let ohc = $(this).data('total_ohc');
+    let biayaMonitoring =  $(this).data('biaya_monitoring');
+
     Swal.fire({
       title: "Masukkan nominal Biaya Monitoring dan Kontrol",
       input: "number",
@@ -1145,7 +1163,9 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
           let formData = {
             "quotationId":$(this).data('quotation_id'),
             "nominal":nominal,
-            "detailId":$(this).data('quotation_detail_id'),
+            "ohc" : ohc,
+            "biayaMonitoring" : biayaMonitoring,
+            "id":detailId,
             "_token": "{{ csrf_token() }}"
           };
           

@@ -65,7 +65,7 @@ class QuotationService
         $this->calculateDevices($kbd, $quotation, $provisi, $jumlahHc);
 
         // Perhitungan OHC
-        $this->calculateOhc($kbd, $quotation, $jumlahHc);
+        $this->calculateOhc($kbd, $quotation, $jumlahHc,$provisi);
 
         // Perhitungan Chemical
         $this->calculateChemical($kbd, $quotation, $provisi);
@@ -94,7 +94,7 @@ class QuotationService
         $kbd->bunga_bank = round($kbd->sub_total_personil*$pengaliTop*$quotation->persen_bunga_bank/100,2);
         $kbd->insentif = round($kbd->sub_total_personil*$quotation->persen_insentif/100,2);
 
-        $kbd->grand_total = $kbd->sub_total_personil + $kbd->management_fee + $kbd->total_ohc + $kbd->bunga_bank + $kbd->insentif;
+        $kbd->grand_total = $kbd->sub_total_personil + $kbd->management_fee + $kbd->bunga_bank + $kbd->insentif;
         $this->calculateTaxes($kbd, $quotation);
         $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
         $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
@@ -128,6 +128,9 @@ class QuotationService
             $kbd->nominal_takaful = $quotation->nominal_takaful;
         } else {
             $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
+            // if($umk==null || $umk==0){
+            //     $umk = $kbd->nominal_upah;
+            // }
 
             // Hitung JKK berdasarkan resiko
             switch ($quotation->resiko) {
@@ -209,7 +212,7 @@ class QuotationService
     private function calculateTotalPersonnel($kbd, $quotation, $totalTunjangan)
     {
         // Hitung total personal seperti pada kode
-        return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
+        return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc;
     }
 
     private function calculateTaxes(&$kbd, $quotation)
@@ -258,9 +261,10 @@ private function calculateDevices($kbd, $value, $provisi, $jumlahHc)
     $kbd->personil_devices = $personilDevices;
 }
 
-private function calculateOhc($kbd, $value, $jumlahHc)
+private function calculateOhc($kbd, $value, $jumlahHc,$provisi)
 {
     $totalOhc = 0;
+    $personilOhc = 0;
     $ohcItems = DB::table('sl_quotation_ohc')
         ->whereNull('deleted_at')
         ->where('quotation_id', $value->id)
@@ -268,10 +272,12 @@ private function calculateOhc($kbd, $value, $jumlahHc)
 
     foreach ($ohcItems as $item) {
         $totalOhc += ($item->harga * $item->jumlah / $jumlahHc * $kbd->jumlah_hc);
+        $personilOhc = $totalOhc / $provisi;
     }
 
     $kbd->list_ohc = $ohcItems;
     $kbd->total_ohc = $totalOhc;
+    $kbd->personil_ohc = $personilOhc;
 }
 
 private function calculateChemical($kbd, $value, $provisi)
@@ -313,7 +319,8 @@ private function calculateCoss($kbd, $value, $jumlahHc, $provisi,$quotation)
     );
 
     // Total Personil COSS
-    $kbd->total_personil_coss = round($kbd->total_base_manpower + $kbd->total_exclude_base_manpower, 2);
+    // dd($kbd->total_base_manpower,$kbd->total_exclude_base_manpower,$kbd->personil_ohc,$kbd->biaya_monitoring_kontrol);
+    $kbd->total_personil_coss = round($kbd->total_base_manpower + $kbd->total_exclude_base_manpower +$kbd->personil_ohc+$kbd->biaya_monitoring_kontrol, 2);
 
     // Subtotal Personil COSS
     $kbd->sub_total_personil_coss = round($kbd->total_personil_coss * $kbd->jumlah_hc, 2);
@@ -340,7 +347,8 @@ private function calculateCoss($kbd, $value, $jumlahHc, $provisi,$quotation)
     //     2
     // );
     $kbd->grand_total_coss = round(
-        $kbd->sub_total_personil_coss + $kbd->total_ohc + $kbd->management_fee_coss,2);
+        // $kbd->sub_total_personil_coss + $kbd->total_ohc + $kbd->management_fee_coss,2);
+        $kbd->sub_total_personil_coss + $kbd->management_fee_coss,2);
 
     // PPN dan PPh COSS
     $kbd->ppn_coss = 0;

@@ -833,7 +833,7 @@ class QuotationController extends Controller
 
             //isi umk
             if ($data->kota_id !=null) {
-                $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$data->kota_id)->first();
+                $dataUmk = DB::table('m_umk')->where('is_aktif',1)->whereNull('deleted_at')->where('city_id',$data->kota_id)->first();
 
                 if($dataUmk!=null){
                     $data->umk = $dataUmk->umk;
@@ -1195,7 +1195,7 @@ class QuotationController extends Controller
                 }
 
                 $umk = 0;
-                $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$city->id)->first();
+                $dataUmk = DB::table("m_umk")->where('is_aktif',1)->whereNull('deleted_at')->where('city_id',$city->id)->first();
                 if($dataUmk !=null){
                     $umk = $dataUmk->umk;
                 }
@@ -1208,6 +1208,8 @@ class QuotationController extends Controller
                     'provinsi' => $province->name,
                     'kota_id' => $city->id,
                     'kota' => $city->name,
+                    'ump' => $ump,
+                    'umk' => $umk,
                     'penempatan' => $request->penempatan,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
@@ -1488,12 +1490,12 @@ class QuotationController extends Controller
                 }else{
                     //cari ump / umk
                     if($upah =="UMP"){
-                        $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$site->provinsi_id)->first();
+                        $dataUmp = DB::table("m_ump")->where('is_aktif',1)->whereNull('deleted_at')->where('province_id',$site->provinsi_id)->first();
                         if($dataUmp !=null){
                             $nominalUpah = $dataUmp->ump;
                         }
                     }else if ($upah =="UMK") {
-                        $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$site->kota_id)->first();
+                        $dataUmk = DB::table("m_umk")->where('is_aktif',1)->whereNull('deleted_at')->where('city_id',$site->kota_id)->first();
                         if($dataUmk !=null){
                             $nominalUpah = $dataUmk->umk;
                         }
@@ -3234,8 +3236,8 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
     public function addBiayaMonitoring(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            DB::table('sl_quotation_detail')->where('id',$request->detailId)->update([
-                'biaya_monitoring_kontrol' => $request-> nominal,
+            DB::table('sl_quotation_detail')->where('id',$request->id)->update([
+                'biaya_monitoring_kontrol' => $request->nominal - $request->ohc,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -3349,7 +3351,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
             //isi umk
             if ($master->kota_id !=null) {
-                $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$master->kota_id)->first();
+                $dataUmk = DB::table('m_umk')->where('is_aktif',1)->whereNull('deleted_at')->where('city_id',$master->kota_id)->first();
 
                 if($dataUmk!=null){
                     $master->umk = $dataUmk->umk;
@@ -3534,7 +3536,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->personil_chemical = $personilChemical;
 
                 // dd($kbd->personil_kaporlap);
-                $kbd->total_personil = $master->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;
+                $kbd->total_personil = $master->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc;
 
                 $kbd->sub_total_personil = $kbd->total_personil*$kbd->jumlah_hc;
                 
@@ -3562,7 +3564,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->total_base_manpower = $master->nominal_upah+$totalTunjangan;
                 $kbd->total_exclude_base_manpower = $kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical;;
 
-                $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->biaya_monitoring_kontrol;
+                $kbd->total_personil_coss = $kbd->total_base_manpower + $kbd->total_exclude_base_manpower + $kbd->personil_ohc + $kbd->biaya_monitoring_kontrol;
 
                 $kbd->sub_total_personil_coss = $kbd->total_personil_coss*$kbd->jumlah_hc;
                 
@@ -3664,7 +3666,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
             //isi umk
             if ($data->kota_id !=null) {
-                $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$data->kota_id)->first();
+                $dataUmk = DB::table('m_umk')->where('is_aktif',1)->whereNull('deleted_at')->where('city_id',$data->kota_id)->first();
 
                 if($dataUmk!=null){
                     $data->umk = $dataUmk->umk;
@@ -3691,7 +3693,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
             //isi umk
             if ($master->kota_id !=null) {
-                $dataUmk = DB::table('m_umk')->whereNull('deleted_at')->where('city_id',$master->kota_id)->first();
+                $dataUmk = DB::table('m_umk')->where('is_aktif',1)->whereNull('deleted_at')->where('city_id',$master->kota_id)->first();
 
                 if($dataUmk!=null){
                     $master->umk = $dataUmk->umk;

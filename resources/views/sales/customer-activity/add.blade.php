@@ -108,13 +108,14 @@
           <input type="hidden" name="tipe" value="" />
           <div class="row mb-3">
             <div class="offset-sm-2 col-sm-2">
-              @if(in_array(Auth::user()->role_id,[2,3,50,51,52,30,31,32,33,96,97,98,99,100]))
+              @if(in_array(Auth::user()->role_id,[2,30,31,33]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-sales" value="Pilih Sales">
                 <label class="form-check-label" for="pilih-sales">
                   Pilih Sales
                 </label>
               </div>
+              @endif
               @if(in_array(Auth::user()->role_id,[30]))
               <!-- <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="ubah-status" value="Ubah Status">
@@ -123,8 +124,7 @@
                 </label>
               </div> -->
               @endif
-              @endif
-              @if(in_array(Auth::user()->role_id,[6,8]))
+              @if(in_array(Auth::user()->role_id,[2,54,55,8,52,10,53]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-ro" value="Pilih RO">
                 <label class="form-check-label" for="pilih-ro">
@@ -132,7 +132,7 @@
                 </label>
               </div>
               @endif
-              @if(in_array(Auth::user()->role_id,[55,56]))
+              @if(in_array(Auth::user()->role_id,[55,52,10,53]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-crm" value="Pilih CRM">
                 <label class="form-check-label" for="pilih-crm">
@@ -147,30 +147,40 @@
                   Ubah Status
                 </label>
               </div> -->
+              @endif
+              @if(in_array(Auth::user()->role_id,[2,30,29,31,33,4,5,6,8,52,10,53]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="telepon" value="Telepon">
                 <label class="form-check-label" for="telepon">
                   Telepon
                 </label>
               </div>
+              @endif
+              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="online-meeting" value="Online Meeting">
                 <label class="form-check-label" for="online-meeting">
                   Online Meeting
                 </label>
               </div>
+              @endif
+              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="email" value="Email">
                 <label class="form-check-label" for="email">
                   Email
                 </label>
               </div>
+              @endif
+              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="kirim-berkas" value="Kirim Berkas">
                 <label class="form-check-label" for="kirim-berkas">
                   Kirim Berkas
                 </label>
               </div>
+              @endif
+              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="visit" value="Visit">
                 <label class="form-check-label" for="visit">
