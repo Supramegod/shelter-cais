@@ -5,7 +5,7 @@
   class="light-style layout-menu-fixed layout-compact"
   dir="ltr"
   data-theme="theme-default"
-  data-assets-path="{{ asset('public/assets/') }}"
+  data-assets-path="{{ asset('') }}"
   data-template="horizontal-menu-template">
   @include('layouts.head')
 <body>

@@ -372,9 +372,98 @@
                         <div data-i18n="UMK">UMK</div>
                     </a>
                 </li>
-                
+
+                <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                    <a href="javascript:void(0)" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Materi">Training</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                        <a href="{{route('training-materi')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Materi">Training Materi</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-divisi'))) active @endif">
+                        <a href="{{route('training-divisi')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Divisi">Training Divisi</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-trainer'))) active @endif">
+                        <a href="{{route('training-trainer')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Trainer">Training Trainer</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-area'))) active @endif">
+                        <a href="{{route('training-area')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Area">Training Area</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                        <a href="{{route('training-client')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Client">Training Client</div>
+                        </a>
+                    </li>
+                    </ul>
+                </li>
             </ul>
         </li> 
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
+                <div data-i18n="Kontrak">Kontrak</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="javascript:void(0)" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
+                        <div data-i18n="Kontrak_2">Kontrak 2</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                                <div data-i18n="Quotation Lanjutan">Quotation Lanjutan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                                <div data-i18n="SPK Lanjutan">SPK Lanjutan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                                <div data-i18n="SPK Lanjutan">PKS Lanjutan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                                <div data-i18n="SPK Lanjutan">Adendum Lanjutan</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Terminate Kontrak">Terminate Kontrak</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        
         @endif
 
 

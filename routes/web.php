@@ -31,6 +31,11 @@ use App\Http\Controllers\Master\TimSalesController;
 use App\Http\Controllers\Master\TrainingController;
 use App\Http\Controllers\Master\UmpController;
 use App\Http\Controllers\Master\UmkController;
+use App\Http\Controllers\Master\TrainingMateriController;
+use App\Http\Controllers\Master\TrainingDivisiController;
+use App\Http\Controllers\Master\TrainingTrainerController;
+use App\Http\Controllers\Master\TrainingAreaController;
+use App\Http\Controllers\Master\TrainingClientController;
 
 
 Route::controller(AuthController::class)->group(function() {
@@ -440,6 +445,53 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/umk/list', 'list')->name('umk.list'); // ajax
         Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
+    });
+
+    Route::controller(TrainingMateriController::class)->group(function() {
+        Route::get('/master/training-materi', 'index')->name('training-materi');
+        Route::get('/master/training-materi/add', 'add')->name('training-materi.add');
+        Route::get('/master/training-materi/view/{id}', 'view')->name('training-materi.view');
+        Route::post('/master/training-materi/save', 'save')->name('training-materi.save');
+
+        Route::get('/master/training-materi/list', 'list')->name('training-materi.list'); // ajax
+        Route::post('/master/training-materi/delete', 'delete')->name('training-materi.delete');
+        // Route::get('/master/training-materi/list-training-materi', 'listUmk')->name('training-materi.list-umk'); // ajax
+    });
+
+    Route::controller(TrainingDivisiController::class)->group(function() {
+        Route::get('/master/training-divisi', 'index')->name('training-divisi');
+        Route::get('/master/training-divisi/add', 'add')->name('training-divisi.add');
+        Route::get('/master/training-divisi/view/{id}', 'view')->name('training-divisi.view');
+        Route::post('/master/training-divisi/save', 'save')->name('training-divisi.save');
+        Route::post('/master/training-divisi/delete', 'delete')->name('training-divisi.delete');
+        Route::get('/master/training-divisi/list', 'list')->name('training-divisi.list'); // ajax
+    });
+
+    Route::controller(TrainingTrainerController::class)->group(function() {
+        Route::get('/master/training-trainer', 'index')->name('training-trainer');
+        Route::get('/master/training-trainer/add', 'add')->name('training-trainer.add');
+        Route::get('/master/training-trainer/view/{id}', 'view')->name('training-trainer.view');
+        Route::post('/master/training-trainer/save', 'save')->name('training-trainer.save');
+        Route::post('/master/training-trainer/delete', 'delete')->name('training-trainer.delete');
+        Route::get('/master/training-trainer/list', 'list')->name('training-trainer.list'); // ajax
+    });
+
+    Route::controller(TrainingAreaController::class)->group(function() {
+        Route::get('/master/training-area', 'index')->name('training-area');
+        Route::get('/master/training-area/add', 'add')->name('training-area.add');
+        Route::get('/master/training-area/view/{id}', 'view')->name('training-area.view');
+        Route::post('/master/training-area/save', 'save')->name('training-area.save');
+        Route::post('/master/training-area/delete', 'delete')->name('training-area.delete');
+        Route::get('/master/training-area/list', 'list')->name('training-area.list'); // ajax
+    });
+
+    Route::controller(TrainingClientController::class)->group(function() {
+        Route::get('/master/training-client', 'index')->name('training-client');
+        Route::get('/master/training-client/add', 'add')->name('training-client.add');
+        Route::get('/master/training-client/view/{id}', 'view')->name('training-client.view');
+        Route::post('/master/training-client/save', 'save')->name('training-client.save');
+        Route::post('/master/training-client/delete', 'delete')->name('training-client.delete');
+        Route::get('/master/training-client/list', 'list')->name('training-client.list'); // ajax
     });
 
     Route::controller(MonitoringKontrakController::class)->group(function() {
