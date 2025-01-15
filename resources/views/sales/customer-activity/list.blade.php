@@ -57,13 +57,13 @@
                                 <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="company" name="company">
-                                                <option value="">- Semua Entitas -</option>
-                                                @foreach($company as $data)
-                                                <option value="{{$data->id}}" @if($request->company==$data->id) selected @endif>{{$data->code}}  | {{$data->name}}</option>
+                                            <select class="form-select" id="user" name="user">
+                                                <option value="">- Semua User -</option>
+                                                @foreach($listUser as $data)
+                                                <option value="{{$data->id}}" @if($request->user==$data->id) selected @endif>{{$data->full_name}}</option>
                                                 @endforeach
                                             </select>
-                                            <label for="company">Entitas</label>
+                                            <label for="company">User</label>
                                         </div>
                                     </div>
                                 </div>
@@ -101,6 +101,7 @@
                                     <th class="text-center">Kebutuhan</th>
                                     <th class="text-center">Wilayah</th>
                                     <th class="text-center">Sales</th>
+                                    <th class="text-center">Role</th>
                                     <th class="text-center">Created By</th>
                                     <th class="text-center">Keterangan</th>
                                     <th class="text-center">Aksi</th>
@@ -255,6 +256,7 @@
                         d.branch = $('#branch').find(":selected").val();
                         d.company = $('#company').find(":selected").val();
                         d.kebutuhan = $('#kebutuhan').find(":selected").val();
+                        d.user = $('#user').find(":selected").val();
                     },
                 },   
                 "order":[
@@ -297,6 +299,10 @@
                 },{
                     data : 'sales',
                     name : 'sales',
+                    className:'text-center'
+                },{
+                    data : 'role',
+                    name : 'role',
                     className:'text-center'
                 },{
                     data : 'created_by',

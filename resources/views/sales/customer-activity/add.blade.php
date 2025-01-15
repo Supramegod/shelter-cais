@@ -22,6 +22,9 @@
             <label class="col-sm-2 col-form-label text-sm-end">Leads / customer <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <input type="hidden" id="leads_id" name="leads_id" value="{{old('leads_id')}}" class="form-control">
+              <input type="hidden" id="email_leads" name="email_leads" value="{{old('email_leads')}}" class="form-control">
+              <input type="hidden" id="email_sales" name="email_sales" value="{{old('email_sales')}}" class="form-control">
+              <input type="hidden" id="email_branch_manager" name="email_branch_manager" value="{{old('email_branch_manager')}}" class="form-control">
               <div class="input-group">
                 <input type="text" id="leads" name="leads" value="{{old('leads')}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else   @endif @endif" readonly>
                 <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
@@ -68,7 +71,7 @@
               <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
             </div>
           </div>
-          @if(!in_array(Auth::user()->role_id,[4,5,8,55,56]))
+          @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Status Leads <span class="text-danger">*</span></label>
             <div class="col-sm-10">
@@ -104,7 +107,7 @@
           <input type="hidden" name="tipe" value="" />
           <div class="row mb-3">
             <div class="offset-sm-2 col-sm-2">
-              @if(in_array(Auth::user()->role_id,[30,31,32,33]))
+              @if(in_array(Auth::user()->role_id,[2,3,50,51,52,30,31,32,33,96,97,98,99,100]))
               <div class="form-check">
                 <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-sales" value="Pilih Sales">
                 <label class="form-check-label" for="pilih-sales">
@@ -334,8 +337,9 @@
                     <div class="position-relative">
                       <select id="jenis_visit" name="jenis_visit" class="form-select @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>  
-                        <option value="Client Visit" @if(old('jenis_visit') == 'Client Visit') selected @endif>Client Visit</option>
-                        <option value="Offline Meeting" @if(old('jenis_visit') == 'Offline Meeting') selected @endif>Offline Meeting</option>  
+                        @foreach($jenisVisit as $data)
+                        <option value="{{$data->id}}" @if(old('jenis_visit') == $data->id) selected @endif>{{$data->nama}}</option>
+                        @endforeach
                       </select>
                       @if($errors->has('jenis_visit'))
                         <div class="invalid-feedback">{{$errors->first('jenis_visit')}}</div>
@@ -386,6 +390,16 @@
                       @if($errors->has('penerima'))
                         <div class="invalid-feedback">{{$errors->first('penerima')}}</div>
                       @endif
+                  </div>
+                </div>
+                <div class="row l-jenis-visit mt-3 mb-3">
+                  <label class="col-sm-2 col-form-label text-sm-end">Kirim Email</label>
+                  <div class="col-sm-10">
+                    <div class="position-relative">
+                      <button type="button" class="btn btn-primary" id="btn-send-email" onclick="sendEmail()">
+                        <span class="tf-icons mdi mdi-email-send-outline me-1"></span> Kirim Email
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -457,6 +471,50 @@
             </div>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<!-- Modal Kirim Email -->
+<div class="modal fade" id="modal-kirim-email" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h3 class="mb-2">Kirim Email</h3>
+        </div>
+        <div class="row">
+          <div class="col-12 mb-3">
+            <label for="email-subject" class="form-label">Subject</label>
+            <input type="text" id="email-subject" class="form-control" placeholder="Subject">
+          </div>
+          <div class="col-12 mb-3">
+            <label for="email-body" class="form-label">Body</label>
+            <textarea id="email-body" class="form-control" rows="5" placeholder="Body"></textarea>
+          </div>
+          <div class="col-12 mb-3">
+            <label class="form-label">Kirim ke:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="kirim-ke-leads">
+              <label class="form-check-label" for="kirim-ke-leads">Leads / Customer (<span id="txt-email-leads">-</span> )</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="kirim-ke-sales">
+              <label class="form-check-label" for="kirim-ke-sales">Sales (<span id="txt-email-sales">-</span> )</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="kirim-ke-branch-manager">
+              <label class="form-check-label" for="kirim-ke-branch-manager">Branch Manager (<span id="txt-email-branch-manager">-</span> )</label>
+            </div>
+          </div>
+          <div class="col-12 text-center">
+            <button type="button" class="btn btn-primary" id="btn-kirim-email">Kirim</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -671,9 +729,12 @@
       $('#branch').val("{{$leads->branch}}");
       $('#leads').val("{{$leads->nama_perusahaan}}");
       $('#leads_id').val("{{$leads->id}}");
+      $('#email_leads').val("{{$leads->email}}");
       $('#kebutuhan').val("{{$leads->kebutuhan}}");
-    $('#tim_sales_name').val("{{$leads->timSalesName}}");
+      $('#tim_sales_name').val("{{$leads->timSalesName}}");
       $('#sales_name').val("{{$leads->salesName}}");
+      $('#email_sales').val("{{$leads->salesEmail}}");
+      $('#email_branch_manager').val("{{$leads->branchManagerEmail}}");
 
       $('#sales_d').val("");
 
@@ -691,12 +752,17 @@
     $('#table-data').on('click', 'tbody tr', function() {
       $('#modal-leads').modal('hide');
       var rdata = table.row(this).data();
+      console.log(rdata);
+      
       $('#branch').val(rdata.branch);
       $('#leads').val(rdata.nama_perusahaan);
       $('#leads_id').val(rdata.id);
+      $('#email_leads').val(rdata.email);
       $('#kebutuhan').val(rdata.kebutuhan);
       $('#tim_sales_name').val(rdata.tim_sales);
       $('#sales_name').val(rdata.sales);
+      $('#email_sales').val(rdata.salesEmail);
+      $('#email_branch_manager').val(rdata.branchManagerEmail);
       $('#ro_name').val(rdata.ro);
       $('#crm_name').val(rdata.crm);
 
@@ -987,6 +1053,130 @@
         icon: "warning"
       });
     }
+  });
+</script>
+
+<script>
+  function sendEmail() {
+    if ($('#leads_id').val()=== '' || $('#jenis_visit').val() === '' || $('#tgl_realisasi').val() === '' || $('#jam_realisasi').val() === '' || $('#notulen').val() === '') {
+      Swal.fire({
+        title: 'Peringatan',
+        text: 'Leads, Jenis Visit, Tanggal Realisasi, Jam Realisasi, dan Notulen harus diisi',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    $('#email-subject').val('Notulensi dan Berita Acara Meeting');
+    let bodyEmail = `Berikut kami sampaikan notulensi dan berita acara meeting yang telah dilaksanakan Pada :
+    Visit : `+$('#jenis_visit').val()+`
+    Tanggal : `+ formatDate($('#tgl_realisasi').val()) +`
+    Jam : `+$('#jam_realisasi').val()+`
+    Notulen : `+$('#notulen').val()+` 
+    \nAtas Perhatiannya kami ucapkan Terima kasih.`;
+    $('#email-body').val(bodyEmail);
+
+    $('#txt-email-leads').text($('#email_leads').val());
+    $('#txt-email-sales').text($('#email_sales').val());
+    $('#txt-email-branch-manager').text($('#email_branch_manager').val());
+    $('#modal-kirim-email').modal('show');
+  }
+
+  function formatDate(date) {
+    const [year, month, day] = date.split('-');
+    return `${day}-${month}-${year}`;
+  }
+
+  $('#btn-kirim-email').on('click', function() {
+    $('#modal-kirim-email').modal('hide');
+
+    let subject = $('#email-subject').val();
+    let body = $('#email-body').val();
+    let recipients = [];
+    let msg = "";
+
+    if ($('#kirim-ke-leads').is(':checked')){
+      recipients.push('Leads / Customer')
+      if ($('#email_leads').val() === '') {
+        msg += "Email Leads tidak ditemukan <br>";
+      }
+    };
+    if ($('#kirim-ke-sales').is(':checked')){
+      recipients.push('Sales');
+      if ($('#email_sales').val() === '') {
+        msg += "Email Sales tidak ditemukan <br>";
+     }
+    };
+    if ($('#kirim-ke-branch-manager').is(':checked')){
+      recipients.push('Branch Manager');
+      if ($('#email_branch_manager').val() === '') {
+        msg += "Email Branch Manager tidak ditemukan <br>";
+      }
+    }
+
+    if (recipients.length === 0) {
+      Swal.fire({
+        title: 'Peringatan',
+        text: 'Minimal ada 1 penerima',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+    if (msg !== "") {
+      Swal.fire({
+        title: 'Peringatan',
+        html: msg,
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: `Kirim email ke: ${recipients.join(', ')}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Kirim',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Mengirim Email',
+          text: 'Mohon tunggu...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        });
+        // Logic to send email
+        $.ajax({
+          url: "{{ route('customer-activity.send-email') }}",
+          type: 'POST',
+          data: {
+            _token: '{{ csrf_token() }}',
+            subject: subject,
+            body: body,
+            email_leads: $('#email_leads').val(),
+            email_sales: $('#email_sales').val(),
+            email_branch_manager: $('#email_branch_manager').val(),
+            is_kirim_leads: $('#kirim-ke-leads').is(':checked'),
+            is_kirim_sales: $('#kirim-ke-sales').is(':checked'),
+            is_kirim_branch_manager: $('#kirim-ke-branch-manager').is(':checked')
+          },
+          success: function(res) {
+            Swal.fire({
+              title: 'Berhasil',
+              text: 'Email berhasil dikirim',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            });
+          },
+      });
+      }
+    });
   });
 </script>
 @endsection

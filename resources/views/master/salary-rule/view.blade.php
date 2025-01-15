@@ -18,62 +18,104 @@
           @csrf
           <input type="hidden" name="id" value="{{$data->id}}">
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <input type="text" id="nama_salary_rule" name="nama_salary_rule" value="{{$data->nama_salary_rule}}" class="form-control @if ($errors->any()) @if($errors->has('nama_salary_rule')) is-invalid @else   @endif @endif">
+            <label class="col-sm-3 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+                <input type="text" id="nama_salary_rule" name="nama_salary_rule" value="{{$data->nama_salary_rule}}" class="form-control @if ($errors->any()) @if($errors->has('nama_salary_rule')) is-invalid @else   @endif @endif">
               @if($errors->has('nama_salary_rule'))
                   <div class="invalid-feedback">{{$errors->first('nama_salary_rule')}}</div>
               @endif
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Cutoff <span class="text-danger">*</span></label>
+            <label class="col-sm-3 col-form-label text-sm-end">Cutoff <span class="text-danger">*</span></label>
             <div class="col-sm-4">
-              <input type="text" placeholder="Tanggal XX - XX" id="cutoff" name="cutoff" value="{{$data->cutoff}}" class="form-control @if ($errors->any()) @if($errors->has('cutoff')) is-invalid @else   @endif @endif">
-              @if($errors->has('cutoff'))
-                  <div class="invalid-feedback">{{$errors->first('cutoff')}}</div>
+              <input type="number" placeholder="Awal" value="{{$data->cutoff_awal}}" id="cutoff_awal" name="cutoff_awal" class="form-control @if ($errors->any()) @if($errors->has('cutoff_awal')) is-invalid @else   @endif @endif">
+              @if($errors->has('cutoff_awal'))
+                  <div class="invalid-feedback">{{$errors->first('cutoff_awal')}}</div>
               @endif
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Check Absen <span class="text-danger">*</span></label>
+            <div class="col-sm-1 d-flex align-items-center justify-content-center">
+              <span>s/d</span>
+            </div>
             <div class="col-sm-4">
-              <input type="text" placeholder="Tanggal XX - XX" id="crosscheck_absen" name="crosscheck_absen" value="{{$data->crosscheck_absen}}" class="form-control @if ($errors->any()) @if($errors->has('crosscheck_absen')) is-invalid @else   @endif @endif">
-              @if($errors->has('crosscheck_absen'))
-                  <div class="invalid-feedback">{{$errors->first('crosscheck_absen')}}</div>
+              <input type="number" placeholder="Akhir" value="{{$data->cutoff_akhir}}" id="cutoff_akhir" name="cutoff_akhir" class="form-control @if ($errors->any()) @if($errors->has('cutoff_akhir')) is-invalid @else   @endif @endif">
+              @if($errors->has('cutoff_akhir'))
+                  <div class="invalid-feedback">{{$errors->first('cutoff_akhir')}}</div>
               @endif
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Pengiriman Invoice <span class="text-danger">*</span></label>
+            <label class="col-sm-3 col-form-label text-sm-end">Check Absen <span class="text-danger">*</span></label>
             <div class="col-sm-4">
-              <input type="text" placeholder="Tanggal XX - XX" id="pengiriman_invoice" name="pengiriman_invoice" value="{{$data->pengiriman_invoice}}" class="form-control @if ($errors->any()) @if($errors->has('pengiriman_invoice')) is-invalid @else   @endif @endif">
-              @if($errors->has('pengiriman_invoice'))
-                  <div class="invalid-feedback">{{$errors->first('pengiriman_invoice')}}</div>
+              <input type="number" placeholder="Awal" value="{{$data->crosscheck_absen_awal}}" id="crosscheck_absen_awal" name="crosscheck_absen_awal" class="form-control @if ($errors->any()) @if($errors->has('crosscheck_absen_awal')) is-invalid @else   @endif @endif">
+              @if($errors->has('crosscheck_absen_awal'))
+                <div class="invalid-feedback">{{$errors->first('crosscheck_absen_awal')}}</div>
               @endif
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Invoice Diterima <span class="text-danger">*</span></label>
+            <div class="col-sm-1 d-flex align-items-center justify-content-center">
+              <span>s/d</span>
+            </div>
             <div class="col-sm-4">
-              <input type="text" placeholder="Tanggal XX - XX" id="perkiraan_invoice_diterima" name="perkiraan_invoice_diterima" value="{{$data->perkiraan_invoice_diterima}}" class="form-control @if ($errors->any()) @if($errors->has('perkiraan_invoice_diterima')) is-invalid @else   @endif @endif">
-              @if($errors->has('perkiraan_invoice_diterima'))
-                  <div class="invalid-feedback">{{$errors->first('perkiraan_invoice_diterima')}}</div>
+              <input type="number" placeholder="Akhir" value="{{$data->crosscheck_absen_akhir}}" id="crosscheck_absen_akhir" name="crosscheck_absen_akhir" class="form-control @if ($errors->any()) @if($errors->has('crosscheck_absen_akhir')) is-invalid @else   @endif @endif">
+              @if($errors->has('crosscheck_absen_akhir'))
+                <div class="invalid-feedback">{{$errors->first('crosscheck_absen_akhir')}}</div>
               @endif
             </div>
           </div>
-          <!-- <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Pembayaran Invoice <span class="text-danger">*</span></label>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label text-sm-end">Pengiriman Invoice <span class="text-danger">*</span></label>
             <div class="col-sm-4">
-              <input type="text" placeholder="Tanggal XX bulan berikutnya" id="pembayaran_invoice" name="pembayaran_invoice" value="{{$data->pembayaran_invoice}}" class="form-control @if ($errors->any()) @if($errors->has('pembayaran_invoice')) is-invalid @else   @endif @endif">
+              <input type="number" placeholder="Awal" value="{{$data->pengiriman_invoice_awal}}" id="pengiriman_invoice_awal" name="pengiriman_invoice_awal" class="form-control @if ($errors->any()) @if($errors->has('pengiriman_invoice_awal')) is-invalid @else   @endif @endif">
+              @if($errors->has('pengiriman_invoice_awal'))
+                <div class="invalid-feedback">{{$errors->first('pengiriman_invoice_awal')}}</div>
+              @endif
+            </div>
+            <div class="col-sm-1 d-flex align-items-center justify-content-center">
+              <span>s/d</span>
+            </div>
+            <div class="col-sm-4">
+              <input type="number" placeholder="Akhir" value="{{$data->pengiriman_invoice_akhir}}" id="pengiriman_invoice_akhir" name="pengiriman_invoice_akhir" class="form-control @if ($errors->any()) @if($errors->has('pengiriman_invoice_akhir')) is-invalid @else   @endif @endif">
+              @if($errors->has('pengiriman_invoice_akhir'))
+                <div class="invalid-feedback">{{$errors->first('pengiriman_invoice_akhir')}}</div>
+              @endif
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label text-sm-end">Invoice Diterima <span class="text-danger">*</span></label>
+            <div class="col-sm-4">
+              <input type="number" placeholder="Awal" value="{{$data->perkiraan_invoice_diterima_awal}}" id="perkiraan_invoice_diterima_awal" name="perkiraan_invoice_diterima_awal" class="form-control @if ($errors->any()) @if($errors->has('perkiraan_invoice_diterima_awal')) is-invalid @else   @endif @endif">
+              @if($errors->has('perkiraan_invoice_diterima_awal'))
+                <div class="invalid-feedback">{{$errors->first('perkiraan_invoice_diterima_awal')}}</div>
+              @endif
+            </div>
+            <div class="col-sm-1 d-flex align-items-center justify-content-center">
+              <span>s/d</span>
+            </div>
+            <div class="col-sm-4">
+              <input type="number" placeholder="Akhir" value="{{$data->perkiraan_invoice_diterima_akhir}}" id="perkiraan_invoice_diterima_akhir" name="perkiraan_invoice_diterima_akhir" class="form-control @if ($errors->any()) @if($errors->has('perkiraan_invoice_diterima_akhir')) is-invalid @else   @endif @endif">
+              @if($errors->has('perkiraan_invoice_diterima_akhir'))
+                <div class="invalid-feedback">{{$errors->first('perkiraan_invoice_diterima_akhir')}}</div>
+              @endif
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label text-sm-end">Pembayaran Invoice <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="number" placeholder="tanggal" value="{{$data->tgl_pembayaran_invoice}}" id="pembayaran_invoice" name="pembayaran_invoice" class="form-control @if ($errors->any()) @if($errors->has('pembayaran_invoice')) is-invalid @else   @endif @endif">
               @if($errors->has('pembayaran_invoice'))
                   <div class="invalid-feedback">{{$errors->first('pembayaran_invoice')}}</div>
               @endif
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Rilis Payroll <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <input type="text" placeholder="Tanggal XX bulan berikutnya" id="rilis_payroll" name="rilis_payroll" value="{{$data->rilis_payroll}}" class="form-control @if ($errors->any()) @if($errors->has('rilis_payroll')) is-invalid @else   @endif @endif">
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label text-sm-end">Rilis Payroll <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="number" placeholder="tanggal" value="{{$data->tgl_rilis_payroll}}" id="rilis_payroll" name="rilis_payroll" class="form-control @if ($errors->any()) @if($errors->has('rilis_payroll')) is-invalid @else   @endif @endif">
               @if($errors->has('rilis_payroll'))
                   <div class="invalid-feedback">{{$errors->first('rilis_payroll')}}</div>
               @endif
             </div>
-          </div> -->
+          </div>
           <div class="pt-4">
           </div>
         </form>

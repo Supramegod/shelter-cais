@@ -17,7 +17,7 @@
             <!-- Account Details -->
             <div id="account-details-1" class="content active">
               <div class="content-header mb-5 text-center">
-                <h6 class="mb-3">COST STRUCTURE</h6>
+                <h6 class="mb-3">Harga Jual</h6>
                 <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
               </div>
               <div class="row mt-5">
@@ -33,7 +33,7 @@
               </li>
               <li class="nav-item" role="presentation">
                 <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-coss" aria-controls="navs-top-coss" aria-selected="false" tabindex="-1">
-                  Cost Structure
+                  Harga Jual
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -126,7 +126,7 @@ Tunjangan overtime flat		<br>
                   <table class="table" >
                     <thead class="text-center">
                       <tr class="table-success">
-                        <th colspan="3" style="vertical-align: middle;">COST STRUCTURE {{$data->kebutuhan}}</th>
+                        <th colspan="3" style="vertical-align: middle;">Harga Jual {{$data->kebutuhan}}</th>
                       </tr>
                       <tr class="table-success">
                         <th colspan="3" style="vertical-align: middle;">{{$leads->nama_perusahaan}}</th>

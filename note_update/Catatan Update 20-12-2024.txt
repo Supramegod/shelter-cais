@@ -1,0 +1,24 @@
+Catatan Update 20-12-2024
+1. dashboard approval dan notif approval
+2. perbaikan copy quotation
+3. Leads / Costumer secara default adalah nama perusahaan tapi apabila quotation atas nama anak perusahaan maka tinggal menambahkan leads baru
+4. monitoring kontrak ( list , action dan terminated kontrak)
+5. tracking activity
+6. dashboard 
+
+
+
+
+
+
+
+
+
+
+NOTE GARAPAN
+- skip dulu tentang perhitungan
+
+
+
+- nomor proyek ada generate sendiri
+- 

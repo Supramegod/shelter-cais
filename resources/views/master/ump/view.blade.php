@@ -139,7 +139,7 @@
                 ajax: {
                     url: "{{ route('ump.list-ump') }}",
                     data: function (d) {
-                      d.id = {{$data->province_id}};
+                      d.province_id = {{$data->province_id}};
                     },
                 },   
                 "order":[

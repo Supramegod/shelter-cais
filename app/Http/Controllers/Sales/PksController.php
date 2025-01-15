@@ -977,6 +977,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'tipe' => 'PKS',
                 'notes' => 'PKS dengan nomor :'.$pksNomor.' terbentuk dari SPK dengan nomor :'.$dataSpk->nomor,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -1421,6 +1422,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'tipe' => 'PKS',
                 'notes' => 'PKS dengan nomor :'.$pks->nomor.' telah diaktifkan oleh '.Auth::user()->full_name,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -1831,6 +1833,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -1846,6 +1849,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'tipe' => 'Quotation',
                 'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
                 'is_activity' => 0,
+                'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);

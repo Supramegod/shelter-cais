@@ -95,6 +95,7 @@ class DashboardController extends Controller
             ->whereNull('deleted_at')
             ->where('is_activity',1)
             ->whereDate('created_at', Carbon::today()->toDateString())
+
             ->count();
 
             // dd(Carbon::now()->endOfWeek()->format('Y-m-d'));
@@ -118,6 +119,7 @@ class DashboardController extends Controller
 
         $aktifitasSalesUserIds = DB::table('sl_customer_activity')
             ->whereNull('deleted_at')
+            ->whereNotNull('user_id')
             ->select('user_id', DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('user_id')
             ->where('is_activity', 1)
@@ -128,6 +130,9 @@ class DashboardController extends Controller
         $jumlahAktifitas = [];
         foreach ($aktifitasSalesUserIds as $key => $value) {
             $user = DB::connection('mysqlhris')->table('m_user')->where('id',$value->user_id)->first();
+            if($user==null){
+                continue;
+            }
             array_push($sales,$user->full_name." ( ".$value->jumlah_aktifitas." )");
             array_push($jumlahAktifitas,$value->jumlah_aktifitas);
         }
@@ -143,8 +148,23 @@ class DashboardController extends Controller
         $tipe = [];
         $jumlahAktifitasTipe = [];
         foreach ($aktifitasByTipe as $key => $value) {
-            array_push($tipe,$value->tipe);
+            array_push($tipe,$value->tipe." ( ".$value->jumlah_aktifitas." )");
             array_push($jumlahAktifitasTipe,$value->jumlah_aktifitas);
+        };
+
+        $aktifitasByStatusLeads = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->select(DB::raw('(select nama from m_status_leads where id=sl_customer_activity.status_leads_id) as status_leads'), DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('status_leads')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+        
+        $statusLeads = [];
+        $jumlahAktifitasStatusLeads = [];
+        foreach ($aktifitasByStatusLeads as $key => $value) {
+            array_push($statusLeads,$value->status_leads." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitasStatusLeads,$value->jumlah_aktifitas);
         };
 
         $aktifitasSalesPerTanggal = [];
@@ -156,6 +176,7 @@ class DashboardController extends Controller
         $aktifitasSales = DB::table('sl_customer_activity')
             ->whereNull('deleted_at')
             ->where('is_activity', 1)
+            ->whereNotNull('user_id')
             ->whereMonth('created_at', Carbon::now()->month)
             ->select(DB::raw('DAY(created_at) as tanggal'), 'user_id', DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('tanggal', 'user_id')
@@ -220,11 +241,131 @@ class DashboardController extends Controller
 
         $aktifitasSalesByTipePerTanggal = array_values($aktifitasSalesByTipePerTanggal);
         
+        $aktifitasByVisit = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->whereNotNull('jenis_visit')
+            ->select('jenis_visit', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('jenis_visit')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+        
+        $jenisVisit = [];
+        $jumlahAktifitasVisit = [];
+        foreach ($aktifitasByVisit as $key => $value) {
+            array_push($jenisVisit,$value->jenis_visit." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitasVisit,$value->jumlah_aktifitas);
+        };
+
         $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
 
-        return view('home.dashboard-aktifitas-sales', compact('aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
+        return view('home.dashboard-aktifitas-sales', compact('jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
     }
 
+    public function dashboardLeads (Request $request){
+        $leadsBaruHariIni = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereDate('created_at', Carbon::today()->toDateString())
+            ->count();
+
+        $leadsBaruMingguIni = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->count();
+
+        $leadsBaruBulanIni = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->count();
+
+        $leadsBaruTahunIni = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        $leadsBelumAdaAktifitas = DB::table('sl_leads')
+            ->leftJoin('sl_customer_activity', 'sl_leads.id', '=', 'sl_customer_activity.leads_id')
+            ->whereNull('sl_leads.deleted_at')
+            ->whereNull('sl_customer_activity.id')
+            ->count();
+
+        $leadsBelumAdaCustomer = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereNull('customer_id')
+            ->count();
+
+        $leadsBelumAdaSales = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereNull('tim_sales_d_id')
+            ->count();
+        
+        $leadsBelumAdaQuotation = DB::table('sl_leads')
+            ->leftJoin('sl_quotation', 'sl_leads.id', '=', 'sl_quotation.leads_id')
+            ->whereNull('sl_leads.deleted_at')
+            ->whereNull('sl_quotation.id')
+            ->count();
+
+        $leadsByKebutuhan = DB::table('sl_leads')
+            ->leftJoin('m_kebutuhan', 'sl_leads.kebutuhan_id', '=', 'm_kebutuhan.id')
+            ->whereNull('sl_leads.deleted_at')
+            // ->whereNotNull('sl_leads.kebutuhan_id')
+            // ->where('sl_leads.kebutuhan_id', '!=', 99)
+            ->whereYear('sl_leads.created_at', Carbon::now()->year)
+            ->select('m_kebutuhan.nama as kebutuhan','sl_leads.kebutuhan_id', DB::raw('MONTH(sl_leads.created_at) as bulan'), DB::raw('count(*) as jumlah_leads'))
+            ->groupBy('sl_leads.kebutuhan_id','kebutuhan', 'bulan')
+            ->get();
+
+        $leadsGroupedByKebutuhan = [];
+
+        foreach ($leadsByKebutuhan as $lead) {
+            if (!isset($leadsGroupedByKebutuhan[$lead->kebutuhan_id])) {
+                $leadsGroupedByKebutuhan[$lead->kebutuhan_id] = [
+                    'kebutuhan' => $lead->kebutuhan,
+                    'kebutuhan_id' => $lead->kebutuhan_id,
+                    'jumlah_leads' => array_fill(1, 12, ['bulan' => 0, 'leads' => 0])
+                ];
+            }
+            $leadsGroupedByKebutuhan[$lead->kebutuhan_id]['jumlah_leads'][$lead->bulan] = [
+                'bulan' => $lead->bulan,
+                'leads' => $lead->jumlah_leads
+            ];
+        }
+
+        $leadsGroupedByKebutuhan = array_values($leadsGroupedByKebutuhan);
+
+        $leadsBySumber = DB::table('sl_leads')
+            ->leftJoin('m_platform', 'sl_leads.platform_id', '=', 'm_platform.id')
+            ->whereNull('sl_leads.deleted_at')
+            ->whereNotNull('m_platform.id')
+            ->select('m_platform.nama as platform',DB::raw('count(*) as jumlah_leads'))
+            ->groupBy('platform')
+            ->get();
+
+        $leadsWithCustomer = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereNotNull('customer_id')
+            ->count();
+
+        $leadsWithoutCustomer = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereNull('customer_id')
+            ->count();
+
+        $leadsGroupKebutuhan = DB::table('sl_leads')
+            ->leftJoin('m_kebutuhan', 'sl_leads.kebutuhan_id', '=', 'm_kebutuhan.id')
+            ->whereNull('sl_leads.deleted_at')
+            ->whereNotNull('m_kebutuhan.id')
+            ->select('m_kebutuhan.nama as kebutuhan',DB::raw('count(*) as jumlah_leads'))
+            ->groupBy('kebutuhan')
+            ->get();
+        $totalLeadsKebutuhan = DB::table('sl_leads')
+            ->whereNull('deleted_at')
+            ->whereNotNull('kebutuhan_id')
+            ->count();
+
+        $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
+        return view('home.dashboard-leads',compact('totalLeadsKebutuhan','leadsGroupKebutuhan','leadsWithoutCustomer','leadsWithCustomer','leadsBySumber','leadsGroupedByKebutuhan','leadsBelumAdaQuotation','leadsBelumAdaSales','leadsBelumAdaCustomer','leadsBelumAdaAktifitas','warna','leadsBaruHariIni','leadsBaruMingguIni','leadsBaruBulanIni','leadsBaruTahunIni'));
+    }
 
     public function getListDashboardApprovalData(Request $request) {
         $arrData = [];
@@ -335,4 +476,73 @@ class DashboardController extends Controller
             ->rawColumns(['aksi','nomor','nama_perusahaan','nama_site'])
             ->make(true);
     }
+
+    public function dashboardGeneral (Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+        $branches = DB::connection('mysqlhris')->table('m_branch')->pluck('name');
+
+        $leadsByBranch = $branches->map(function ($branch) use ($db2) {
+            $jumlahLeads = DB::table('sl_leads')
+                ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+                ->whereNull('sl_leads.deleted_at')
+                ->whereNull('sl_leads.customer_id')
+                ->whereMonth('sl_leads.created_at', Carbon::now()->month)
+                ->where($db2.'.m_branch.name', $branch)
+                ->count();
+
+            return (object) [
+                'branch' => $branch,
+                'jumlah_leads' => $jumlahLeads
+            ];
+        });
+
+        $kebutuhanList = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+        $leadsByBranchAndKebutuhan = $branches->map(function ($branch) use ($db2) {
+            $kebutuhanIds = DB::table('m_kebutuhan')->pluck('id');
+            $data = $kebutuhanIds->map(function ($kebutuhanId) use ($branch, $db2) {
+                $jumlahLeads = DB::table('sl_leads')
+                    ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+                    ->whereNull('sl_leads.deleted_at')
+                    ->where('sl_leads.kebutuhan_id', $kebutuhanId)
+                    ->where($db2.'.m_branch.name', $branch)
+                    ->whereMonth('sl_leads.created_at', Carbon::now()->month)
+                    ->count();
+
+                $kebutuhan = DB::table('m_kebutuhan')->where('id', $kebutuhanId)->value('nama');
+
+                return (object) [
+                    'kebutuhan' => $kebutuhan,
+                    'jumlah_leads' => $jumlahLeads
+                ];
+            });
+
+            return (object) [
+                'branch' => $branch,
+                'data' => $data
+            ];
+        });
+        
+        $branchesWithCustomerData = $branches->map(function ($branch) use ($db2) {
+            $branchId = DB::connection('mysqlhris')->table('m_branch')->where('name', $branch)->value('id');
+            $target = DB::connection('mysqlhris')->table('m_branch')->where('id', $branchId)->value('sales_target');
+            $actual = DB::table('sl_customer')
+                ->leftJoin('sl_leads', 'sl_customer.leads_id', '=', 'sl_leads.id')
+                ->whereNull('sl_customer.deleted_at')
+                ->where('sl_leads.branch_id', $branchId)
+                ->count();
+
+            return (object) [
+                'branch' => $branch,
+                'data' => (object) [
+                    'target' => $target,
+                    'actual' => $actual
+                ]
+            ];
+        });
+
+        $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
+        return view('home.dashboard-general',compact('branchesWithCustomerData','kebutuhanList','leadsByBranchAndKebutuhan','leadsByBranch','warna'));
+    }
+
 }

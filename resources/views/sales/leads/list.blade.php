@@ -335,7 +335,6 @@
                         window.location.href = '{{route("leads.index-terhapus")}}';
                     }
                 },
-                @if(in_array(Auth::user()->role_id,[29,30,48,49]))
                 {
                 extend: 'collection',
                 className: 'btn btn-label-warning dropdown-toggle me-2 waves-effect waves-light',
@@ -370,26 +369,25 @@
                         window.location.href = '{{route("leads.add")}}';
                     }
                 }
-                @endif
             ],
         });
 
-        // $('#table-data').on('click', 'tbody tr', function() {
-        //     let rdata = table.row(this).data();
-        //     if(rdata.can_view){
-        //         window.location.href = "leads/view/"+rdata.id;
-        //     }else{
-        //         Swal.fire({
-        //             title: 'Pemberitahuan',
-        //             html: 'Anda tidak bisa melihat data ini',
-        //             icon: 'warning',
-        //             customClass: {
-        //             confirmButton: 'btn btn-warning waves-effect waves-light'
-        //             },
-        //             buttonsStyling: false
-        //         });
-        //     }
-        // })
+        $('#table-data').on('click', 'tbody tr', function() {
+            let rdata = table.row(this).data();
+            if(rdata.can_view){
+                window.location.href = "leads/view/"+rdata.id;
+            }else{
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    html: 'Anda tidak bisa melihat data ini',
+                    icon: 'warning',
+                    customClass: {
+                    confirmButton: 'btn btn-warning waves-effect waves-light'
+                    },
+                    buttonsStyling: false
+                });
+            }
+        })
 
     // Setup - add a text input to each footer cell
     // $('.dt-column-search thead tr').clone(true).appendTo('.dt-column-search thead');

@@ -59,11 +59,15 @@ class SalaryRuleController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'nama_salary_rule' => 'required',
-                'cutoff' => 'required',
-                'crosscheck_absen' => 'required',
-                'pengiriman_invoice' => 'required',
-                'perkiraan_invoice_diterima' => 'required',
-                // 'pembayaran_invoice' => 'required',
+                'cutoff_awal' => 'required',
+                'cutoff_akhir' => 'required',
+                'crosscheck_absen_awal' => 'required',
+                'crosscheck_absen_akhir' => 'required',
+                'pengiriman_invoice_awal' => 'required',
+                'pengiriman_invoice_akhir' => 'required',
+                'perkiraan_invoice_diterima_awal' => 'required',
+                'perkiraan_invoice_diterima_akhir' => 'required',
+                'pembayaran_invoice' => 'required',
                 'rilis_payroll' => 'required',
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
@@ -75,29 +79,55 @@ class SalaryRuleController extends Controller
                 return back()->withErrors($validator->errors())->withInput();
             }else{
                 $current_date_time = Carbon::now()->toDateTimeString();
+                $cutoff = "Tanggal ".$request->cutoff_awal." - ".$request->cutoff_akhir;
+                $crosscheckAbsen = "Tanggal ".$request->crosscheck_absen_awal." - ".$request->crosscheck_absen_akhir;
+                $pengirimanInvoice = "Tanggal ".$request->pengiriman_invoice_awal." - ".$request->pengiriman_invoice_akhir;
+                $perkiraanInvoiceDiterima = "Tanggal ".$request->perkiraan_invoice_diterima_awal." - ".$request->perkiraan_invoice_diterima_akhir;
+                $pembayaranInvoice = "Tanggal ".$request->pembayaran_invoice." bulan berikutnya";
+                $rilisPayroll = "Tanggal ".$request->rilis_payroll." bulan berikutnya";
 
                 $msgSave = '';
                 if(!empty($request->id)){
                     DB::table('m_salary_rule')->where('id',$request->id)->update([
                         'nama_salary_rule' => $request->nama_salary_rule,
-                        'cutoff' => $request->cutoff,
-                        'crosscheck_absen' => $request->crosscheck_absen,
-                        'pengiriman_invoice' => $request->pengiriman_invoice,
-                        'perkiraan_invoice_diterima' => $request->perkiraan_invoice_diterima,
-                        // 'pembayaran_invoice' => $request->pembayaran_invoice,
-                        'rilis_payroll' => $request->rilis_payroll,
+                        'cutoff' => $cutoff,
+                        'cutoff_awal' => $request->cutoff_awal,
+                        'cutoff_akhir' => $request->cutoff_akhir,
+                        'crosscheck_absen' => $crosscheckAbsen,
+                        'crosscheck_absen_awal' => $request->crosscheck_absen_awal,
+                        'crosscheck_absen_akhir' => $request->crosscheck_absen_akhir,
+                        'pengiriman_invoice' => $pengirimanInvoice,
+                        'pengiriman_invoice_awal' => $request->pengiriman_invoice_awal,
+                        'pengiriman_invoice_akhir' => $request->pengiriman_invoice_akhir,
+                        'perkiraan_invoice_diterima' => $perkiraanInvoiceDiterima,
+                        'perkiraan_invoice_diterima_awal' => $request->perkiraan_invoice_diterima_awal,
+                        'perkiraan_invoice_diterima_akhir' => $request->perkiraan_invoice_diterima_akhir,
+                        'pembayaran_invoice' => $pembayaranInvoice,
+                        'tgl_pembayaran_invoice' => $request->pembayaran_invoice,
+                        'rilis_payroll' => $rilisPayroll,
+                        'tgl_rilis_payroll' => $request->rilis_payroll,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
                     ]);
                 }else{
                     DB::table('m_salary_rule')->insert([
                         'nama_salary_rule' => $request->nama_salary_rule,
-                        'cutoff' => $request->cutoff,
-                        'crosscheck_absen' => $request->crosscheck_absen,
-                        'pengiriman_invoice' => $request->pengiriman_invoice,
-                        'perkiraan_invoice_diterima' => $request->perkiraan_invoice_diterima,
-                        // 'pembayaran_invoice' => $request->pembayaran_invoice,
-                        'rilis_payroll' => $request->rilis_payroll,
+                        'cutoff' => $cutoff,
+                        'cutoff_awal' => $request->cuttoff_awal,
+                        'cutoff_akhir' => $request->cuttoff_akhir,
+                        'crosscheck_absen' => $crosscheckAbsen,
+                        'crosscheck_absen_awal' => $request->crosscheck_absen_akhir,
+                        'crosscheck_absen_akhir' => $request->crosscheck_absen_akhir,
+                        'pengiriman_invoice' => $pengirimanInvoice,
+                        'pengiriman_invoice_awal' => $request->pengiriman_invoice_awal,
+                        'pengiriman_invoice_akhir' => $request->pengiriman_invoice_akhir,
+                        'perkiraan_invoice_diterima' => $perkiraanInvoiceDiterima,
+                        'perkiraan_invoice_diterima_awal' => $request->perkiraan_invoice_diterima_awal,
+                        'perkiraan_invoice_diterima_akhir' => $request->perkiraan_invoice_diterima_akhir,
+                        'pembayaran_invoice' => $pembayaranInvoice,
+                        'tgl_pembayaran_invoice' => $request->pembayaran_invoice,
+                        'rilis_payroll' => $rilisPayroll,
+                        'tgl_rilis_payroll' => $request->rilis_payroll,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);

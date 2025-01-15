@@ -1,12 +1,6 @@
 @extends('layouts.master')
 @section('title','Dashboard Aktifitas Sales')
 @section('pageStyle')
-    <!-- PivotTable CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.css">
-    <!-- C3 Chart CSS (Optional for charts) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.css">
-    <!-- jQuery UI CSS (Required for drag and drop functionality) -->
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 @endsection
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
@@ -96,25 +90,38 @@
             </div>
         </div>
         <div class="col-lg-6 col-12 mb-4">
-            <div class="card">
+          <div class="card">
             <h5 class="card-header">By Tipe Aktifitas Bulan Ini</h5>
             <div class="card-body">
                 <div class="d-flex justify-content-center">
-                    <div class="col-lg-4">
-                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="100"></canvas>
+                    <div class="col-lg-8">
+                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="100" height="200"></canvas>
                     </div>
                 </div>
-                <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
-                @foreach($tipe as $key => $value)
-                    <li class="ct-series-0 d-flex flex-column">
-                        <h5 class="mb-0">{{$value}}</h5>
-                        <span
-                        class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                        style="background-color: {{$warna[$key]}}; width: 35px; height: 6px"></span>
-                        <div class="text-muted">{{round($jumlahAktifitasTipe[$key]/array_sum($jumlahAktifitasTipe)*100,0)}} %</div>
-                    </li>
-                @endforeach
-                </ul>
+            </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12 mb-4">
+          <div class="card">
+            <h5 class="card-header">By Status Leads Bulan Ini</h5>
+            <div class="card-body">
+                <div class="d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <canvas id="doughnutChartStatus" class="chartjs mb-4" data-height="100" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12 mb-4">
+          <div class="card">
+            <h5 class="card-header">Visit Bulan Ini</h5>
+            <div class="card-body">
+                <div class="d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <canvas id="doughnutChartVisit" class="chartjs mb-4" data-height="100" height="200"></canvas>
+                    </div>
+                </div>
             </div>
             </div>
         </div>
@@ -138,18 +145,6 @@
                         <div class="dropdown">
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <ul class="d-flex justify-content-around ps-0 mb-2 pt-1">
-                    @foreach($tipe as $key => $value)
-                        <li class="ct-series-0 d-flex flex-column">
-                            <h5 class="mb-0">{{$value}}</h5>
-                            <span
-                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                            style="background-color: {{$warna[$key]}}; width: 35px; height: 6px"></span>
-                        </li>
-                    @endforeach
-                    </ul>
                 </div>
                 <div class="card-body">
                     <canvas id="barChart" class="chartjs" data-height="400" height="400"></canvas>
@@ -235,7 +230,7 @@
                     },
                     legend: {
                         rtl: isRtl,
-                        position: 'right',
+                        position: 'bottom',
                         labels: {
                         usePointStyle: true,
                         padding: 25,
@@ -252,7 +247,7 @@
                 });
             }
 
-            const doughnutChart = document.getElementById('doughnutChart');
+  const doughnutChart = document.getElementById('doughnutChart');
   if (doughnutChart) {
     const doughnutChartVar = new Chart(doughnutChart, {
       type: 'doughnut',
@@ -275,7 +270,101 @@
         cutout: '68%',
         plugins: {
           legend: {
-            display: false
+            position: 'right'
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const label = context.labels || '',
+                  value = context.parsed;
+                const output = ' ' + label + ' : ' + value;
+                return output;
+              }
+            },
+            // Updated default tooltip UI
+            rtl: isRtl,
+            backgroundColor: cardColor,
+            titleColor: headingColor,
+            bodyColor: legendColor,
+            borderWidth: 1,
+            borderColor: borderColor
+          }
+        }
+      }
+    });
+  }
+
+  const doughnutChartStatus = document.getElementById('doughnutChartStatus');
+  if (doughnutChartStatus) {
+    const doughnutChartStatusVar = new Chart(doughnutChartStatus, {
+      type: 'doughnut',
+      data: {
+        labels: @json($statusLeads),
+        datasets: [
+          {
+            data: @json($jumlahAktifitasStatusLeads),
+            backgroundColor: backgroundColor,
+            borderWidth: 0,
+            pointStyle: 'rectRounded'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 500
+        },
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'right'
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const label = context.labels || '',
+                  value = context.parsed;
+                const output = ' ' + label + ' : ' + value;
+                return output;
+              }
+            },
+            // Updated default tooltip UI
+            rtl: isRtl,
+            backgroundColor: cardColor,
+            titleColor: headingColor,
+            bodyColor: legendColor,
+            borderWidth: 1,
+            borderColor: borderColor
+          }
+        }
+      }
+    });
+  }
+
+  const doughnutChartVisit = document.getElementById('doughnutChartVisit');
+  if (doughnutChartVisit) {
+    const doughnutChartVisitVar = new Chart(doughnutChartVisit, {
+      type: 'doughnut',
+      data: {
+        labels: @json($jenisVisit),
+        datasets: [
+          {
+            data: @json($jumlahAktifitasVisit),
+            backgroundColor: backgroundColor,
+            borderWidth: 0,
+            pointStyle: 'rectRounded'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 500
+        },
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'right'
           },
           tooltip: {
             callbacks: {
@@ -394,12 +483,14 @@
   let dataSetBar = [];
   actByTipe.forEach(function(element, index) {
     let arrData = [];
-    element.jumlah_aktifitas.forEach(eld => {
+    element.jumlah_aktifitas.forEach(eld => {  
         arrData.push(eld.aktifitas);
     });
-
+    // console.log(element);
+    
     let objBar = {
         data: arrData,
+        label:element.tipe,
         backgroundColor: bankWarna[index],
         borderColor: 'transparent',
         maxBarThickness: 15,
@@ -416,7 +507,7 @@
     const barChartVar = new Chart(barChart, {
       type: 'bar',
       data: {
-        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,31],
         datasets: dataSetBar
       },
       options: {
@@ -434,9 +525,6 @@
             borderWidth: 1,
             borderColor: borderColor
           },
-          legend: {
-            display: false
-          }
         },
         scales: {
           x: {

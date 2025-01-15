@@ -15,6 +15,8 @@ use \stdClass;
 use App\Exports\LeadsTemplateExport;
 use App\Exports\LeadsExport;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\CustomerActivityEmail;
+use Illuminate\Support\Facades\Mail;
 
 
 class CustomerActivityController extends Controller
@@ -38,6 +40,7 @@ class CustomerActivityController extends Controller
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
         $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
 
+        $listUser = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id', [4,5,29,30,31,54])->where('is_active',1)->orderBy('full_name','asc')->get();
         $error = null;
         $success = null;
         if($ctglDari->gt($ctglSampai)){
@@ -48,7 +51,7 @@ class CustomerActivityController extends Controller
             $tglSampai = carbon::now()->toDateString();
             $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
         }
-        return view('sales.customer-activity.list',compact('branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
+        return view('sales.customer-activity.list',compact('listUser','branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
     }
 
     public function add (Request $request){
@@ -80,8 +83,22 @@ class CustomerActivityController extends Controller
 
                 if($timSalesDId !=null){
                     $leads->salesName = $timSalesDId->nama;
+                    $leads->salesEmail = "";
+                    $salesUser = DB::connection('mysqlhris')->table('m_user')->where('id',$timSalesDId->user_id)->first();
+                    if($salesUser !=null){
+                        $leads->salesEmail = $salesUser->email;
+                    }
                 }else{
                     $leads->salesName = "";
+                }
+
+                // cari branch manager dari m_branch mysqlhris dimana branch_id = branch_id leads dan role = 52
+                $branchManager = DB::connection('mysqlhris')->table('m_user')->where('role_id',52)->where('branch_id',$leads->branch_id)->first();
+                $leads->branchManagerEmail = "";
+                $leads->branchManager = "";
+                if($branchManager !=null){
+                    $leads->branchManagerEmail = $branchManager->email;
+                    $leads->branchManager = $branchManager->full_name;
                 }
             }
             
@@ -101,9 +118,11 @@ class CustomerActivityController extends Controller
                 $tim_sales_id = $dataSalesD->tim_sales_id;
                 $tim_sales_d_id = $dataSalesD->id;
             }
+            $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
             
-            return view('sales.customer-activity.add',compact('spvRoList','roList','crmList','leads','now','nowd','statusLeads','timSales','tim_sales_id','tim_sales_d_id'));
+            return view('sales.customer-activity.add',compact('jenisVisit','spvRoList','roList','crmList','leads','now','nowd','statusLeads','timSales','tim_sales_id','tim_sales_d_id'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -266,15 +285,15 @@ class CustomerActivityController extends Controller
                 }
 
                 //validator role
-                if(!in_array(Auth::user()->role_id,[4,5,6,8,55,56])){
-                    $validator = Validator::make($request->all(), [
-                        'status_leads_id' => 'required',
-                    ], [
-                        'min' => 'Masukkan :attribute minimal :min',
-                        'max' => 'Masukkan :attribute maksimal :max',
-                        'required' => ':attribute harus di isi',
-                    ]);
-                }
+                // if(!in_array(Auth::user()->role_id,[4,5,6,8,55,56])){
+                //     $validator = Validator::make($request->all(), [
+                //         'status_leads_id' => 'required',
+                //     ], [
+                //         'min' => 'Masukkan :attribute minimal :min',
+                //         'max' => 'Masukkan :attribute maksimal :max',
+                //         'required' => ':attribute harus di isi',
+                //     ]);
+                // }
 
                 if ($validator->fails()) {
                     return back()->withErrors($validator->errors())->withInput();
@@ -339,7 +358,10 @@ class CustomerActivityController extends Controller
                 }
 
                 if($request->jenis_visit !=null){
-                    $jenisVisit = $request->jenis_visit;
+                    $djenisVisit = DB::table('m_jenis_visit')->where('id', $request->jenis_visit)->first();
+                    if($djenisVisit != null){
+                        $jenisVisit = $djenisVisit->nama;
+                    }
                 }
 
                 if($request->notulen !=null){
@@ -403,6 +425,7 @@ class CustomerActivityController extends Controller
                         'notes_tipe' => $notesTipe,
                         'notulen' => $notulen,
                         'jenis_visit' => $jenisVisit,
+                        'jenis_visit_id' => $request->jenis_visit,
                         'link_bukti_foto' => $linkBuktiFoto,
                         'email' => $email,
                         'ro_id' => $roId,
@@ -441,7 +464,9 @@ class CustomerActivityController extends Controller
                         'crm' => $crmName,
                         'status_leads_id' => $statusLeads,
                         'jenis_visit' => $jenisVisit,
+                        'jenis_visit_id' => $request->jenis_visit,
                         'is_activity' => 1,
+                        'user_id' => Auth::user()->id,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -580,10 +605,12 @@ class CustomerActivityController extends Controller
             $data = DB::table('sl_customer_activity')
                         ->join('sl_leads','sl_leads.id','sl_customer_activity.leads_id')
                         ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
+                        ->leftJoin($db2.'.m_user','sl_leads.created_by','=',$db2.'.m_user.full_name')
+                        ->leftJoin($db2.'.m_role',$db2.'.m_user.role_id','=',$db2.'.m_role.id')
                         ->leftJoin('m_kebutuhan','m_kebutuhan.id','=','sl_leads.kebutuhan_id')
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
-                        ->select('sl_customer_activity.created_by','sl_customer_activity.email','sl_customer_activity.notulen','sl_customer_activity.jenis_visit','sl_customer_activity.link_bukti_foto','sl_customer_activity.penerima','sl_customer_activity.jam_realisasi','sl_customer_activity.tgl_realisasi','sl_customer_activity.notes_tipe','sl_customer_activity.start','sl_customer_activity.end','sl_customer_activity.durasi','m_status_leads.nama as status_leads','sl_customer_activity.leads_id','sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_leads.nama_perusahaan as nama', $db2.'.m_branch.name as branch', 'm_kebutuhan.nama as kebutuhan','m_tim_sales_d.nama as sales','sl_customer_activity.notes as keterangan')
+                        ->select($db2.'.m_role.name as role','sl_customer_activity.created_by','sl_customer_activity.email','sl_customer_activity.notulen','sl_customer_activity.jenis_visit','sl_customer_activity.link_bukti_foto','sl_customer_activity.penerima','sl_customer_activity.jam_realisasi','sl_customer_activity.tgl_realisasi','sl_customer_activity.notes_tipe','sl_customer_activity.start','sl_customer_activity.end','sl_customer_activity.durasi','m_status_leads.nama as status_leads','sl_customer_activity.leads_id','sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_leads.nama_perusahaan as nama', $db2.'.m_branch.name as branch', 'm_kebutuhan.nama as kebutuhan','m_tim_sales_d.nama as sales','sl_customer_activity.notes as keterangan')
                         ->whereNull('sl_customer_activity.deleted_at');
             
             if(!empty($request->tgl_dari)){
@@ -598,6 +625,9 @@ class CustomerActivityController extends Controller
             }
             if(!empty($request->branch)){
                 $data = $data->where('sl_leads.branch_id',$request->branch);
+            }
+            if(!empty($request->user)){
+                $data = $data->where($db2.'.m_user.id',$request->user);
             }
             // if(!empty($request->company)){
             //     $data = $data->where('sl_leads.company_id',$request->company);
@@ -748,6 +778,30 @@ class CustomerActivityController extends Controller
             return view('sales.customer-activity.track',compact('data','leads','quotation','tipe'));
         } catch (\Exception $e) {
             dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function sendEmail (Request $request){
+        try {
+            // if ($request->is_kirim_leads =="true") {
+            //     Mail::to($request->email_leads)->send(new CustomerActivityEmail($request->subject,$request->body));
+            // }
+            // if ($request->is_kirim_sales =="true") {
+            //     Mail::to($request->email_sales)->send(new CustomerActivityEmail($request->subject,$request->body));
+            // }
+            // if ($request->is_kirim_branch_manager =="true") {
+            //     Mail::to($request->email_branch_manager)->send(new CustomerActivityEmail($request->subject,$request->body));
+            // }
+            Mail::to("firdaus280513@gmail.com")->send(new CustomerActivityEmail());
+            // dd($mail);
+            // Mail::to()->send(new CustomerActivityEmail("Pemberitahuan Dokumen Siap Close","5",$url,$data,$namaUser));
+            // dd($request);
+            return response()->json(['status' => 'success', 'message' => 'Email berhasil dikirim']);
+        } catch (\Throwable $th) {
+            dd($e);
+            return response()->json(['status' => 'gagal', 'message' => 'Email gagal dikirim']);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
