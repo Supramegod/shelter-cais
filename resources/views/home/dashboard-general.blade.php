@@ -1,6 +1,13 @@
 @extends('layouts.master')
 @section('title','Dashboard General')
 @section('pageStyle')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pivottable/dist/pivot.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/pivottable/dist/pivot.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+
 @endsection
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
@@ -49,6 +56,11 @@
         </div>
       </div>
       <!-- /Bar Charts -->
+      <div class="col-xl-12 col-12 mb-4">
+        <h1>Make Your Own</h1>
+        <div id="output" style="margin: 30px;"></div>
+        <div id="chart" style="margin: 30px;"></div>
+      </div>
     </div>
 </div>
 @endsection
@@ -264,5 +276,30 @@
     });
   }
 </script>
+<script>
+        $(function() {
+            // Sample Data
+            const data = [
+                { region: "North", year: "2020", sales: 1000 },
+                { region: "North", year: "2021", sales: 1200 },
+                { region: "South", year: "2020", sales: 800 },
+                { region: "South", year: "2021", sales: 950 },
+                { region: "East", year: "2020", sales: 1500 },
+                { region: "East", year: "2021", sales: 1700 },
+            ];
+
+            // Render PivotTable
+            $("#output").pivotUI(data, {
+                renderers: $.extend($.pivotUtilities.renderers, 
+                    $.pivotUtilities.plotlyRenderers // Add Plotly renderers
+                ),
+                rendererName: "Horizontal Bar Chart", // Default chart type
+                rows: ["region"], // Set rows
+                cols: ["year"], // Set columns
+                aggregatorName: "Sum",
+                vals: ["sales"]
+            });
+        });
+    </script>
 @endsection
 

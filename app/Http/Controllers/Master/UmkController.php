@@ -89,7 +89,9 @@ class UmkController extends Controller
     public function save(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $umk = str_replace(",", "",$request->umk);
+            $umk = str_replace("Rp.", "",$request->umk);
+            $umk = str_replace(".", "",$umk);
+            $umk = str_replace(",", ".",$umk);
 
             DB::table('m_umk')->where('city_id',$request->city_id)->update([
                 'is_aktif' => 0,

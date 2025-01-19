@@ -225,7 +225,7 @@
                 <td>Upah</td>
                 <td>: {{$data->upah}}</td>
                 <td>Nominal Upah @if($data->nominal_upah<$data->umk)<span class="badge bg-label-warning rounded-pill">Butuh Approval</span>@endif</td>
-                <td>: Rp {{number_format($data->nominal_upah,0,",",".")}}</td>
+                <td>: Rp {{number_format($data->nominal_upah,2,",",".")}}</td>
               </tr>
               <tr>
                 <td>Manajemen Fee</td>
@@ -247,7 +247,7 @@
                 <td>: {{$data->program_bpjs}}</td>
                 @else
                 <td>Nominal</td>
-                <td colspan="2">: Rp {{number_format($data->nominal_takaful,0,",",".")}}</td>                
+                <td colspan="2">: Rp {{number_format($data->nominal_takaful,2,",",".")}}</td>                
                 @endif
               </tr>
               @if($data->penjamin =="BPJS")

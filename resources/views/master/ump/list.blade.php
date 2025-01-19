@@ -108,7 +108,7 @@
                     data : 'ump',
                     name : 'ump',
                     className:'dt-body-right',
-                    render: $.fn.dataTable.render.number('.','.', 0,'')
+                    render: $.fn.dataTable.render.number('.','.', 2,'')
                 },{
                     data : 'tgl_berlaku',
                     name : 'tgl_berlaku',

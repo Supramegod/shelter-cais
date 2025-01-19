@@ -68,7 +68,7 @@ class QuotationController extends Controller
                 $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('is_aktif',1)->where('province_id',$value->id)->first();
                 $value->ump = "UMP : Rp. 0";
                 if($dataUmp !=null){
-                    $value->ump = "UMP : Rp. ".number_format($dataUmp->ump,0,",",".");
+                    $value->ump = "UMP : Rp. ".number_format($dataUmp->ump,2,",",".");
                 }
             }
 
@@ -1954,7 +1954,19 @@ class QuotationController extends Controller
                 $newStep = $dataQuotation->step;
             }
             
+
+            // tambah approval dir sales
+            $dataQuotationD =  DB::table('sl_quotation_d')->where('quotation_id',$request->id)->get();
+
+            $isAktif = $quotation->is_aktif;
+            foreach ($dataQuotationD as $key => $dataD) {
+                if($dataD->biaya_monitoring > 0 ){
+                    $isAktif=0;
+                }
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
+                'is_aktif' => $isAktif,
                 'step' => $newStep,
                 'penagihan' => $request->penagihan,
                 'updated_at' => $current_date_time,
@@ -2637,7 +2649,7 @@ class QuotationController extends Controller
             $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('is_aktif',1)->where('city_id',$value->id)->first();
             $value->umk = "UMK : Rp. 0";
             if($dataUmk !=null){
-                $value->umk = "UMK : Rp. ".number_format($dataUmk->umk,0,",",".");
+                $value->umk = "UMK : Rp. ".number_format($dataUmk->umk,2,",",".");
             }
         }
         return $data;

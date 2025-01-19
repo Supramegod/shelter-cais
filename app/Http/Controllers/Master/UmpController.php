@@ -89,7 +89,9 @@ class UmpController extends Controller
     public function save(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            $ump = str_replace(",", "",$request->ump);
+            $ump = str_replace("Rp.", "",$request->ump);
+            $ump = str_replace(".", "",$ump);
+            $ump = str_replace(",", ".",$ump);
 
             DB::table('m_ump')->where('province_id',$request->province_id)->update([
                 'is_aktif' => 0,

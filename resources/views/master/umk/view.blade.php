@@ -98,6 +98,7 @@
 @endsection
 
 @section('pageScript')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/imask/7.6.1/imask.min.js" integrity="sha512-+3RJc0aLDkj0plGNnrqlTwCCyMmDCV1fSYqXw4m+OczX09Pas5A/U+V3pFwrSyoC1svzDy40Q9RU/85yb/7D2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $('#btn-kembali').on('click',function () {
           window.location.replace("{{route('umk')}}");
@@ -158,7 +159,7 @@
                     data : 'umk',
                     name : 'umk',
                     className:'dt-body-right',
-                    render: $.fn.dataTable.render.number('.','.', 0,'')
+                    render: $.fn.dataTable.render.number('.','.', 2,'')
                 },{
                     data : 'tgl_berlaku',
                     name : 'tgl_berlaku',
@@ -253,25 +254,18 @@
             });
     </script>
     <script>
-        var elem = document.getElementById("umk");
-      
-        elem.addEventListener("keydown",function(event){
-            var key = event.which;
-            if((key<48 || key>57) && key != 8) event.preventDefault();
-        });
-      
-        elem.addEventListener("keyup",function(event){
-            var value = this.value.replace(/,/g,"");
-            this.dataset.currentValue=parseInt(value);
-            var caret = value.length-1;
-            while((caret-3)>-1)
+        IMask(
+            document.getElementById('umk'),
             {
-                caret -= 3;
-                value = value.split('');
-                value.splice(caret+1,0,",");
-                value = value.join('');
+                mask: 'Rp.num',
+                blocks: {
+                num: {
+                    // nested masks are available!
+                    mask: Number,
+                    thousandsSeparator: '.'
+                }
+                }
             }
-            this.value = value;
-        });
+            )
       </script>
 @endsection

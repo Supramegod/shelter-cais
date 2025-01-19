@@ -619,7 +619,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td class="fw-bold">3. BIAYA PENGAWASAN DAN PELAKSANAAN LAPANGAN ( UNIT / MONTH )</th>
                         <td class="text-center fw-bold"></th>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_ohc+$detailJabatan->biaya_monitoring_kontrol,2,",",".")}} <i class="mdi mdi-pencil text-warning edit-biaya-monitoring" data-id="{{$detailJabatan->id}}" data-total_ohc="{{$detailJabatan->total_ohc}}" data-biaya_monitoring="{{$detailJabatan->biaya_monitoring_kontrol}}"></i></a></td>
+                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_ohc+$detailJabatan->biaya_monitoring_kontrol,2,",",".")}} <i class="mdi mdi-pencil text-warning edit-biaya-monitoring" data-id="{{$detailJabatan->id}}" data-total_ohc="{{$detailJabatan->personil_ohc}}" data-biaya_monitoring="{{$detailJabatan->biaya_monitoring_kontrol}}"></i></a></td>
                         @endforeach
                       </tr>
                       <tr class="table-success">
