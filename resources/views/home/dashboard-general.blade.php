@@ -1,13 +1,20 @@
 @extends('layouts.master')
 @section('title','Dashboard General')
 @section('pageStyle')
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pivottable/dist/pivot.min.css">
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/pivottable/dist/pivot.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
-
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://pivottable.js.org/dist/pivot.css">
+<script src="https://pivottable.js.org/dist/pivot.js"></script>
+<script src="https://pivottable.js.org/dist/plotly_renderers.js"></script>
+<style>
+  .card {
+  padding: 20px; /* Sesuaikan dengan kebutuhan */
+  width: auto; /* Menyesuaikan lebar dengan konten */
+  max-width: fit-content !important; /* Menghindari card melebihi batas container */
+  box-sizing: border-box; /* Agar padding termasuk dalam ukuran total */
+}
+</style>
 @endsection
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
@@ -56,11 +63,12 @@
         </div>
       </div>
       <!-- /Bar Charts -->
-      <div class="col-xl-12 col-12 mb-4">
-        <h1>Make Your Own</h1>
-        <div id="output" style="margin: 30px;"></div>
-        <div id="chart" style="margin: 30px;"></div>
-      </div>
+      <div class="card container-fluid" style="width: auto;">
+        <div class="row">
+          <div id="output" style="margin: 30px;"></div>
+        </div>
+        
+      </div>  
     </div>
 </div>
 @endsection
@@ -278,6 +286,9 @@
 </script>
 <script>
         $(function() {
+          var derivers = $.pivotUtilities.derivers;
+          var renderers = $.extend($.pivotUtilities.renderers,
+          $.pivotUtilities.plotly_renderers);
             // Sample Data
             const data = [
                 { region: "North", year: "2020", sales: 1000 },
@@ -288,12 +299,10 @@
                 { region: "East", year: "2021", sales: 1700 },
             ];
 
-            // Render PivotTable
+            // Render PivotTable with Plotly Renderer
             $("#output").pivotUI(data, {
-                renderers: $.extend($.pivotUtilities.renderers, 
-                    $.pivotUtilities.plotlyRenderers // Add Plotly renderers
-                ),
-                rendererName: "Horizontal Bar Chart", // Default chart type
+                renderers: renderers,
+                rendererName: "Bar Chart",
                 rows: ["region"], // Set rows
                 cols: ["year"], // Set columns
                 aggregatorName: "Sum",
