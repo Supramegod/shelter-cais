@@ -91,7 +91,8 @@ class QuotationService
         };
 
         
-        $kbd->bunga_bank = round($kbd->sub_total_personil*$pengaliTop*$quotation->persen_bunga_bank/100,2);
+        // $kbd->bunga_bank = round($kbd->sub_total_personil*$pengaliTop*$quotation->persen_bunga_bank/100,2);
+        $kbd->bunga_bank = round($kbd->sub_total_personil*($quotation->persen_bunga_bank/100)/12,2);
         $kbd->insentif = round($kbd->management_fee*$quotation->persen_insentif/100,2);
 
         $kbd->grand_total = $kbd->sub_total_personil + $kbd->management_fee + $kbd->bunga_bank + $kbd->insentif;
@@ -195,7 +196,7 @@ class QuotationService
         if ($quotation->tunjangan_holiday == "Flat") {
             $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
         } else {
-            $quotation->tunjangan_holiday_display = ($umk / 173 * 14) * 15;
+            $quotation->tunjangan_holiday_display = ($umk / 173 * 14) * 1.5;
         }
 
         // Lembur

@@ -2,18 +2,17 @@
 @section('title','Dashboard General')
 @section('pageStyle')
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://pivottable.js.org/dist/pivot.css">
 <script src="https://pivottable.js.org/dist/pivot.js"></script>
 <script src="https://pivottable.js.org/dist/plotly_renderers.js"></script>
 <style>
   .card {
-  padding: 20px; /* Sesuaikan dengan kebutuhan */
-  width: auto; /* Menyesuaikan lebar dengan konten */
-  max-width: fit-content !important; /* Menghindari card melebihi batas container */
-  box-sizing: border-box; /* Agar padding termasuk dalam ukuran total */
-}
+    padding: 20px; /* Sesuaikan dengan kebutuhan */
+    width: auto; /* Menyesuaikan lebar dengan konten */
+    max-width: fit-content !important; /* Menghindari card melebihi batas container */
+    box-sizing: border-box; /* Agar padding termasuk dalam ukuran total */
+  }
 </style>
 @endsection
 @section('content')
