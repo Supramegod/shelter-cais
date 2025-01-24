@@ -68,7 +68,7 @@
                   @endif
                 </div>
                 <div class="col-sm-4">
-                  <label class="form-label" for="durasi_karyawan">Durasi Karyawan</label>
+                  <label class="form-label" for="durasi_karyawan">Durasi Kontrak Karyawan</label>
                   <select id="durasi_karyawan" name="durasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
                     <option value="" @if($quotation->durasi_karyawan=='') selected @endif>- Pilih Data -</option>  
                     <option value="1 Bulan" @if($quotation->durasi_karyawan=='1 Bulan') selected @endif>1 Bulan</option>  
@@ -336,7 +336,7 @@ $('#btn-submit').on('click',function(e){
     msg += "<b>Tanggal Penempatan</b> belum dipilih </br>";
   }
   if(obj.durasi_karyawan == null || obj.durasi_karyawan == ""){
-    msg += "<b>Durasi Karyawan</b> belum dipilih </br>";
+    msg += "<b>Durasi Kontrak Karyawan</b> belum dipilih </br>";
   }
   if(obj.evaluasi_karyawan == null || obj.evaluasi_karyawan == ""){
     msg += "<b>Evaluasi Karyawan</b> belum dipilih </br>";
@@ -451,11 +451,23 @@ function validasiKontrak() {
           // Hitung perbedaan tahun dan bulan
           var tahun = selesaiDate.getFullYear() - mulaiDate.getFullYear();
           var bulan = selesaiDate.getMonth() - mulaiDate.getMonth();
+          var hari = selesaiDate.getDate() - mulaiDate.getDate();
 
           // Jika bulan negatif, kurangi satu tahun dan tambahkan 12 bulan
           if (bulan < 0) {
               tahun--;
               bulan += 12;
+          }
+
+          // Jika selisih hari lebih dari 0, naikkan jumlah bulan
+          if (hari > 0) {
+              bulan++;
+          }
+
+          // Jika bulan mencapai 12, konversi ke tahun tambahan
+          if (bulan >= 12) {
+              tahun++;
+              bulan -= 12;
           }
 
           // Siapkan string hasil
@@ -473,9 +485,11 @@ function validasiKontrak() {
                   hasil += ', ';
               }
               hasil += bulan + ' bulan';
-          }          
-          if(hasil==""){
-            hasil ="1 bulan";
+          }
+
+          // Jika hasil kosong, berarti durasi minimal adalah 1 bulan
+          if (hasil === '') {
+              hasil = '1 bulan';
           }
 
           // Tampilkan hasil

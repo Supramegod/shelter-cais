@@ -126,7 +126,7 @@
                 <td>: {{$master->evaluasi_kontrak}}</td>
               </tr>
               <tr>
-                <td>Durasi Karyawan</td>
+                <td>Durasi Kontrak Karyawan</td>
                 <td>: {{$master->durasi_karyawan}}</td>
                 <td>Evaluasi Karyawan</td>
                 <td>: {{$master->evaluasi_karyawan}}</td>

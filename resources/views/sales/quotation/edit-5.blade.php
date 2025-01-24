@@ -46,16 +46,6 @@
                 </div>
                 <div class="row mb-3">
                   <div class="col-sm-6">
-                    <label class="form-label" for="penjamin">Penjamin</label>
-                    <div class="input-group">
-                      <select id="penjamin" name="penjamin" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih data -</option>
-                        <option value="BPJS" @if($quotation->penjamin == 'BPJS') selected @elseif($quotation->penjamin ==null) selected @endif>BPJS</option>
-                        <option value="Takaful" @if($quotation->penjamin == 'Takaful') selected @endif>Takaful</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div id="d-bpjs" class="col-sm-6 d-none">
                     <label class="form-label" for="program-bpjs">Program BPJS</label>
                     <div class="input-group">
                       <select id="program-bpjs" name="program-bpjs" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -67,6 +57,17 @@
                     </div>
                     <span class="text-warning">*Program BPJS selain 4 program membutuhkan persetujuan</span>
                   </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="is_takaful">Takaful ?</label>
+                    <div class="input-group">
+                      <select id="is_takaful" name="is_takaful" class="form-select" data-allow-clear="true" tabindex="-1" value="{{$quotation->is_takaful}}"> 
+                        <option value="">- Pilih data -</option>
+                        <option value="0" @if($quotation->is_takaful == '0') @endif>Tidak</option>
+                        <option value="1" @if($quotation->is_takaful == '1') selected @endif>Ya</option>
+                      </select>
+                    </div>
+                  </div>
+                  
                   <div id="d-nominal-takaful" class="col-sm-6 d-none">
                     <label class="form-label" for="nominal-takaful">Nominal takaful</label>
                     <div class="input-group">
@@ -134,22 +135,18 @@
       $(id).val($(this).find(':selected').data('resiko'));
     });
 
-    showBpjs(1);
+    showTakaful();
 
-    function showBpjs(first) {
-      let selected = $("#penjamin option:selected").val();
-      console.log(selected);
-      
-      if (selected=="BPJS") {
-        $('#d-bpjs').removeClass('d-none');
+    function showTakaful(first) {
+      let selected = $("#is_takaful option:selected").val();
+      if (selected=="0" || selected==null || selected=="") {
         $('#d-nominal-takaful').addClass('d-none');
       }else{
-        $('#d-bpjs').addClass('d-none');
         $('#d-nominal-takaful').removeClass('d-none');
       }
     }
-    $('#penjamin').on('change', function() {
-      showBpjs(2);
+    $('#is_takaful').on('change', function() {
+      showTakaful();
     });
 
 
@@ -168,18 +165,18 @@
       if(obj['jenis-perusahaan'] == null || obj['jenis-perusahaan'] == ""){
         msg += "<b>Jenis Perusahaan</b> belum dipilih </br>";
       }
-      if(obj['penjamin'] == null || obj['penjamin'] == ""){
-        msg += "<b>Penjamin </b> belum dipilih </br>";
-      }else if(obj['penjamin'] == "BPJS" ){
-        if(obj['program-bpjs'] == null || obj['program-bpjs'] == ""){
-          msg += "<b>Program BPJS </b> belum dipilih </br>";
-        }
-      }else if(obj['penjamin'] == "Takaful" ){
-        if(obj['nominal-takaful'] == null || obj['nominal-takaful'] == ""){
-          msg += "<b>Nominal Takaful </b> belum dipilih </br>";
+      if(obj['is_takaful'] == null || obj['is_takaful'] == ""){
+        msg += "<b>Takaful</b> belum dipilih </br>";
+      }else{
+        if(obj['is_takaful'] == "1"){
+          if(obj['nominal-takaful'] == null || obj['nominal-takaful'] == ""){
+            msg += "<b>Nominal Takaful</b> belum diisi </br>";
+          }
         }
       }
-      
+      if(obj['program-bpjs'] == null || obj['program-bpjs'] == ""){
+        msg += "<b>Program BPJS</b> belum dipilih </br>";
+      }
 
       if(obj['resiko'] == null || obj['resiko'] == ""){
         msg += "<b>Resiko </b> belum dipilih </br>";

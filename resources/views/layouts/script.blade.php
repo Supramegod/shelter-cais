@@ -27,6 +27,8 @@
     <!-- <script src="{{ asset('public/assets/vendor/libs/select2/select2.js') }}"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/7.6.1/imask.min.js" integrity="sha512-+3RJc0aLDkj0plGNnrqlTwCCyMmDCV1fSYqXw4m+OczX09Pas5A/U+V3pFwrSyoC1svzDy40Q9RU/85yb/7D2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <!-- Flat Picker -->
     <script src="{{ asset('public/assets/vendor/libs/moment/moment.js')}}"></script>
     <script src="{{ asset('public/assets/vendor/libs/flatpickr/flatpickr.js')}}"></script>

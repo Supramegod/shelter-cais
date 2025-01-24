@@ -239,6 +239,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/edit-tunjangan', 'editTunjangan')->name('quotation.edit-tunjangan');
         Route::post('/sales/quotation/edit-persen-insentif', 'editPersenInsentif')->name('quotation.edit-persen-insentif');
         Route::post('/sales/quotation/edit-persen-bunga-bank', 'editPersenBungaBank')->name('quotation.edit-persen-bunga-bank');
+        Route::post('/sales/quotation/edit-nominal', 'editNominal')->name('quotation.edit-nominal');
 
         //PIC
         Route::get('/sales/quotation/list-detail-pic', 'listDetailPic')->name('quotation.list-detail-pic'); // ajax

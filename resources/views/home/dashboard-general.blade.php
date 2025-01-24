@@ -62,12 +62,12 @@
         </div>
       </div>
       <!-- /Bar Charts -->
-      <div class="card container-fluid" style="width: auto;">
+      <!-- <div class="card container-fluid" style="width: auto;">
         <div class="row">
           <div id="output" style="margin: 30px;"></div>
         </div>
         
-      </div>  
+      </div>   -->
     </div>
 </div>
 @endsection
@@ -283,7 +283,7 @@
     });
   }
 </script>
-<script>
+<!-- <script>
         $(function() {
           var derivers = $.pivotUtilities.derivers;
           var renderers = $.extend($.pivotUtilities.renderers,
@@ -308,6 +308,6 @@
                 vals: ["sales"]
             });
         });
-    </script>
+    </script> -->
 @endsection
 

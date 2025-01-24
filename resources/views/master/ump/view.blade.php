@@ -98,8 +98,6 @@
 @endsection
 
 @section('pageScript')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/7.6.1/imask.min.js" integrity="sha512-+3RJc0aLDkj0plGNnrqlTwCCyMmDCV1fSYqXw4m+OczX09Pas5A/U+V3pFwrSyoC1svzDy40Q9RU/85yb/7D2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <script>
         $('#btn-kembali').on('click',function () {
           window.location.replace("{{route('ump')}}");

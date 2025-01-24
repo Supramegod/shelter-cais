@@ -1529,6 +1529,13 @@ class QuotationController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
+            //update semua nominal menjadi upah
+            DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->update([
+                'nominal_upah' => $nominalUpah,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
             if($request->edit==0){
                 return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
             }else{
@@ -1548,16 +1555,15 @@ class QuotationController extends Controller
             $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->first();
             $jenisPerusahaanId = $request['jenis-perusahaan'];
             $resiko = $request['resiko'];
-            $penjamin = $request['penjamin'];
             $programBpjs = $request['program-bpjs'];
+            $isTakaful = $request['is_takaful'];
             $nominalTakaful = $request['nominal-takaful'];
 
-            // jika penjamin takaful maka program bpjs == null
-            if($penjamin=="Takaful"){
-                $programBpjs = null; 
-                $nominalTakaful = str_replace(".","",$nominalTakaful);
+            if($isTakaful == "Tidak"){
+                $nominalTakaful = 0;
             }else{
-                $nominalTakaful =null;
+                $nominalTakaful = str_replace(".","",$nominalTakaful);
+                $nominalTakaful = str_replace(",",".",$nominalTakaful);
             }
 
             $jenisPerusahaan = null;
@@ -1594,9 +1600,10 @@ class QuotationController extends Controller
                 'jenis_perusahaan' => $jenisPerusahaan,
                 'resiko' => $resiko,
                 'is_aktif' => $isAktif,
-                'penjamin' => $penjamin,
+                'penjamin' => 'BPJS',
                 'program_bpjs' => $programBpjs,
                 'nominal_takaful' => $nominalTakaful,
+                'is_takaful' => $isTakaful,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -2281,6 +2288,26 @@ class QuotationController extends Controller
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
+                
+                $hpp = DB::table('sl_quotation_detail_hpp')->insert([
+                    'quotation_id' => $quotation->id,
+                    'quotation_detail_id' => $detailIdBaru,
+                    'leads_id' => $quotation->leads_id,
+                    'position_id' => $request->position_id,
+                    'jumlah_hc' => $request->jumlah_hc,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+
+                $coss = DB::table('sl_quotation_detail_coss')->insert([
+                    'quotation_id' => $quotation->id,
+                    'quotation_detail_id' => $detailIdBaru,
+                    'leads_id' => $quotation->leads_id,
+                    'position_id' => $request->position_id,
+                    'jumlah_hc' => $request->jumlah_hc,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
 
                 //masukkan tunjangan
                 $listTunjangan = DB::table('m_tunjangan_posisi')->whereNull('deleted_at')->where('position_id',$request->position_id)->get();
@@ -2488,11 +2515,20 @@ class QuotationController extends Controller
                 'deleted_by' => Auth::user()->full_name
             ]);
 
-            DB::table('sl_quotation_detail_tunjangan')->where('quotation_id',$request->id)->update([
+            DB::table('sl_quotation_detail_tunjangan')->where('quotation_detail_id',$request->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
 
+            DB::table('sl_quotation_detail_hpp')->where('quotation_detail_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+
+            DB::table('sl_quotation_detail_coss')->where('quotation_detail_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -2525,6 +2561,159 @@ class QuotationController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function editNominal(Request $request){
+        try {
+            DB::beginTransaction();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $hpp = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_detail_id',$request->id)->first();
+            $coss = DB::table('sl_quotation_detail_coss')->whereNull('deleted_at')->where('quotation_detail_id',$request->id)->first();
+
+            $hppByQuotation = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_id',$request->quotation_id)->get();
+            $cossByQuotation = DB::table('sl_quotation_detail_coss')->whereNull('deleted_at')->where('quotation_id',$request->quotation_id)->get();
+
+            $isUpdateAll = false;
+            
+            if ($request->tabel=="hpp") {
+                switch ($request->tipe) {
+                    case 'Gaji Pokok':
+                        $hpp->gaji_pokok = $request->nominal;
+                        $coss->gaji_pokok = $request->nominal;
+                        break;
+                    case 'THR':
+                        $hpp->tunjangan_hari_raya = $request->nominal;
+                        $coss->tunjangan_hari_raya = $request->nominal;
+                        break;
+                    case 'Kompensasi':
+                        $hpp->kompensasi = $request->nominal;
+                        $coss->kompensasi = $request->nominal;
+                        break;
+                    case 'Tunjangan Holiday':
+                        $hpp->tunjangan_hari_libur_nasional = $request->nominal;
+                        $coss->tunjangan_hari_libur_nasional = $request->nominal;
+                        break;
+                    case 'Lembur':
+                        $hpp->lembur = $request->nominal;
+                        $coss->lembur = $request->nominal;
+                        break;
+                    case 'BPJS JKK':
+                        $hpp->bpjs_jkk = $request->nominal;
+                        $coss->bpjs_jkk = $request->nominal;
+                        break;
+                    case 'BPJS JKM':
+                        $hpp->bpjs_jkm = $request->nominal;
+                        $coss->bpjs_jkm = $request->nominal;
+                        break;
+                    case 'BPJS JHT':
+                        $hpp->bpjs_jht = $request->nominal;
+                        $coss->bpjs_jht = $request->nominal;
+                        break;
+                    case 'BPJS JP':
+                        $hpp->bpjs_jp = $request->nominal;
+                        $coss->bpjs_jp = $request->nominal;
+                        break;
+                    case 'BPJS KES':
+                        $hpp->bpjs_ks = $request->nominal;
+                        $coss->bpjs_ks = $request->nominal;
+                        break;
+                    case 'Takaful':
+                        $hpp->takaful = $request->nominal;
+                        $coss->takaful = $request->nominal;
+                        break;
+                    case 'Kaporlap':
+                        $hpp->provisi_seragam = $request->nominal;
+                        break;
+                    case 'Peralatan':
+                        foreach ($hppByQuotation as $key => $value) {
+                            $value->provisi_peralatan = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    case 'Chemical':
+                        foreach ($hppByQuotation as $key => $value) {
+                            $value->provisi_chemical = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    case 'OHC':
+                        foreach ($hppByQuotation as $key => $value) {
+                            $value->provisi_ohc = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    case 'Bunga Bank':
+                        foreach ($hppByQuotation as $key => $value) {
+                            $value->bunga_bank = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    case 'Insentif':
+                        foreach ($hppByQuotation as $key => $value) {
+                            $value->insentif = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    default:
+                        break;
+                }
+            }else if($request->tabel=="coss"){
+                switch ($request->tipe) {
+                    case 'Kaporlap':
+                        $coss->provisi_seragam = $request->nominal;
+                        break;
+                    case 'Peralatan':
+                        foreach ($cossByQuotation as $key => $value) {
+                            $value->provisi_peralatan = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    case 'Chemical':
+                        foreach ($cossByQuotation as $key => $value) {
+                            $value->provisi_chemical = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    case 'OHC':
+                        foreach ($cossByQuotation as $key => $value) {
+                            $value->provisi_ohc = $request->nominal;
+                        }
+                        $isUpdateAll = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            
+    
+            if ($isUpdateAll) {
+                foreach ($hppByQuotation as $key => $value) {
+                    $value->updated_at = $current_date_time;
+                    $value->updated_by = Auth::user()->full_name;
+                    DB::table('sl_quotation_detail_hpp')->where('id', $value->id)->update((array) $value);
+                }
+
+                foreach ($cossByQuotation as $key => $value) {
+                    DB::table('sl_quotation_detail_coss')->where('id', $value->id)->update((array) $value);
+                }
+            }else{
+                $hpp->updated_at = $current_date_time;
+                $hpp->updated_by = Auth::user()->full_name;
+                $coss->updated_at = $current_date_time;
+                $coss->updated_by = Auth::user()->full_name;
+                DB::table('sl_quotation_detail_hpp')->where('quotation_detail_id', $request->id)->update((array) $hpp);
+                DB::table('sl_quotation_detail_coss')->where('quotation_detail_id', $request->id)->update((array) $coss);         
+            }
+
+               
+
+            DB::commit();
+        } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

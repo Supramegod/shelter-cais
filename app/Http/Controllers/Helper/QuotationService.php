@@ -21,20 +21,73 @@ class QuotationService
         if (!strpos($quotation->durasi_kerjasama, 'tahun')) {
             $provisi = (int)str_replace(" bulan", "", $quotation->durasi_kerjasama);
         }
-        $quotation->provisi = $provisi;
+        $quotation->provisi = $provisi;        
 
         foreach ($quotation->quotation_detail as $kbd) {
+            $hpp = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
+            $coss = DB::table('sl_quotation_detail_coss')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
             $quotationSite = DB::table('sl_quotation_site')->whereNull('deleted_at')->where('id', $kbd->quotation_site_id)->first();
-            $kbd->nominal_upah = $quotationSite->nominal_upah;
+
+            $nominalUpah = $quotationSite->nominal_upah;
+            if($hpp->gaji_pokok !=null){
+                $nominalUpah = $hpp->gaji_pokok;
+            }
+            $kbd->nominal_upah = $nominalUpah;
+
             $kbd->umk = $quotationSite->umk;
             $kbd->ump = $quotationSite->ump;
-            $this->processQuotationDetail($kbd, $daftarTunjangan, $quotation, $jumlahHc, $provisi);
+
+            // inisial insentif dan bunga bank
+            $kbd->bunga_bank = $hpp->bunga_bank;
+            $kbd->insentif = $hpp->insentif;
+            if ($kbd->bunga_bank === null) {
+                $kbd->bunga_bank = 0;
+            }
+            if ($kbd->insentif === null) {
+                $kbd->insentif = 0;
+            }
+
+            $this->processQuotationDetail($kbd, $daftarTunjangan, $quotation, $jumlahHc, $provisi,$hpp,$coss);
+        }
+
+        $this->calculateHpp($quotation, $jumlahHc, $provisi);
+        $this->calculateCoss($quotation, $jumlahHc, $provisi);
+
+
+        // recalculating bunga bank dan insentif karena gross up
+        $bungaBank = $quotation->total_sebelum_management_fee * ($quotation->persen_bunga_bank / 100) / $jumlahHc;
+        $insentif = $quotation->nominal_management_fee_coss * ($quotation->persen_insentif / 100) / $jumlahHc;
+        
+        // Hitung ulang sub total personil
+        foreach ($quotation->quotation_detail as $kbd) {
+            $hpp = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
+            $coss = DB::table('sl_quotation_detail_coss')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
+            $quotationSite = DB::table('sl_quotation_site')->whereNull('deleted_at')->where('id', $kbd->quotation_site_id)->first();
+
+            $nominalUpah = $quotationSite->nominal_upah;
+            if($hpp->gaji_pokok !=null){
+                $nominalUpah = $hpp->gaji_pokok;
+            }
+            $kbd->nominal_upah = $nominalUpah;
+
+            $kbd->umk = $quotationSite->umk;
+            $kbd->ump = $quotationSite->ump;
+
+            if ($hpp->bunga_bank === null) {
+                $kbd->bunga_bank = $bungaBank;
+            }
+            if ($hpp->insentif === null) {
+                $kbd->insentif = $insentif;
+            }
+            $this->processQuotationDetail($kbd, $daftarTunjangan, $quotation, $jumlahHc, $provisi,$hpp,$coss);
+            $this->calculateHpp($quotation, $jumlahHc, $provisi);
+            $this->calculateCoss($quotation, $jumlahHc, $provisi);
         }
 
         return $quotation;
     }
 
-    private function processQuotationDetail(&$kbd, $daftarTunjangan, $quotation, $jumlahHc, $provisi)
+    private function processQuotationDetail(&$kbd, $daftarTunjangan, $quotation, $jumlahHc, $provisi,$hpp,$coss)
     {
         // Pindahkan detail proses di sini
         $totalTunjangan = 0;
@@ -56,77 +109,73 @@ class QuotationService
 
         $umk = $kbd->umk;
 
-        $this->calculateBpjs($kbd, $quotation, $umk);
-        $this->calculateExtras($kbd, $quotation, $provisi, $jumlahHc,$umk);
+        $this->calculateBpjs($kbd, $quotation, $umk,$hpp);
+        $this->calculateExtras($kbd, $quotation, $provisi, $jumlahHc,$umk,$hpp);
         // Perhitungan Kaporlap
-        $this->calculateKaporlap($kbd, $quotation, $provisi);
+        $this->calculateKaporlap($kbd, $quotation, $provisi,$hpp,$coss);
 
         // Perhitungan Devices
-        $this->calculateDevices($kbd, $quotation, $provisi, $jumlahHc);
+        $this->calculateDevices($kbd, $quotation, $provisi, $jumlahHc,$hpp,$coss);
 
         // Perhitungan OHC
-        $this->calculateOhc($kbd, $quotation, $jumlahHc,$provisi);
+        $this->calculateOhc($kbd, $quotation, $jumlahHc,$provisi,$hpp,$coss);
 
         // Perhitungan Chemical
-        $this->calculateChemical($kbd, $quotation, $provisi);
+        $this->calculateChemical($kbd, $quotation, $provisi,$hpp,$coss);
 
+        // hpp
         $kbd->total_personil = $this->calculateTotalPersonnel($kbd, $quotation, $totalTunjangan);
         $kbd->sub_total_personil = $kbd->total_personil * $kbd->jumlah_hc;
 
-        $kbd->management_fee = 0;
-        if($quotation->management_fee_id==1){
-            $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100; 
-        }else if($quotation->management_fee_id==4){
-            $kbd->management_fee = $kbd->sub_total_personil*$quotation->persentase/100; 
-        }else if($quotation->management_fee_id==5){
-            $kbd->management_fee = $kbd->nominal_upah*$quotation->persentase/100;
-        }
+        // coss
+        // Total Base Manpower
+        $kbd->total_base_manpower = round($kbd->nominal_upah + $kbd->total_tunjangan, 2);
 
-        // bunga bank dan insentif
-        $pengaliTop = 0;
-        if ($quotation->top == "Kurang Dari 7 Hari") {
-            $pengaliTop = 7;
-        }else if($quotation->top == "Lebih Dari 7 Hari"){
-            $pengaliTop = $quotation->jumlah_hari_invoice;
-        };
+        // Total Exclude Base Manpower
+        $kbd->total_exclude_base_manpower = round(
+            $kbd->tunjangan_hari_raya +
+            $kbd->kompensasi +
+            $kbd->tunjangan_holiday +
+            $kbd->lembur +
+            $kbd->nominal_takaful +
+            $kbd->bpjs_jkk +
+            $kbd->bpjs_jkm +
+            $kbd->bpjs_jht +
+            $kbd->bpjs_jp +
+            $kbd->bpjs_kes +
+            $kbd->personil_kaporlap_coss+
+            $kbd->personil_devices_coss +
+            $kbd->personil_chemical_coss,
+            2
+        );
 
-        
-        // $kbd->bunga_bank = round($kbd->sub_total_personil*$pengaliTop*$quotation->persen_bunga_bank/100,2);
-        $kbd->bunga_bank = round($kbd->sub_total_personil*($quotation->persen_bunga_bank/100)/12,2);
-        $kbd->insentif = round($kbd->management_fee*$quotation->persen_insentif/100,2);
-
-        $kbd->grand_total = $kbd->sub_total_personil + $kbd->management_fee + $kbd->bunga_bank + $kbd->insentif;
-        $this->calculateTaxes($kbd, $quotation);
-        $kbd->total_invoice = $kbd->grand_total + $kbd->ppn + $kbd->pph;
-        $kbd->pembulatan = ceil($kbd->total_invoice / 1000) * 1000;
-
-        $isPembulatan = 0;
-        if($quotation->penagihan=="Dengan Pembulatan"){
-            $isPembulatan = 1;
-        }
-        $kbd->is_pembulatan = $isPembulatan;
-
-        $this->calculateCoss($kbd, $quotation, $jumlahHc, $provisi,$quotation);
+        // Total Personil COSS
+        // dd($kbd->total_base_manpower,$kbd->total_exclude_base_manpower,$kbd->personil_ohc,$kbd->biaya_monitoring_kontrol);
+        $kbd->total_personil_coss = round($kbd->total_base_manpower + $kbd->total_exclude_base_manpower +$kbd->personil_ohc_coss, 2);
+        // Subtotal Personil COSS
+        $kbd->sub_total_personil_coss = round($kbd->total_personil_coss * $kbd->jumlah_hc, 2);
 
     }
 
-    private function calculateBpjs(&$kbd, $quotation, $umk)
+    private function calculateBpjs(&$kbd, $quotation, $umk,$hpp)
     {
         // Inisialisasi default
-        $kbd->nominal_takaful = 0;
-        $kbd->bpjs_jkm = 0;
-        $kbd->bpjs_jkk = 0;
-        $kbd->bpjs_jht = 0;
-        $kbd->bpjs_jp = 0;
-        $kbd->bpjs_kes = 0;
-        $kbd->persen_bpjs_jkm = 0;
-        $kbd->persen_bpjs_jkk = 0;
-        $kbd->persen_bpjs_jht = 0;
-        $kbd->persen_bpjs_jp = 0;
-        $kbd->persen_bpjs_kes = 0;
+        $kbd->nominal_takaful = $hpp->takaful;
+        $kbd->bpjs_jkm = $hpp->bpjs_jkm;
+        $kbd->bpjs_jkk = $hpp->bpjs_jkk;
+        $kbd->bpjs_jht = $hpp->bpjs_jht;
+        $kbd->bpjs_jp = $hpp->bpjs_jp;
+        $kbd->bpjs_kes = $hpp->bpjs_ks;
+        $kbd->persen_bpjs_jkm = null;
+        $kbd->persen_bpjs_jkk = null;
+        $kbd->persen_bpjs_jht = null;
+        $kbd->persen_bpjs_jp = null;
+        $kbd->persen_bpjs_kes = null;
 
         if ($quotation->penjamin == "Takaful") {
-            $kbd->nominal_takaful = $quotation->nominal_takaful;
+            if($kbd->nominal_takaful=== null){
+                $kbd->nominal_takaful = $quotation->nominal_takaful;
+            }
         } else {
             $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
             // if($umk==null || $umk==0){
@@ -134,67 +183,91 @@ class QuotationService
             // }
 
             // Hitung JKK berdasarkan resiko
-            switch ($quotation->resiko) {
-                case "Sangat Rendah":
-                    $kbd->bpjs_jkk = $upahBpjs * 0.24 / 100;
-                    $kbd->persen_bpjs_jkk = 0.24;
-                    break;
-                case "Rendah":
-                    $kbd->bpjs_jkk = $upahBpjs * 0.54 / 100;
-                    $kbd->persen_bpjs_jkk = 0.54;
-                    break;
-                case "Sedang":
-                    $kbd->bpjs_jkk = $upahBpjs * 0.89 / 100;
-                    $kbd->persen_bpjs_jkk = 0.89;
-                    break;
-                case "Tinggi":
-                    $kbd->bpjs_jkk = $upahBpjs * 1.27 / 100;
-                    $kbd->persen_bpjs_jkk = 1.27;
-                    break;
-                case "Sangat Tinggi":
-                    $kbd->bpjs_jkk = $upahBpjs * 1.74 / 100;
-                    $kbd->persen_bpjs_jkk = 1.74;
-                    break;
+            if ($kbd->bpjs_jkk === null) {
+                switch ($quotation->resiko) {
+                    case "Sangat Rendah":
+                        $kbd->bpjs_jkk = $upahBpjs * 0.24 / 100;
+                        $kbd->persen_bpjs_jkk = 0.24;
+                        break;
+                    case "Rendah":
+                        $kbd->bpjs_jkk = $upahBpjs * 0.54 / 100;
+                        $kbd->persen_bpjs_jkk = 0.54;
+                        break;
+                    case "Sedang":
+                        $kbd->bpjs_jkk = $upahBpjs * 0.89 / 100;
+                        $kbd->persen_bpjs_jkk = 0.89;
+                        break;
+                    case "Tinggi":
+                        $kbd->bpjs_jkk = $upahBpjs * 1.27 / 100;
+                        $kbd->persen_bpjs_jkk = 1.27;
+                        break;
+                    case "Sangat Tinggi":
+                        $kbd->bpjs_jkk = $upahBpjs * 1.74 / 100;
+                        $kbd->persen_bpjs_jkk = 1.74;
+                        break;
+                }
             }
 
             // Hitung JKM
-            $kbd->bpjs_jkm = $upahBpjs * 0.3 / 100;
-            $kbd->persen_bpjs_jkm = 0.3;
+            if ($kbd->bpjs_jkm === null) {
+                $kbd->bpjs_jkm = $upahBpjs * 0.3 / 100;
+                $kbd->persen_bpjs_jkm = 0.3;
+            }
 
             // Hitung JHT (jika program BPJS mencakup JHT)
-            $kbd->bpjs_jht = in_array($quotation->program_bpjs, ["3 BPJS", "4 BPJS"]) ? $upahBpjs * 3.7 / 100 : 0;
-            $kbd->persen_bpjs_jht = in_array($quotation->program_bpjs, ["3 BPJS", "4 BPJS"]) ? 3.7 : 0;
-
+            if ($quotation->program_bpjs == "3 BPJS" || $quotation->program_bpjs == "4 BPJS") {
+                if($kbd->bpjs_jht=== null){
+                    $kbd->bpjs_jht = $upahBpjs * 3.7 / 100;
+                    $kbd->persen_bpjs_jht = 3.7;
+                }
+            }
+            
             // Hitung JP (jika program BPJS mencakup JP)
-            $kbd->bpjs_jp = $quotation->program_bpjs == "4 BPJS" ? $upahBpjs * 2 / 100 : 0;
-            $kbd->persen_bpjs_jp = $quotation->program_bpjs == "4 BPJS" ? 2 : 0;
+            if ($quotation->program_bpjs == "4 BPJS") {
+                if ($kbd->bpjs_jp === null) {
+                    $kbd->bpjs_jp = $upahBpjs * 2 / 100;
+                    $kbd->persen_bpjs_jp = 2;
+                }
+            }
 
             // Hitung BPJS Kesehatan berdasarkan UMK
-            $kbd->bpjs_kes = $umk * 4 / 100;
-            $kbd->persen_bpjs_kes = 4;
+            if ($kbd->bpjs_kes === null) {
+                $kbd->bpjs_kes = $umk * 4 / 100;
+                $kbd->persen_bpjs_kes = 4;
+            }
+            // dd($kbd->bpjs_kes);
+            
         }
     }
 
-    private function calculateExtras(&$kbd, $quotation, $provisi, $jumlahHc,$umk)
+    private function calculateExtras(&$kbd, $quotation, $provisi, $jumlahHc,$umk,$hpp)
     {
         // Tambahkan perhitungan kompensasi, tunjangan, dll.
         // THR
-        $kbd->tunjangan_hari_raya = 0;
-        if ($quotation->thr == "Diprovisikan") {
-            $kbd->tunjangan_hari_raya = $kbd->nominal_upah / $provisi;
+        $kbd->tunjangan_hari_raya = $hpp->tunjangan_hari_raya;
+        if ($kbd->tunjangan_hari_raya === null) {
+            if ($quotation->thr == "Diprovisikan") {
+                $kbd->tunjangan_hari_raya = $kbd->nominal_upah / $provisi;
+            }
         }
 
         // Kompensasi
-        $kbd->kompensasi = 0;
+        $kbd->kompensasi = $hpp->kompensasi;
         if ($quotation->kompensasi == "Diprovisikan") {
-            $kbd->kompensasi = $kbd->nominal_upah / $provisi;
+            if ($kbd->kompensasi === null) {
+                $kbd->kompensasi = $kbd->nominal_upah / $provisi;
+            }
         }
 
         // Tunjangan Holiday
         $kbd->tunjangan_holiday = 0;
         $quotation->tunjangan_holiday_display = 0;
         if ($quotation->tunjangan_holiday == "Flat") {
-            $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
+            if ($hpp->tunjangan_holiday !== null) {
+                $kbd->tunjangan_holiday = $hpp->tunjangan_hari_libur_nasional;
+            }else{
+                $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
+            }
         } else {
             $quotation->tunjangan_holiday_display = ($umk / 173 * 14) * 1.5;
         }
@@ -203,17 +276,21 @@ class QuotationService
         $kbd->lembur = 0;
         $quotation->lembur_per_jam = 0;
         if ($quotation->lembur == "Flat") {
-            $kbd->lembur = $quotation->nominal_lembur;
+            if ($hpp->lembur !== null) {
+                $kbd->lembur = $hpp->lembur;
+            }else{
+                $kbd->lembur = $quotation->nominal_lembur;
+            }
             $quotation->lembur_per_jam = null;
         } else {
             $quotation->lembur_per_jam = ($umk / 173 * 1.5) * 1;
         }
     }
-
+    
     private function calculateTotalPersonnel($kbd, $quotation, $totalTunjangan)
     {
         // Hitung total personal seperti pada kode
-        return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc;
+        return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc+$kbd->bunga_bank+$kbd->insentif;
     }
 
     private function calculateTaxes(&$kbd, $quotation)
@@ -223,151 +300,172 @@ class QuotationService
         $kbd->pph = 0;
 
         if ($quotation->ppn_pph_dipotong == "Management Fee") {
-            $kbd->ppn = $kbd->management_fee * 11 / 100;
+            $kbd->ppn = $kbd->management_fee * 11/12 * 12/100;
             $kbd->pph = $kbd->management_fee * -2 / 100;
         } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
-            $kbd->ppn = $kbd->grand_total * 11 / 100;
+            $kbd->ppn = $kbd->grand_total * 11/12 * 12/100;
             $kbd->pph = $kbd->grand_total * -2 / 100;
         }
     }
 
-    private function calculateKaporlap($kbd, $value, $provisi)
-{
-    $personilKaporlap = 0;
-    $kaporlapItems = DB::table('sl_quotation_kaporlap')
-        ->whereNull('deleted_at')
-        ->where('quotation_id', $value->id)
-        ->where('quotation_detail_id', $kbd->id)
-        ->get();
+    private function calculateKaporlap($kbd, $value, $provisi,$hpp,$coss)
+    {
+        $personilKaporlap = $hpp->provisi_seragam;
+        $personilKaporlapCoss = $coss->provisi_seragam;
 
-    foreach ($kaporlapItems as $item) {
-        $personilKaporlap += ($item->harga * $item->jumlah) / $provisi / $kbd->jumlah_hc;
+        if ($personilKaporlap === null) {
+            $kaporlapItems = DB::table('sl_quotation_kaporlap')
+            ->whereNull('deleted_at')
+            ->where('quotation_id', $value->id)
+            ->where('quotation_detail_id', $kbd->id)
+            ->get();
+            foreach ($kaporlapItems as $item) {
+                $personilKaporlap += ($item->harga * $item->jumlah) / $provisi / $kbd->jumlah_hc;
+            }
+        }
+        $kbd->personil_kaporlap = $personilKaporlap;
+        
+        if ($personilKaporlapCoss === null) {
+            $personilKaporlapCoss = $personilKaporlap;
+        }
+
+        $kbd->personil_kaporlap_coss = $personilKaporlapCoss;
     }
 
-    $kbd->personil_kaporlap = $personilKaporlap;
-}
+    private function calculateDevices($kbd, $value, $provisi, $jumlahHc,$hpp,$coss)
+    {
+        $personilDevices = $hpp->provisi_peralatan;
+        $personilDevicesCoss = $coss->provisi_peralatan;
+        
+        if($personilDevices === null){
+            $deviceItems = DB::table('sl_quotation_devices')
+            ->whereNull('deleted_at')
+            ->where('quotation_id', $value->id)
+            ->get();
 
-private function calculateDevices($kbd, $value, $provisi, $jumlahHc)
-{
-    $personilDevices = 0;
-    $deviceItems = DB::table('sl_quotation_devices')
-        ->whereNull('deleted_at')
-        ->where('quotation_id', $value->id)
-        ->get();
+            foreach ($deviceItems as $item) {
+                $personilDevices += ($item->harga * $item->jumlah / $jumlahHc) / $provisi;
+            }
+        }
+        $kbd->personil_devices = $personilDevices;
 
-    foreach ($deviceItems as $item) {
-        $personilDevices += ($item->harga * $item->jumlah / $jumlahHc) / $provisi;
+        if ($personilDevicesCoss === null) {
+            $personilDevicesCoss = $personilDevices;
+        }
+
+        $kbd->personil_devices_coss = $personilDevicesCoss;
+
     }
 
-    $kbd->personil_devices = $personilDevices;
-}
+    private function calculateOhc($kbd, $value, $jumlahHc,$provisi,$hpp,$coss)
+    {
+        $personilOhc = $hpp->provisi_ohc;
+        $personilOhcCoss = $coss->provisi_ohc;
 
-private function calculateOhc($kbd, $value, $jumlahHc,$provisi)
-{
-    $totalOhc = 0;
-    $personilOhc = 0;
-    $ohcItems = DB::table('sl_quotation_ohc')
-        ->whereNull('deleted_at')
-        ->where('quotation_id', $value->id)
-        ->get();
+        if ($personilOhc === null) {
+            $ohcItems = DB::table('sl_quotation_ohc')
+            ->whereNull('deleted_at')
+            ->where('quotation_id', $value->id)
+            ->get();
 
-    foreach ($ohcItems as $item) {
-        $totalOhc += ($item->harga * $item->jumlah / $jumlahHc * $kbd->jumlah_hc);
-        $personilOhc = $totalOhc / $provisi;
+            foreach ($ohcItems as $item) {
+                $personilOhc += ($item->harga * $item->jumlah) / $provisi / $jumlahHc;
+            }
+        }
+        $kbd->personil_ohc = $personilOhc;
+
+        if ($personilOhcCoss === null) {
+            $personilOhcCoss = $personilOhc;
+        }
+        $kbd->personil_ohc_coss = $personilOhcCoss;
     }
 
-    $kbd->list_ohc = $ohcItems;
-    $kbd->total_ohc = $totalOhc;
-    $kbd->personil_ohc = $personilOhc;
-}
+    private function calculateChemical($kbd, $value, $provisi,$hpp,$coss)
+    {
+        $personilChemical = $hpp->provisi_chemical;
+        $personilChemicalCoss = $coss->provisi_chemical;
 
-private function calculateChemical($kbd, $value, $provisi)
-{
-    $personilChemical = 0;
-    $chemicalItems = DB::table('sl_quotation_chemical')
-        ->whereNull('deleted_at')
-        ->where('quotation_id', $value->id)
-        ->get();
+        if ($personilChemical === null) {
+            $chemicalItems = DB::table('sl_quotation_chemical')
+            ->whereNull('deleted_at')
+            ->where('quotation_id', $value->id)
+            ->get();
 
-    foreach ($chemicalItems as $item) {
-        $personilChemical += ($item->harga * $item->jumlah) / $provisi;
+            foreach ($chemicalItems as $item) {
+                $personilChemical += ($item->harga * $item->jumlah) / $provisi;
+            }
+        }
+        $kbd->personil_chemical = $personilChemical;
+
+        if ($personilChemicalCoss === null) {
+            $personilChemicalCoss = $personilChemical;
+        }
+
+        $kbd->personil_chemical_coss = $personilChemical;
     }
 
-    $kbd->personil_chemical = $personilChemical;
-}
+    private function calculateCoss(&$quotation, $jumlahHc, $provisi)
+    {
+        $quotation->total_sebelum_management_fee_coss = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->total_sebelum_management_fee_coss += $kbd->sub_total_personil_coss;
+        }
 
-private function calculateCoss($kbd, $value, $jumlahHc, $provisi,$quotation)
-{
-    // Total Base Manpower
-    $kbd->total_base_manpower = round($kbd->nominal_upah + $kbd->total_tunjangan, 2);
+        $quotation->nominal_management_fee_coss = 0;
+        if($quotation->management_fee_id==1){
+            $quotation->nominal_management_fee_coss = $quotation->total_sebelum_management_fee_coss * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==4){
+            $quotation->nominal_management_fee_coss = $quotation->total_sebelum_management_fee_coss * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==5){
+            $quotation->management_fee_coss = 0;
+            // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
+        }
 
-    // Total Exclude Base Manpower
-    $kbd->total_exclude_base_manpower = round(
-        $kbd->tunjangan_hari_raya +
-        $kbd->kompensasi +
-        $kbd->tunjangan_holiday +
-        $kbd->lembur +
-        $kbd->nominal_takaful +
-        $kbd->bpjs_jkk +
-        $kbd->bpjs_jkm +
-        $kbd->bpjs_jht +
-        $kbd->bpjs_jp +
-        $kbd->bpjs_kes +
-        (ceil($kbd->personil_kaporlap / 1000) * 1000) +
-        (ceil($kbd->personil_devices / 1000) * 1000) +
-        (ceil($kbd->personil_chemical / 1000) * 1000),
-        2
-    );
+        $quotation->grand_total_sebelum_pajak_coss = $quotation->total_sebelum_management_fee_coss + $quotation->nominal_management_fee_coss;
+        $quotation->ppn_coss = $quotation->nominal_management_fee_coss * 11/12* 12/ 100;
+        $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
+        $quotation->total_invoice_coss = $quotation->grand_total_sebelum_pajak_coss + $quotation->ppn_coss + $quotation->pph_coss;
+        $quotation->pembulatan_coss = ceil($quotation->total_invoice_coss / 1000) * 1000;
 
-    // Total Personil COSS
-    // dd($kbd->total_base_manpower,$kbd->total_exclude_base_manpower,$kbd->personil_ohc,$kbd->biaya_monitoring_kontrol);
-    $kbd->total_personil_coss = round($kbd->total_base_manpower + $kbd->total_exclude_base_manpower +$kbd->personil_ohc+$kbd->biaya_monitoring_kontrol, 2);
+        // bunga bank dan insentif
+        // $pengaliTop = 0;
+        // if ($quotation->top == "Kurang Dari 7 Hari") {
+        //     $pengaliTop = 7;
+        // }else if($quotation->top == "Lebih Dari 7 Hari"){
+        //     $pengaliTop = $quotation->jumlah_hari_invoice;
+        // };
+        // return $quotation;
 
-    // Subtotal Personil COSS
-    $kbd->sub_total_personil_coss = round($kbd->total_personil_coss * $kbd->jumlah_hc, 2);
-
-    // Management Fee COSS
-    $kbd->management_fee_coss = 0;
-    if ($value->management_fee_id == 1 || $value->management_fee_id == 4) {
-        $kbd->management_fee_coss = round($kbd->sub_total_personil_coss * $value->persentase / 100, 2);
-    } elseif ($value->management_fee_id == 5) {
-        $kbd->management_fee_coss = round($kbd->nominal_upah * $value->persentase / 100, 2);
     }
+    private function calculateHpp(&$quotation, $jumlahHc, $provisi){
+        $quotation->total_sebelum_management_fee = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->total_sebelum_management_fee += $kbd->sub_total_personil;
+        }
 
-    // // bunga bank dan insentif
-    // $pengaliTop = 0;
-    // if ($quotation->top == "Kurang Dari 7 Hari") {
-    //     $pengaliTop = 7;
-    // }else if($quotation->top == "Lebih Dari 7 Hari"){
-    //     $pengaliTop = $quotation->jumlah_hari_invoice;
-    // };
+        $quotation->nominal_management_fee = 0;
+        if($quotation->management_fee_id==1){
+            $quotation->nominal_management_fee = $quotation->total_sebelum_management_fee * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==4){
+            $quotation->nominal_management_fee = $quotation->total_sebelum_management_fee * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==5){
+            $kbd->management_fee = 0;
+            // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
+        }
 
-    // Grand Total COSS
-    // $kbd->grand_total_coss = round(
-    //     $kbd->sub_total_personil_coss + $kbd->total_ohc + $kbd->management_fee_coss + $kbd->bunga_bank + $kbd->insentif,
-    //     2
-    // );
-    $kbd->grand_total_coss = round(
-        // $kbd->sub_total_personil_coss + $kbd->total_ohc + $kbd->management_fee_coss,2);
-        $kbd->sub_total_personil_coss + $kbd->management_fee_coss,2);
+        $quotation->grand_total_sebelum_pajak = $quotation->total_sebelum_management_fee + $quotation->nominal_management_fee;
+        $quotation->ppn = $quotation->nominal_management_fee * 11/12* 12/ 100;
+        $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
+        $quotation->total_invoice = $quotation->grand_total_sebelum_pajak + $quotation->ppn + $quotation->pph;
+        $quotation->pembulatan = ceil($quotation->total_invoice / 1000) * 1000;
 
-    // PPN dan PPh COSS
-    $kbd->ppn_coss = 0;
-    $kbd->pph_coss = 0;
-    if ($value->ppn_pph_dipotong == "Management Fee") {
-        $kbd->ppn_coss = round($kbd->management_fee_coss * 11 / 100, 2);
-        $kbd->pph_coss = round($kbd->management_fee_coss * -2 / 100, 2);
-    } elseif ($value->ppn_pph_dipotong == "Total Invoice") {
-        $kbd->ppn_coss = round($kbd->grand_total_coss * 11 / 100, 2);
-        $kbd->pph_coss = round($kbd->grand_total_coss * -2 / 100, 2);
+        // bunga bank dan insentif
+        // $pengaliTop = 0;
+        // if ($quotation->top == "Kurang Dari 7 Hari") {
+        //     $pengaliTop = 7;
+        // }else if($quotation->top == "Lebih Dari 7 Hari"){
+        //     $pengaliTop = $quotation->jumlah_hari_invoice;
+        // };
+        // return $quotation;
     }
-
-    // Total Invoice COSS
-    $kbd->total_invoice_coss = round($kbd->grand_total_coss + $kbd->ppn_coss + $kbd->pph_coss, 2);
-
-    // Pembulatan COSS
-    $kbd->pembulatan_coss = ceil($kbd->total_invoice_coss / 1000) * 1000;
-}
-
-
 }
