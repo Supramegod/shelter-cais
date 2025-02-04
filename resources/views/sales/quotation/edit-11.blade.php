@@ -168,7 +168,7 @@
                         <td style="text-align:left" class="">BPJS Kesehatan</td>
                         <td style="text-align:center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}} 
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}} </td>
                         @endforeach
                       </tr>
                       <tr class="">
@@ -176,7 +176,7 @@
                         <td style="text-align:left" class="">BPJS Ketenagakerjaan</td>
                         <td style="text-align:center">{{number_format($quotation->persen_bpjs_ketenagakerjaan,2,",",".")}}%</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_ketenagakerjaan,2,",",".")}} 
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_ketenagakerjaan,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-magnify text-primary view-bpjs" data-persen-bpjs-jkk="{{$detailJabatan->persen_bpjs_jkk}}" data-persen-bpjs-jkm="{{$detailJabatan->persen_bpjs_jkm}}" data-persen-bpjs-jht="{{$detailJabatan->persen_bpjs_jht}}" data-persen-bpjs-jp="{{$detailJabatan->persen_bpjs_jp}}" data-bpjs-jkk="{{$detailJabatan->bpjs_jkk}}" data-bpjs-jkm="{{$detailJabatan->bpjs_jkm}}" data-bpjs-jht="{{$detailJabatan->bpjs_jht}}" data-bpjs-jp="{{$detailJabatan->bpjs_jp}}"></i></a></td>
                         @endforeach
                       </tr>                      
                       @php $nomorUrut++; @endphp
@@ -683,6 +683,73 @@ BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
   </div>
 </div>
 
+<div class="modal fade" id="bpjsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Detail BPJS Ketenagakerjaan</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Jenis BPJS TK</th>
+                <th>Persentase</th>
+                <th>Nominal</th>
+              </tr>
+            </thead>
+            <tbody id="bpjs-details">
+              <!-- BPJS details will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('body').on('click', '.view-bpjs', function() {
+    const bpjsDetails = [
+      { jenis: 'JKK', persen: $(this).data('persen-bpjs-jkk'), nominal: $(this).data('bpjs-jkk') },
+      { jenis: 'JKM', persen: $(this).data('persen-bpjs-jkm'), nominal: $(this).data('bpjs-jkm') },
+      { jenis: 'JHT', persen: $(this).data('persen-bpjs-jht'), nominal: $(this).data('bpjs-jht') },
+      { jenis: 'JP', persen: $(this).data('persen-bpjs-jp'), nominal: $(this).data('bpjs-jp') }
+    ];
+
+    let bpjsTableContent = '';
+    let total = 0;
+    let totalPersen = 0;
+    bpjsDetails.forEach((detail, index) => {
+      bpjsTableContent += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${detail.jenis}</td>
+          <td>${detail.persen}%</td>
+          <td>Rp. ${parseFloat(detail.nominal).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+      `;
+      totalPersen += detail.persen;
+      total += detail.nominal;
+    });
+
+    bpjsTableContent += `
+        <tr>
+          <td colspan="2" class="text-end">TOTAL</td>
+          <td>${totalPersen}%</td>
+          <td>Rp. ${parseFloat(total).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+      `;
+    $('#bpjs-details').html(bpjsTableContent);
+    $('#bpjsModal').modal('show');
+  });
+</script>
 <!--/ Content -->
 @endsection
 
