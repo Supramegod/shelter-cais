@@ -602,6 +602,12 @@
                 </li>
             </ul>
         </li>
+        <li class="menu-item @if(str_contains(Request::url(), route('sdt-training'))) active @endif">
+            <a href="{{route('sdt-training')}}" class="menu-link">
+                <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+                <div data-i18n="Training Data">Training Data</div>
+            </a>
+        </li>
         
         @endif
 

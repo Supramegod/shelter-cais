@@ -3,7 +3,7 @@
 @section('content')
 <!--/ Content -->
 <div class="container-fluid flex-grow-1 container-p-y">
-  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Master/ </span> Lihat Training Divisi</h4>
+  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Master/ </span> Training Divisi</h4>
   <!-- Multi Column with Form Separator -->
   <div class="row">
     <!-- Form Label Alignment -->

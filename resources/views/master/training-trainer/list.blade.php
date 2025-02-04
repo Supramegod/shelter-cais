@@ -102,7 +102,7 @@
                     name : 'trainer',
                     className:'text-center'
                 },{
-                    data : 'divisi_id',
+                    data : 'divisi',
                     name : 'divisi',
                     className:'text-center'
                 },{

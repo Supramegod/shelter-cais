@@ -113,7 +113,7 @@
                     name : 'kompetensi',
                     className:'dt-body-center'
                 },{
-                    data : 'laman_id',
+                    data : 'laman',
                     name : 'laman_id',
                     className:'dt-body-center'
                 },{

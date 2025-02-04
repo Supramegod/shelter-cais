@@ -102,7 +102,7 @@
                     name : 'area',
                     className:'text-center'
                 },{
-                    data : 'laman_id',
+                    data : 'laman',
                     name : 'laman_id',
                     className:'text-center'
                 },{

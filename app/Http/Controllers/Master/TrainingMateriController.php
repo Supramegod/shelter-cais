@@ -21,20 +21,19 @@ class TrainingMateriController extends Controller
     public function list(Request $request){
         try {
             
-            $data = DB::table('m_training_materi')->where('is_aktif',1)->get();
+            $data = DB::table('m_training_materi as materi')
+                    ->leftjoin('m_training_laman as laman','laman.id', '=', 'materi.laman_id')
+                    ->select('materi.id', 'materi.materi', 'materi.tujuan', 'materi.kompetensi', 'laman.laman', 'materi.updated_at')
+                    ->where('materi.is_aktif', 1)
+                    ->get();
             return DataTables::of($data)
-                // ->addColumn('sumber', function ($data) {
-                //     return '<div class="justify-content-center d-flex">
-                //                 <a target="_blank" href="'.$data->sumber.'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-link"></i></a> &nbsp;
-                //             </div>';
-                // })
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
                         <a href="'.route('training-materi.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
                         <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
                 })
-                ->rawColumns(['aksi', 'sumber'])
+                ->rawColumns(['aksi'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);

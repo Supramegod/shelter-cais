@@ -20,7 +20,12 @@ class TrainingAreaController extends Controller
 
     public function list(Request $request){
         try {
-            $data = DB::table('m_training_area')->whereNull('deleted_at')->get();
+            $data = DB::table('m_training_area as area')
+            ->leftjoin('m_training_laman as laman','laman.id', '=', 'area.laman_id')
+            ->select('area.id', 'area.area', 'laman.laman', 'area.created_at')
+            ->where('area.is_aktif', 1)
+            ->get();
+            
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">

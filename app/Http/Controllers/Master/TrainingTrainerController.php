@@ -20,7 +20,12 @@ class TrainingTrainerController extends Controller
 
     public function list(Request $request){
         try {
-            $data = DB::table('m_training_trainer')->whereNull('deleted_at')->get();
+            $data = DB::table('m_training_trainer as trainer')
+            ->leftjoin('m_training_divisi as divisi','divisi.id', '=', 'trainer.divisi_id')
+            ->select('trainer.id', 'trainer.trainer', 'divisi.divisi', 'trainer.created_at')
+            ->where('trainer.is_aktif', 1)
+            ->get();
+
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">

@@ -38,6 +38,8 @@ use App\Http\Controllers\Master\TrainingTrainerController;
 use App\Http\Controllers\Master\TrainingAreaController;
 use App\Http\Controllers\Master\TrainingClientController;
 
+use App\Http\Controllers\Sdt\SdtTrainingController;
+
 
 Route::controller(AuthController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
@@ -507,6 +509,32 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/training-client/save', 'save')->name('training-client.save');
         Route::post('/master/training-client/delete', 'delete')->name('training-client.delete');
         Route::get('/master/training-client/list', 'list')->name('training-client.list'); // ajax
+    });
+
+    Route::controller(SdtTrainingController::class)->group(function() {
+        
+        Route::get('/sdt/sdt-training', 'index')->name('sdt-training');
+        Route::get('/sdt/sdt-training/add', 'add')->name('sdt-training.add');
+        // Route::get('/sales/leads/index-terhapus', 'indexTerhapus')->name('leads.index-terhapus');
+        // 
+        // Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
+        // Route::get('/sales/leads/import', 'import')->name('leads.import');
+        // Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
+
+        // Route::post('/sales/leads/inquiry-import', 'inquiryImport')->name('leads.inquiry-import');
+        // Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
+        Route::post('/sdt/sdt-training/save', 'save')->name('sdt-training.save');
+        Route::post('/sdt/sdt-training/delete', 'delete')->name('sdt-training.delete');
+
+        // Route::get('/sales/leads/export-excel', 'exportExcel')->name('leads.export-excel');
+
+        Route::get('/sdt/sdt-training/list', 'list')->name('sdt-training.list'); // ajax
+        // Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
+        // Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
+        // Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation'); // ajax
+
+        // Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads'); // ajax
+        // Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads'); // ajax
     });
 
     Route::controller(MonitoringKontrakController::class)->group(function() {
