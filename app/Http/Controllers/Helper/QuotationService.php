@@ -83,7 +83,6 @@ class QuotationService
             $this->calculateHpp($quotation, $jumlahHc, $provisi);
             $this->calculateCoss($quotation, $jumlahHc, $provisi);
         }
-
         return $quotation;
     }
 
@@ -138,11 +137,8 @@ class QuotationService
             $kbd->tunjangan_holiday +
             $kbd->lembur +
             $kbd->nominal_takaful +
-            $kbd->bpjs_jkk +
-            $kbd->bpjs_jkm +
-            $kbd->bpjs_jht +
-            $kbd->bpjs_jp +
-            $kbd->bpjs_kes +
+            $kbd->bpjs_kesehatan +
+            $kbd->bpjs_ketenagakerjaan +
             $kbd->personil_kaporlap_coss+
             $kbd->personil_devices_coss +
             $kbd->personil_chemical_coss,
@@ -158,9 +154,8 @@ class QuotationService
     }
 
     private function calculateBpjs(&$kbd, $quotation, $umk,$hpp)
-    {
-        // Inisialisasi default
-        $kbd->nominal_takaful = $hpp->takaful;
+    {        // Inisialisasi default
+        // $kbd->nominal_takaful = $hpp->takaful;
         $kbd->bpjs_jkm = $hpp->bpjs_jkm;
         $kbd->bpjs_jkk = $hpp->bpjs_jkk;
         $kbd->bpjs_jht = $hpp->bpjs_jht;
@@ -172,72 +167,99 @@ class QuotationService
         $kbd->persen_bpjs_jp = null;
         $kbd->persen_bpjs_kes = null;
 
-        if ($quotation->penjamin == "Takaful") {
-            if($kbd->nominal_takaful=== null){
-                $kbd->nominal_takaful = $quotation->nominal_takaful;
-            }
-        } else {
-            $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
-            // if($umk==null || $umk==0){
-            //     $umk = $kbd->nominal_upah;
-            // }
+        // if($kbd->nominal_takaful=== null){
+        //     $kbd->nominal_takaful = $quotation->nominal_takaful;
+        // }
 
-            // Hitung JKK berdasarkan resiko
-            if ($kbd->bpjs_jkk === null) {
-                switch ($quotation->resiko) {
-                    case "Sangat Rendah":
-                        $kbd->bpjs_jkk = $upahBpjs * 0.24 / 100;
-                        $kbd->persen_bpjs_jkk = 0.24;
-                        break;
-                    case "Rendah":
-                        $kbd->bpjs_jkk = $upahBpjs * 0.54 / 100;
-                        $kbd->persen_bpjs_jkk = 0.54;
-                        break;
-                    case "Sedang":
-                        $kbd->bpjs_jkk = $upahBpjs * 0.89 / 100;
-                        $kbd->persen_bpjs_jkk = 0.89;
-                        break;
-                    case "Tinggi":
-                        $kbd->bpjs_jkk = $upahBpjs * 1.27 / 100;
-                        $kbd->persen_bpjs_jkk = 1.27;
-                        break;
-                    case "Sangat Tinggi":
-                        $kbd->bpjs_jkk = $upahBpjs * 1.74 / 100;
-                        $kbd->persen_bpjs_jkk = 1.74;
-                        break;
-                }
-            }
+        $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
+        // if($umk==null || $umk==0){
+        //     $umk = $kbd->nominal_upah;
+        // }
 
-            // Hitung JKM
-            if ($kbd->bpjs_jkm === null) {
-                $kbd->bpjs_jkm = $upahBpjs * 0.3 / 100;
-                $kbd->persen_bpjs_jkm = 0.3;
+        // Hitung JKK berdasarkan resiko
+        if ($kbd->bpjs_jkk === null) {
+            switch ($quotation->resiko) {
+                case "Sangat Rendah":
+                    $kbd->bpjs_jkk = $upahBpjs * 0.24 / 100;
+                    $kbd->persen_bpjs_jkk = 0.24;
+                    break;
+                case "Rendah":
+                    $kbd->bpjs_jkk = $upahBpjs * 0.54 / 100;
+                    $kbd->persen_bpjs_jkk = 0.54;
+                    break;
+                case "Sedang":
+                    $kbd->bpjs_jkk = $upahBpjs * 0.89 / 100;
+                    $kbd->persen_bpjs_jkk = 0.89;
+                    break;
+                case "Tinggi":
+                    $kbd->bpjs_jkk = $upahBpjs * 1.27 / 100;
+                    $kbd->persen_bpjs_jkk = 1.27;
+                    break;
+                case "Sangat Tinggi":
+                    $kbd->bpjs_jkk = $upahBpjs * 1.74 / 100;
+                    $kbd->persen_bpjs_jkk = 1.74;
+                    break;
             }
-
-            // Hitung JHT (jika program BPJS mencakup JHT)
-            if ($quotation->program_bpjs == "3 BPJS" || $quotation->program_bpjs == "4 BPJS") {
-                if($kbd->bpjs_jht=== null){
-                    $kbd->bpjs_jht = $upahBpjs * 3.7 / 100;
-                    $kbd->persen_bpjs_jht = 3.7;
-                }
-            }
-            
-            // Hitung JP (jika program BPJS mencakup JP)
-            if ($quotation->program_bpjs == "4 BPJS") {
-                if ($kbd->bpjs_jp === null) {
-                    $kbd->bpjs_jp = $upahBpjs * 2 / 100;
-                    $kbd->persen_bpjs_jp = 2;
-                }
-            }
-
-            // Hitung BPJS Kesehatan berdasarkan UMK
-            if ($kbd->bpjs_kes === null) {
-                $kbd->bpjs_kes = $umk * 4 / 100;
-                $kbd->persen_bpjs_kes = 4;
-            }
-            // dd($kbd->bpjs_kes);
-            
         }
+
+        // Hitung JKM
+        if ($kbd->bpjs_jkm === null) {
+            $kbd->bpjs_jkm = $upahBpjs * 0.3 / 100;
+            $kbd->persen_bpjs_jkm = 0.3;
+        }
+
+        // Hitung JHT (jika program BPJS mencakup JHT)
+        if($kbd->bpjs_jht=== null){
+            $kbd->bpjs_jht = $upahBpjs * 3.7 / 100;
+            $kbd->persen_bpjs_jht = 3.7;
+        }
+        
+        // Hitung JP (jika program BPJS mencakup JP)
+        if ($kbd->bpjs_jp === null) {
+            $kbd->bpjs_jp = $upahBpjs * 2 / 100;
+            $kbd->persen_bpjs_jp = 2;
+        }
+
+        // Hitung BPJS Kesehatan berdasarkan UMK
+        if ($kbd->bpjs_kes === null) {
+            $kbd->bpjs_kes = $umk * 4 / 100;
+            $kbd->persen_bpjs_kes = 4;
+        } 
+
+        if($kbd->is_bpjs_jkk=="0"){
+            $kbd->bpjs_jkk = 0;
+            $kbd->persen_bpjs_jkk = 0;
+        }
+        if ($kbd->is_bpjs_jkm == "0") {
+            $kbd->bpjs_jkm = 0;
+            $kbd->persen_bpjs_jkm = 0;
+        }
+        if ($kbd->is_bpjs_jht == "0") {
+            $kbd->bpjs_jht = 0;
+            $kbd->persen_bpjs_jht = 0;
+        }
+        if ($kbd->is_bpjs_jp == "0") {
+            $kbd->bpjs_jp = 0;
+            $kbd->persen_bpjs_jp = 0;
+        }
+        // if ($kbd->is_bpjs_kes == "0") {
+        //     $kbd->bpjs_kes = 0;
+        //     $kbd->persen_bpjs_kes = 0;
+        // }
+        
+        $kbd->persen_bpjs_ketenagakerjaan = $kbd->persen_bpjs_jkk+$kbd->persen_bpjs_jkm+$kbd->persen_bpjs_jht+$kbd->persen_bpjs_jp;
+        $kbd->bpjs_ketenagakerjaan = $kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp;
+        $quotation->persen_bpjs_ketenagakerjaan = $kbd->persen_bpjs_ketenagakerjaan;
+
+        if($kbd->penjamin_kesehatan=="BPJS"){
+            $kbd->bpjs_kesehatan = $kbd->bpjs_kes;
+            $kbd->persen_bpjs_kesehatan = $kbd->persen_bpjs_kes;
+            $quotation->persen_bpjs_kesehatan = $kbd->persen_bpjs_kesehatan;
+        }else{
+            $kbd->bpjs_kesehatan = $kbd->nominal_takaful;
+            $kbd->persen_bpjs_kesehatan = 0;
+            // dd($kbd->bpjs_jkk,$kbd->bpjs_jkm,$kbd->bpjs_jht,$kbd->bpjs_jp,$kbd->bpjs_kes);
+        };
     }
 
     private function calculateExtras(&$kbd, $quotation, $provisi, $jumlahHc,$umk,$hpp)
@@ -263,7 +285,7 @@ class QuotationService
         $kbd->tunjangan_holiday = 0;
         $quotation->tunjangan_holiday_display = 0;
         if ($quotation->tunjangan_holiday == "Flat") {
-            if ($hpp->tunjangan_holiday !== null) {
+            if ($hpp->tunjangan_hari_libur_nasional !== null) {
                 $kbd->tunjangan_holiday = $hpp->tunjangan_hari_libur_nasional;
             }else{
                 $kbd->tunjangan_holiday = $quotation->nominal_tunjangan_holiday;
@@ -282,15 +304,18 @@ class QuotationService
                 $kbd->lembur = $quotation->nominal_lembur;
             }
             $quotation->lembur_per_jam = null;
+            $quotation->nominal_lembur = $kbd->lembur;
         } else {
             $quotation->lembur_per_jam = ($umk / 173 * 1.5) * 1;
         }
+        $quotation->nominal_lembur = $kbd->lembur;
     }
     
     private function calculateTotalPersonnel($kbd, $quotation, $totalTunjangan)
     {
         // Hitung total personal seperti pada kode
-        return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc+$kbd->bunga_bank+$kbd->insentif;
+        // return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp+$kbd->bpjs_kes+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc+$kbd->bunga_bank+$kbd->insentif;
+                return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_ketenagakerjaan+$kbd->bpjs_kesehatan+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc+$kbd->bunga_bank+$kbd->insentif;
     }
 
     private function calculateTaxes(&$kbd, $quotation)

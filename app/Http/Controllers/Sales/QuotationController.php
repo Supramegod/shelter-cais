@@ -1553,17 +1553,30 @@ class QuotationController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->first();
+            $quotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $jenisPerusahaanId = $request['jenis-perusahaan'];
             $resiko = $request['resiko'];
             $programBpjs = $request['program-bpjs'];
-            $isTakaful = $request['is_takaful'];
-            $nominalTakaful = $request['nominal-takaful'];
+            $isAktif = 1;
 
-            if($isTakaful == "Tidak"){
-                $nominalTakaful = 0;
-            }else{
-                $nominalTakaful = str_replace(".","",$nominalTakaful);
-                $nominalTakaful = str_replace(",",".",$nominalTakaful);
+            foreach ($quotationDetail as $key => $value) {
+                $penjamin = $request->penjamin[$value->id] ?? null;
+                $jkk = $request->jkk[$value->id] ?? null;
+                $jkm = $request->jkm[$value->id] ?? null;
+                $jht = $request->jht[$value->id] ?? null;
+                $jp = $request->jp[$value->id] ?? null;
+                $nominalTakaful = $request->nominal_takaful[$value->id] ?? null;
+
+                DB::table('sl_quotation_detail')->where('id',$value->id)->update([
+                    'penjamin_kesehatan' => $penjamin,
+                    'is_bpjs_jkk' => $jkk=="on" ? 1 : 0,
+                    'is_bpjs_jkm' => $jkm=="on" ? 1 : 0,
+                    'is_bpjs_jht' => $jht=="on" ? 1 : 0,
+                    'is_bpjs_jp' => $jp=="on" ? 1 : 0,
+                    'nominal_takaful' => $nominalTakaful,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->full_name
+                ]);
             }
 
             $jenisPerusahaan = null;
@@ -1575,11 +1588,11 @@ class QuotationController extends Controller
             }
 
             $isAktif = $quotation->is_aktif;
-            if($isAktif==2){
-                if($programBpjs != "4 BPJS"){
-                    $isAktif = 0;
-                }
-            }
+            // if($isAktif==2){
+            //     if($programBpjs != "4 BPJS"){
+            //         $isAktif = 0;
+            //     }
+            // }
 
             if($isAktif == 2){
                 $isAktif = 1;
@@ -1600,10 +1613,6 @@ class QuotationController extends Controller
                 'jenis_perusahaan' => $jenisPerusahaan,
                 'resiko' => $resiko,
                 'is_aktif' => $isAktif,
-                'penjamin' => 'BPJS',
-                'program_bpjs' => $programBpjs,
-                'nominal_takaful' => $nominalTakaful,
-                'is_takaful' => $isTakaful,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);

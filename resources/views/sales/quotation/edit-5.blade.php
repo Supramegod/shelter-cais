@@ -26,7 +26,7 @@
               </div>
               <div class="row mb-3">
                 <div class="row mb-3 mt-3">
-                  <div class="col-sm-6">
+                  <div class="col-sm-12">
                     <label class="form-label" for="jenis-perusahaan">Jenis Perusahaan</label>
                     <div class="input-group">
                       <select id="jenis-perusahaan" name="jenis-perusahaan" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -37,7 +37,7 @@
                       </select>
                     </div>
                   </div>
-                  <div class="col-sm-6">
+                  <div class="col-sm-12">
                     <label class="form-label" for="resiko">Resiko</label>
                     <div class="input-group">
                       <input type="text" class="form-control" name="resiko" id="resiko" value="{{$quotation->resiko}}" readonly>
@@ -45,35 +45,62 @@
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-6">
-                    <label class="form-label" for="program-bpjs">Program BPJS</label>
-                    <div class="input-group">
-                      <select id="program-bpjs" name="program-bpjs" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih data -</option>
-                        <option value="2 BPJS" @if($quotation->program_bpjs == '2 BPJS') selected @endif>2 BPJS ( BPJS JKK , BPJS JKM ) </option>  
-                        <option value="3 BPJS" @if($quotation->program_bpjs == '3 BPJS') selected @endif>3 BPJS ( BPJS JKK , BPJS JKM , BPJS JHT )</option>
-                        <option value="4 BPJS" @if($quotation->program_bpjs == '4 BPJS') selected @elseif($quotation->program_bpjs ==null) selected @endif>4 BPJS ( BPJS JKK , BPJS JKM , BPJS JHT , BPJS JP )</option>
-                      </select>
+                  <div class="col-12">
+                    <label class="form-label">Detail Program</label>
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                            <tr class="text-center fw-bold align-middle">
+                              <th rowspan="2">No</th>
+                              <th rowspan="2">Posisi</th>
+                              <th colspan="4">BPJS</th>
+                              <th rowspan="2">Kesehatan</th>
+                              <th rowspan="2">Nominal Takaful</th>
+                            </tr>
+                            <tr class="text-center fw-bold align-middle">
+                              <th>JKK</th>
+                              <th>JKM</th>
+                              <th>JHT</th>
+                              <th>JP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          @foreach($quotation->quotation_detail as $index => $detail)
+                          <tr class="text-center align-middle">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $detail->jabatan_kebutuhan }}</td>
+                            <td><input class="check-bpjs" type="checkbox" name="jkk[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jkk=='1' ) checked @endif></td>
+                            <td><input class="check-bpjs" type="checkbox" name="jkm[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jkm=='1') checked @endif></td>
+                            <td><input class="check-bpjs" type="checkbox" name="jht[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jht=='1') checked @endif></td>
+                            <td><input class="check-bpjs" type="checkbox" name="jp[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jp=='1') checked @endif></td>
+                            <td>
+                              <select name="penjamin[{{ $detail->id }}]" class="form-select penjamin-select" data-detail="{{ $detail->id }}">
+                                <option value="">- Pilih Penjamin -</option>
+                                <option value="BPJS" @if($detail->penjamin_kesehatan == 'BPJS') selected @elseif($detail->penjamin_kesehatan==null) selected @endif>BPJS</option>
+                                <option value="Takaful" @if($detail->penjamin_kesehatan == 'Takaful') selected @endif>Takaful</option>
+                              </select>
+                            </td>
+                            <td><input type="number" value="{{$detail->nominal_takaful}}" name="nominal_takaful[{{ $detail->id }}]" class="form-control text-end nominal-takaful" disabled></td>
+                          </tr>
+                          @endforeach
+                        </tbody>
+                      </table>
                     </div>
                     <span class="text-warning">*Program BPJS selain 4 program membutuhkan persetujuan</span>
                   </div>
-                  <div class="col-sm-6">
-                    <label class="form-label" for="is_takaful">Takaful ?</label>
-                    <div class="input-group">
-                      <select id="is_takaful" name="is_takaful" class="form-select" data-allow-clear="true" tabindex="-1" value="{{$quotation->is_takaful}}"> 
-                        <option value="">- Pilih data -</option>
-                        <option value="0" @if($quotation->is_takaful == '0') @endif>Tidak</option>
-                        <option value="1" @if($quotation->is_takaful == '1') selected @endif>Ya</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div id="d-nominal-takaful" class="col-sm-6 d-none">
-                    <label class="form-label" for="nominal-takaful">Nominal takaful</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control mask-nominal text-end" value="{{$quotation->nominal_takaful}}" id="nominal-takaful" name="nominal-takaful">
-                    </div>
-                  </div>
+
+                  <script>
+                    $(document).ready(function() {
+                      $('.penjamin-select').on('change', function() {
+                        let selected = $(this).val();
+                        if (selected == 'Takaful') {
+                          $(this).closest('tr').find('.nominal-takaful').prop('disabled', false);
+                        } else {
+                          $(this).closest('tr').find('.nominal-takaful').prop('disabled', true).val('');
+                        }
+                      });
+                    });
+                  </script>
                 </div>
               </div>
               @include('sales.quotation.action')
@@ -93,38 +120,52 @@
 <script>
   $(document).ready(function(){
 
-    let extra = 0;
-    $('.mask-nominal').on("keyup", function(event) {    
-      // When user select text in the document, also abort.
-      var selection = window.getSelection().toString();
-      if (selection !== '') {
-        return;
-      }
+    // let extra = 0;
+    // $('.mask-nominal').on("keyup", function(event) {    
+    //   // When user select text in the document, also abort.
+    //   var selection = window.getSelection().toString();
+    //   if (selection !== '') {
+    //     return;
+    //   }
 
-      // When the arrow keys are pressed, abort.
-      if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
-        if (event.keyCode == 38) {
-          extra = 1000;
-        } else if (event.keyCode == 40) {
-          extra = -1000;
-        } else {
-          return;
-        }
+    //   // When the arrow keys are pressed, abort.
+    //   if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+    //     if (event.keyCode == 38) {
+    //       extra = 1000;
+    //     } else if (event.keyCode == 40) {
+    //       extra = -1000;
+    //     } else {
+    //       return;
+    //     }
 
-      }
+    //   }
 
-      var $this = $(this);
-      // Get the value.
-      var input = $this.val();
-      var input = input.replace(/[\D\s\._\-]+/g, "");
-      input = input ? parseInt(input, 10) : 0;
-      input += extra;
-      extra = 0;
-      $this.val(function() {
-        return (input === 0) ? "" : input.toLocaleString("id-ID");
-      });
-    });
-        
+    //   var $this = $(this);
+    //   // Get the value.
+    //   var input = $this.val();
+    //   var input = input.replace(/[\D\s\._\-]+/g, "");
+    //   input = input ? parseInt(input, 10) : 0;
+    //   input += extra;
+    //   extra = 0;
+    //   $this.val(function() {
+    //     return (input === 0) ? "" : input.toLocaleString("id-ID");
+    //   });
+    // });
+    
+    // IMask(
+    //         document.getElementById('mask-nominal'),
+    //         {
+    //             mask: 'Rp.num',
+    //             blocks: {
+    //             num: {
+    //                 // nested masks are available!
+    //                 mask: Number,
+    //                 thousandsSeparator: '.'
+    //             }
+    //             }
+    //         }
+    //         )
+
     $(document).ready(function() {
       $('#jenis-perusahaan').select2();
     });
@@ -165,18 +206,29 @@
       if(obj['jenis-perusahaan'] == null || obj['jenis-perusahaan'] == ""){
         msg += "<b>Jenis Perusahaan</b> belum dipilih </br>";
       }
-      if(obj['is_takaful'] == null || obj['is_takaful'] == ""){
-        msg += "<b>Takaful</b> belum dipilih </br>";
-      }else{
-        if(obj['is_takaful'] == "1"){
-          if(obj['nominal-takaful'] == null || obj['nominal-takaful'] == ""){
-            msg += "<b>Nominal Takaful</b> belum diisi </br>";
+
+      $('.penjamin-select').each(function() {
+        let index = $(this).data('detail');
+        let value = $(this).val();
+        if (value == 'Takaful') {
+          if (obj['nominal_takaful[' + index + ']'] == null || obj['nominal_takaful[' + index + ']'] == "") {
+        msg += "<b>Nominal Takaful</b> belum diisi </br>";
           }
         }
-      }
-      if(obj['program-bpjs'] == null || obj['program-bpjs'] == ""){
-        msg += "<b>Program BPJS</b> belum dipilih </br>";
-      }
+      });
+
+      // if(obj['is_takaful'] == null || obj['is_takaful'] == ""){
+      //   msg += "<b>Takaful</b> belum dipilih </br>";
+      // }else{
+      //   if(obj['is_takaful'] == "1"){
+      //     if(obj['nominal-takaful'] == null || obj['nominal-takaful'] == ""){
+      //       msg += "<b>Nominal Takaful</b> belum diisi </br>";
+      //     }
+      //   }
+      // }
+      // if(obj['program-bpjs'] == null || obj['program-bpjs'] == ""){
+      //   msg += "<b>Program BPJS</b> belum dipilih </br>";
+      // }
 
       if(obj['resiko'] == null || obj['resiko'] == ""){
         msg += "<b>Resiko </b> belum dipilih </br>";
