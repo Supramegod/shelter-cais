@@ -7,14 +7,14 @@
             <div data-i18n="Dashboards">Home</div>
             </a>
         </li>
-        @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,98,99,100]))
+        @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,40,98,99,100]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
                 <div data-i18n="Master Data">Dashboard</div>
             </a>
             <ul class="menu-sub">
-                @if(in_array(Auth::user()->role_id,[2,52,54,55,56,53,56,96,97,98,99,100]))
+                @if(in_array(Auth::user()->role_id,[2,52,54,55,56,53,56,96,97,40,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-approval'))) active @endif">
                     <a href="{{route('dashboard-approval')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
@@ -30,7 +30,7 @@
                     </a>
                 </li>
                 @endif
-                @if(in_array(Auth::user()->role_id,[2,31,32,33,52,53,56,96,97,98,99,100]))
+                @if(in_array(Auth::user()->role_id,[2,31,32,33,52,53,56,96,97,40,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-sales'))) active @endif">
                     <a href="{{route('dashboard-aktifitas-sales')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
@@ -38,7 +38,7 @@
                     </a>
                 </li>
                 @endif
-                @if(in_array(Auth::user()->role_id,[2,52,53,56,96,97,98,99,100]))
+                @if(in_array(Auth::user()->role_id,[2,52,53,56,96,97,40,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
                     <a href="{{route('dashboard-leads')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
@@ -50,7 +50,7 @@
         </li>
         @endif
 
-        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,99]))
+        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('customer')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
@@ -58,7 +58,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,99]))
+        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('leads'))) active @endif">
             <a href="{{route('leads')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
@@ -66,7 +66,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,99]))
+        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('site'))) active @endif">
             <a href="{{route('site')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
@@ -74,7 +74,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,29,30,31,33,52,96,97,99]))
+        @if(in_array(Auth::user()->role_id,[2,29,30,31,33,52,96,97,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
             <a href="{{route('customer-activity')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
@@ -106,7 +106,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,4,5,6,8,52,53,10,96,97,99]))
+        @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,4,5,6,8,52,53,10,96,97,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
             <a href="{{route('monitoring-kontrak')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>

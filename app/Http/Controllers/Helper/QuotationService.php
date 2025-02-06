@@ -325,10 +325,10 @@ class QuotationService
         $kbd->pph = 0;
 
         if ($quotation->ppn_pph_dipotong == "Management Fee") {
-            $kbd->ppn = $kbd->management_fee * 11/12 * 12/100;
+            $kbd->ppn = $kbd->management_fee * 12/100;
             $kbd->pph = $kbd->management_fee * -2 / 100;
         } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
-            $kbd->ppn = $kbd->grand_total * 11/12 * 12/100;
+            $kbd->ppn = $kbd->grand_total * 12/100;
             $kbd->pph = $kbd->grand_total * -2 / 100;
         }
     }
@@ -345,7 +345,7 @@ class QuotationService
             ->where('quotation_detail_id', $kbd->id)
             ->get();
             foreach ($kaporlapItems as $item) {
-                $personilKaporlap += ($item->harga * $item->jumlah) / $provisi / $kbd->jumlah_hc;
+                $personilKaporlap += ($item->harga * $item->jumlah) / $provisi;
             }
         }
         $kbd->personil_kaporlap = $personilKaporlap;
@@ -447,7 +447,7 @@ class QuotationService
         }
 
         $quotation->grand_total_sebelum_pajak_coss = $quotation->total_sebelum_management_fee_coss + $quotation->nominal_management_fee_coss;
-        $quotation->ppn_coss = $quotation->nominal_management_fee_coss * 11/12* 12/ 100;
+        $quotation->ppn_coss = $quotation->nominal_management_fee_coss * 12/ 100;
         $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
         $quotation->total_invoice_coss = $quotation->grand_total_sebelum_pajak_coss + $quotation->ppn_coss + $quotation->pph_coss;
         $quotation->pembulatan_coss = ceil($quotation->total_invoice_coss / 1000) * 1000;
@@ -460,7 +460,6 @@ class QuotationService
         //     $pengaliTop = $quotation->jumlah_hari_invoice;
         // };
         // return $quotation;
-
     }
     private function calculateHpp(&$quotation, $jumlahHc, $provisi){
         $quotation->total_sebelum_management_fee = 0;
@@ -479,7 +478,7 @@ class QuotationService
         }
 
         $quotation->grand_total_sebelum_pajak = $quotation->total_sebelum_management_fee + $quotation->nominal_management_fee;
-        $quotation->ppn = $quotation->nominal_management_fee * 11/12* 12/ 100;
+        $quotation->ppn = $quotation->nominal_management_fee * 12/ 100;
         $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
         $quotation->total_invoice = $quotation->grand_total_sebelum_pajak + $quotation->ppn + $quotation->pph;
         $quotation->pembulatan = ceil($quotation->total_invoice / 1000) * 1000;

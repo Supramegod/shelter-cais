@@ -58,7 +58,7 @@
             <!-- <button class="btn btn-warning" @if($quotation->is_aktif==1) disabled @endif><i class="mdi mdi-file-refresh"></i>&nbsp; Ajukan Ulang ( Ubah )</button> -->
               @if(Auth::user()->role_id==96 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot1 == null)
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
-              @elseif(Auth::user()->role_id==97 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari")
+              @elseif(in_array(Auth::user()->role_id,[97,40]) && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari")
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
               @elseif(Auth::user()->role_id==99 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari")
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
@@ -585,7 +585,7 @@
                           <td style="text-align:left" class="">Tunjangan Hari Libur Nasional <b>( {{$quotation->tunjangan_holiday}} @if($quotation->tunjangan_holiday=="Normatif") : {{"Rp. ".number_format($quotation->tunjangan_holiday_display,2,",",".")}} @endif )</b></td>
                           <td style="text-align:center"></td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif"){{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @endif </td>
+                          <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif") Ditagihkan terpisah @elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @endif </td>
                           @endforeach
                         </tr>
                         @php $nomorUrut++; @endphp
@@ -596,7 +596,7 @@
                           <td style="text-align:left" class="">Lembur <b>( {{$quotation->lembur}} @if($quotation->lembur=="Normatif") : {{"Rp. ".number_format($quotation->lembur_per_jam,2,",",".")}} Per Jam @endif )</b></td>
                           <td style="text-align:center"></td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td style="text-align:right" class="">@if($quotation->lembur=="Normatif") {{"Rp. ".number_format(0,2,",",".")}} @elseif ($quotation->lembur=="Flat") {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif </td>
+                          <td style="text-align:right" class="">@if($quotation->lembur=="Normatif") Ditagihkan terpisah @elseif ($quotation->lembur=="Flat") {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif </td>
                           @endforeach
                         </tr>
                         @php $nomorUrut++; @endphp
@@ -707,7 +707,7 @@
                         </tr>
                         <tr class="">
                           <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
-                          <td style="text-align:center">11 %</td>
+                          <td style="text-align:center">12 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn,2,",",".")}}</td>
                         </tr>
                         <tr class="">
@@ -933,7 +933,7 @@
                         </tr>
                         <tr class="">
                           <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
-                          <td style="text-align:center">11 %</td>
+                          <td style="text-align:center">12 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn_coss,2,",",".")}}</td>
                         </tr>
                         <tr class="">

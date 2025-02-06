@@ -147,7 +147,7 @@
                         <td style="text-align:left" class="">Tunjangan Hari Libur Nasional <b>( {{$quotation->tunjangan_holiday}} @if($quotation->tunjangan_holiday=="Normatif") : {{"Rp. ".number_format($quotation->tunjangan_holiday_display,2,",",".")}} @endif )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif"){{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->tunjangan_holiday}}" data-tipe="Tunjangan Holiday"></i></a> @endif </td>
+                        <td style="text-align:right" class="">@if($quotation->tunjangan_holiday=="Normatif") Ditagihkan terpisah @elseif($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->tunjangan_holiday}}" data-tipe="Tunjangan Holiday"></i></a> @endif </td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
@@ -158,7 +158,7 @@
                         <td style="text-align:left" class="">Lembur <b>( {{$quotation->lembur}} @if($quotation->lembur=="Normatif") : {{"Rp. ".number_format($quotation->lembur_per_jam,2,",",".")}} Per Jam @endif )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">@if($quotation->lembur=="Normatif") {{"Rp. ".number_format(0,2,",",".")}} @elseif ($quotation->lembur=="Flat") {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->lembur}}" data-tipe="Lembur"></i></a> @endif </td>
+                        <td style="text-align:right" class="">@if($quotation->lembur=="Normatif") Ditagihkan terpisah @elseif ($quotation->lembur=="Flat") {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->lembur}}" data-tipe="Lembur"></i></a> @endif </td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
@@ -270,7 +270,7 @@
                       </tr>
                       <tr class="">
                         <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
-                        <td style="text-align:center">11 %</td>
+                        <td style="text-align:center">12 %</td>
                         <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn,2,",",".")}}</td>
                       </tr>
                       <tr class="">
@@ -496,7 +496,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                       </tr>
                       <tr class="">
                         <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
-                        <td style="text-align:center">11 %</td>
+                        <td style="text-align:center">12 %</td>
                         <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn_coss,2,",",".")}}</td>
                       </tr>
                       <tr class="">

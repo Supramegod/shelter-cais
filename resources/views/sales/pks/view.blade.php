@@ -125,7 +125,7 @@
           <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="1"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Sales</button>
           </div>
-          @elseif($data->status_pks_id == 2 && Auth::user()->role_id==97)
+          @elseif($data->status_pks_id == 2 && in_array(Auth::user()->role_id,[97,40]))
           <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="2"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Keuangan</button>
           </div>

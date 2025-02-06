@@ -565,7 +565,7 @@ inter-ideograph;text-indent:-13.7pt;mso-pagination:widow-orphan;mso-list:l1 leve
 mso-layout-grid-align:auto;text-autospace:ideograph-numeric ideograph-other"><!--[if !supportLists]--><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif;mso-fareast-font-family:Arial">b.<span style="font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-variant-emoji: normal; font-stretch: normal; font-size: 7pt; line-height: normal; font-family: &quot;Times New Roman&quot;;">&nbsp; </span></span><!--[endif]--><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif">Biaya kontrak sudah termasuk
 upah pokok beserta <i>variable</i> <i>breakdown</i> lainnya, seperti tunjangan, premi BPJS Ketenagakerjaan, BPJS
 Kesehatan, biaya monitoring dan kontrol, biaya provisi seragam, biaya provisi
-chemical dan tools, ppn 11%, pph -2% dan <i>managemen</i><i>t fee</i> yang telah disepakati.<o:p></o:p></span></p>
+chemical dan tools, ppn 12%, pph -2% dan <i>managemen</i><i>t fee</i> yang telah disepakati.<o:p></o:p></span></p>
 
 <p class="MsoNormal" style="margin-left:31.7pt;text-align:justify;text-justify:
 inter-ideograph;mso-pagination:widow-orphan;mso-layout-grid-align:auto;

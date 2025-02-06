@@ -741,10 +741,10 @@ class QuotationController extends Controller
             //step 9 - chemical
             $listChemical = null;
             if($request->step==9){
-                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[13,14,15,16])->get();
+                $listJenis = DB::table('m_jenis_barang')->whereIn('id',[13,14,15,16,18,19])->get();
                 $listChemical = DB::table('m_barang')
                                     ->whereNull('deleted_at')
-                                    ->whereIn('jenis_barang_id',[13,14,15,16])
+                                    ->whereIn('jenis_barang_id',[13,14,15,16,18,19])
                                     ->get();
                 foreach ($listChemical as $key => $value) {
                     $value->harga = number_format($value->harga,0,",",".");
@@ -2772,7 +2772,7 @@ class QuotationController extends Controller
                         'updated_by' => Auth::user()->full_name
                     ]);
                 }
-            }else if(in_array(Auth::user()->role_id,[97])){
+            }else if(in_array(Auth::user()->role_id,[97,40])){
                 DB::table('sl_quotation')->where('id',$request->id)->update([
                     'ot2' => Auth::user()->full_name,
                     'updated_at' => $current_date_time,
@@ -3593,10 +3593,10 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->ppn = 0;
                 $kbd->pph = 0;
                 if ($master->ppn_pph_dipotong=="Management Fee") {
-                    $kbd->ppn = $kbd->management_fee*11/100;
+                    $kbd->ppn = $kbd->management_fee*12/100;
                     $kbd->pph = $kbd->management_fee*(-2/100);
                 }else if ($master->ppn_pph_dipotong=="Total Invoice") {
-                    $kbd->ppn = $kbd->grand_total*11/100;
+                    $kbd->ppn = $kbd->grand_total*12/100;
                     $kbd->pph = $kbd->grand_total*(-2/100);
                 }
                 
@@ -3621,10 +3621,10 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->ppn_coss = 0;
                 $kbd->pph_coss = 0;
                 if($master->ppn_pph_dipotong =="Management Fee"){
-                    $kbd->ppn_coss = $kbd->management_fee_coss*11/100;
+                    $kbd->ppn_coss = $kbd->management_fee_coss*12/100;
                     $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
                 }else  if($master->ppn_pph_dipotong =="Total Invoice"){
-                    $kbd->ppn_coss = $kbd->grand_total_coss*11/100;
+                    $kbd->ppn_coss = $kbd->grand_total_coss*12/100;
                     $kbd->pph_coss = $kbd->grand_total_coss*(-2/100);
                 }
 

@@ -32,7 +32,7 @@ class Controller extends BaseController
                 $this->signed_in = Auth::check();
 
                 $approval = [];
-                $arrRole = [96,97,98,99];
+                $arrRole = [96,97,40,98,99];
                 if(in_array($user->role_id,$arrRole)){
                     $dataApproval = DB::table('sl_quotation')
                     ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
@@ -51,7 +51,7 @@ class Controller extends BaseController
                                 array_push($approval,$quotation);
                             }
                         }else if($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
-                            if(Auth::user()->role_id==97){
+                            if(Auth::user()->role_id==97 || Auth::user()->role_id==40 ){
                                 array_push($approval,$quotation);
                             }
                         }else if ( $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){

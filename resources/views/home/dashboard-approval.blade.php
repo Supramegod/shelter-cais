@@ -138,11 +138,11 @@
                         aria-controls="navs-approval-anda"
                         aria-selected="true">
                         <i class="tf-icons mdi mdi-home-outline me-1"></i> Approval Anda
-                        @if(in_array(Auth::user()->role_id,[96,97,99]))
+                        @if(in_array(Auth::user()->role_id,[96,97,40,99]))
                         <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-label-danger ms-1">
                         @if(Auth::user()->role_id==96)
                         {{$jumlahMenungguDirSales}}
-                        @elseif(Auth::user()->role_id==97)
+                        @elseif(Auth::user()->role_id==97 || Auth::user()->role_id==40)
                         {{$jumlahMenungguDirkeu}}
                         @elseif(Auth::user()->role_id==99)
                         {{$jumlahMenungguDirut}}

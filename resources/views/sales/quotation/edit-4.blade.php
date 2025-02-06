@@ -195,8 +195,10 @@
                   <div class="col-sm-3 ada_lembur">
                     <label class="form-label" for="lembur">Normatif / Flat</label>
                       <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>  
-                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>  
+                        <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>
+                        @if($quotation->jam_kerja !="12 Jam Kerja")
+                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option> 
+                        @endif 
                         <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>  
                       </select>
                   </div>

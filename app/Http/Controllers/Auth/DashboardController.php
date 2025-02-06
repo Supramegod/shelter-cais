@@ -55,7 +55,7 @@ class DashboardController extends Controller
                 }
                 if($quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
                     $jumlahMenungguDirkeu++;
-                    if(Auth::user()->role_id==97){
+                    if(Auth::user()->role_id==97 || Auth::user()->role_id==40 ){
                         array_push($dataMenungguAnda,$quotation);
                     }
                 }
@@ -394,7 +394,7 @@ class DashboardController extends Controller
                         array_push($arrData,$quotation);
                     }
                 }else if($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
-                    if(Auth::user()->role_id==97){
+                    if(Auth::user()->role_id==97 || Auth::user()->role_id==40 ){
                         array_push($arrData,$quotation);
                     }
                 }else if ( $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
