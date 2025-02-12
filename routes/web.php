@@ -201,7 +201,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/delete-detail-hc', 'deleteDetailHC')->name('quotation.delete-detail-hc');
         Route::get('/sales/quotation/change-kota', 'changeKota')->name('quotation.change-kota'); // ajax
         Route::get('/sales/quotation/list-quotation-kerjasama', 'listQuotationKerjasama')->name('quotation.list-quotation-kerjasama'); // ajax
-        Route::post('/sales/quotation/add-quotation-kerjasama', 'addQuotationKerjasama')->name('quotation.add-quotation-kerjasama');
+        Route::get('/sales/quotation/edit-quotation-kerjasama/{id}', 'editQuotationKerjasama')->name('quotation.edit-quotation-kerjasama');
+        Route::get('/sales/quotation/add-quotation-kerjasama/{id}', 'addQuotationKerjasama')->name('quotation.add-quotation-kerjasama');
+        Route::post('/sales/quotation/save-add-quotation-kerjasama', 'saveAddQuotationKerjasama')->name('quotation.save-add-quotation-kerjasama');
+        Route::post('/sales/quotation/save-edit-quotation-kerjasama', 'saveEditQuotationKerjasama')->name('quotation.save-edit-quotation-kerjasama');
         Route::post('/sales/quotation/delete-quotation-kerjasama', 'deleteQuotationKerjasama')->name('quotation.delete-quotation-kerjasama');
         Route::post('/sales/quotation/delete-quotation', 'deleteQuotation')->name('quotation.delete-quotation');
         Route::post('/sales/quotation/approve-quotation', 'approveQuotation')->name('quotation.approve-quotation');

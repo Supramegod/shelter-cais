@@ -843,7 +843,7 @@
                           <td>Tunjangan Hari Libur Nasional</td>
                           <td class="text-center"></td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td class="text-end">@if($quotation->tunjangan_holiday=="Normatif") <b>Normatif</b> @else {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @endif</td>
+                          <td class="text-end">@if($quotation->tunjangan_holiday=="Normatif") <b>Ditagihkan Terpisah</b> @else {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @endif</td>
                           @endforeach
                         </tr>
                         @endif
@@ -852,7 +852,7 @@
                           <td>Lembur</td>
                           <td class="text-center"></td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td class="text-end">@if($quotation->lembur=="Normatif") <b>Normatif</b> @else {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif</td>
+                          <td class="text-end">@if($quotation->lembur=="Normatif") <b>Ditagihkan Terpisah</b> @else {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif</td>
                           @endforeach
                         </tr>
                         @endif
@@ -1315,7 +1315,7 @@
           <div class="card-header d-flex justify-content-between align-items-center pb-0">
           <h5 class="card-title m-0">Syarat Dan Ketentuan Kerjasama</h5>
           @if($quotation->step == 100 && $quotation->is_aktif == 0)
-          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'13','edit'=>1])}}">Edit</a></h6>
+          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'12','edit'=>1])}}">Edit</a></h6>
             @endif
           </div>
           <div class="card-body pt-0">

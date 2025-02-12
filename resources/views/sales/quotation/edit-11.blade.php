@@ -297,19 +297,8 @@
                   </table>
                 </div>
                 <div class="mt-3" style="padding-left:40px">
-                  <p><b><i>Note :</i></b>	<br>
-Tunjangan hari raya (gaji pokok dibagi {{$quotation->provisi}}).		<br>
-<i>Cover</i> 
-@if($quotation->program_bpjs=="2 BPJS")
-BPJS Ketenagakerjaan 2 Program (JKK, JKM). 
-@elseif($quotation->program_bpjs=="3 BPJS")
-BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT). 
-@elseif($quotation->program_bpjs=="4 BPJS")
-BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP). 
-@endif
-<span class="text-danger">Pengalian base on upah</span>		<br>
-<i>Cover</i> BPJS Kesehatan. <span class="text-danger">Pengalian base on UMK</span>		<br>
-</p>
+                <p><b><i>Note :</i></b> <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning"></i></a> <br>
+                {!! $quotation->note_harga_jual !!}</p>
                 </div>
               </div>
             </div>
@@ -406,7 +395,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td>Tunjangan Hari Libur Nasional</td>
                         <td class="text-center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">@if($quotation->tunjangan_holiday=="Normatif") <b>Normatif</b> @else {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @endif</td>
+                        <td class="text-end">@if($quotation->tunjangan_holiday=="Normatif") <b>Ditagihkan Terpisah</b> @else {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @endif</td>
                         @endforeach
                       </tr>
                       @endif
@@ -415,7 +404,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                         <td>Lembur</td>
                         <td class="text-center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">@if($quotation->lembur=="Normatif") <b>Normatif</b> @else {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif</td>
+                        <td class="text-end">@if($quotation->lembur=="Normatif") <b>Ditagihkan Terpisah</b> @else {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif</td>
                         @endforeach
                       </tr>
                       @endif
@@ -528,22 +517,7 @@ BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
                   </table>
                 </div>
                 <div class="mt-3" style="padding-left:40px">
-                  <p><b><i>Note :</i></b>	<br>
-                  <b>Upah pokok base on Umk 2024 </b> <br>
-Tunjangan overtime flat total 75 jam. <span class="text-danger">*jika system jam kerja 12 jam </span> <br>
-Tunjangan hari raya ditagihkan provisi setiap bulan. (upah/12) <br>
-@if($quotation->program_bpjs=="2 BPJS")
-BPJS Ketenagakerjaan 2 Program (JKK, JKM). 
-@elseif($quotation->program_bpjs=="3 BPJS")
-BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT). 
-@elseif($quotation->program_bpjs=="4 BPJS")
-BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP). 
-@endif
-<span class="text-danger">Pengalian base on upah</span>		<br>
-BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
-<br>
-<span class="text-danger">*prosentase Bpjs Tk J. Kecelakaan Kerja disesuaikan dengan tingkat resiko sesuai ketentuan.</span>
-</p>
+                 {!! $quotation->note_harga_jual !!}
                 </div>
               </div>
             </div>

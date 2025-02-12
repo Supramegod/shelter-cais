@@ -196,6 +196,8 @@
                     <option value="15" @if($quotation->jumlah_hari_invoice=='15') selected @endif>15</option>  
                     <option value="21" @if($quotation->jumlah_hari_invoice=='21') selected @endif>21</option>  
                     <option value="30" @if($quotation->jumlah_hari_invoice=='30') selected @endif>30</option>  
+                    <option value="60" @if($quotation->jumlah_hari_invoice=='60') selected @endif>60</option>  
+                    <option value="90" @if($quotation->jumlah_hari_invoice=='90') selected @endif>90</option>  
                     </select>
                     @if($errors->has('jumlah_hari_invoice'))
                       <span class="text-danger">{{$errors->first('jumlah_hari_invoice')}}</span>

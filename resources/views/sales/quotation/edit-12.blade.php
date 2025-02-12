@@ -42,10 +42,10 @@
               </div>
               <div class="row">
                 <div class="col-12 d-flex justify-content-center">
-                  <button type="button" class="btn btn-info btn-back w-50" id="btn-tambah-kerjasama">
+                  <a href="{{route('quotation.add-quotation-kerjasama',$quotation->id)}}" class="btn btn-info btn-back w-50" id="btn-tambah-kerjasama">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Perjanjian</span>
                     <i class="mdi mdi-plus"></i>
-                  </button>
+                  </a>
                 </div>
               </div>
               @include('sales.quotation.action')
@@ -125,40 +125,6 @@
           }
         });
       });
-      
-      $('#btn-tambah-kerjasama').on('click',function () {
-        Swal.fire({
-          title: "Masukkan Perjanjian",
-          input: "textarea",
-          inputAttributes: {
-            autocapitalize: "off"
-          },
-          showCancelButton: true,
-          confirmButtonText: "Simpan",
-          showLoaderOnConfirm: true,
-          preConfirm: async (value) => {
-            let formData = {
-              "quotation_id":{{$quotation->id}},
-              "perjanjian":value,
-              "_token": "{{ csrf_token() }}"
-            };
-
-            $.ajax({
-              type: "POST",
-              url: "{{route('quotation.add-quotation-kerjasama')}}",
-              data:formData,
-              success: function(response){
-                  $('#table-data').DataTable().ajax.reload();
-              },
-              error:function(error){
-                console.log(error);
-              }
-            });
-          },
-        }).then((result) => {
-          $(table).DataTable().ajax.reload();
-        });
-    });
 
     $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {               

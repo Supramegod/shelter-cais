@@ -55,9 +55,16 @@ class QuotationService
 
 
         // recalculating bunga bank dan insentif karena gross up
-        $bungaBank = $quotation->total_sebelum_management_fee * ($quotation->persen_bunga_bank / 100) / $jumlahHc;
-        $insentif = $quotation->nominal_management_fee_coss * ($quotation->persen_insentif / 100) / $jumlahHc;
-        
+        $persenBungaBank = $quotation->persen_bunga_bank;
+        $persenInsentif = $quotation->persen_insentif;
+        $bungaBank = 0;
+        $insentif = 0;
+        if($persenBungaBank != 0 && $persenBungaBank != null){
+            $bungaBank = $quotation->total_sebelum_management_fee * ($quotation->persen_bunga_bank / 100) / $jumlahHc;
+        }
+        if($persenInsentif != 0 && $persenInsentif != null){
+            $insentif = $quotation->nominal_management_fee_coss * ($quotation->persen_insentif / 100) / $jumlahHc;
+        }        
         // Hitung ulang sub total personil
         foreach ($quotation->quotation_detail as $kbd) {
             $hpp = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
@@ -107,8 +114,9 @@ class QuotationService
         $kbd->total_tunjangan = $totalTunjangan;
 
         $umk = $kbd->umk;
+        $ump = $kbd->ump;
 
-        $this->calculateBpjs($kbd, $quotation, $umk,$hpp);
+        $this->calculateBpjs($kbd, $quotation, $umk,$ump,$hpp);
         $this->calculateExtras($kbd, $quotation, $provisi, $jumlahHc,$umk,$hpp);
         // Perhitungan Kaporlap
         $this->calculateKaporlap($kbd, $quotation, $provisi,$hpp,$coss);
@@ -153,7 +161,7 @@ class QuotationService
 
     }
 
-    private function calculateBpjs(&$kbd, $quotation, $umk,$hpp)
+    private function calculateBpjs(&$kbd, $quotation, $umk,$ump,$hpp)
     {        // Inisialisasi default
         // $kbd->nominal_takaful = $hpp->takaful;
         $kbd->bpjs_jkm = $hpp->bpjs_jkm;
@@ -170,8 +178,25 @@ class QuotationService
         // if($kbd->nominal_takaful=== null){
         //     $kbd->nominal_takaful = $quotation->nominal_takaful;
         // }
+        $upahBpjs = 0;
+        // Case 1 Gaji diatas UMK
+        if($kbd->nominal_upah > $umk){
+            $upahBpjs = $kbd->nominal_upah;
+        }
+        // Case 2 Gaji = umk
+        else if ($kbd->nominal_upah == $umk) {
+            $upahBpjs = $umk;
+        }
+        // Case 3 Gaji dibawah UMK tapi lebih dari atau sama dengan ump
+        else if ($kbd->nominal_upah < $umk && $kbd->nominal_upah >= $ump) {
+            $upahBpjs = $kbd->nominal_upah;
+        }
+        // Case 4 Gaji dibawah umk dan ump
+        else if ($kbd->nominal_upah < $ump) {
+            $upahBpjs = $ump;
+        }
 
-        $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
+        // $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
         $upahBpjsKes = $kbd->nominal_upah;
         // if($umk==null || $umk==0){
         //     $umk = $kbd->nominal_upah;
