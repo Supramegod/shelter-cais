@@ -65,9 +65,9 @@ class DashboardController extends Controller
             } else if ( $quotation->step != 100){
                 $quotationBelumLengkap++;
                 $jumlahMenungguApproval++;
-                if(Auth::user()->role_id==99){
-                    array_push($dataMenungguAnda,$quotation);
-                }
+                // if(Auth::user()->role_id==99){
+                //     array_push($dataMenungguAnda,$quotation);
+                // }
             }else{
                 array_push($dataBelumLengkap,$quotation);
                 $error++;
@@ -397,11 +397,12 @@ class DashboardController extends Controller
                     if(Auth::user()->role_id==97 || Auth::user()->role_id==40 ){
                         array_push($arrData,$quotation);
                     }
-                }else if ( $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
-                    if(Auth::user()->role_id==99){
-                        array_push($arrData,$quotation);
-                    }
                 }
+                // else if ( $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari" ){
+                //     if(Auth::user()->role_id==99){
+                //         array_push($arrData,$quotation);
+                //     }
+                // }
             }
         }else if($request->tipe =="menunggu-approval"){
             foreach ($data as $key => $quotation) {

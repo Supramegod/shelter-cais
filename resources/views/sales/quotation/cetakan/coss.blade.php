@@ -276,7 +276,7 @@
                         @endforeach
                       </tr>
                         <tr class="">
-                          <td style="text-align:right" class="fw-bold">PPn <span class='text-danger'>*dari management fee</span></td>
+                          <td style="text-align:right" class="fw-bold">PPN <span class='text-danger'>*dari management fee</span></td>
                           <td style="text-align:center">12 %</td>
                           @foreach($master->quotation_detail as $detailJabatan)
                           <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->ppn_coss,2,",",".")}}</td>

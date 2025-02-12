@@ -106,7 +106,7 @@
             </div>
             </div>
         </div>
-        <div class="col-sm-6 col-lg-3 mb-4">
+        <!-- <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card card-border-shadow-info h-100">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
@@ -120,7 +120,7 @@
                 <p class="mb-0 text-heading ">Menunggu Approval Direktur Utama</p>
             </div>
             </div>
-        </div>
+        </div> -->
     </div>
     <div class="row mt-3">
         <div class="col-xl-12">

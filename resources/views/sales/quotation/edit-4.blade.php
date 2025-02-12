@@ -110,7 +110,7 @@
                 </div>
                 <div class="row mb-3">
                   <div class="col-sm-12">
-                    <label class="form-label" for="ppn_pph_dipotong">Hitungan PPn & PPh</label>
+                    <label class="form-label" for="ppn_pph_dipotong">Hitungan PPN & PPh</label>
                     <div class="input-group">
                       <select id="ppn_pph_dipotong" name="ppn_pph_dipotong" class="form-select" data-allow-clear="true" tabindex="-1">
                       <option value="Management Fee" @if($quotation->ppn_pph_dipotong==null || $quotation->ppn_pph_dipotong=="" ||$quotation->ppn_pph_dipotong=="Management Fee") selected @endif>Management Fee</option>  

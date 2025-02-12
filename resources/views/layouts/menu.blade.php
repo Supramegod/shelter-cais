@@ -238,7 +238,12 @@
             </ul>
         </li>
         @endif
-
+        <!-- <li class="menu-item @if(str_contains(Request::url(), "entitas")) active @endif">
+            <a href="{{route('entitas')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
+            <div data-i18n="Notifikasi">Notifikasi</div>
+            </a>
+        </li> -->
 
 
 

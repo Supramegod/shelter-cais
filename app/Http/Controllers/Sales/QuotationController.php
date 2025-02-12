@@ -1985,7 +1985,53 @@ class QuotationController extends Controller
     }
 
     public function delete (Request $request){
-        return null;
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::beginTransaction();
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_aplikasi')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_devices')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_kaporlap')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_site')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_detail_requirement')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+        
     }
 
     public function list (Request $request){
@@ -2073,11 +2119,15 @@ class QuotationController extends Controller
                 if($data->step != 100){
                     if($data->jumlah_site=="Multi Site"){
                         return '<div class="justify-content-center d-flex">
-                        <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
-            <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Dari Existing</a>
+                            <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
+                            <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Dari Existing</a>
+                            <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
                         </div>';
                     }else{
-                        return '<div class="justify-content-center d-flex"><a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a></div>';
+                        return '<div class="justify-content-center d-flex">
+                        <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a>
+                        <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
+                        </div>';
                     }
                 }else{
                     return '<div class="justify-content-center d-flex">
@@ -2775,23 +2825,39 @@ class QuotationController extends Controller
             }else if(in_array(Auth::user()->role_id,[97,40])){
                 DB::table('sl_quotation')->where('id',$request->id)->update([
                     'ot2' => Auth::user()->full_name,
-                    'updated_at' => $current_date_time,
-                    'updated_by' => Auth::user()->full_name
-                ]);
-            }else if(in_array(Auth::user()->role_id,[99])){
-                DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'ot3' => Auth::user()->full_name,
                     'is_aktif' => 1,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
 
-                DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'status_quotation_id' => 3,
-                    'updated_at' => $current_date_time,
-                    'updated_by' => Auth::user()->full_name
-                ]);
+                // DB::table('sl_quotation')->where('id',$request->id)->update([
+                //     'ot3' => Auth::user()->full_name,
+                //     'is_aktif' => 1,
+                //     'updated_at' => $current_date_time,
+                //     'updated_by' => Auth::user()->full_name
+                // ]);
+
+                // DB::table('sl_quotation')->where('id',$request->id)->update([
+                //     'status_quotation_id' => 3,
+                //     'updated_at' => $current_date_time,
+                //     'updated_by' => Auth::user()->full_name
+                // ]);
+
             }
+            // else if(in_array(Auth::user()->role_id,[99])){
+            //     DB::table('sl_quotation')->where('id',$request->id)->update([
+            //         'ot3' => Auth::user()->full_name,
+            //         'is_aktif' => 1,
+            //         'updated_at' => $current_date_time,
+            //         'updated_by' => Auth::user()->full_name
+            //     ]);
+
+            //     DB::table('sl_quotation')->where('id',$request->id)->update([
+            //         'status_quotation_id' => 3,
+            //         'updated_at' => $current_date_time,
+            //         'updated_by' => Auth::user()->full_name
+            //     ]);
+            // }
 
             //insert ke activity sebagai activity pertama
             $customerActivityController = new CustomerActivityController();
@@ -3593,10 +3659,10 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->ppn = 0;
                 $kbd->pph = 0;
                 if ($master->ppn_pph_dipotong=="Management Fee") {
-                    $kbd->ppn = $kbd->management_fee*12/100;
+                    $kbd->ppn = $kbd->management_fee*11/12*12/100;
                     $kbd->pph = $kbd->management_fee*(-2/100);
                 }else if ($master->ppn_pph_dipotong=="Total Invoice") {
-                    $kbd->ppn = $kbd->grand_total*12/100;
+                    $kbd->ppn = $kbd->grand_total*11/12*12/100;
                     $kbd->pph = $kbd->grand_total*(-2/100);
                 }
                 
@@ -3621,10 +3687,10 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 $kbd->ppn_coss = 0;
                 $kbd->pph_coss = 0;
                 if($master->ppn_pph_dipotong =="Management Fee"){
-                    $kbd->ppn_coss = $kbd->management_fee_coss*12/100;
+                    $kbd->ppn_coss = $kbd->management_fee_coss*11/12*12/100;
                     $kbd->pph_coss = $kbd->management_fee_coss*(-2/100);
                 }else  if($master->ppn_pph_dipotong =="Total Invoice"){
-                    $kbd->ppn_coss = $kbd->grand_total_coss*12/100;
+                    $kbd->ppn_coss = $kbd->grand_total_coss*11/12*12/100;
                     $kbd->pph_coss = $kbd->grand_total_coss*(-2/100);
                 }
 

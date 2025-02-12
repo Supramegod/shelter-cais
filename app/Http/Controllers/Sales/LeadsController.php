@@ -387,6 +387,26 @@ class LeadsController extends Controller
         }
     }
 
+    public function restore (Request $request){
+        try {
+            DB::beginTransaction();
+
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_leads')->where('id',$request->id)->update([
+                'deleted_at' => null,
+                'deleted_by' => null
+            ]);
+
+            $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil direstore.';
+            
+            DB::commit();
+            return redirect()->route('leads')->with('success', $msgSave);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function delete (Request $request){
         try {
             DB::beginTransaction();

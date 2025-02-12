@@ -457,6 +457,80 @@
                 }
             });
 
+            $('body').on('click', '.hapus-quotation', function() {
+                let msg = "";
+                let id = $(this).data('id');
+                let nomor = $(this).data('nomor');      
+
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: 'Apakah Anda yakin ingin menghapus Quotation '+nomor+'?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal'
+                    }).then((result) => {
+                    // Jika user mengklik "Ya"
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Loading',
+                            text: 'Sedang memproses...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        });
+
+                        $.ajax({
+                            url: '{{route("quotation.delete")}}',
+                            type: 'POST',
+                            data: { 
+                                id: id ,
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            success: function(data) {
+                                if(data.status == 'success') {
+                                    Swal.fire({
+                                        title: 'Pemberitahuan',
+                                        text: data.message,
+                                        icon: 'success',
+                                        customClass: {
+                                        confirmButton: 'btn btn-primary waves-effect waves-light'
+                                        },
+                                        buttonsStyling: false
+                                    }).then(function() {
+                                        table.ajax.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Pemberitahuan',
+                                        text: data.message,
+                                        icon: 'warning',
+                                        customClass: {
+                                        confirmButton: 'btn btn-warning waves-effect waves-light'
+                                        },
+                                        buttonsStyling: false
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    title: 'Pemberitahuan',
+                                    text: 'Gagal menghapus data',
+                                    icon: 'warning',
+                                    customClass: {
+                                    confirmButton: 'btn btn-warning waves-effect waves-light'
+                                    },
+                                    buttonsStyling: false
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
             $('body').on('click', '.copy-quotation', function() {
                 $("#quotationModal2").modal("show"); 
                 $("#quotationTujuan2").val($(this).data('id'));

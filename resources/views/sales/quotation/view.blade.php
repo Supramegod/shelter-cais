@@ -61,7 +61,7 @@
               @elseif(in_array(Auth::user()->role_id,[97,40]) && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari")
                 <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
               @elseif(Auth::user()->role_id==99 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari")
-                <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
+                <!-- <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button> -->
               @endif
               @if($quotation->is_aktif==1)
                 <!-- <a href="javascript:void(0)" class="btn btn-secondary" id="btn-copy-quotation"><i class="mdi mdi-content-copy"></i>&nbsp; Copy Ke</a> -->
@@ -705,8 +705,13 @@
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->grand_total_sebelum_pajak,2,",",".")}}</td>
                         </tr>
+                        <tr class="table-success">
+                          <td colspan="2" style="text-align:right" class="fw-bold">Dasar Pengenaan Pajak</td>
+                          <td style="text-align:center"></td>
+                          <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->dpp,2,",",".")}}</td>
+                        </tr>
                         <tr class="">
-                          <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
+                          <td colspan="2" style="text-align:right" class="fw-bold">PPN <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                           <td style="text-align:center">12 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn,2,",",".")}}</td>
                         </tr>
@@ -931,8 +936,13 @@
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->grand_total_sebelum_pajak_coss,2,",",".")}}</td>
                         </tr>
+                        <tr class="table-success">
+                          <td colspan="2" style="text-align:right" class="fw-bold">Dasar Pengenaan Pajak</td>
+                          <td style="text-align:center"></td>
+                          <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->dpp_coss,2,",",".")}}</td>
+                        </tr>
                         <tr class="">
-                          <td colspan="2" style="text-align:right" class="fw-bold">PPn <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
+                          <td colspan="2" style="text-align:right" class="fw-bold">PPN <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                           <td style="text-align:center">12 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn_coss,2,",",".")}}</td>
                         </tr>
