@@ -209,6 +209,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/delete-quotation', 'deleteQuotation')->name('quotation.delete-quotation');
         Route::post('/sales/quotation/approve-quotation', 'approveQuotation')->name('quotation.approve-quotation');
 
+        Route::get('/sales/quotation/edit-note-harga-jual/{id}', 'editNoteHargaJual')->name('quotation.edit-note-harga-jual');
+        Route::post('/sales/quotation/save-edit-note-harga-jual', 'saveEditNoteHargaJual')->name('quotation.save-edit-note-harga-jual');
+
         //KAPORLAP
         Route::get('/sales/quotation/list-kaporlap', 'listKaporlap')->name('quotation.list-kaporlap'); // ajax
         Route::post('/sales/quotation/add-detail-kaporlap', 'addDetailKaporlap')->name('quotation.add-detail-kaporlap');

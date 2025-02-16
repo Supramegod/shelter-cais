@@ -198,6 +198,9 @@ class QuotationService
 
         // $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
         $upahBpjsKes = $kbd->nominal_upah;
+        if($kbd->nominal_upah < $umk){
+            $upahBpjsKes = $umk;
+        }
         // if($umk==null || $umk==0){
         //     $umk = $kbd->nominal_upah;
         // }
@@ -248,7 +251,7 @@ class QuotationService
 
         // Hitung BPJS Kesehatan berdasarkan UMK
         if ($kbd->bpjs_kes === null) {
-            $kbd->bpjs_kes = $upahBpjs * 4 / 100;
+            $kbd->bpjs_kes = $upahBpjsKes * 4 / 100;
             $kbd->persen_bpjs_kes = 4;
         } 
 

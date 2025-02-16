@@ -185,13 +185,17 @@
                         <td style="text-align:left" class="">Provisi Seragam </td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_kaporlap,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_kaporlap}}" data-tipe="Kaporlap"></i></a></td>
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_kaporlap,2,",",".")}} 
+                          <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_kaporlap}}" data-tipe="Kaporlap"></i></a> -->
+                        </td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Provisi Peralatan <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_devices}}" data-tipe="Peralatan"></i></a></td>
+                        <td style="text-align:left" class="">Provisi Peralatan 
+                          <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_devices}}" data-tipe="Peralatan"></i></a> -->
+                        </td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_devices,2,",",".")}}</td>
@@ -201,7 +205,9 @@
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Chemical <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_chemical}}" data-tipe="Chemical"></i></a></td>
+                        <td style="text-align:left" class="">Chemical 
+                          <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_chemical}}" data-tipe="Chemical"></i></a> -->
+                        </td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_chemical,2,",",".")}}</td>
@@ -211,7 +217,9 @@
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Overhead Cost <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_ohc}}" data-tipe="OHC"></i></a></td>
+                        <td style="text-align:left" class="">Overhead Cost 
+                          <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_ohc}}" data-tipe="OHC"></i></a> -->
+                        </td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_ohc,2,",",".")}}</td>
@@ -297,7 +305,7 @@
                   </table>
                 </div>
                 <div class="mt-3" style="padding-left:40px">
-                <p><b><i>Note :</i></b> <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning"></i></a> <br>
+                <p><b><i>Note :</i></b> <a href="{{route('quotation.edit-note-harga-jual',$quotation->id)}}"><i class="mdi mdi-pencil text-warning"></i></a> <br>
                 {!! $quotation->note_harga_jual !!}</p>
                 </div>
               </div>

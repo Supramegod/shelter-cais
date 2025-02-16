@@ -228,7 +228,7 @@
     $('body').on('click', '.btn-delete', function() {
     let formData = {
       "barang_id":$(this).data('barang'),
-      "quotation_kebutuhan_id":$(this).data('kebutuhan'),
+      "quotation_id":{{$quotation->id}}
       "_token": "{{ csrf_token() }}"
     };
 

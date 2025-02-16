@@ -995,7 +995,6 @@
                           <th>Harga Jual</th>
                         </tr>
                       </thead>
-                      @if($quotation->ppn_pph_dipotong=="Management Fee")
                       <tbody>
                         <tr>
                           <td style="text-align:left">Nominal</td>
@@ -1051,6 +1050,8 @@
                           </td>
                         </tr>
                       </tbody>
+                      @if($quotation->ppn_pph_dipotong=="Management Fee")
+                      
                       @else
                       
                       @endif

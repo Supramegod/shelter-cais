@@ -257,12 +257,6 @@ Hormat kami,
                     @endforeach
                 </tr>
                 <tr>
-                    <td>BPJS Kesehatan ( {{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}% )</th>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
-                    <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</th>
-                    @endforeach
-                </tr>
-                <tr>
                     <td>BPJS Ketenagakerjaan ( {{number_format($quotation->persen_bpjs_ketenagakerjaan,2,",",".")}}% )</th>
                     @foreach($quotation->quotation_detail as $detailJabatan)
                     <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_ketenagakerjaan,2,",",".")}}</th>
@@ -368,19 +362,7 @@ Hormat kami,
     </div>
     <div class="mt-3" style="padding-left:40px;color:black !important;font-size:9pt !important">
         <p><b><i>Note :</i></b>	<br>
-        <b>Upah pokok base on Umk {{$quotation->tahun_quotation}} </b> <br>
-        @if($quotation->program_bpjs=="2 BPJS")
-        BPJS Ketenagakerjaan 2 Program (JKK, JKM). 
-        @elseif($quotation->program_bpjs=="3 BPJS")
-        BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT). 
-        @elseif($quotation->program_bpjs=="4 BPJS")
-        BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP). 
-        @endif
-<span class="text-danger">Pengalian base on upah</span>		<br>
-BPJS Kesehatan. <span class="text-danger">*base on Umk {{$quotation->tahun_quotation}}</span> <br>
-<br>
-<span class="text-danger">*prosentase Bpjs Tk J. Kecelakaan Kerja disesuaikan dengan tingkat resiko sesuai ketentuan.</span>
-</p>
+        {!! $quotation->note_harga_jual !!}</p>
 </div>
 </div>
 <div class="content">
