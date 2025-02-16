@@ -490,4 +490,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/setting/entitas/list', 'list')->name('entitas.list'); // ajax
 
     });
+
+    // LOG
+    //NOTIFIKASI
+    Route::controller(NotifikasiController::class)->group(function() {
+        Route::get('/log/notifikasi', 'index')->name('notifikasi');
+    });
 });

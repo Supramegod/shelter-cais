@@ -238,13 +238,20 @@
             </ul>
         </li>
         @endif
-        <!-- <li class="menu-item @if(str_contains(Request::url(), "entitas")) active @endif">
-            <a href="{{route('entitas')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
-            <div data-i18n="Notifikasi">Notifikasi</div>
+        <!-- <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-list-box"></i>
+                <div data-i18n="Log">Log</div>
             </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('notifikasi'))) active @endif">
+                    <a href="{{route('notifikasi')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Notifikasi</div>
+                    </a>
+                </li>
+            </ul>
         </li> -->
-
 
 
 
