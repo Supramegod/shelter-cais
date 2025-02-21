@@ -238,7 +238,7 @@
             </ul>
         </li>
         @endif
-        <!-- <li class="menu-item">
+        <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-list-box"></i>
                 <div data-i18n="Log">Log</div>
@@ -251,7 +251,7 @@
                     </a>
                 </li>
             </ul>
-        </li> -->
+        </li>
 
 
 

@@ -196,11 +196,12 @@ class QuotationService
             $upahBpjs = $ump;
         }
 
+        $upahBpjsKes = $umk;
         // $upahBpjs = $kbd->nominal_upah < $umk ? $umk : $kbd->nominal_upah;
-        $upahBpjsKes = $kbd->nominal_upah;
-        if($kbd->nominal_upah < $umk){
-            $upahBpjsKes = $umk;
-        }
+        // $upahBpjsKes = $kbd->nominal_upah;
+        // if($kbd->nominal_upah < $umk){
+        //     $upahBpjsKes = $umk;
+        // }
         // if($umk==null || $umk==0){
         //     $umk = $kbd->nominal_upah;
         // }
@@ -446,7 +447,8 @@ class QuotationService
             ->get();
 
             foreach ($chemicalItems as $item) {
-                $personilChemical += ($item->harga * $item->jumlah) / $provisi;
+                // $personilChemical += ($item->harga * $item->jumlah) / $provisi;+
+                $personilChemical += ($item->jumlah * $item->harga) / $item->masa_pakai;
             }
         }
         $kbd->personil_chemical = $personilChemical;

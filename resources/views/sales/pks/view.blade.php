@@ -134,9 +134,9 @@
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="3"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval GM HRM</button>
           </div>
           @elseif($data->status_pks_id == 4 && Auth::user()->role_id==99)
-          <div class="col-12 text-center mt-2">
+          <!-- <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="4"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Utama</button>
-          </div>
+          </div> -->
           @elseif($data->status_pks_id == 5 && Auth::user()->role_id==29)
           <div class="col-12 text-center mt-2">
             <button id="btn-upload-pks" class="btn btn-primary w-100 waves-effect waves-light">

@@ -2890,32 +2890,48 @@ if($quotation->note_harga_jual == null){
 
             $current_date_time = Carbon::now()->toDateTimeString();
             $master = DB::table('sl_quotation')->where('id',$request->id)->first();
-            
+            $approve = $request->approve;
+            $leads = DB::table('sl_leads')->where('id',$master->leads_id)->first();
+
             if(in_array(Auth::user()->role_id,[96])){
+                $ot1 = null;
+                $isAktif = 0;
+                $statusQuotation = $master->status_quotation_id;
+
+                if($approve=="true"){
+                    $ot1 = Auth::user()->full_name;
+                    if($master->top=="Kurang Dari 7 Hari" || $master->top=="Non TOP"){
+                        $isAktif = 1;
+                        $statusQuotation = 3;
+                    }
+                }else{
+                    $statusQuotation = 8;
+                }
+
                 DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'ot1' => Auth::user()->full_name,
+                    'ot1' => $ot1,
+                    'is_aktif' => $isAktif,
+                    'status_quotation_id' => $statusQuotation,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
-
-                //ambil quotation
-                if($master->top=="Kurang Dari 7 Hari" || $master->top=="Non TOP"){
-                    DB::table('sl_quotation')->where('id',$request->id)->update([
-                        'is_aktif' => 1,
-                        'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->full_name
-                    ]);
-
-                    DB::table('sl_quotation')->where('id',$request->id)->update([
-                        'status_quotation_id' => 3,
-                        'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->full_name
-                    ]);
-                }
+                
             }else if(in_array(Auth::user()->role_id,[97,40])){
+                $ot2 = null;
+                $isAktif = 0;
+                $statusQuotation = $master->status_quotation_id;
+
+                if($approve=="true"){
+                    $ot2 = Auth::user()->full_name;
+                    $isAktif = 1;
+                    $statusQuotation = 3;
+                }else{
+                    $statusQuotation = 8;
+                }
+
                 DB::table('sl_quotation')->where('id',$request->id)->update([
-                    'ot2' => Auth::user()->full_name,
-                    'is_aktif' => 1,
+                    'ot2' => $ot2,
+                    'is_aktif' => $isAktif,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
@@ -2949,10 +2965,29 @@ if($quotation->note_harga_jual == null){
             //     ]);
             // }
 
-            //insert ke activity sebagai activity pertama
+            // kirim ke notifikasi
+            $timSalesD = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
+            $penerima = $timSalesD->user_id;
+            if ($approve=="false") {
+                $msg = "Quotation dengan nomor :".$master->nomor." di reject oleh ".Auth::user()->full_name." dengan alasan : ".$request->alasan;
+            }else{
+                $msg = "Quotation dengan nomor :".$master->nomor." di approve oleh ".Auth::user()->full_name;
+            }
+
+            DB::table('log_notification')->insert([
+                'user_id' => $penerima,
+                'tabel' => 'sl_quotation',
+                'doc_id' => $request->id,
+                'transaksi' => 'Quotation',
+                'pesan' => $msg,
+                'is_read' => 0,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            //insert ke activity sebagai activity
             $customerActivityController = new CustomerActivityController();
             $nomorActivity = $customerActivityController->generateNomor($master->leads_id);
-            $leads = DB::table('sl_leads')->where('id',$master->leads_id)->first();
             $activityId = DB::table('sl_customer_activity')->insertGetId([
                 'leads_id' => $master->leads_id,
                 'quotation_id' => $request->id,
@@ -2960,7 +2995,7 @@ if($quotation->note_harga_jual == null){
                 'tgl_activity' => $current_date_time,
                 'nomor' => $nomorActivity,
                 'tipe' => 'Quotation',
-                'notes' => 'Quotation dengan nomor :'.$master->nomor.' di approve oleh '.Auth::user()->full_name,
+                'notes' => $msg,
                 'is_activity' => 0,
                 'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
@@ -3357,6 +3392,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                             'jumlah' => $dataExist->jumlah+(int)$request['jumlah'],
                             'harga' => $barang->harga,
                             'nama' => $barang->nama,
+                            'masa_pakai' => $request->masa_pakai,
                             'jenis_barang' => $barang->jenis_barang,
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
@@ -3368,6 +3404,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                     'jumlah' => $request['jumlah'],
                     'harga' => $barang->harga,
                     'nama' => $barang->nama,
+                    'masa_pakai' => $request->masa_pakai,
                     'jenis_barang' => $barang->jenis_barang,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
@@ -3384,21 +3421,23 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
 
     public function listChemical (Request $request){
         $raw = ['aksi'];
-        $data = DB::select("SELECT DISTINCT m_barang.jenis_barang_id,sl_quotation_chemical.quotation_id,sl_quotation_chemical.barang_id,sl_quotation_chemical.jenis_barang,sl_quotation_chemical.nama,sl_quotation_chemical.harga,sl_quotation_chemical.jumlah
+        $data = DB::select("SELECT DISTINCT m_barang.jenis_barang_id,sl_quotation_chemical.quotation_id,sl_quotation_chemical.barang_id,sl_quotation_chemical.jenis_barang,sl_quotation_chemical.nama,sl_quotation_chemical.harga,sl_quotation_chemical.jumlah,sl_quotation_chemical.masa_pakai
 from sl_quotation_chemical 
 INNER JOIN m_barang ON sl_quotation_chemical.barang_id = m_barang.id
 WHERE sl_quotation_chemical.deleted_at is null 
 and quotation_id = $request->quotation_id
 ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
 
-$total =DB::select("select sum(harga*jumlah) as total from sl_quotation_chemical WHERE deleted_at is null and quotation_id = $request->quotation_id")[0]->total;
+$total =DB::select("select sum(jumlah*harga/masa_pakai) as total from sl_quotation_chemical WHERE deleted_at is null and quotation_id = $request->quotation_id")[0]->total;
 $objectTotal = (object) ['jenis_barang_id' => 100,
 'quotation_id' => 0,
 'barang_id' => 0,
 'jumlah' => '',
 'jenis_barang' => 'TOTAL',
 'nama' => '',
-'harga' => $total];
+'masa_pakai' => '',
+'total' => $total,
+'harga' => ''];
 
         array_push($data,$objectTotal);
         $dt = DataTables::of($data)
@@ -3409,8 +3448,39 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             return '<div class="justify-content-center d-flex">
                         <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-barang="'.$data->barang_id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
                     </div>';
+        })
+        ->addColumn('jumlah_pertahun', function ($data){
+            if($data->jenis_barang=="TOTAL"){
+                return "";
+            }
+            
+            return (int)$data->jumlah/(int)$data->masa_pakai*12;
+        })
+        ->addColumn('total', function ($data){
+            if($data->jenis_barang=="TOTAL"){
+                return "Rp ".number_format($data->total,0,",",".");
+            }
+            
+            $jumlahPerTahun = (int)$data->jumlah/(int)$data->masa_pakai*12;
+            return "Rp ".number_format($data->harga*$data->jumlah/$data->masa_pakai,0,",",".");
+        })
+        ->editColumn('masa_pakai', function ($data){
+            if($data->jenis_barang=="TOTAL"){
+                return "";
+            }  
+            return $data->masa_pakai." Bulan";
+        })
+        ->editColumn('jumlah', function ($data){
+            if($data->jenis_barang=="TOTAL"){
+                return "";
+            }  
+            return $data->jumlah;
         });
+
         $dt = $dt->editColumn('harga', function ($data){
+            if($data->jenis_barang=="TOTAL"){
+                return "";
+            }  
             return "Rp ".number_format($data->harga,0,",",".");
         });
 

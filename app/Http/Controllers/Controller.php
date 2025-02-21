@@ -66,10 +66,19 @@ class Controller extends BaseController
                 }
 
                 $this->approval = $approval;
-                
+
+                $notifikasiList = DB::table('log_notification')->where('is_read',0)->whereNull('deleted_at')->where('user_id',$user->id)->orderBy('created_at','desc')->get();
+                foreach ($notifikasiList as $key => $value) {
+                    $value->waktu = Carbon::parse($value->created_at)->diffForHumans();
+                    $value->url = "";
+                };
+
+                $this->notifikasi = $notifikasiList;
+
                 view()->share('signed_in', $this->signed_in);
                 view()->share('user', $this->user);
                 view()->share('approval', $this->approval);
+                view()->share('notifikasi', $this->notifikasi);
             }
             return $next($request);
         });

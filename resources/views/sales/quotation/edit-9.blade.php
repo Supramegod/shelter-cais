@@ -25,7 +25,7 @@
               </div>
               <div class="row mt-1">
                 <div class="row mb-3" style="display: flex;justify-content: center;">
-                  <div class="col-sm-6">
+                  <div class="col-sm-5">
                     <label class="form-label" for="barang">Nama Barang</label>
                     <div class="input-group">
                       <select id="barang" name="barang" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -47,10 +47,17 @@
                       <input type="text" class="form-control" id="harga" readonly>
                     </div>
                   </div>
-                  <div class="col-sm-3">
+                  <div class="col-sm-2">
                     <label class="form-label" for="jumlah">Jumlah</label>
                     <div class="input-group">
                       <input type="number" class="form-control" id="jumlah">
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <label class="form-label" for="jumlah">Masa Pakai</label>
+                    <div class="input-group">
+                      <input type="number" class="form-control" id="masa_pakai">
+                      <span class="input-group-text">Bulan</span>
                     </div>
                   </div>
                 </div>
@@ -72,6 +79,9 @@
                                 <th class="text-center">Nama Barang</th>
                                 <th class="text-center">Harga/Unit</th>
                                 <th class="text-center">Jumlah</th>
+                                <th class="text-center">Masa Pakai</th>
+                                <th class="text-center">Jumlah Pertahun</th>
+                                <th class="text-center">Total</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -164,6 +174,24 @@
           orderable:false
       },
       {
+          data : 'masa_pakai',
+          name : 'masa_pakai',
+          className:'text-center',
+          orderable:false
+      },
+      {
+          data : 'jumlah_pertahun',
+          name : 'jumlah_pertahun',
+          className:'text-center',
+          orderable:false
+      },
+      {
+          data : 'total',
+          name : 'total',
+          className:'text-end',
+          orderable:false
+      },
+      {
           data : 'aksi',
           name : 'aksi',
           width: "10%",
@@ -177,6 +205,7 @@
     $('#btn-tambah-detail').on('click',function () {
       let barang = $('#barang').val();
       let jumlah = $('#jumlah').val();
+      let masaPakai = $('#masa_pakai').val();
 
       let msg="";
       if(barang ==""){
@@ -185,6 +214,10 @@
       
       if(jumlah ==""){
         msg += "Jumlah Belum Diisi <br />";
+      }
+
+      if(masaPakai ==""){
+        msg += "Masa Pakai Belum Diisi <br />";
       }
 
       if(msg!=""){
@@ -197,6 +230,7 @@
         let formData = {
           "barang":barang,
           "jumlah":jumlah,
+          "masa_pakai":masaPakai,
           "quotation_id":{{$quotation->id}},
           "_token": "{{ csrf_token() }}"
         };
@@ -228,7 +262,7 @@
     $('body').on('click', '.btn-delete', function() {
     let formData = {
       "barang_id":$(this).data('barang'),
-      "quotation_id":{{$quotation->id}}
+      "quotation_id":{{$quotation->id}},
       "_token": "{{ csrf_token() }}"
     };
 

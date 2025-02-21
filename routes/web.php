@@ -36,6 +36,8 @@ use App\Http\Controllers\Master\UmkController;
 
 use App\Http\Controllers\Setting\EntitasController;
 
+use App\Http\Controllers\Log\NotifikasiController;
+
 Route::controller(AuthController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/', 'dashboard')->name('home');
@@ -495,5 +497,7 @@ Route::group(['middleware' => ['auth']], function () {
     //NOTIFIKASI
     Route::controller(NotifikasiController::class)->group(function() {
         Route::get('/log/notifikasi', 'index')->name('notifikasi');
+        Route::get('/log/notifikasi/list', 'list')->name('notifikasi.list'); // ajax
+        Route::post('/log/notifikasi/read', 'read')->name('notifikasi.read');
     });
 });

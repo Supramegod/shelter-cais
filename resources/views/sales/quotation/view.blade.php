@@ -46,7 +46,7 @@
                 <span class="badge bg-label-warning rounded-pill mt-1">Membutuhkan Approval Direktur Keuangan</span>
                 @endif
                 @if($quotation->step == 100 && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari")
-                <span class="badge bg-label-warning rounded-pill mt-1">Membutuhkan Approval Direktur Utama</span>
+                <!-- <span class="badge bg-label-warning rounded-pill mt-1">Membutuhkan Approval Direktur Utama</span> -->
                 @endif
               @endif
             </div>
@@ -406,11 +406,11 @@
                   <td>Direktur Keuangan</td>
                   <td class="text-center">@if($quotation->ot2 !=null)<i class="mdi mdi-check-circle text-success"></i>@else &nbsp; @endif</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                   <td class="text-center">3</td>
                   <td>Direktur Utama</td>
                   <td class="text-center">@if($quotation->ot3 !=null)<i class="mdi mdi-check-circle text-success"></i>@else &nbsp; @endif</td>
-                </tr>
+                </tr> -->
                 @endif
               </tbody>
             </table>
@@ -1276,8 +1276,11 @@
                       <thead class="text-center">
                         <tr class="table-primary">
                           <th style="vertical-align: middle;">{{$jenisChemical->jenis_barang}}</th>
-                          <th style="vertical-align: middle;">Harga / Unit</th>
                           <th>Jumlah</th>
+                          <th style="vertical-align: middle;">Harga Satuan</th>
+                          <th>Masa Pakai</th>
+                          <th>Jumlah Pertahun</th>
+                          <th>Total</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1285,8 +1288,11 @@
                         @if($chemical->jenis_barang == $jenisChemical->jenis_barang)
                           <tr>
                             <td>{{$chemical->nama}}</td>
-                            <td style="text-align:right">Rp {{number_format($chemical->harga,0,",",".")}}</td>
                             <td style="text-align:center">{{$chemical->jumlah}}</td>
+                            <td style="text-align:right">Rp {{number_format($chemical->harga,0,",",".")}}</td>
+                            <td style="text-align:center">{{$chemical->masa_pakai}}</td>
+                            <td style="text-align:right">{{($chemical->jumlah/$chemical->masa_pakai)*12}}</td>
+                            <td style="text-align:right">{{($chemical->jumlah*$chemical->harga)/$chemical->masa_pakai}}</td>
                           </tr>
                           @php
                             $totalChemical += ($chemical->jumlah*$chemical->harga);
@@ -1514,9 +1520,11 @@
               timerProgressBar: true,
               didOpen: () => {
                 Swal.showLoading();
-                const timer = Swal.getPopup().querySelector("b");
                 timerInterval = setInterval(() => {
-                  timer.textContent = `${Swal.getTimerLeft()}`;
+                  const timer = Swal.getHtmlContainer().querySelector('b');
+                  if (timer) {
+                    timer.textContent = Swal.getTimerLeft();
+                  }
                 }, 100);
               },
               willClose: () => {
@@ -1536,53 +1544,107 @@
       }
     });
   });
+
+  function sendApprovalRequest(formData, msg) {
+    Swal.fire({
+      title: 'Loading...',
+      html: 'Tunggu data anda sedang diproses.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+      
+    $.ajax({
+      type: "POST",
+      url: "{{route('quotation.approve-quotation')}}",
+      data: formData,
+      success: function(response) {
+        let timerInterval;
+        Swal.fire({
+          title: "Pemberitahuan",
+          html: msg,
+          icon: "success",
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+            timerInterval = setInterval(() => {
+              const timer = Swal.getHtmlContainer().querySelector('b');
+              if (timer) {
+                timer.textContent = Swal.getTimerLeft();
+              }
+            }, 100);
+          },
+          willClose: () => {
+            clearInterval(timerInterval);
+          }
+        }).then((result) => {
+          if (result.dismiss === Swal.DismissReason.timer) {
+            location.reload();
+          }
+        });
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  }
+  
   $('body').on('click', '#approve-quotation', function() {
     Swal.fire({
       icon: "question",
       title: "Apakah anda yakin ingin menyetujui data ini ?",
       showCancelButton: true,
+      showDenyButton: true,
       confirmButtonText: "Approve",
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isConfirmed) {
+      denyButtonText: "Not Approve",
+      cancelButtonText: "Batal",
+      confirmButtonColor: '#28a745',
+      denyButtonColor: '#ff4d49',
+      cancelButtonColor: '#6c757d',
+    }).then((result) => {            
+      if (result.isConfirmed || result.isDenied) {
+        let approve = false;
+        $msg = "Data berhasil tidak disetujui.";
+        if(result.isConfirmed){
+          approve = true;
+          $msg = "Data berhasil disetujui.";
+        }
+
         let formData = {
           "id":$(this).data('id'),
+          "approve":approve,
           "_token": "{{ csrf_token() }}"
         };
 
-        $.ajax({
-          type: "POST",
-          url: "{{route('quotation.approve-quotation')}}",
-          data:formData,
-          success: function(response){
-            let timerInterval;
-            Swal.fire({
-              title: "Pemberitahuan",
-              html: "Data berhasil disetujui.",
-              icon: "success",
-              timer: 2000,
-              timerProgressBar: true,
-              didOpen: () => {
-                Swal.showLoading();
-                const timer = Swal.getPopup().querySelector("b");
-                timerInterval = setInterval(() => {
-                  timer.textContent = `${Swal.getTimerLeft()}`;
-                }, 100);
-              },
-              willClose: () => {
-                clearInterval(timerInterval);
+        if (result.isDenied) {
+          Swal.fire({
+            title: 'Masukkan Alasan',
+            input: 'textarea',
+            inputPlaceholder: 'Tuliskan alasan tidak menyetujui...',
+            inputAttributes: {
+              'aria-label': 'Tuliskan alasan tidak menyetujui'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Kirim',
+            cancelButtonText: 'Batal',
+            preConfirm: (alasan) => {
+              if (!alasan) {
+                Swal.showValidationMessage('Alasan tidak boleh kosong');
+                return false;
               }
-            }).then((result) => {
-              /* Read more about handling dismissals below */
-              if (result.dismiss === Swal.DismissReason.timer) {
-                location.reload();
-              }
-            });
-          },
-          error:function(error){
-            console.log(error);
-          }
-        });
+              return alasan;
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              formData.alasan = result.value;
+              sendApprovalRequest(formData, $msg);
+            }
+          });
+        } else {
+          sendApprovalRequest(formData, $msg);
+        }
       }
     });
   });
