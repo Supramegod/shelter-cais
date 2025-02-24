@@ -323,6 +323,16 @@ class LeadsController extends Controller
 
                     $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
                 }else{
+                    $companies = DB::table('sl_leads')->whereNull('deleted_at')->pluck('nama_perusahaan');
+                    foreach ($companies as $company) {
+                        if (similar_text(strtolower($request->nama_perusahaan), strtolower($company), $percent)) {
+                            if ($percent > 80) { // jika kemiripan lebih dari 80%
+                                $validator->errors()->add('nama_perusahaan', 'Nama perusahaan terlalu mirip dengan : ' . $company.' Silahkan infokan ke Telesales atau Admin IT');
+                                return back()->withErrors($validator->errors())->withInput();
+                            }
+                        }
+                    }
+
                     $nomor = $this->generateNomor();
                     $newId = DB::table('sl_leads')->insertGetId([
                         'nomor' =>  $nomor,
@@ -382,6 +392,7 @@ class LeadsController extends Controller
             DB::commit();
             return redirect()->back()->with('success', $msgSave);
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

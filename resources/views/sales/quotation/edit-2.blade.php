@@ -573,6 +573,14 @@ $('#top').on('change', function() {
 $('#jumlah_hari_invoice').on('change', function() {
   showDTipeHari(2);
 });
+@if($quotation->salary_rule_id!=null)
+  $('#cut-off').text($("#salary_rule option:selected").data("cutoff"));
+  // $('#pembayaran-invoice').text($("#salary_rule option:selected").data("pembayaraninvoice"));
+  $('#perkiraan-invoice').text($("#salary_rule option:selected").data("perkiraaninvoice"));
+  $('#pengiriman-invoice').text($("#salary_rule option:selected").data("pengirimaninvoice"));
+  $('#crosscheck-absensi').text($("#salary_rule option:selected").data("crosscheckabsensi"));
+  $('#rilis-payroll').text($("#salary_rule option:selected").data("rilispayroll"));
+@endif
 
 $('#salary_rule').on('change', function() {
   $('#cut-off').text($("#salary_rule option:selected").data("cutoff"));

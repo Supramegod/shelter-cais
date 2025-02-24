@@ -1176,6 +1176,7 @@ class QuotationController extends Controller
         }
         
         try {
+            DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'mulai_kontrak' => 'required',
                 'kontrak_selesai' => 'required',
@@ -1219,7 +1220,6 @@ class QuotationController extends Controller
                     'durasi_kerjasama' => $request->durasi_kerjasama,
                     'durasi_karyawan' => $request->durasi_karyawan,
                     'evaluasi_karyawan' => $request->evaluasi_karyawan,
-                    'step' => 3,
                     'cuti' => $request->macam_cuti,
                     'hari_cuti_kematian' => $request->hari_cuti_kematian,
                     'hari_istri_melahirkan' => $request->hari_istri_melahirkan,
@@ -1256,6 +1256,7 @@ class QuotationController extends Controller
                     return redirect()->route('quotation.view',$request->id);
                 }
             }
+            DB::commit();
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1302,6 +1303,9 @@ class QuotationController extends Controller
             $manfee = $request['manajemen_fee'];
             $presentase = $request['persentase'];
             $hitunganUpah = "Per Bulan";
+
+            //dijadikan acuan
+            $nilaiUpah = 0;
 
             $customUpah = 0;
             if($upah == "Custom"){
@@ -1375,11 +1379,13 @@ class QuotationController extends Controller
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->full_name
                 ]);
+
+                $nilaiUpah = $nominalUpah;
             }
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'upah' => $upah,
-                'nominal_upah' => 0,
+                'nominal_upah' => $nilaiUpah,
                 'hitungan_upah' => $hitunganUpah,
                 'management_fee_id' => $manfee,
                 'is_aktif' => 0,
@@ -1646,6 +1652,7 @@ if($quotation->note_harga_jual == null){
                     }else{
                         //cari harga
                         $barang = DB::table('m_barang')->where('id',$value->id)->first();
+                        $jenisBarang = DB::table('m_jenis_barang')->where('id',$barang->jenis_barang_id)->first();
                         DB::table('sl_quotation_kaporlap')->insert([
                             'quotation_detail_id' => $vd->id,
                             'quotation_id' => $quotation->id,
@@ -1653,7 +1660,8 @@ if($quotation->note_harga_jual == null){
                             'jumlah' => $request->{'jumlah'.'_'.$value->id.'_'.$vd->id},
                             'harga' => $barang->harga,
                             'nama' => $barang->nama,
-                            'jenis_barang' => $barang->jenis_barang,
+                            'jenis_barang_id' => $jenisBarang->id,
+                            'jenis_barang' => $jenisBarang->nama,
                             'created_at' => $current_date_time,
                             'created_by' => Auth::user()->full_name
                         ]);
@@ -1713,13 +1721,15 @@ if($quotation->note_harga_jual == null){
                 }else{
                     //cari harga
                     $barang = DB::table('m_barang')->where('id',$value->id)->first();
+                    $jenisBarang = DB::table('m_jenis_barang')->where('id',$barang->jenis_barang_id)->first();
                     DB::table('sl_quotation_devices')->insert([
                         'quotation_id' => $quotation->id,
                         'barang_id' => $barang->id,
                         'jumlah' => $request->{'jumlah'.'_'.$value->id},
                         'harga' => $barang->harga,
                         'nama' => $barang->nama,
-                        'jenis_barang' => $barang->jenis_barang,
+                        'jenis_barang_id' => $jenisBarang->id,
+                        'jenis_barang' => $jenisBarang->nama,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -3154,6 +3164,7 @@ if($quotation->note_harga_jual == null){
                 ->first();
 
                 $barang = DB::table('m_barang')->where('id',$request->barang)->first();
+                $jenisBarang = DB::table('m_jenis_barang')->where('id',$barang->jenis_barang_id)->first();
                 $harga = str_replace(".","",$request->harga);
                 if($dataExist!=null){
                     DB::table("sl_quotation_ohc")
@@ -3163,7 +3174,8 @@ if($quotation->note_harga_jual == null){
                                 'jumlah' => $dataExist->jumlah+(int)$request->jumlah,
                                 'harga' => $harga,
                                 'nama' => $barang->nama,
-                                'jenis_barang' => $barang->jenis_barang,
+                                'jenis_barang_id' => $jenisBarang->id,
+                                'jenis_barang' => $jenisBarang->nama,
                                 'updated_at' => $current_date_time,
                                 'updated_by' => Auth::user()->full_name
                         ]);
@@ -3174,7 +3186,8 @@ if($quotation->note_harga_jual == null){
                         'jumlah' => $request->jumlah,
                         'harga' => $harga,
                         'nama' => $barang->nama,
-                        'jenis_barang' => $barang->jenis_barang,
+                        'jenis_barang_id' => $jenisBarang->id,
+                        'jenis_barang' => $jenisBarang->nama,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -3384,6 +3397,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 ->first();
 
             $barang = DB::table('m_barang')->where('id',$request->barang)->first();
+            $jenisBarang = DB::table('m_jenis_barang')->where('id',$barang->jenis_barang_id)->first();
             if($dataExist!=null){
                 DB::table("sl_quotation_chemical")
                     ->whereNull('deleted_at')
@@ -3393,7 +3407,8 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                             'harga' => $barang->harga,
                             'nama' => $barang->nama,
                             'masa_pakai' => $request->masa_pakai,
-                            'jenis_barang' => $barang->jenis_barang,
+                            'jenis_barang_id' => $jenisBarang->id,
+                            'jenis_barang' => $jenisBarang->nama,
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
                     ]);
@@ -3405,7 +3420,8 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                     'harga' => $barang->harga,
                     'nama' => $barang->nama,
                     'masa_pakai' => $request->masa_pakai,
-                    'jenis_barang' => $barang->jenis_barang,
+                    'jenis_barang_id' => $jenisBarang->id,
+                    'jenis_barang' => $jenisBarang->nama,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);

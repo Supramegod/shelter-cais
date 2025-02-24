@@ -288,6 +288,7 @@ class QuotationService
         }else{
             $kbd->bpjs_kesehatan = $kbd->nominal_takaful;
             $kbd->persen_bpjs_kesehatan = 0;
+            $quotation->persen_bpjs_kesehatan = 0;
             // dd($kbd->bpjs_jkk,$kbd->bpjs_jkm,$kbd->bpjs_jht,$kbd->bpjs_jp,$kbd->bpjs_kes);
         };
     }

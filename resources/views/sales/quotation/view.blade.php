@@ -734,19 +734,8 @@
                     </table>
                   </div>
                   <div class="mt-3" style="padding-left:40px">
-                    <p><b><i>Note :</i></b>	<br>
-  Tunjangan hari raya (gaji pokok dibagi {{$quotation->provisi}}).		<br>
-  <i>Cover</i> 
-  @if($quotation->program_bpjs=="2 BPJS")
-  BPJS Ketenagakerjaan 2 Program (JKK, JKM). 
-  @elseif($quotation->program_bpjs=="3 BPJS")
-  BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT). 
-  @elseif($quotation->program_bpjs=="4 BPJS")
-  BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP). 
-  @endif
-  <span class="text-danger">Pengalian base on upah</span>		<br>
-  <i>Cover</i> BPJS Kesehatan. <span class="text-danger">Pengalian base on UMK</span>		<br>
-  </p>
+                    <p><b><i>Note :</i></b><br>
+                    {!! $quotation->note_harga_jual !!}</p>
                   </div>
                 </div>
               </div>
@@ -1209,7 +1198,7 @@
                   <div class="col-12 d-flex justify-content-between">
                     <div></div>
                     <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'9','edit'=>1])}}" class="btn btn-primary btn-next w-20">
-                        <span class="align-middle me-sm-1">Edit Devices</span>
+                        <span class="align-middle me-sm-1">Edit</span>
                     </a>
                   </div>
                 @endif
