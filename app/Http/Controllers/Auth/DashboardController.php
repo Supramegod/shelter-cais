@@ -546,4 +546,96 @@ class DashboardController extends Controller
         return view('home.dashboard-general',compact('branchesWithCustomerData','kebutuhanList','leadsByBranchAndKebutuhan','leadsByBranch','warna'));
     }
 
+
+    public function listAktifitasSalesHariIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereDate('sl_customer_activity.created_at', Carbon::today()->toDateString())
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function listAktifitasSalesMingguIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereBetween('sl_customer_activity.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function listAktifitasSalesBulanIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function listAktifitasSalesTahunIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereYear('sl_customer_activity.created_at', Carbon::now()->year)
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
 }

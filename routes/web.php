@@ -74,6 +74,12 @@ Route::group(['middleware' => ['auth']], function () {
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
         Route::get('/dashboard/aktifkan/list', 'getListDashboardAktifkanData')->name('dashboard-aktifkan.list');
+
+        // ajax modal
+        Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-hari-ini', 'listAktifitasSalesHariIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-hari-ini');
+        Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-minggu-ini', 'listAktifitasSalesMingguIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-minggu-ini');
+        Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-bulan-ini', 'listAktifitasSalesBulanIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-bulan-ini');
+        Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-tahun-ini', 'listAktifitasSalesTahunIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-tahun-ini');
     });
 
     Route::controller(LeadsController::class)->group(function() {

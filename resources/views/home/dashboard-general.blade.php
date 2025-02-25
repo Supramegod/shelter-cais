@@ -283,7 +283,7 @@
     });
   }
 </script>
-<!-- <script>
+<script>
         $(function() {
           var derivers = $.pivotUtilities.derivers;
           var renderers = $.extend($.pivotUtilities.renderers,
@@ -308,6 +308,6 @@
                 vals: ["sales"]
             });
         });
-    </script> -->
+    </script>
 @endsection
 

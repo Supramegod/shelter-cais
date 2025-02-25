@@ -75,6 +75,7 @@ class PksController extends Controller
                 ->leftJoin('sl_quotation','sl_pks.quotation_id','sl_quotation.id')
                 ->whereNull('sl_pks.deleted_at')
                 ->whereNull('sl_spk.deleted_at')
+                ->whereNull('sl_quotation.deleted_at')
                 ->select('sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation.kebutuhan','sl_pks.status_pks_id')
                 ->get();
 
@@ -1024,7 +1025,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         try {
             $data = DB::table('sl_pks')->whereNull('deleted_at')->where('id',$id)->first();
             $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$data->spk_id)->first();
-            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->whereNull('deleted_at')->first();
+            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->first();
 
             $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');

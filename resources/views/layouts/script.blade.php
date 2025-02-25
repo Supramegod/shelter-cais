@@ -1,3 +1,26 @@
+<!-- Modal -->
+<div class="modal fade" id="normalModalDatatable" tabindex="-1" aria-labelledby="normalModalDatatable" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="normalModalDatatable"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table id="normal-modal-datatable" class="table table-striped table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <!-- <script src="{{ asset('public/assets/vendor/libs/jquery/jquery.js') }}"></script> -->
@@ -123,4 +146,49 @@
         });
     </script>
     <!-- Custom script -->
+
+    <script>  
+  function openNormalDataTableModal(url, title) {
+    $('#normalModalDatatable .modal-title').text(title);
+    $('#normalModalDatatable').modal('show');
+    $('#normal-modal-datatable tbody').html('<tr><td colspan="100%" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>');
+    $.ajax({
+      url: url,
+      success: function(data) {
+        $('#normal-modal-datatable tbody').html('');
+        if (data.data.length === 0) {
+            $('#normal-modal-datatable tbody').html('<tr><td colspan="100%" class="text-center">Data tidak tersedia</td></tr>');
+            return;
+        }
+        let columns = Object.keys(data.data[0]).map(key => ({ title: key, data: key }));
+        let thead = $('#normal-modal-datatable thead tr');
+        thead.empty();
+        columns.forEach(column => {
+          thead.append(`<th>${column.title}</th>`);
+        });
+
+        let table = $('#normal-modal-datatable').DataTable({
+          destroy: true,
+          scrollX: true,
+          "iDisplayLength": 25,
+          'processing': true,
+          'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': 'Loading...'
+          },
+          data: data.data,
+          columns: columns,
+          "order": [
+            [0, 'desc']
+          ],
+          "language": datatableLang,
+          dom: 'frtip',
+          buttons: [],
+        });
+      }
+    });
+
+  }
+</script>
+
     @yield('pageScript')

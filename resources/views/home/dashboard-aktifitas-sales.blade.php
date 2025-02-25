@@ -6,22 +6,22 @@
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="row">
         <div class="col-sm-6 col-lg-3 mb-4">
-            <div class="card card-border-shadow-primary h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-2 pb-1">
-                <div class="avatar me-2">
-                    <span class="avatar-initial rounded bg-label-primary"
-                    ><i class="mdi mdi-finance mdi-20px"></i
-                    ></span>
-                </div>
-                <h4 class="ms-1 mb-0 display-6">{{$aktifitasSalesHariIni}}</h4>
-                </div>
-                <p class="mb-0 text-heading ">Aktifitas Sales Hari Ini</p>
-            </div>
+            <div class="card card-border-shadow-primary h-100" id="aktifitasSalesHariIni" onclick="openNormalDataTableModal('{{ route('dashboard.aktifitas-sales.modal.aktifitas-sales-hari-ini') }}','AKTIFITAS SALES HARI INI')">
+              <div class="card-body">
+                  <div class="d-flex align-items-center mb-2 pb-1">
+                  <div class="avatar me-2">
+                      <span class="avatar-initial rounded bg-label-primary"
+                      ><i class="mdi mdi-finance mdi-20px"></i
+                      ></span>
+                  </div>
+                  <h4 class="ms-1 mb-0 display-6">{{$aktifitasSalesHariIni}}</h4>
+                  </div>
+                  <p class="mb-0 text-heading ">Aktifitas Sales Hari Ini</p>
+              </div>
             </div>
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
-            <div class="card card-border-shadow-warning h-100">
+            <div class="card card-border-shadow-warning h-100" id="aktifitasSalesMingguIni" onclick="openNormalDataTableModal('{{ route('dashboard.aktifitas-sales.modal.aktifitas-sales-minggu-ini') }}','AKTIFITAS SALES MINGGU INI')">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
                 <div class="avatar me-2">
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
-            <div class="card card-border-shadow-secondary h-100">
+            <div class="card card-border-shadow-secondary h-100" id="aktifitasSalesBulanIni" onclick="openNormalDataTableModal('{{ route('dashboard.aktifitas-sales.modal.aktifitas-sales-bulan-ini') }}','AKTIFITAS SALES BULAN INI')">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
                 <div class="avatar me-2">
@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
-            <div class="card card-border-shadow-info h-100">
+            <div class="card card-border-shadow-info h-100" id="aktifitasSalesTahunIni" onclick="openNormalDataTableModal('{{ route('dashboard.aktifitas-sales.modal.aktifitas-sales-tahun-ini') }}','AKTIFITAS SALES TAHUN INI')">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
                 <div class="avatar me-2">
