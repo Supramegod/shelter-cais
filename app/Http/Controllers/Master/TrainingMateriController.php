@@ -23,9 +23,12 @@ class TrainingMateriController extends Controller
             
             $data = DB::table('m_training_materi as materi')
                     ->leftjoin('m_training_laman as laman','laman.id', '=', 'materi.laman_id')
-                    ->select('materi.id', 'materi.materi', 'materi.tujuan', 'materi.kompetensi', 'laman.laman', 'materi.updated_at')
+                    ->leftjoin('sdt_training as st','materi.id', '=', 'st.id_materi')
+                    ->select('materi.id', 'materi.materi', 'materi.tujuan', 'materi.kompetensi', 'laman.laman',  DB::raw("count(distinct st.id_training) AS training", 'materi.updated_at'))
                     ->where('materi.is_aktif', 1)
+                    ->groupBy('materi.id')
                     ->get();
+            
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -52,34 +55,6 @@ class TrainingMateriController extends Controller
             $data = DB::table('m_training_materi')->where('id',$id)->first();
 
             return view('master.training-materi.view',compact('data'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-    
-    public function listUmk(Request $request){
-        try {
-            $data = DB::table('m_umk')->where('city_id',$request->id)->whereNull('deleted_at')->get();
-                return DataTables::of($data)
-                ->addColumn('sumber', function ($data) {
-                    return '<div class="justify-content-center d-flex">
-                                <a target="_blank" href="'.$data->sumber.'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-link"></i></a> &nbsp;
-                            </div>';
-                })
-                ->addColumn('is_aktif', function ($data) {
-                    if($data->is_aktif == 1){
-                        return '<div class="justify-content-center d-flex">
-                                    <a href="#" class="btn btn-success waves-effect btn-xs">Active</a> &nbsp;
-                                </div>';
-                    }else{
-                        return '<div class="justify-content-center d-flex">
-                                    <a href="#" class="btn btn-warning waves-effect btn-xs">Inactive</a> &nbsp;
-                                </div>';
-                    }
-                })
-                ->rawColumns(['sumber', 'is_aktif'])
-                ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -115,7 +90,8 @@ class TrainingMateriController extends Controller
             
             if(!empty($request->id)){
                 $msg = 'Data Berhasil Diubah';
-                DB::table('m_training_materi')->insert([
+                
+                DB::table('m_training_materi')->where('id',$request->id)->update([
                     'materi'        => $request->judul,
                     'tujuan'        => $request->tujuan,
                     'kompetensi'    => $request->kompetensi,

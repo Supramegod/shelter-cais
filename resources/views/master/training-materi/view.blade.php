@@ -45,7 +45,8 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Tujuan <span class="text-danger">*</span></label>
             <div class="col-sm-10">
-              <input type="text" id="tujuan" name="tujuan" value="{{$data->tujuan}}" class="form-control @if ($errors->any()) @if($errors->has('tujuan')) is-invalid @else   @endif @endif">
+              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="tujuan" id="tujuan" placeholder="">{{$data->tujuan}}</textarea>    
+            <!-- <input type="text" id="tujuan" name="tujuan" value="{{$data->tujuan}}" class="form-control @if ($errors->any()) @if($errors->has('tujuan')) is-invalid @else   @endif @endif"> -->
               @if($errors->has('tujuan'))
                   <div class="invalid-feedback">{{$errors->first('tujuan')}}</div>
               @endif
@@ -55,7 +56,8 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Kompetensi <span class="text-danger">*</span></label>
             <div class="col-sm-10">
-              <input type="text" id="kompetensi" name="kompetensi" value="{{$data->kompetensi}}" class="form-control @if ($errors->any()) @if($errors->has('kompetensi')) is-invalid @else   @endif @endif">
+              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="kompetensi" id="kompetensi" placeholder="">{{$data->kompetensi}}</textarea>  
+              <!-- <input type="text" id="kompetensi" name="kompetensi" value="{{$data->kompetensi}}" class="form-control @if ($errors->any()) @if($errors->has('kompetensi')) is-invalid @else   @endif @endif"> -->
               @if($errors->has('kompetensi'))
                   <div class="invalid-feedback">{{$errors->first('kompetensi')}}</div>
               @endif
@@ -82,7 +84,7 @@
           <div class="card-body">
             <div class="col-12 text-center">
               <button id="btn-update" class="btn btn-primary w-100 waves-effect waves-light">
-                <span class="me-1">Update Training</span>
+                <span class="me-1">Update Materi</span>
                 <i class="mdi mdi-content-save scaleX-n1-rtl"></i>
               </button>
             </div>

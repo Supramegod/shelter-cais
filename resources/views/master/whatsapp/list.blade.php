@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','SDT Training')
+@section('title','Whastapp')
 @section('pageStyle')
 <style>
     .dt-buttons {width: 100%;}
@@ -14,10 +14,10 @@
             <div class="card">
                 <div class="card-header d-flex" style="padding-bottom: 0px !important;">
                     <div class="col-md-6 text-left col-12 my-auto">
-                        <h3 class="page-title">Training</h3>
+                        <h3 class="page-title">Whatsapp</h3>
                         <ol class="breadcrumb" style="background-color:white !important;padding:0 !important">
-							<li class="breadcrumb-item"><a href="javascript:void(0);">SDT</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Training</li>
+							<li class="breadcrumb-item"><a href="javascript:void(0);">Master</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Whatsapp</li>
 						</ol>
                     </div>
                 </div>
@@ -41,45 +41,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="branch" name="branch">
-                                                <option value="">- Semua Wilayah -</option>
-                                                @foreach($branch as $data)
-                                                <option value="{{$data->id}}" @if($request->branch==$data->id) selected @endif>{{$data->name}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="branch">Wilayah</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="platform" name="platform">
-                                                <option value="">- Semua Sumber Trainings -</option>
-                                                @foreach($platform as $data)
-                                                <option value="{{$data->id}}" @if($request->platform==$data->id) selected @endif>{{$data->nama}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="platform">Sumber Trainings</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="status" name="status">
-                                                <option value="">- Semua Status -</option>
-                                                @foreach($status as $data)
-                                                <option value="{{$data->id}}" @if($request->status==$data->id) selected @endif>{{$data->nama}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="status">Status</label>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <div class="col-md-1">
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-lg btn-primary waves-effect waves-light">Filter</button>
@@ -92,15 +53,11 @@
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Materi</th>
-                                    <th class="text-center">Waktu Mulai</th>
-                                    <th class="text-center">Tipe</th>
-                                    <th class="text-center">Tempat</th>
-                                    <th class="text-center">Client</th>
-                                    <th class="text-center">Total Client</th>
-                                    <th class="text-center">Total Peserta</th>
-                                    <th class="text-center">Trainer</th>
-                                    <th class="text-center">Total Trainer</th>
+                                    <th class="text-center">Nomor Whatsapp</th>
+                                    <th class="text-center">Pesan</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Created Date</th>
+                                    <th class="text-center">Send Date</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -137,7 +94,7 @@
         'processing': 'Loading...'
     },
             ajax: {
-                url: "{{ route('sdt-training.list') }}",
+                url: "{{ route('whatsapp.list') }}",
                 data: function (d) {
                     // d.tgl_dari = $('#tgl_dari').val();
                     // d.tgl_sampai = $('#tgl_sampai').val();
@@ -154,40 +111,24 @@
                 [0,'desc']
             ],
             columns:[{
-                data : 'materi',
-                name : 'materi',
-                className:'text-left'
-            },{
-                data : 'waktu_mulai',
-                name : 'waktu_mulai',
+                data : 'nomor_wa',
+                name : 'nomor_whatsapp',
                 className:'text-center'
             },{
-                data : 'tipe',
-                name : 'tipe',
+                data : 'message',
+                name : 'message',
                 className:'text-center'
             },{
-                data : 'tempat',
-                name : 'tempat',
+                data : 'status',
+                name : 'status',
                 className:'text-center'
             },{
-                data : 'client',
-                name : 'client',
-                className:'text-left'
-            },{
-                data : 'total_client',
-                name : 'total_client',
+                data : 'created_date',
+                name : 'created_date',
                 className:'text-center'
             },{
-                data : 'total_peserta',
-                name : 'total_peserta',
-                className:'text-center'
-            },{
-                data : 'trainer',
-                name : 'trainer',
-                className:'text-left'
-            },{
-                data : 'total_trainer',
-                name : 'total_trainer',
+                data : 'send_date',
+                name : 'send_date',
                 className:'text-center'
             },{
                 data : 'aksi',
@@ -199,13 +140,22 @@
             "language": datatableLang,
             dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
             buttons: [{
-                text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah SDT Training</span>',
-                className: 'create-new btn btn-label-primary waves-effect waves-light',
-                action: function (e, dt, node, config)
-                    {
-                        window.location.href = '{{route("sdt-training.add")}}';
-                    }
+                text: '<i class="mdi mdi-lan-disconnect me-sm-1"></i> <span class="d-none d-sm-inline-block">Status Sender {{$status}} </span>',
+                className: 'create-new btn @if($status == "Close") btn-label-danger @else btn-label-success @endif waves-effect waves-light btn-qr',
+                // action: function (e, dt, node, config)
+                //     {
+                //         window.location.href = '{{route("sdt-training.add")}}';
+                //     }
+
+                }
+                @if($status == "Open") 
+                ,{
+                    text: '<i class="mdi mdi-whatsapp me-sm-1"></i> <span class="d-none d-sm-inline-block">Test Sender </span>',
+                    className: 'btn btn-label-primary waves-effect waves-light btn-message',
                 }]
+                @else
+                ]
+                @endif
         });
 
         $('body').on('click', '.btn-delete', function() {
@@ -301,5 +251,176 @@
     //         }
     //     });
     // });
+
+    $('.btn-qr').on('click',function(){
+        // $('#modal-qr').modal('show');
+        let id = $(this).data('id');
+        let formData = {
+                        "id":id,
+                        "_token": "{{ csrf_token() }}"
+                    };
+        // let i = 1;
+        // while (i < 10) {
+        //     console.log(i);
+        //     setTimeout(function timer() {
+
+        //         checkStatus(function(data){
+        //             // var BDate = data;
+        //             // var BookingDate = Bdate;
+        //             //continue your function here, inside of the callback
+        //             // console.log(data.data['is_aktif'] == 0);
+        //             // console.log(i);
+        //             // i = 10;
+        //             console.log(i);
+        //             if(data.data['is_aktif'] == 0){i = 10};
+        //         });
+
+        //         // console.log(checkStatus());
+        //         // if(checkStatus()){
+        //         //     return;
+        //         // }
+        //         i++;
+        //     }, i * 1000);
+        // }
+        
+                    
+        $.ajax({
+            type: "POST",
+            url: "{{route('whatsapp.connectQr')}}",
+            data:formData,
+            success: function(response){
+                console.log(response)
+                if (response.success) {
+                    $("#picQr").attr("src", response.data);
+                    $('#modal-qr').modal('show');
+                    console.log(checkStatus());
+                    // var cek = true;
+                    // while(cek){
+                    //     cek = checkStatus();
+                    // }
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+    });
+
+    $('.btn-message').on('click',function(){
+        let id = $(this).data('id');
+        let formData = {
+                        "id":id,
+                        "_token": "{{ csrf_token() }}"
+                    };
+                    
+        $.ajax({
+            type: "POST",
+            url: "{{route('whatsapp.message')}}",
+            data:formData,
+            success: function(response){
+                console.log(response)
+                if (response.success) {
+                    // $("#picQr").attr("src", response.data);
+                    // $('#modal-qr').modal('show');
+                    // console.log(checkStatus());
+                    // var cek = true;
+                    // while(cek){
+                    //     cek = checkStatus();
+                    // }
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'success'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+    });
+
+    function checkStatus(callBack) {
+        let id = $(this).data('id');
+        let formData = {
+                        "id":id,
+                        "_token": "{{ csrf_token() }}"
+                    };
+        $.ajax({
+            type: "POST",
+            url: "{{route('whatsapp.connectStatus')}}",
+            data:formData,
+            success: function(response){
+                // console.log(response.data);
+                // console.log(response.data['is_aktif'] == 0);
+                if (response.success) {
+                    // return response.data['is_aktif'] == 0;
+                } 
+                // console.log('aaa');
+                callBack(response);
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+        // .then(function(response){
+            // console.log("getRecord response: "+JSON.stringify(response));
+            // console.log(response.data['is_aktif'] == 0);
+        //     return response.data;
+        // });
+
+        // setTimeout(function () {
+        //     // if (newState == -1) {
+        //     alert('CHECK status');
+            
+        //     // }
+        // }, 5000);
+    }
 </script>
+
+
+<div class="modal fade" id="modal-qr" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h3 class="mb-2">SCAN QR</h3>
+        </div>
+        <div class="row">
+          <!-- <div class="table-responsive overflow-hidden table-data"> -->
+            <img 
+                id='picQr'
+                alt="Red dot" 
+            />
+          <!-- </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection

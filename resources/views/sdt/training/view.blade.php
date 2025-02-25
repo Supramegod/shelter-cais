@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title','Leads')
+@section('title','SDT Training')
 @section('content')
 <!--/ Content -->
 <div class="container-fluid flex-grow-1 container-p-y">
-  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Sales/ </span> Lihat Leads</h4>
+  <h4 class="py-3 mb-4"><span class="text-muted fw-light">SDT/ </span> Detail SDT Training</h4>
   <!-- Multi Column with Form Separator -->
   <div class="row">
     <!-- Form Label Alignment -->
@@ -11,137 +11,73 @@
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
-            <span>Form Leads</span>
-            <span style="font-weight:bold;color:#000">{{$data->nomor}} - {{$data->stgl_leads}}</span>
+            <!-- <span>SDT Training</span> -->
           </div>
         </h5>
-        <form class="card-body overflow-hidden" action="{{route('leads.save')}}" method="POST">
+        <div class="card-body overflow-hidden">
           @csrf
-          <input type="hidden" name="id" value="{{$data->id}}">
-          <h6>1. Informasi Perusahaan</h6>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{$data->nama_perusahaan}}" class="form-control @if ($errors->any()) @if($errors->has('nama_perusahaan')) is-invalid @else   @endif @endif">
-              @if($errors->has('nama_perusahaan'))
-                  <div class="invalid-feedback">{{$errors->first('nama_perusahaan')}}</div>
-              @endif
+          <input type="hidden" id="training_id" value="{{$data->id_training}}">
+          
+          <h6>Peserta Training</h6>
+            <div class="position-relative">
+              <!-- <label class="col-sm-2 col-form-label text-center">Nama Perusahaan / Client</label> -->
+              <div class="col-sm-2 ">
+                  <select id="nama_perusahaan" name="nama_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                    <option value="">- Pilih Perusahaan -</option>
+                    @foreach($namaPerusahaan as $value)
+                    <option value="{{$value->id}}"> {{$value->client}}</option>
+                    @endforeach
+                  </select>
+              </div>  
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Jenis</label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="jenis_perusahaan" name="jenis_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($jenisPerusahaan as $value)
-                  <option value="{{$value->id}}" @if($data->jenis_perusahaan_id == $value->id) selected @endif>{{$value->nama}}</option>
-                  @endforeach
-                </select>
-              </div>
+            <div class="table-responsive overflow-hidden table-data-client">
+                <table id="table-data-client" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                    <thead>
+                    <!-- no, nik, nama, no whatsapp, aksi -->
+                        <tr>
+                            <th class="text-center">NIK</th>
+                            <th class="text-center">Nama</th>
+                            <th class="text-center">No Whatsapp</th>
+                            <th class="text-center">Status Kirim</th>
+                            <th class="text-center">Hadir</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- data table ajax --}}
+                    </tbody>
+                </table>
             </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Wilayah <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="branch" name="branch" class="form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($branch as $value)
-                  <option value="{{$value->id}}" @if($data->branch_id == $value->id) selected @endif>{{$value->name}}</option>
-                  @endforeach
-                </select>
-                @if($errors->has('branch'))
-                  <div class="invalid-feedback">{{$errors->first('branch')}}</div>
-                @endif
-              </div>
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Telpon</label>
-            <div class="col-sm-4">
-              <input type="number" id="telp_perusahaan" name="telp_perusahaan" value="{{$data->telp_perusahaan}}" class="form-control @if ($errors->any())   @endif">
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Alamat</label>
-            <div class="col-sm-10">
-              <div class="form-floating form-floating-outline mb-2">
-                <textarea class="form-control mt-3 h-px-100 @if ($errors->any())   @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{$data->alamat}}</textarea>
-              </div>
-            </div>
-          </div>          
-          <hr class="my-4 mx-4">
-          <h6>2. Kebutuhan Leads</h6>
+      
+          
+          <br>
+          <br>
+          <br>
+
+          <h6>Trainer</h6>
           <div class="row mb-2">
-            <label class="col-sm-2 col-form-label text-sm-end">Sumber Leads</label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="platform" name="platform" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($platform as $value)
-                  <option value="{{$value->id}}" @if($data->platform_id == $value->id) selected @endif>{{$value->nama}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="kebutuhan" name="kebutuhan" class="form-select @if ($errors->any()) @if($errors->has('kebutuhan')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($kebutuhan as $value)
-                  <option value="{{$value->id}}" @if($data->kebutuhan_id == $value->id) selected @endif>{{$value->nama}}</option>
-                  @endforeach
-                </select>
-                @if($errors->has('kebutuhan'))
-                  <div class="invalid-feedback">{{$errors->first('kebutuhan')}}</div>
-                @endif
-              </div>
+            <div class="table-responsive overflow-hidden table-data-trainer">
+                <table id="table-data-trainer" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Nama</th>
+                            <th class="text-center">Divisi</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- data table ajax --}}
+                    </tbody>
+                </table>
             </div>
           </div>
           <hr class="my-4 mx-4">
-          <h6>3. Informasi PIC</h6>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <input type="text" id="pic" name="pic" value="{{$data->pic}}" class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
-              @if($errors->has('pic'))
-                  <div class="invalid-feedback">{{$errors->first('pic')}}</div>
-              @endif
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="jabatan_pic" name="jabatan_pic" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($jabatanPic as $value)
-                  <option value="{{$value->id}}" @if($data->jabatan == $value->id) selected @endif>{{$value->nama}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nomor Telepon</label>
-            <div class="col-sm-4">
-              <input type="number" id="no_telp" name="no_telp" value="{{$data->no_telp}}" class="form-control @if ($errors->any())   @endif">
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Email</label>
-            <div class="col-sm-4">
-              <input type="text" id="email" name="email" value="{{$data->email}}" class="form-control @if ($errors->any())   @endif">
-            </div>
-          </div>
+         
+          
           <hr class="my-4 mx-4">
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Detail Leads</label>
-            <div class="col-sm-10">
-              <div class="form-floating form-floating-outline mb-4">
-                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="detail_leads" id="detail_leads" placeholder="">{{$data->notes}}</textarea>
-              </div>
-            </div>
-          </div>
-          <hr class="my-4 mx-4">
-          <div class="row mb-3">
-            <label class="col-sm-12 col-form-label">Note : <span class="text-danger">*)</span> Wajib Diisi</label>
-          </div>
           <div class="pt-4">
           </div>
-        </form>
+        </div>
       </div>
     </div>
     <div class="col-md-3">
@@ -167,25 +103,43 @@
             </div>
             @endif
             @if(in_array(Auth::user()->role_id,[29,31,32,33]))
-            <div class="col-12 text-center mt-2">
+            <!-- <div class="col-12 text-center mt-2">
               <button id="btn-quotation" class="btn btn-success w-100 waves-effect waves-light">
                 <span class="me-1">Create Quotation</span>
                 <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
               </button>
-            </div>
+            </div> -->
             @endif
             @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
-            <div class="col-12 text-center mt-2">
+            <!-- <div class="col-12 text-center mt-2">
               <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
                 <span class="me-1">Create Activity</span>
                 <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
               </button>
-            </div>
+            </div> -->
             @endif
             <div class="col-12 text-center mt-2">
-              <button id="btn-track-activity" class="btn btn-warning w-100 waves-effect waves-light">
-                <span class="me-1">Track Activity</span>
-                <i class="mdi mdi-debug-step-over scaleX-n1-rtl"></i>
+              <button id="btn-send-message" class="btn btn-info w-100 waves-effect waves-light">
+                <span class="me-1">Kirim Undangan</span>
+                  <i class="mdi mdi-send scaleX-n1-rtl"></i>
+              </button>
+            </div>
+            <div class="col-12 text-center mt-2">
+              <button id="btn-add-client" class="btn btn-primary w-100 waves-effect waves-light">
+                <span class="me-1">Tambah Client</span>
+                  <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
+              </button>
+            </div>
+            <div class="col-12 text-center mt-2">
+              <button id="btn-add-peserta" class="btn btn-success w-100 waves-effect waves-light">
+                <span class="me-1">Tambah Peserta</span>
+                  <i class="mdi mdi-account-multiple-plus scaleX-n1-rtl"></i>
+              </button>
+            </div>
+            <div class="col-12 text-center mt-2">
+              <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Tambah Trainer</span>
+                  <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
               </button>
             </div>
             <div class="col-12 text-center mt-2">
@@ -195,85 +149,16 @@
               </button>
             </div>
             <hr class="my-4 mx-4">
-            <div class="col-12 text-center mt-2">
+            <!-- <div class="col-12 text-center mt-2">
               <button id="btn-delete" class="btn btn-danger w-100 waves-effect waves-light">
                 <span class="me-1">Delete Leads</span>
                 <i class="mdi mdi-trash-can scaleX-n1-rtl"></i>
               </button>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
-      <div class="row mt-4">
-        <div class="card h-100">
-          <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="card-title m-0 me-2">Leads Activity</h5>
-            <div class="dropdown">
-              <button class="btn p-0" type="button" id="btn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="mdi mdi-dots-vertical mdi-24px"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="btn">
-              </div>
-            </div>
-          </div>
-          <div class="card-body">
-            <ul class="timeline card-timeline mb-0">
-              @foreach($activity as $value)
-              <li class="timeline-item timeline-item-transparent border-transparent">
-                <span class="timeline-point timeline-point-info"></span>
-                <div class="timeline-event pb-1">
-                  <div class="timeline-header mb-1">
-                    <h6 class="mb-0">{{$value->tipe}}</h6>
-                    <small class="text-muted">{{$value->stgl_activity}}</small>
-                  </div>
-                  <p class="mb-0">
-                    Nomor : <b>{{$value->nomor}}</b>
-                    <br> oleh : {{$value->created_by}}<b></b>
-                    <br> pada : {{$value->screated_at}}
-                    <br> keterangan : <b>{{$value->notes}}</b>
-                  </p>
-                  <div class="d-flex justify-content-center">
-                    <a href="{{route('customer-activity.view',$value->id)}}" class="btn btn-sm rounded-pill btn-outline-info waves-effect w-50 mt-1">Selengkapnya</a>
-                  </div>
-                </div>
-              </li>
-              @endforeach
-              <li class="timeline-item timeline-item-transparent border-transparent">
-                <span class="timeline-point timeline-point-primary"></span>
-                <div class="timeline-event pb-1">
-                  <div class="timeline-header mb-1">
-                    <h6 class="mb-0">Leads</h6>
-                    <small class="text-muted">{{$data->screated_at}}</small>
-                  </div>
-                  <p class="mb-0">Leads Terbentuk</p>
-                </div>
-              </li>
-              <!-- <li class="timeline-item timeline-item-transparent border-transparent">
-                <span class="timeline-point timeline-point-info"></span>
-                <div class="timeline-event pb-1">
-                  <div class="timeline-header mb-1">
-                    <h6 class="mb-0">Quotation</h6>
-                    <small class="text-muted">24 Juli 2024</small>
-                  </div>
-                  <p class="mb-0">Terbentuk Quotation dengan Nomor #QUO/01/01/2024.</p>
-                  <button type="button" class="btn btn-sm rounded-pill btn-outline-info waves-effect w-100 mt-1">Selengkapnya</button>
-                </div>
-              </li>
-              <li class="timeline-item timeline-item-transparent border-transparent">
-                <span class="timeline-point timeline-point-success"></span>
-                <div class="timeline-event pb-1">
-                  <div class="timeline-header mb-1">
-                    <h6 class="mb-0">SPK</h6>
-                    <small class="text-muted">25 Juli 2024</small>
-                  </div>
-                  <p class="mb-0">SPK Terbentuk dengan Nomor SPK : #SPK/29/01/2024.</p>
-                  <button type="button" class="btn btn-sm rounded-pill btn-outline-info waves-effect w-100 mt-1">Selengkapnya</button>
-                </div>
-              </li> -->
-            </ul>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
 </div>
@@ -293,15 +178,234 @@
       buttonsStyling: false
     });
   @endif
-
-  $('#btn-update').on('click',function () {
-    $('form').submit();
-  });
   
-  $('#btn-delete').on('click',function () {
-    $('form').attr('action', '{{route("leads.delete")}}');
-    $('form').submit();
+  var table = $('#table-data-trainer').DataTable({
+      scrollX: true,
+      "iDisplayLength": 25,
+      'processing': true,
+      'language': {
+      'loadingRecords': '&nbsp;',
+      'processing': 'Loading...'
+  },
+      ajax: {
+          url: "{{ route('sdt-training.data-trainer') }}",
+          data: function (d) {
+              d.client_id = $('#nama_perusahaan').val();
+              d.training_id = $('#training_id').val();
+              // d.branch = $('#branch').find(":selected").val();
+              // d.platform = $('#platform').find(":selected").val();
+              // d.status = $('#status').find(":selected").val();
+          },
+      },
+      "createdRow": function( row, data, dataIndex){
+          $('td', row).css('background-color', data.warna_background);
+          $('td', row).css('color', data.warna_font);
+      },      
+      "order":[
+          [0,'desc']
+      ],
+      columns:[{
+          data : 'nama',
+          name : 'nama',
+          className:'text-center'
+      },{
+          data : 'divisi',
+          name : 'divisi',
+          className:'text-center'
+      },{
+          data : 'aksi',
+          name : 'aksi',
+          width: "10%",
+          orderable: false,
+          searchable: false,
+      }],
+      "language": datatableLang,
+      dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+      buttons: []
   });
+
+  $('#nama_perusahaan').on('change', function() {
+    // alert( this.value );
+    $('#table-data-client').dataTable().fnDestroy();
+    var table = $('#table-data-client').DataTable({
+        scrollX: true,
+        "iDisplayLength": 25,
+        'processing': true,
+        'language': {
+        'loadingRecords': '&nbsp;',
+        'processing': 'Loading...'
+    },
+        ajax: {
+            url: "{{ route('sdt-training.client-peserta') }}",
+            data: function (d) {
+                d.client_id = $('#nama_perusahaan').val();
+                d.training_id = $('#training_id').val();
+                // d.branch = $('#branch').find(":selected").val();
+                // d.platform = $('#platform').find(":selected").val();
+                // d.status = $('#status').find(":selected").val();
+            },
+        },
+        "createdRow": function( row, data, dataIndex){
+            $('td', row).css('background-color', data.warna_background);
+            $('td', row).css('color', data.warna_font);
+        },      
+        "order":[
+            [0,'desc']
+        ],
+        columns:[{
+            data : 'nik',
+            name : 'nik',
+            className:'text-center'
+        },{
+            data : 'nama',
+            name : 'nama',
+            className:'text-center'
+        },{
+            data : 'no_whatsapp',
+            name : 'no_whatsapp',
+            className:'text-center'
+        },{
+            data : 'status_whatsapp',
+            name : 'status_kirim',
+            className:'text-center'
+        },{
+            data : 'status_hadir',
+            name : 'hadir',
+            className:'text-center'
+        },{
+            data : 'aksi',
+            name : 'aksi',
+            width: "10%",
+            orderable: false,
+            searchable: false,
+        }],
+        "language": datatableLang,
+        dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+        buttons: []
+    });
+
+  });
+
+  $('body').on('click', '.btn-delete-trainer', function() {
+      let id = $(this).data('id');
+      Swal.fire({
+          title: 'Konfirmasi',
+          text: 'Apakah anda ingin hapus trainer?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: 'primary',
+          cancelButtonColor: 'warning',
+          confirmButtonText: 'Hapus'
+      }).then(function (result) {
+          console.log(result)
+          if (result.isConfirmed) {
+              let formData = {
+                  "id":id,
+                  "_token": "{{ csrf_token() }}"
+              };
+
+              let table ='#table-data-trainer';
+              $.ajax({
+                  type: "POST",
+                  url: "{{route('sdt-training.delete-trainer')}}",
+                  data:formData,
+                  success: function(response){
+                      console.log(response)
+                      if (response.success) {
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'success',
+                              timer: 1000,
+                              timerProgressBar: true,
+                              willClose: () => {
+                                  $(table).DataTable().ajax.reload();
+                              }
+                          })
+                      } else {
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'error'
+                          })
+                      }
+                  },
+                  error:function(error){
+                      Swal.fire({
+                          title: 'Pemberitahuan',
+                          text: error,
+                          icon: 'error'
+                      })
+                  }
+              });
+          }
+      });
+  });
+
+  $('body').on('click', '.btn-delete-peserta', function() {
+      let id = $(this).data('id');
+      Swal.fire({
+          title: 'Konfirmasi',
+          text: 'Apakah anda ingin hapus peserta?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: 'primary',
+          cancelButtonColor: 'warning',
+          confirmButtonText: 'Hapus'
+      }).then(function (result) {
+          console.log(result)
+          if (result.isConfirmed) {
+              let formData = {
+                  "id":id,
+                  "_token": "{{ csrf_token() }}"
+              };
+
+              let table ='#table-data-client';
+              $.ajax({
+                  type: "POST",
+                  url: "{{route('sdt-training.delete-peserta')}}",
+                  data:formData,
+                  success: function(response){
+                      console.log(response)
+                      if (response.success) {
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'success',
+                              timer: 1000,
+                              timerProgressBar: true,
+                              willClose: () => {
+                                  $(table).DataTable().ajax.reload();
+                              }
+                          })
+                      } else {
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'error'
+                          })
+                      }
+                  },
+                  error:function(error){
+                      Swal.fire({
+                          title: 'Pemberitahuan',
+                          text: error,
+                          icon: 'error'
+                      })
+                  }
+              });
+          }
+      });
+  });
+
+  // $('#btn-update').on('click',function () {
+  //   $('form').submit();
+  // });
+  
+  // $('#btn-delete').on('click',function () {
+  //   $('form').attr('action', '{{route("leads.delete")}}');
+  //   $('form').submit();
+  // });
   
   // $('#btn-quotation').on('click',function () {
   //   Swal.fire({
@@ -315,22 +419,417 @@
   //   });
   // });
 
-  $('#btn-activity').on('click',function () {
-    window.location.replace("{{route('customer-activity.add',['leads_id'=>$data->id])}}");
-  });
+  // $('#btn-activity').on('click',function () {
+  
+  // });
 
-  $('#btn-track-activity').on('click',function () {
-    window.location.replace("{{route('customer-activity.track',$data->id)}}");
-  });
 
-  $('#btn-quotation').on('click',function () {
-    window.location.replace("{!! route('quotation.add', ['leads_id' => $data->id, 'tipe' => 'Quotation Baru']) !!}");
-  });
+  // $('#btn-quotation').on('click',function () {
+  
+  // });
 
 
   $('#btn-kembali').on('click',function () {
     window.history.go(-1); return false;
     // window.location.replace("{{route('leads')}}");
   });
+
+  $('#btn-add-client').on('click',function(){
+    $('#modal-client').modal('show');  
+  });
+
+  $('#btn-add-peserta').on('click',function(){
+    $('#modal-peserta').modal('show');  
+  });
+
+  $('#btn-add-trainer').on('click',function(){
+    $('#modal-trainer').modal('show');  
+  });
+
+
+  $(document).ready(function() {
+
+    $('#btn-send-message').on('click',function(){
+        let id = $('#training_id').val();
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah anda ingin kirim undangan whatsapp ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: 'info',
+            cancelButtonColor: 'warning',
+            confirmButtonText: 'Kirim Whatsapp'
+        }).then(function (result) {
+            console.log(result)
+            if (result.isConfirmed) {
+                let formData = {
+                    "id":id,
+                    "_token": "{{ csrf_token() }}"
+                };
+
+                let table ='#table-data';
+                $.ajax({
+                    type: "POST",
+                    url: "{{route('sdt-training.send-message')}}",
+                    data:formData,
+                    success: function(response){
+                        console.log(response)
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Pemberitahuan',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 1000,
+                                timerProgressBar: true,
+                                willClose: () => {
+                                    $(table).DataTable().ajax.reload();
+                                }
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Pemberitahuan',
+                                text: response.message,
+                                icon: 'error'
+                            })
+                        }
+                    },
+                    error:function(error){
+                        Swal.fire({
+                            title: 'Pemberitahuan',
+                            text: error,
+                            icon: 'error'
+                        })
+                    }
+                });
+            }
+        });
+    });
+
+    $('#btn-add-client-save').on('click',function(){
+      $('#modal-client').modal('hide');
+      let id = $('#training_id').val();
+      let client_id = $('#client_id').val();
+    
+      if(client_id == ''){
+        Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: "Mohon untuk memilih data client yang akan di tambahkan",
+                  icon: 'error'
+              })
+      }else{
+        let formData = {
+            "id":id,
+            "client_id":client_id,
+            "_token": "{{ csrf_token() }}"
+        };
+
+        let table ='#table-data-client';
+        $.ajax({
+            type: "POST",
+            url: "{{route('sdt-training.add-client')}}",
+            data:formData,
+            success: function(response){
+                // console.log(response);
+                // alert(response)
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+      }
+    });
+    
+    $('#btn-add-peserta-save').on('click',function(){
+      $('#modal-peserta').modal('hide');
+      let id = $('#training_id').val();
+      let trainer_id = $('#peserta_id').val();
+      let client_id = $('#nama_perusahaan').val()
+    
+      if(client_id == ''){
+        Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: "Mohon untuk memilih nama perusahaan terlebih dahulu",
+                  icon: 'error'
+              })
+      }else{
+        let formData = {
+            "id":id,
+            "client_id":client_id,
+            "employee_id": trainer_id,
+            "_token": "{{ csrf_token() }}"
+        };
+
+        let table ='#table-data-client';
+        $.ajax({
+            type: "POST",
+            url: "{{route('sdt-training.add-peserta')}}",
+            data:formData,
+            success: function(response){
+                // console.log(response);
+                // alert(response)
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            $(table).DataTable().ajax.reload();
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+      }
+    });
+
+    $('#btn-add-trainer-save').on('click',function(){
+      $('#modal-trainer').modal('hide');
+      let id = $('#training_id').val();
+      let trainer_id = $('#trainer_id').val();
+      // alert(id + ' ' + trainer_id);
+      let formData = {
+          "id":id,
+          "trainer_id": trainer_id,
+          "_token": "{{ csrf_token() }}"
+      };
+
+      let table ='#table-data-trainer';
+      $.ajax({
+          type: "POST",
+          url: "{{route('sdt-training.add-trainer')}}",
+          data:formData,
+          success: function(response){
+              // console.log(response);
+              // alert(response)
+              if (response.success) {
+                  Swal.fire({
+                      title: 'Pemberitahuan',
+                      text: response.message,
+                      icon: 'success',
+                      timer: 1000,
+                      timerProgressBar: true,
+                      willClose: () => {
+                          $(table).DataTable().ajax.reload();
+                      }
+                  })
+              } else {
+                  Swal.fire({
+                      title: 'Pemberitahuan',
+                      text: response.message,
+                      icon: 'error'
+                  })
+              }
+          },
+          error:function(error){
+              Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: error,
+                  icon: 'error'
+              })
+          }
+      });
+    });
+    // $('#select2insidemodal').select2();
+    // $("#trainer_id").select2({
+    //   dropdownParent: $("#modal-trainer")
+    // });
+  });
+
+  
+  
+  // $("#select2Input").select2({ dropdownParent: "#modal-container" });
+
+
+  // $('.select2insidemodal').each(function() { 
+  //   $(this).select2({ dropdownParent: $(this).parent()});
+  // })
 </script>
+
+<div class="modal fade" id="modal-client" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Tambah Client : <p id="nama"></p></h4>
+        </div>
+        <br>
+        <div class="row mb-3">    
+            <label class="col-sm-3 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <div class="position-relative">
+                <select id="client_id" name="client_id" class="select2 form-select">
+                  <option value="">- Pilih data -</option>
+                  @foreach($listClient as $value)
+                  <option value="{{$value->id}}"> {{$value->client . ' - ' .$value->kab_kota}}</option>
+                  @endforeach
+                </select>
+                @if($errors->has('client_id'))
+                  <div class="invalid-feedback">{{$errors->first('client_id')}}</div>
+                @endif
+              </div>
+            </div>
+        </div>  
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-add-client-save" class="btn btn-primary">Add Peserta</button>
+        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-peserta" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Tambah Peserta : <p id="nama"></p></h4>
+        </div>
+        <br>
+        <div class="row mb-3">    
+            <label class="col-sm-3 col-form-label text-sm-end">Peserta <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <div class="position-relative">
+                <select id="peserta_id" name="peserta_id" class="select2 form-select">
+                  <option value="">- Pilih data -</option>
+                  @foreach($listPeserta as $value)
+                  <option value="{{$value->id}}"> {{$value->full_name . ' - ' .$value->position }}</option>
+                  @endforeach
+                </select>
+                @if($errors->has('peserta_id'))
+                  <div class="invalid-feedback">{{$errors->first('peserta_id')}}</div>
+                @endif
+              </div>
+            </div>
+        </div>  
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-add-peserta-save" class="btn btn-primary">Add Peserta</button>
+        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-trainer" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Tambah Trainer : <p id="nama"></p></h4>
+        </div>
+        <br>
+        <div class="row mb-3">    
+            <label class="col-sm-3 col-form-label text-sm-end">Trainer <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <div class="position-relative">
+                <select id="trainer_id" name="trainer_id" class="select2 form-select">
+                  <option value="">- Pilih data -</option>
+                  @foreach($listTrainer as $value)
+                  @if($value->id==99) @continue @endif
+                  <option value="{{$value->id}}" @if(old('trainer_id') == $value->id) selected @endif>{{$value->trainer}}</option>
+                  @endforeach
+                </select>
+                @if($errors->has('trainer_id'))
+                  <div class="invalid-feedback">{{$errors->first('trainer_id')}}</div>
+                @endif
+              </div>
+            </div>
+        </div>  
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-add-trainer-save" class="btn btn-primary">Add Trainer</button>
+        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> -->
+<!-- <div id="myModal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 id="myModalLabel">Panel</h3>
+      </div>
+      <div class="modal-body" style="max-height: 800px">
+        <select id="select2insidemodal" multiple="multiple">
+          <option value="AL">Alabama</option>
+            ...
+          <option value="WY">Wyoming</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- <div class="modal" id="modal-trainer" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
 @endsection

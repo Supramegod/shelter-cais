@@ -29,6 +29,7 @@
                                     <th class="text-center">ID</th>
                                     <th class="text-center">Trainer</th>
                                     <th class="text-center">Divisi</th>
+                                    <th class="text-center">Training</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
@@ -100,10 +101,14 @@
                 },{
                     data : 'trainer',
                     name : 'trainer',
-                    className:'text-center'
+                    className:'text-left'
                 },{
                     data : 'divisi',
                     name : 'divisi',
+                    className:'text-left'
+                },{
+                    data : 'training',
+                    name : 'training',
                     className:'text-center'
                 },{
                     data : 'created_at',

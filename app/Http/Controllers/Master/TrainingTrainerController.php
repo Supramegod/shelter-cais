@@ -22,8 +22,10 @@ class TrainingTrainerController extends Controller
         try {
             $data = DB::table('m_training_trainer as trainer')
             ->leftjoin('m_training_divisi as divisi','divisi.id', '=', 'trainer.divisi_id')
-            ->select('trainer.id', 'trainer.trainer', 'divisi.divisi', 'trainer.created_at')
+            ->leftjoin('sdt_training_trainer as stt','stt.id_trainer', '=', DB::raw('trainer.id AND stt.is_active = 1'))
+            ->select('trainer.id', 'trainer.trainer', 'divisi.divisi', 'trainer.created_at',  DB::raw("count(distinct stt.id_training) AS training"))
             ->where('trainer.is_aktif', 1)
+            ->groupBy('trainer.id')
             ->get();
 
             return DataTables::of($data)
@@ -102,6 +104,7 @@ class TrainingTrainerController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('m_training_trainer')->where('id',$request->id)->update([
+                'is_aktif' => 0,
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->id
             ]);

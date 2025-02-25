@@ -103,7 +103,7 @@
                 },{
                     data : 'client',
                     name : 'client',
-                    className:'text-center'
+                    className:'text-left'
                 },{
                     data : 'area_id',
                     name : 'area_id',

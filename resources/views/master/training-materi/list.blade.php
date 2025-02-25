@@ -31,7 +31,8 @@
                                     <th class="text-center">Tujuan</th>
                                     <th class="text-center">Kompetensi</th>
                                     <th class="text-center">Laman ID</th>
-                                    <th class="text-center">Diubah Tanggal</th>
+                                    <th class="text-center">Training</th>
+                                    <!-- <th class="text-center">Diubah Tanggal</th> -->
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -106,20 +107,20 @@
                 },{
                     data : 'tujuan',
                     name : 'tujuan',
-                    className:'dt-body-right',
+                    className:'dt-body-left',
                     render: $.fn.dataTable.render.number('.','.', 0,'')
                 },{
                     data : 'kompetensi',
                     name : 'kompetensi',
-                    className:'dt-body-center'
+                    className:'dt-body-left'
                 },{
                     data : 'laman',
                     name : 'laman_id',
                     className:'dt-body-center'
                 },{
-                    data : 'updated_at',
-                    name : 'updated_at',
-                    className:'text-center'
+                    data : 'training',
+                    name : 'training',
+                    className:'dt-body-center'
                 },{
                     data : 'aksi',
                     name : 'aksi',

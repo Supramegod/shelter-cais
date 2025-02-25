@@ -20,7 +20,7 @@ class TrainingClientController extends Controller
 
     public function list(Request $request){
         try {
-            $data = DB::table('m_training_client')->whereNull('deleted_at')->get();
+            $data = DB::table('m_training_client')->where('is_aktif', 1)->get();
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -108,7 +108,8 @@ class TrainingClientController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('m_training_client')->where('id',$request->id)->update([
-                'deleted_at' => $current_date_time
+                'deleted_at' => $current_date_time,
+                'is_aktif' => 0
             ]);
 
             return response()->json([

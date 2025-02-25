@@ -103,7 +103,8 @@ class TrainingAreaController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('m_training_area')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
-                'deleted_by' => Auth::user()->id
+                'deleted_by' => Auth::user()->id,
+                'is_aktif' => 0
             ]);
 
             return response()->json([

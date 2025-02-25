@@ -14,6 +14,7 @@ use App\Http\Controllers\Sales\QuotationController;
 use App\Http\Controllers\Sales\SpkController;
 use App\Http\Controllers\Sales\PksController;
 use App\Http\Controllers\Sales\MonitoringKontrakController;
+use App\Http\Controllers\Sales\WhatsappController;
 
 use App\Http\Controllers\Master\PlatformController;
 use App\Http\Controllers\Master\AplikasiPendukungController;
@@ -72,6 +73,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-sales', 'dashboardAktifitasSales')->name('dashboard-aktifitas-sales');
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
+        Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
 
 
         // list
@@ -515,7 +517,7 @@ Route::group(['middleware' => ['auth']], function () {
         
         Route::get('/sdt/sdt-training', 'index')->name('sdt-training');
         Route::get('/sdt/sdt-training/add', 'add')->name('sdt-training.add');
-        // Route::get('/sales/leads/index-terhapus', 'indexTerhapus')->name('leads.index-terhapus');
+        Route::get('/sdt/sdt-training/view/{id}', 'view')->name('sdt-training.view');
         // 
         // Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
         // Route::get('/sales/leads/import', 'import')->name('leads.import');
@@ -525,9 +527,15 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
         Route::post('/sdt/sdt-training/save', 'save')->name('sdt-training.save');
         Route::post('/sdt/sdt-training/delete', 'delete')->name('sdt-training.delete');
+        Route::post('/sdt/sdt-training/delete-trainer', 'deleteTrainer')->name('sdt-training.delete-trainer');
+        Route::post('/sdt/sdt-training/add-client', 'addClient')->name('sdt-training.add-client');
+        Route::post('/sdt/sdt-training/add-peserta', 'addPeserta')->name('sdt-training.add-peserta');
+        Route::post('/sdt/sdt-training/add-trainer', 'addTrainer')->name('sdt-training.add-trainer');
+        Route::post('/sdt/sdt-training/delete-peserta', 'deletePeserta')->name('sdt-training.delete-peserta');
+        Route::post('/sdt/sdt-training/send-message', 'sendMessage')->name('sdt-training.send-message');
 
-        // Route::get('/sales/leads/export-excel', 'exportExcel')->name('leads.export-excel');
-
+        Route::get('/sdt/sdt-training/client-peserta', 'clientpeserta')->name('sdt-training.client-peserta');
+        Route::get('/sdt/sdt-training/data-trainer', 'dataTrainer')->name('sdt-training.data-trainer');
         Route::get('/sdt/sdt-training/list', 'list')->name('sdt-training.list'); // ajax
         // Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
         // Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
@@ -543,5 +551,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/monitoring-kontrak/terminate', 'terminate')->name('monitoring-kontrak.terminate');
         Route::get('/sales/monitoring-kontrak/index-terminate', 'indexTerminate')->name('monitoring-kontrak.index-terminate');
         Route::get('/sales/monitoring-kontrak/list-terminate', 'listTerminate')->name('monitoring-kontrak.list-terminate');
+    });
+
+    Route::controller(WhatsappController::class)->group(function() {
+        Route::get('/whatsapp/login', 'login')->name('whatsapp.login');
+        Route::get('/whatsapp', 'index')->name('whatsapp');
+        Route::get('/whatsapp/list', 'list')->name('whatsapp.list');
+        Route::post('/whatsapp/connectQr', 'connectQr')->name('whatsapp.connectQr');
+        Route::post('/whatsapp/connectStatus', 'connectStatus')->name('whatsapp.connectStatus');
+        Route::post('/whatsapp/message', 'message')->name('whatsapp.message');
     });
 });

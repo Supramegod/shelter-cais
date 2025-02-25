@@ -364,6 +364,12 @@
                         <div>Dashboard Leads</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
+                    <a href="{{route('dashboard-sdt-training')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Dashboard SDT Training</div>
+                    </a>
+                </li>
             </ul>
         </li>
         <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
@@ -553,6 +559,13 @@
                         </a>
                     </li>
                     </ul>
+                </li>
+
+                <li class="menu-item @if(str_contains(Request::url(), route('whatsapp'))) active @endif">
+                    <a href="{{route('whatsapp')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="whatsapp">Whatsapp</div>
+                    </a>
                 </li>
             </ul>
         </li> 

@@ -41,7 +41,8 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Tujuan <span class="text-danger">*</span></label>
             <div class="col-sm-6">
-              <input type="text" id="tujuan" name="tujuan" value="{{old('tujuan')}}" class="form-control @if ($errors->any()) @if($errors->has('tujuan')) is-invalid @else   @endif @endif">
+              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="tujuan" id="tujuan" placeholder="">{{old('tujuan')}}</textarea>  
+            <!-- <input type="text" id="tujuan" name="tujuan" value="{{old('tujuan')}}" class="form-control @if ($errors->any()) @if($errors->has('tujuan')) is-invalid @else   @endif @endif"> -->
               @if($errors->has('tujuan'))
                   <div class="invalid-feedback">{{$errors->first('tujuan')}}</div>
               @endif
@@ -50,7 +51,8 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Kompetensi <span class="text-danger">*</span></label>
             <div class="col-sm-6">
-              <input type="text" id="kompetensi" name="kompetensi" value="{{old('kompetensi')}}" class="form-control @if ($errors->any()) @if($errors->has('kompetensi')) is-invalid @else   @endif @endif">
+              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="kompetensi" id="kompetensi" placeholder="">{{old('kompetensi')}}</textarea>
+              <!-- <input type="text" id="kompetensi" name="kompetensi" value="{{old('kompetensi')}}" class="form-control @if ($errors->any()) @if($errors->has('kompetensi')) is-invalid @else   @endif @endif"> -->
               @if($errors->has('kompetensi'))
                   <div class="invalid-feedback">{{$errors->first('kompetensi')}}</div>
               @endif

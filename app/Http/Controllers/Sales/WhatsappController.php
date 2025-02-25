@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Sdt;
+namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,17 +9,15 @@ use DB;
 use App\Http\Controllers\SystemController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use \stdClass;
-use App\Exports\LeadsTemplateExport;
-use App\Exports\LeadsExport;
-use App\Http\Controllers\Sales\CustomerActivityController;
 
 
-class SdtTrainingController extends Controller
+
+class WhatsappController extends Controller
 {
-
     public function index (Request $request){
         $tglDari = $request->tgl_dari;
         $tglSampai = $request->tgl_sampai;
@@ -35,9 +33,9 @@ class SdtTrainingController extends Controller
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
         
 
-        $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
-        $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
-        $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+        // $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
+        // $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
+        // $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
 
         $error =null;
         $success = null;
@@ -49,199 +47,282 @@ class SdtTrainingController extends Controller
             $tglSampai = carbon::now()->toDateString();
             $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
         }
-        return view('sdt.training.list',compact('branch','platform','status','tglDari','tglSampai','request','error','success'));
-    }
-    
-    public function indexTerhapus (Request $request){
-        return view('sales.leads.list-terhapus');
-    }
 
-    public function add (Request $request){
-        try {
-            // $now = Carbon::now()->isoFormat('DD MMMM Y');
-            $listBu = DB::table('m_training_laman')->orderBy('laman', 'ASC')->get();
-            $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
-            $listMateri = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
-            $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
-
-            return view('sdt.training.add',compact('listBu','listClient','listMateri', 'listTrainer'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function view(Request $request, $id){
-        try {
-            $data = DB::table('sdt_training')
-                    ->where('is_aktif', 1)
-                    ->where('id_training', $id)
-                    ->first();
-
-            // $data->stgl_leads = Carbon::createFromFormat('Y-m-d',$data->tgl_leads)->isoFormat('D MMMM Y');
-            // $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
-
-            // $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
-            // $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
-            $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
-            $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
-            $namaPerusahaan = DB::table('sdt_training_client as tr')
-                        ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'tr.id_client')
-                        ->select("mtc.id", "mtc.client")
-                        ->where('tr.id_training', $id)
-                        ->get();
-
-            //LIST PSERTA TRAININH, HRIS
-            $listPeserta = DB::connection('mysqlhris')
-                ->table('m_employee as empl')
-                ->leftJoin('m_position as position', 'position.id' ,'=', 'empl.position_id')
-                ->select("empl.id", "empl.id_card", "empl.full_name", "empl.phone_number", "position.name as position")
-                ->where('empl.status_approval', '=' , 3)
-                ->where('empl.is_active', '=', 1)
-                ->where('position.description', '!=', 'Security')
-                ->orderBy('empl.full_name','asc')
-                ->get();
-            
-                // dd($peserta);
-
-            // dd($data);
-            // dd($namaPerusahaan);
-            // $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
-            // $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
-
-            // $activity = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id',$id)->orderBy('created_at','desc')->limit(5)->get();
-            // foreach ($activity as $key => $value) {
-            //     $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
-            //     $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
-            // }
-
-            return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta'));
-            // return view('sdt.training.view',compact('activity','data','branch','jabatanPic','namaPerusahaan','kebutuhan','platform'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
+        $tokenWhatsapp = DB::table('m_setting')->where('id', 1)->first();
+        $status = '';
+        $response = Http::withToken($tokenWhatsapp->value)
+            ->get('https://whatsapp.ulilworld.com/server/find-by-cabang/16');
+            // dd($response->json()['data']);
+        foreach ($response->json()['data'] as $data) {
+            // dd($data['status']);
+            $status = $data['status'];
+        }   
         
+        return view('master.whatsapp.list',compact('tglDari','tglSampai','request','error','success', 'status'));
     }
 
-    // public function list(Request $request){
+    public function login (Request $request){
+        try {
+            $response = Http::withBasicAuth('keys', 'secret')
+                ->withHeaders([
+                    'Content-Type' => 'application/json'
+                ])
+                ->post('https://whatsapp.ulilworld.com/login', [
+                    'username' => 'cais',
+                    'password' => 1
+                ]);
+
+                // dd($response->json()['data']);
+            if( $response->successful() ){
+                $current_date_time = Carbon::now()->toDateTimeString();
+                DB::table('m_setting')->where('id', 1)->update([
+                        'value' => $response->json()['data'],
+                        'last_updated' => $current_date_time
+                    ]);        
+            }elseif( $response->failed() ){
+                //do some logic
+                //redirect https://www.test2.com/
+            }
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function connectQr (Request $request){
+        try {
+            // $response = Http::withToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzM4NzI0MTE1LCJleHAiOjE3Mzg4MTA1MTV9.CII_cSMK0_J2SAEXHOidSXWD7vLatv9GYPuz2CCNw7U')
+            //     ->withHeaders([
+            //         'Content-Type' => 'application/x-www-form-urlencoded'
+            //     ])
+            //     ->post('https://whatsapp.ulilworld.com/sessions/add', [
+            //         'isLegacy' => 'false',
+            //         'id' => 'test1'
+            //     ]);
+
+            $response = Http::asForm()->post('https://whatsapp.ulilworld.com/sessions/add', [
+                'isLegacy' => 'false',
+                'id' => 'test1',
+            ]);
+
+            // dd($response->successful());
+            if( $response->successful() ){
+                // if($response->json()['success'] == 'true'){
+                //     dd($response->json()['data']['qr']);
+                // }else{
+                //     dd($response->json()['message']);
+                // }
+                
+                return response()->json([
+                    'success'   => true,
+                    'data'      => $response->json()['data']['qr'],
+                    'message'   => $response->json()['message']
+                ], 200);
+                // $current_date_time = Carbon::now()->toDateTimeString();
+                // DB::table('m_setting')->where('id', 1)->update([
+                //         'value' => $response->json()['data'],
+                //         'last_updated' => $current_date_time
+                //     ]);        
+            }else{
+                return response()->json([
+                    'success'   => false,
+                    'data'      => [],
+                    'message'   => $response->json()['message']
+                ], 200);
+                // dd($response->json());
+                //do some logic
+                //redirect https://www.test2.com/
+            }
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function message (Request $request){
+        try {
+            $tokenWhatsapp = DB::table('m_setting')->where('id', 1)->first();
+            $response = Http::asForm()
+            ->withHeaders([
+                'Authorization' => 'Bearer '.$tokenWhatsapp->value
+            ])
+            ->post('https://whatsapp.ulilworld.com/chats/send?id=test1', [
+                'receiver' => '628986362990',
+                'message' => 'test1',
+            ]);
+
+            // dd($response->json());
+            if( $response->successful() ){
+                return response()->json([
+                    'success'   => true,
+                    'data'      => $response->json()['data'],
+                    'message'   => $response->json()['message']
+                ], 200);
+            }else{
+                return response()->json([
+                    'success'   => false,
+                    'data'      => [],
+                    'message'   => $response->json()['message']
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function connectStatus (Request $request){
+        try {
+            $tokenWhatsapp = DB::table('m_setting')->where('id', 1)->first();
+            $response = Http::withToken($tokenWhatsapp->value)
+            ->get('https://whatsapp.ulilworld.com/server/find-by-cabang/16');
+            foreach ($response->json()['data'] as $data) {
+                return response()->json([
+                    'success'   => true,
+                    'data'      => $data,
+                    'message'   => $response->json()['message']
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    // public function addDetailTunjangan(Request $request){
     //     try {
-    //         $data = DB::table('m_training_area')->whereNull('deleted_at')->get();
-    //         return DataTables::of($data)
-    //             ->addColumn('aksi', function ($data) {
-    //                 return '<div class="justify-content-center d-flex">
-    //                     <a href="'.route('training-area.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-    //                     <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
-    //                 </div>';
-    //             })
-    //             ->rawColumns(['aksi'])
-    //         ->make(true);
+    //         $current_date_time = Carbon::now()->toDateTimeString();
+    //         $nama = $request->nama;
+    //         $nominal = str_replace(",", "",$request->nominal);;
+    //         $position_id = 0;
+
+    //         DB::table('m_kebutuhan_detail_tunjangan')->insert([
+    //             'kebutuhan_id' => $request->kebutuhan_id,
+    //             'position_id' => $position_id,
+    //             'nama' => $nama,
+    //             'nominal' => $nominal,
+    //             'created_at' => $current_date_time,
+    //             'created_by' => Auth::user()->full_name
+    //         ]);
+
+    //         return response()->json([
+    //             'success'   => true,
+    //             'data'      => [],
+    //             'message'   => "Data Berhasil Ditambahkan"
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         dd($e);
+    //         SystemController::saveError($e,Auth::user(),$request);
+    //         abort(500);
+    //         return response()->json([
+    //             'success'   => false,
+    //             'data'      => [],
+    //             'message'   => "Error '.$e.'"
+    //         ], 200);
+    //     }
+    // }
+
+    // public function view (Request $request,$id){
+    //     try {
+    //         $data = DB::table('sl_leads')->whereNull('customer_id')->where('id',$id)->first();
+
+    //         $data->stgl_leads = Carbon::createFromFormat('Y-m-d',$data->tgl_leads)->isoFormat('D MMMM Y');
+    //         $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
+
+    //         $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+    //         $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
+    //         $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+    //         $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+    //         $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+
+    //         $activity = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id',$id)->orderBy('created_at','desc')->limit(5)->get();
+    //         foreach ($activity as $key => $value) {
+    //             $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
+    //             $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+    //         }
+
+    //         return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform'));
     //     } catch (\Exception $e) {
     //         SystemController::saveError($e,Auth::user(),$request);
     //         abort(500);
     //     }
+        
     // }
 
-    public function list (Request $request){
+    public function list(Request $request){
         try {
-            $data = DB::table('sdt_training as tr')
-                        ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
-                        ->leftJoin('sdt_training_client as stc','stc.id_training', '=', DB::raw('tr.id_training AND stc.is_active = 1'))
-                        ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
-                        ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
-                        ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
-                        ->leftJoin('sdt_training_client_detail as stcd', 'stcd.training_id', '=', DB::raw('tr.id_training AND stcd.is_active = 1'))
+
+            $data = DB::table('whatsapp_message')->where('is_active', 1)->get();
+            return DataTables::of($data)
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <a href="'.route('training-area.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                    </div>';
+                })
+                ->rawColumns(['aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    // public function list (Request $request){
+    //     try {
+    //         // $data = DB::table('sl_leads')
+    //         //             ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
+    //         //             ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
+    //         //             ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
+    //         //             ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+    //         //             ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
+    //         //             ->whereNull('sl_leads.deleted_at')
+    //         //             ->whereNull('sl_leads.customer_id');
+
+    //         $data = DB::table('sdt_training as tr')
+    //                     ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
+    //                     ->leftJoin('sdt_training_client as stc','stc.id_training', '=', 'tr.id_training')
+    //                     ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
+    //                     ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', 'tr.id_training')
+    //                     ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
                         
-                        ->select(
-                            "tr.id_training as id",
-                            "mtm.materi", 
-                            "tr.waktu_mulai", 
-                            "tr.waktu_selesai", 
-                            DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
-                            DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
-                            DB::raw("group_concat(distinct mtc.client separator ', ') AS client"),
-                            DB::raw("count(mtc.client) AS total_client"),
-                            // DB::raw("sum(stc.peserta_hadir) AS total_peserta"),
-                            DB::raw("count(distinct stcd.id) AS total_peserta"),
-                            DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
-                            DB::raw("count(distinct mtt.id) AS total_trainer"))
-                        ->where('tr.is_aktif', 1)
-                        ->groupBy('tr.id_training');
+    //                     ->select(
+    //                         "tr.id_training as id",
+    //                         "mtm.materi", 
+    //                         "tr.waktu_mulai", 
+    //                         "tr.waktu_selesai", 
+    //                         DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
+    //                         DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
+    //                         DB::raw("group_concat(distinct mtc.client separator ', ') AS client"),
+    //                         DB::raw("count(mtc.client) AS total_client"),
+    //                         DB::raw("sum(stc.peserta_hadir) AS total_peserta"),
+    //                         DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
+    //                         DB::raw("count(mtt.id) AS total_trainer"))
+    //                     ->where('tr.is_aktif', 1)
+    //                     ->groupBy('tr.id_training');
             
-            $data = $data->get();          
+    //         $data = $data->get();          
 
-            // foreach ($data as $key => $value) {
-            //     $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
-            // }
+    //         // foreach ($data as $key => $value) {
+    //         //     $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
+    //         // }
 
-            // $dd($data);
-            return DataTables::of($data)
-            ->addColumn('aksi', function ($data) {
-                return '<div class="justify-content-center d-flex">
-                    <a href="'.route('sdt-training.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-                    <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
-                </div>';
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            // dd($e);
-            abort(500);
-        }
-    }
-
-    public function clientpeserta (Request $request){
-        try {
-            // dd($request);
-            $data = DB::table('sdt_training_client_detail')
-            ->where('training_id', $request->training_id)
-            ->where('client_id', $request->client_id)
-            ->where('is_active', 1)
-            ->get();          
-            return DataTables::of($data)
-            ->addColumn('aksi', function ($data) {
-                return '<div class="justify-content-center d-flex">
-                    <div class="btn-delete-peserta btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
-                </div>';
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            // dd($e);
-            abort(500);
-        }
-    }
-
-    public function dataTrainer (Request $request){
-        try {
-            $data = DB::table('sdt_training_trainer as stt')
-            ->leftJoin('m_training_trainer as mtt','mtt.id','=', 'stt.id_trainer')
-            ->leftJoin('m_training_divisi as mtd','mtd.id','=', 'mtt.divisi_id')
-            ->select(
-                "stt.id_pel_trainer as id",
-                "mtt.trainer as nama", 
-                "mtd.divisi")
-            ->where('stt.is_active', 1)
-            ->where('stt.id_training', $request->training_id)
-            ->get();          
-
-            // dd($data);
-            return DataTables::of($data)
-            ->addColumn('aksi', function ($data) {
-                return '<div class="justify-content-center d-flex">
-                    <div class="btn-delete-trainer btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
-                </div>';
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            // dd($e);
-            abort(500);
-        }
-    }
+    //         // $dd($data);
+    //         return DataTables::of($data)
+    //         ->addColumn('aksi', function ($data) {
+    //             return '<div class="justify-content-center d-flex">
+    //                 <a href="'.route('training-area.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+    //                 <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+    //             </div>';
+    //         })
+    //         ->rawColumns(['aksi'])
+    //         ->make(true);
+    //     } catch (\Exception $e) {
+    //         SystemController::saveError($e,Auth::user(),$request);
+    //         // dd($e);
+    //         abort(500);
+    //     }
+    // }
 
     // public function listTerhapus (Request $request){
     //     try {
@@ -271,315 +352,120 @@ class SdtTrainingController extends Controller
     //     }
     // }
 
-    public function save(Request $request) {
-        try {
-            DB::beginTransaction();
+    // public function save(Request $request) {
+    //     try {
+    //         DB::beginTransaction();
 
-            // $validator = Validator::make($request->all(), [
-            //     'nama_perusahaan' => 'required|max:100|min:3',
-            //     'pic' => 'required',
-            //     'branch' => 'required',
-            //     'kebutuhan' => 'required'
-            // ], [
-            //     'min' => 'Masukkan :attribute minimal :min',
-            //     'max' => 'Masukkan :attribute maksimal :max',
-            //     'required' => ':attribute harus di isi',
-            // ]);
+    //         // $validator = Validator::make($request->all(), [
+    //         //     'nama_perusahaan' => 'required|max:100|min:3',
+    //         //     'pic' => 'required',
+    //         //     'branch' => 'required',
+    //         //     'kebutuhan' => 'required'
+    //         // ], [
+    //         //     'min' => 'Masukkan :attribute minimal :min',
+    //         //     'max' => 'Masukkan :attribute maksimal :max',
+    //         //     'required' => ':attribute harus di isi',
+    //         // ]);
     
-            // if ($validator->fails()) {
-            //     return back()->withErrors($validator->errors())->withInput();
-            // }else{
-                $current_date_time = Carbon::now()->toDateTimeString();
+    //         // if ($validator->fails()) {
+    //         //     return back()->withErrors($validator->errors())->withInput();
+    //         // }else{
+    //             $current_date_time = Carbon::now()->toDateTimeString();
 
-                $msgSave = '';
-                if(!empty($request->id)){
-                    // DB::table('sl_leads')->where('id',$request->id)->update([
-                    //     'nama_perusahaan' => $request->nama_perusahaan,
-                    //     'telp_perusahaan' => $request->telp_perusahaan,
-                    //     'jenis_perusahaan_id' => $request->jenis_perusahaan,
-                    //     'branch_id' => $request->branch,
-                    //     'platform_id' => $request->platform,
-                    //     'kebutuhan_id' => $request->kebutuhan,
-                    //     'alamat' => $request->alamat_perusahaan,
-                    //     'pic' => $request->pic,
-                    //     'jabatan' => $request->jabatan_pic,
-                    //     'no_telp' => $request->no_telp,
-                    //     'email' => $request->email,
-                    //     'notes' => $request->detail_leads,
-                    //     'updated_at' => $current_date_time,
-                    //     'updated_by' => Auth::user()->name
-                    // ]);
+    //             $msgSave = '';
+    //             if(!empty($request->id)){
+    //                 // DB::table('sl_leads')->where('id',$request->id)->update([
+    //                 //     'nama_perusahaan' => $request->nama_perusahaan,
+    //                 //     'telp_perusahaan' => $request->telp_perusahaan,
+    //                 //     'jenis_perusahaan_id' => $request->jenis_perusahaan,
+    //                 //     'branch_id' => $request->branch,
+    //                 //     'platform_id' => $request->platform,
+    //                 //     'kebutuhan_id' => $request->kebutuhan,
+    //                 //     'alamat' => $request->alamat_perusahaan,
+    //                 //     'pic' => $request->pic,
+    //                 //     'jabatan' => $request->jabatan_pic,
+    //                 //     'no_telp' => $request->no_telp,
+    //                 //     'email' => $request->email,
+    //                 //     'notes' => $request->detail_leads,
+    //                 //     'updated_at' => $current_date_time,
+    //                 //     'updated_by' => Auth::user()->name
+    //                 // ]);
 
-                    // //insert ke activity sebagai activity pertama
-                    // $customerActivityController = new CustomerActivityController();
-                    // $nomorActivity = $customerActivityController->generateNomor($request->id);
+    //                 // //insert ke activity sebagai activity pertama
+    //                 // $customerActivityController = new CustomerActivityController();
+    //                 // $nomorActivity = $customerActivityController->generateNomor($request->id);
 
-                    // $activityId = DB::table('sl_customer_activity')->insertGetId([
-                    //     'leads_id' => $request->id,
-                    //     'branch_id' => $request->branch,
-                    //     'tgl_activity' => $current_date_time,
-                    //     'nomor' => $nomorActivity,
-                    //     'notes' => 'Leads diubah',
-                    //     'tipe' => 'Leads',
-                    //     'is_activity' => 0,
-                    //     'created_at' => $current_date_time,
-                    //     'created_by' => Auth::user()->full_name
-                    // ]);
+    //                 // $activityId = DB::table('sl_customer_activity')->insertGetId([
+    //                 //     'leads_id' => $request->id,
+    //                 //     'branch_id' => $request->branch,
+    //                 //     'tgl_activity' => $current_date_time,
+    //                 //     'nomor' => $nomorActivity,
+    //                 //     'notes' => 'Leads diubah',
+    //                 //     'tipe' => 'Leads',
+    //                 //     'is_activity' => 0,
+    //                 //     'created_at' => $current_date_time,
+    //                 //     'created_by' => Auth::user()->full_name
+    //                 // ]);
 
-                    $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
-                }else{
+    //                 $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
+    //             }else{
+    //                 // $nomor = $this->generateNomor();
+    //                 $trainingId = DB::table('sdt_training')->insertGetId([
+    //                     'keterangan' => $request->keterangan,
+    //                     'waktu_mulai' => $request->start_date,
+    //                     'waktu_selesai' => $request->end_date,
+    //                     'id_pel_tipe' => $request->tipe_id,
+    //                     'id_pel_tempat' => $request->tempat_id,
+    //                     'id_materi' => $request->materi_id,
+    //                     'id_user' => Auth::user()->id,
+    //                     'created_at' => $current_date_time
+    //                 ]);
+
+    //                 foreach ($request->client_id as $x) {
+    //                     // dd((int) $x);
+    //                     $trainingClient = DB::table('sdt_training_client')->insertGetId([
+    //                         'id_client' => (int) $x,
+    //                         'peserta_hadir' => $request->peserta,
+    //                         'id_training' => $trainingId
+    //                     ]);    
+    //                 }
+    //                 // dd($request->trainer_id);
+    //                 foreach ($request->trainer_id as $x) {
+    //                     $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
+    //                         'id_trainer' => (int) $x,
+    //                         'id_training' => $trainingId
+    //                     ]);
+    //                 }
                     
-                    // $nomor = $this->generateNomor();
-                    $trainingId = DB::table('sdt_training')->insertGetId([
-                        'keterangan' => $request->keterangan,
-                        'waktu_mulai' => $request->start_date,
-                        'waktu_selesai' => $request->end_date,
-                        'id_pel_tipe' => $request->tipe_id,
-                        'id_pel_tempat' => $request->tempat_id,
-                        'id_materi' => $request->materi_id,
-                        'id_user' => Auth::user()->id,
-                        'created_at' => $current_date_time
-                    ]);
-                    
-                    foreach ($request->client_id as $x) {
-                        $trainingClient = DB::table('sdt_training_client')->insertGetId([
-                            'id_client' => (int) $x,
-                            // 'peserta_hadir' => $request->peserta,
-                            'id_training' => $trainingId
-                        ]);    
-                        // dd($trainingClient);
-                    }
-                    
-                    foreach ($request->trainer_id as $x) {
-                        $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
-                            'id_trainer' => (int) $x,
-                            'id_training' => $trainingId
-                        ]);
-                    }
-                    
-                    $msgSave = 'Training berhasil disimpan ';
-                }
-            // }
-            DB::commit();
-            return redirect()->back()->with('success', $msgSave);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
+    //                 $msgSave = 'Training berhasil disimpan ';
+    //             }
+    //         // }
+    //         DB::commit();
+    //         return redirect()->back()->with('success', $msgSave);
+    //     } catch (\Exception $e) {
+    //         SystemController::saveError($e,Auth::user(),$request);
+    //         abort(500);
+    //     }
+    // }
 
-    public function addClient(Request $request) {
-        try {
-            DB::beginTransaction();
-            $current_date_time = Carbon::now()->toDateTimeString();
-            
-            $employeeExist = DB::table('sdt_training_client as client')
-                ->leftJoin('m_training_client as m_client', 'client.id_client', '=', 'm_client.id')
-                ->select("client.id_pel_client", "m_client.client")
-                ->where('client.id_training', '=' , $request->id)
-                ->where('client.id_client', '=' , $request->client_id)
-                ->where('client.is_active', '=' , 1)
-                ->first();
+    // public function delete(Request $request){
+    //     try {
+    //         $current_date_time = Carbon::now()->toDateTimeString();
+    //         DB::table('sdt_training')->where('id_training',$request->id)->update([
+    //             'updated_at' => $current_date_time,
+    //             'is_aktif' => 0 
+    //         ]);
 
-            // dd($employeeExist);
-            if(!empty($employeeExist->id_pel_client)){
-                return response()->json([
-                    'success'   => false,
-                    'data'      => [],
-                    'message'   => "Data client " . $employeeExist->client . " sudah ada"
-                ], 200);
-            }
-
-            $clientId = DB::table('sdt_training_client')->insertGetId([
-                'id_training' => $request->id,
-                'id_client' => $request->client_id,
-                'is_active' => 1
-            ]);
-            
-            
-            $msgSave = 'Client berhasil disimpan ';
-            DB::commit();
-            // return redirect()->back()->with('success', $msgSave);
-            return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil menambahkan client"
-            ], 200);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function addPeserta(Request $request) {
-        try {
-            DB::beginTransaction();
-            $current_date_time = Carbon::now()->toDateTimeString();
-            
-            $employee = DB::connection('mysqlhris')
-                ->table('m_employee as empl')
-                ->leftJoin('m_position as position', 'position.id' ,'=', 'empl.position_id')
-                ->select("empl.id", "empl.id_card", "empl.full_name", "empl.phone_number", "position.name as position")
-                ->where('empl.id', '=' , $request->employee_id)
-                ->first();
-
-            // dd($employee->id_card);
-            $trainerId = DB::table('sdt_training_client_detail')->insertGetId([
-                'training_id' => $request->id,
-                'employee_id' => $request->employee_id,
-                'client_id' => $request->client_id,
-                'nik' => $employee->id_card,
-                'nama' => $employee->full_name,
-                'no_whatsapp' => $employee->phone_number,
-                'status_whatsapp' => 'Belum Kirim',
-                'status_hadir' => '',
-                'position' => $employee->position,
-                'is_active' => 1,
-                'created_at' => $current_date_time
-            ]);
-            // dd($request);
-            
-            $msgSave = 'Peserta berhasil disimpan ';
-            DB::commit();
-            // return redirect()->back()->with('success', $msgSave);
-            return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil menambahkan peserta"
-            ], 200);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function addTrainer(Request $request) {
-        try {
-            DB::beginTransaction();
-            $current_date_time = Carbon::now()->toDateTimeString();
-            
-            // $nomor = $this->generateNomor();
-            $trainerId = DB::table('sdt_training_trainer')->insertGetId([
-                'id_trainer' => $request->trainer_id,
-                'id_training' => $request->id,
-                'is_active' => 1,
-                'created_at' => $current_date_time
-            ]);
-            // dd($request);
-            
-            $msgSave = 'Trainer berhasil disimpan ';
-            DB::commit();
-            // return redirect()->back()->with('success', $msgSave);
-            return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil menambahkan trainer"
-            ], 200);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function delete(Request $request){
-        try {
-            $current_date_time = Carbon::now()->toDateTimeString();
-            DB::table('sdt_training')->where('id_training',$request->id)->update([
-                'updated_at' => $current_date_time,
-                'is_aktif' => 0 
-            ]);
-
-            return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil menghapus data"
-            ], 200);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function deleteTrainer(Request $request){
-        try {
-            $current_date_time = Carbon::now()->toDateTimeString();
-            DB::table('sdt_training_trainer')->where('id_pel_trainer', $request->id)->update([
-                'is_active' => 0 
-            ]);
-
-            return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil menghapus data"
-            ], 200);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function deletePeserta(Request $request){
-        try {
-            DB::table('sdt_training_client_detail')->where('id', $request->id)->update([
-                'is_active' => 0 
-            ]);
-
-            return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil menghapus data"
-            ], 200);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function sendMessage(Request $request){
-        try {
-            $dataPeserta = DB::table('sdt_training_client_detail')
-                ->where('status_whatsapp', 'Belum Kirim')
-                ->where('is_active', 1)
-                ->where('no_whatsapp', '!=', '')
-                ->where('training_id', $request->id)
-                ->get();
-                
-                $current_date_time = Carbon::now()->toDateTimeString();
-                foreach ($dataPeserta as $key => $value) {
-                    // $value->tgl_leads = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_leads)->isoFormat('D MMMM Y');
-                    DB::table('sdt_training_client_detail')->where('id', $value->id)
-                    ->update([
-                        'status_whatsapp' => 'Waiting'
-                    ]);
-                    
-                    DB::table('whatsapp_message')->insert([
-                        'nomor_wa' => $value->no_whatsapp,
-                        'message' => 'test',
-                        'type' => '',
-                        'status' => 'Waiting',
-                        'created_date' => $current_date_time,
-                        'support_id' => $value->id,
-                        'is_active' => 1
-                    ]);
-
-                    // dd($dataPeserta);
-                }   
-
-                
-            return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil mengirim undangan"
-            ], 200);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            return response()->json([
-                'success'   => false,
-                'data'      => [],
-                'message'   => "Gagal mengirim undangan"
-            ], 200);
-        }
-    }
+    //         return response()->json([
+    //             'success'   => true,
+    //             'data'      => [],
+    //             'message'   => "Berhasil menghapus data"
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         SystemController::saveError($e,Auth::user(),$request);
+    //         abort(500);
+    //     }
+    // }
 
     // public function delete (Request $request){
     //     try {
@@ -601,75 +487,75 @@ class SdtTrainingController extends Controller
     //     }
     // }
 
-    public function generateNomor (){
-        //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
+    // public function generateNomor (){
+    //     //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
 
-        //dapatkan dulu last leads 
-        $nomor = "AAAAA";
+    //     //dapatkan dulu last leads 
+    //     $nomor = "AAAAA";
 
-        $lastLeads = DB::table('sl_leads')->orderBy('id', 'DESC')->first();
-        if($lastLeads!=null){
-            $nomor = $lastLeads->nomor;
-            $chars = str_split($nomor);
-            for ($i=count($chars)-1; $i >= 0; $i--) { 
-                //dapatkan ascii dari character
-                $ascii = ord($chars[$i]);
+    //     $lastLeads = DB::table('sl_leads')->orderBy('id', 'DESC')->first();
+    //     if($lastLeads!=null){
+    //         $nomor = $lastLeads->nomor;
+    //         $chars = str_split($nomor);
+    //         for ($i=count($chars)-1; $i >= 0; $i--) { 
+    //             //dapatkan ascii dari character
+    //             $ascii = ord($chars[$i]);
 
-                if(($ascii >= 48 && $ascii < 57) || ($ascii >= 65 && $ascii < 90)){
-                    $ascii += 1;
-                }else if ($ascii == 90 ) {
-                    $ascii = 48;
-                }else{
-                    continue;
-                }
+    //             if(($ascii >= 48 && $ascii < 57) || ($ascii >= 65 && $ascii < 90)){
+    //                 $ascii += 1;
+    //             }else if ($ascii == 90 ) {
+    //                 $ascii = 48;
+    //             }else{
+    //                 continue;
+    //             }
 
-                $ascchar = chr($ascii);
-                $nomor = substr_replace($nomor,$ascchar,$i);
-                break;
-            }
-            if(strlen($nomor)<5){
-                $jumlah = 5-strlen($nomor);
-                for ($i=0; $i < $jumlah; $i++) { 
-                    $nomor = $nomor."A";
-                }
-            }
-        }
+    //             $ascchar = chr($ascii);
+    //             $nomor = substr_replace($nomor,$ascchar,$i);
+    //             break;
+    //         }
+    //         if(strlen($nomor)<5){
+    //             $jumlah = 5-strlen($nomor);
+    //             for ($i=0; $i < $jumlah; $i++) { 
+    //                 $nomor = $nomor."A";
+    //             }
+    //         }
+    //     }
 
-        return $nomor;
-    }
+    //     return $nomor;
+    // }
 
-    public function generateNomorLanjutan ($nomor){
-        //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
+    // public function generateNomorLanjutan ($nomor){
+    //     //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
 
-        //dapatkan dulu last leads 
-        // $nomor = "AAAAA";
+    //     //dapatkan dulu last leads 
+    //     // $nomor = "AAAAA";
 
-        $chars = str_split($nomor);
-        for ($i=count($chars)-1; $i >= 0; $i--) { 
-            //dapatkan ascii dari character
-            $ascii = ord($chars[$i]);
+    //     $chars = str_split($nomor);
+    //     for ($i=count($chars)-1; $i >= 0; $i--) { 
+    //         //dapatkan ascii dari character
+    //         $ascii = ord($chars[$i]);
 
-            if(($ascii >= 48 && $ascii < 57) || ($ascii >= 65 && $ascii < 90)){
-                $ascii += 1;
-            }else if ($ascii == 90 ) {
-                $ascii = 48;
-            }else{
-                continue;
-            }
+    //         if(($ascii >= 48 && $ascii < 57) || ($ascii >= 65 && $ascii < 90)){
+    //             $ascii += 1;
+    //         }else if ($ascii == 90 ) {
+    //             $ascii = 48;
+    //         }else{
+    //             continue;
+    //         }
 
-            $ascchar = chr($ascii);
-            $nomor = substr_replace($nomor,$ascchar,$i);
-            break;
-        }
-        if(strlen($nomor)<5){
-            $jumlah = 5-strlen($nomor);
-            for ($i=0; $i < $jumlah; $i++) { 
-                $nomor = $nomor."A";
-            }
-        }
+    //         $ascchar = chr($ascii);
+    //         $nomor = substr_replace($nomor,$ascchar,$i);
+    //         break;
+    //     }
+    //     if(strlen($nomor)<5){
+    //         $jumlah = 5-strlen($nomor);
+    //         for ($i=0; $i < $jumlah; $i++) { 
+    //             $nomor = $nomor."A";
+    //         }
+    //     }
 
-        return $nomor;
-    }
+    //     return $nomor;
+    // }
 
     // public function import (Request $request){
     //     $now = Carbon::now()->isoFormat('DD MMMM Y');
