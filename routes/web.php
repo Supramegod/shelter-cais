@@ -87,6 +87,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-minggu-ini', 'listAktifitasTelesalesMingguIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-minggu-ini');
         Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-bulan-ini', 'listAktifitasTelesalesBulanIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-bulan-ini');
         Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-tahun-ini', 'listAktifitasTelesalesTahunIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-tahun-ini');
+        Route::get('/dashboard/aktifitas-telesales/pivot/aktifitas-telesales', 'pivotAktifitasTelesales')->name('dashboard.aktifitas-telesales.pivot.aktifitas-telesales');
     });
 
     Route::controller(LeadsController::class)->group(function() {

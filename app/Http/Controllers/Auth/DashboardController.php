@@ -91,39 +91,51 @@ class DashboardController extends Controller
     }
 
     public function dashboardAktifitasSales(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
         $aktifitasSalesHariIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereDate('created_at', Carbon::today()->toDateString())
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
+            ->whereDate('sl_customer_activity.created_at', Carbon::today()->toDateString())
 
             ->count();
 
             // dd(Carbon::now()->endOfWeek()->format('Y-m-d'));
         $aktifitasSalesMingguIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
+            ->whereBetween('sl_customer_activity.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
             ->count();
 
         $aktifitasSalesBulanIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->count();
 
         $aktifitasSalesTahunIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereYear('created_at', Carbon::now()->year)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereYear('sl_customer_activity.created_at', Carbon::now()->year)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->count();
 
         $aktifitasSalesUserIds = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->whereNotNull('user_id')
-            ->select('user_id', DB::raw('count(*) as jumlah_aktifitas'))
-            ->groupBy('user_id')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->whereNotNull('sl_customer_activity.user_id')
+            ->select('sl_customer_activity.user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('sl_customer_activity.user_id')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->get();
 
         $sales = [];
@@ -138,11 +150,13 @@ class DashboardController extends Controller
         }
 
         $aktifitasByTipe = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->select('tipe', DB::raw('count(*) as jumlah_aktifitas'))
-            ->groupBy('tipe')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->select('sl_customer_activity.tipe', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('sl_customer_activity.tipe')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->get();
 
         $tipe = [];
@@ -153,11 +167,13 @@ class DashboardController extends Controller
         };
 
         $aktifitasByStatusLeads = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
             ->select(DB::raw('(select nama from m_status_leads where id=sl_customer_activity.status_leads_id) as status_leads'), DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('status_leads')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->get();
 
         $statusLeads = [];
@@ -174,11 +190,13 @@ class DashboardController extends Controller
         }
 
         $aktifitasSales = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity', 1)
-            ->whereNotNull('user_id')
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->select(DB::raw('DAY(created_at) as tanggal'), 'user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereNotNull('sl_customer_activity.user_id')
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
+            ->select(DB::raw('DAY(sl_customer_activity.created_at) as tanggal'), 'sl_customer_activity.user_id', DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('tanggal', 'user_id')
             ->get();
 
@@ -209,10 +227,12 @@ class DashboardController extends Controller
         $aktifitasSalesByTipePerTanggal = [];
 
         $aktifitasSalesByTipe = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->select('tipe', DB::raw('DAY(created_at) as tanggal'), DB::raw('count(*) as jumlah_aktifitas'))
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
+            ->select('sl_customer_activity.tipe', DB::raw('DAY(sl_customer_activity.created_at) as tanggal'), DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('tipe', 'tanggal')
             ->get();
 
@@ -242,12 +262,14 @@ class DashboardController extends Controller
         $aktifitasSalesByTipePerTanggal = array_values($aktifitasSalesByTipePerTanggal);
 
         $aktifitasByVisit = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->whereNotNull('jenis_visit')
-            ->select('jenis_visit', DB::raw('count(*) as jumlah_aktifitas'))
-            ->groupBy('jenis_visit')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->whereNotNull('sl_customer_activity.jenis_visit')
+            ->select('sl_customer_activity.jenis_visit', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('sl_customer_activity.jenis_visit')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->get();
 
         $jenisVisit = [];
@@ -263,38 +285,51 @@ class DashboardController extends Controller
     }
 
     public function dashboardAktifitasTelesales(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
         $aktifitasTelesalesHariIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereDate('created_at', Carbon::today()->toDateString())
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [30])
+            ->whereDate('sl_customer_activity.created_at', Carbon::today()->toDateString())
+
             ->count();
 
             // dd(Carbon::now()->endOfWeek()->format('Y-m-d'));
         $aktifitasTelesalesMingguIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [30])
+            ->whereBetween('sl_customer_activity.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
             ->count();
 
         $aktifitasTelesalesBulanIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->count();
 
         $aktifitasTelesalesTahunIni = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity',1)
-            ->whereYear('created_at', Carbon::now()->year)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereYear('sl_customer_activity.created_at', Carbon::now()->year)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->count();
 
         $aktifitasTelesalesUserIds = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->whereNotNull('user_id')
-            ->select('user_id', DB::raw('count(*) as jumlah_aktifitas'))
-            ->groupBy('user_id')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->whereNotNull('sl_customer_activity.user_id')
+            ->select('sl_customer_activity.user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('sl_customer_activity.user_id')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->get();
 
         $telesales = [];
@@ -309,11 +344,13 @@ class DashboardController extends Controller
         }
 
         $aktifitasByTipe = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->select('tipe', DB::raw('count(*) as jumlah_aktifitas'))
-            ->groupBy('tipe')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->select('sl_customer_activity.tipe', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('sl_customer_activity.tipe')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->get();
 
         $tipe = [];
@@ -324,11 +361,13 @@ class DashboardController extends Controller
         };
 
         $aktifitasByStatusLeads = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
             ->select(DB::raw('(select nama from m_status_leads where id=sl_customer_activity.status_leads_id) as status_leads'), DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('status_leads')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->get();
 
         $statusLeads = [];
@@ -345,11 +384,13 @@ class DashboardController extends Controller
         }
 
         $aktifitasTelesales = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity', 1)
-            ->whereNotNull('user_id')
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->select(DB::raw('DAY(created_at) as tanggal'), 'user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereNotNull('sl_customer_activity.user_id')
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [30])
+            ->select(DB::raw('DAY(sl_customer_activity.created_at) as tanggal'), 'sl_customer_activity.user_id', DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('tanggal', 'user_id')
             ->get();
 
@@ -380,10 +421,12 @@ class DashboardController extends Controller
         $aktifitasTelesalesByTipePerTanggal = [];
 
         $aktifitasTelesalesByTipe = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->select('tipe', DB::raw('DAY(created_at) as tanggal'), DB::raw('count(*) as jumlah_aktifitas'))
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [30])
+            ->select('sl_customer_activity.tipe', DB::raw('DAY(sl_customer_activity.created_at) as tanggal'), DB::raw('count(*) as jumlah_aktifitas'))
             ->groupBy('tipe', 'tanggal')
             ->get();
 
@@ -413,12 +456,14 @@ class DashboardController extends Controller
         $aktifitasTelesalesByTipePerTanggal = array_values($aktifitasTelesalesByTipePerTanggal);
 
         $aktifitasByVisit = DB::table('sl_customer_activity')
-            ->whereNull('deleted_at')
-            ->whereNotNull('jenis_visit')
-            ->select('jenis_visit', DB::raw('count(*) as jumlah_aktifitas'))
-            ->groupBy('jenis_visit')
-            ->where('is_activity', 1)
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->whereNotNull('sl_customer_activity.jenis_visit')
+            ->select('sl_customer_activity.jenis_visit', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('sl_customer_activity.jenis_visit')
+            ->where('sl_customer_activity.is_activity', 1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->get();
 
         $jenisVisit = [];
@@ -916,6 +961,33 @@ class DashboardController extends Controller
         ->leftJoin('m_status_leads', 'sl_leads.status_leads_id', '=', 'm_status_leads.id')
         ->whereNull('sl_customer_activity.deleted_at')
         ->where('is_activity',1)
+        ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
+        ->whereBetween('sl_customer_activity.tgl_activity', [$tanggalDari, $tanggalSampai])
+        ->select('sl_customer_activity.tgl_activity as Tanggal','sl_customer_activity.tipe as Tipe',$db2.'.m_user.full_name as User',$db2.'.m_branch.name as Branch','m_status_leads.nama as Status_Leads','sl_quotation.nomor as Nomor_Quotation','sl_leads.nama_perusahaan as Nama_Perusahaan')
+        ->get();
+
+        foreach ($data as $key => $value) {
+            $value->Bulan = Carbon::createFromFormat('Y-m-d', $value->Tanggal)->isoFormat('MMMM');
+            $value->Tahun = Carbon::createFromFormat('Y-m-d', $value->Tanggal)->year;
+            $value->Tanggal = Carbon::createFromFormat('Y-m-d',$value->Tanggal)->isoFormat('D MMMM Y');
+        }
+
+        return $data;
+    }
+    public function pivotAktifitasTelesales (Request $request){
+        $tanggalDari = $request->tanggalDari;
+        $tanggalSampai = $request->tanggalSampai;
+
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $data = DB::table('sl_customer_activity')
+        ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+        ->join($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
+        ->leftJoin('sl_quotation', 'sl_quotation.id', '=', 'sl_customer_activity.quotation_id')
+        ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+        ->leftJoin('m_status_leads', 'sl_leads.status_leads_id', '=', 'm_status_leads.id')
+        ->whereNull('sl_customer_activity.deleted_at')
+        ->where('is_activity',1)
+        ->whereIn($db2.'.m_user.role_id', [30])
         ->whereBetween('sl_customer_activity.tgl_activity', [$tanggalDari, $tanggalSampai])
         ->select('sl_customer_activity.tgl_activity as Tanggal','sl_customer_activity.tipe as Tipe',$db2.'.m_user.full_name as User',$db2.'.m_branch.name as Branch','m_status_leads.nama as Status_Leads','sl_quotation.nomor as Nomor_Quotation','sl_leads.nama_perusahaan as Nama_Perusahaan')
         ->get();
