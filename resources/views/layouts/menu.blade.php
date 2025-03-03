@@ -26,7 +26,7 @@
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-general'))) active @endif">
                     <a href="{{route('dashboard-general')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard General</div>
+                        <div>General</div>
                     </a>
                 </li>
                 @endif
@@ -34,7 +34,13 @@
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-sales'))) active @endif">
                     <a href="{{route('dashboard-aktifitas-sales')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard Aktifitas Sales</div>
+                        <div>Aktifitas Sales</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-aktifitas-telesales'))) active @endif">
+                    <a href="{{route('dashboard-aktifitas-telesales')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Aktifitas Telesales</div>
                     </a>
                 </li>
                 @endif
@@ -42,7 +48,7 @@
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
                     <a href="{{route('dashboard-leads')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Dashboard Leads</div>
+                        <div>Leads</div>
                     </a>
                 </li>
                 @endif
@@ -218,9 +224,9 @@
                         <div data-i18n="UMK">UMK</div>
                     </a>
                 </li>
-                
+
             </ul>
-        </li> 
+        </li>
         @endif
         @if(in_array(Auth::user()->role_id,[2]))
         <li class="menu-item">
@@ -270,7 +276,7 @@
 
 
 
-        
+
         <!-- <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>

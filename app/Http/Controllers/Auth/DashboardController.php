@@ -37,7 +37,7 @@ class DashboardController extends Controller
         ->where('sl_quotation.is_aktif',0)->get();
 
         $quotationExisting = DB::table('sl_quotation')->whereNull('deleted_at')->where('is_aktif',0)->get();
-        
+
 
         $dataMenungguAnda = [];
         $dataMenungguApproval = [];
@@ -125,7 +125,7 @@ class DashboardController extends Controller
             ->where('is_activity', 1)
             ->whereMonth('created_at', Carbon::now()->month)
             ->get();
-        
+
         $sales = [];
         $jumlahAktifitas = [];
         foreach ($aktifitasSalesUserIds as $key => $value) {
@@ -144,7 +144,7 @@ class DashboardController extends Controller
             ->where('is_activity', 1)
             ->whereMonth('created_at', Carbon::now()->month)
             ->get();
-        
+
         $tipe = [];
         $jumlahAktifitasTipe = [];
         foreach ($aktifitasByTipe as $key => $value) {
@@ -159,7 +159,7 @@ class DashboardController extends Controller
             ->where('is_activity', 1)
             ->whereMonth('created_at', Carbon::now()->month)
             ->get();
-        
+
         $statusLeads = [];
         $jumlahAktifitasStatusLeads = [];
         foreach ($aktifitasByStatusLeads as $key => $value) {
@@ -240,7 +240,7 @@ class DashboardController extends Controller
         }
 
         $aktifitasSalesByTipePerTanggal = array_values($aktifitasSalesByTipePerTanggal);
-        
+
         $aktifitasByVisit = DB::table('sl_customer_activity')
             ->whereNull('deleted_at')
             ->whereNotNull('jenis_visit')
@@ -249,7 +249,7 @@ class DashboardController extends Controller
             ->where('is_activity', 1)
             ->whereMonth('created_at', Carbon::now()->month)
             ->get();
-        
+
         $jenisVisit = [];
         $jumlahAktifitasVisit = [];
         foreach ($aktifitasByVisit as $key => $value) {
@@ -261,6 +261,178 @@ class DashboardController extends Controller
 
         return view('home.dashboard-aktifitas-sales', compact('jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
     }
+
+    public function dashboardAktifitasTelesales(Request $request) {
+        $aktifitasTelesalesHariIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereDate('created_at', Carbon::today()->toDateString())
+            ->count();
+
+            // dd(Carbon::now()->endOfWeek()->format('Y-m-d'));
+        $aktifitasTelesalesMingguIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->count();
+
+        $aktifitasTelesalesBulanIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->count();
+
+        $aktifitasTelesalesTahunIni = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity',1)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        $aktifitasTelesalesUserIds = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->whereNotNull('user_id')
+            ->select('user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('user_id')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+
+        $telesales = [];
+        $jumlahAktifitas = [];
+        foreach ($aktifitasTelesalesUserIds as $key => $value) {
+            $user = DB::connection('mysqlhris')->table('m_user')->where('id',$value->user_id)->first();
+            if($user==null){
+                continue;
+            }
+            array_push($telesales,$user->full_name." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitas,$value->jumlah_aktifitas);
+        }
+
+        $aktifitasByTipe = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->select('tipe', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('tipe')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+
+        $tipe = [];
+        $jumlahAktifitasTipe = [];
+        foreach ($aktifitasByTipe as $key => $value) {
+            array_push($tipe,$value->tipe." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitasTipe,$value->jumlah_aktifitas);
+        };
+
+        $aktifitasByStatusLeads = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->select(DB::raw('(select nama from m_status_leads where id=sl_customer_activity.status_leads_id) as status_leads'), DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('status_leads')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+
+        $statusLeads = [];
+        $jumlahAktifitasStatusLeads = [];
+        foreach ($aktifitasByStatusLeads as $key => $value) {
+            array_push($statusLeads,$value->status_leads." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitasStatusLeads,$value->jumlah_aktifitas);
+        };
+
+        $aktifitasTelesalesPerTanggal = [];
+
+        for ($i = 1; $i <= 31; $i++) {
+            $aktifitasTelesalesPerTanggal[$i] = 0;
+        }
+
+        $aktifitasTelesales = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity', 1)
+            ->whereNotNull('user_id')
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->select(DB::raw('DAY(created_at) as tanggal'), 'user_id', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('tanggal', 'user_id')
+            ->get();
+
+        $aktifitasTelesalesUser = [];
+
+        foreach ($aktifitasTelesales as $aktifitas) {
+            if (!isset($aktifitasTelesalesUser[$aktifitas->user_id])) {
+                $aktifitasTelesalesUser[$aktifitas->user_id] = [
+                    'user' => DB::connection('mysqlhris')->table('m_user')->where('id', $aktifitas->user_id)->value('full_name'),
+                    'jumlah_aktifitas' => []
+                ];
+            }
+
+            $aktifitasTelesalesUser[$aktifitas->user_id]['jumlah_aktifitas'][$aktifitas->tanggal] = $aktifitas->jumlah_aktifitas;
+        }
+
+        foreach ($aktifitasTelesalesUser as &$userAktifitas) {
+            for ($i = 1; $i <= 31; $i++) {
+                if (!isset($userAktifitas['jumlah_aktifitas'][$i])) {
+                    $userAktifitas['jumlah_aktifitas'][$i] = 0;
+                }
+            }
+            ksort($userAktifitas['jumlah_aktifitas']);
+        }
+
+        $aktifitasTelesalesPerTanggal = array_values($aktifitasTelesalesUser);
+
+        $aktifitasTelesalesByTipePerTanggal = [];
+
+        $aktifitasTelesalesByTipe = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->select('tipe', DB::raw('DAY(created_at) as tanggal'), DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('tipe', 'tanggal')
+            ->get();
+
+        foreach ($aktifitasTelesalesByTipe as $aktifitas) {
+            if (!isset($aktifitasTelesalesByTipePerTanggal[$aktifitas->tipe])) {
+                $aktifitasTelesalesByTipePerTanggal[$aktifitas->tipe] = [
+                    'tipe' => $aktifitas->tipe,
+                    'jumlah_aktifitas' => []
+                ];
+            }
+
+            $aktifitasTelesalesByTipePerTanggal[$aktifitas->tipe]['jumlah_aktifitas'][$aktifitas->tanggal] = $aktifitas->jumlah_aktifitas;
+        }
+
+        foreach ($aktifitasTelesalesByTipePerTanggal as &$tipeAktifitas) {
+            for ($i = 1; $i <= 31; $i++) {
+                if (!isset($tipeAktifitas['jumlah_aktifitas'][$i])) {
+                    $tipeAktifitas['jumlah_aktifitas'][$i] = 0;
+                }
+            }
+            ksort($tipeAktifitas['jumlah_aktifitas']);
+            $tipeAktifitas['jumlah_aktifitas'] = array_map(function($tanggal, $aktifitas) {
+                return ['tanggal' => $tanggal, 'aktifitas' => $aktifitas];
+            }, array_keys($tipeAktifitas['jumlah_aktifitas']), $tipeAktifitas['jumlah_aktifitas']);
+        }
+
+        $aktifitasTelesalesByTipePerTanggal = array_values($aktifitasTelesalesByTipePerTanggal);
+
+        $aktifitasByVisit = DB::table('sl_customer_activity')
+            ->whereNull('deleted_at')
+            ->whereNotNull('jenis_visit')
+            ->select('jenis_visit', DB::raw('count(*) as jumlah_aktifitas'))
+            ->groupBy('jenis_visit')
+            ->where('is_activity', 1)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+
+        $jenisVisit = [];
+        $jumlahAktifitasVisit = [];
+        foreach ($aktifitasByVisit as $key => $value) {
+            array_push($jenisVisit,$value->jenis_visit." ( ".$value->jumlah_aktifitas." )");
+            array_push($jumlahAktifitasVisit,$value->jumlah_aktifitas);
+        };
+
+        $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
+
+        return view('home.dashboard-aktifitas-telesales', compact('jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasTelesalesByTipePerTanggal','aktifitasTelesalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','telesales','aktifitasTelesalesHariIni','aktifitasTelesalesMingguIni','aktifitasTelesalesBulanIni','aktifitasTelesalesTahunIni'));
+    }
+
 
     public function dashboardLeads (Request $request){
         $leadsBaruHariIni = DB::table('sl_leads')
@@ -298,7 +470,7 @@ class DashboardController extends Controller
             ->whereNull('deleted_at')
             ->whereNull('tim_sales_d_id')
             ->count();
-        
+
         $leadsBelumAdaQuotation = DB::table('sl_leads')
             ->leftJoin('sl_quotation', 'sl_leads.id', '=', 'sl_quotation.leads_id')
             ->whereNull('sl_leads.deleted_at')
@@ -375,8 +547,8 @@ class DashboardController extends Controller
         ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
         ->select('sl_quotation.step','sl_quotation.top','sl_quotation.ot3','sl_quotation.ot2','sl_quotation.ot1','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation',
-        DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
-                    FROM sl_quotation_site 
+        DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
+                    FROM sl_quotation_site
                     WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site')
         )
         ->whereNull('sl_leads.deleted_at')
@@ -386,9 +558,9 @@ class DashboardController extends Controller
         foreach ($data as $key => $value) {
             $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
         }
-        
+
         if($request->tipe =="menunggu-anda"){
-            foreach ($data as $key => $quotation) {    
+            foreach ($data as $key => $quotation) {
                 if ($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot1 == null) {
                     if(Auth::user()->role_id==96){
                         array_push($arrData,$quotation);
@@ -411,7 +583,7 @@ class DashboardController extends Controller
                 }
             }
         }else if($request->tipe =="quotation-belum-lengkap"){
-            foreach ($data as $key => $quotation) {    
+            foreach ($data as $key => $quotation) {
                 if ($quotation->step != 100 && $quotation->is_aktif==0){
                     array_push($arrData,$quotation);
                 }
@@ -449,8 +621,8 @@ class DashboardController extends Controller
         ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
         ->select('sl_pks.nomor','sl_quotation.step','sl_quotation.top','sl_quotation.ot3','sl_quotation.ot2','sl_quotation.ot1','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_pks.id','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation',
-        DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
-                    FROM sl_quotation_site 
+        DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
+                    FROM sl_quotation_site
                     WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site')
         )
         ->whereNull('sl_leads.deleted_at')
@@ -523,7 +695,7 @@ class DashboardController extends Controller
                 'data' => $data
             ];
         });
-        
+
         $branchesWithCustomerData = $branches->map(function ($branch) use ($db2) {
             $branchId = DB::connection('mysqlhris')->table('m_branch')->where('name', $branch)->value('id');
             $target = DB::connection('mysqlhris')->table('m_branch')->where('id', $branchId)->value('sales_target');
@@ -637,5 +809,123 @@ class DashboardController extends Controller
             })
             ->rawColumns(['aksi'])
             ->make(true);
+    }
+
+    public function listAktifitasTelesalesHariIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereDate('sl_customer_activity.created_at', Carbon::today()->toDateString())
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function listAktifitasTelesalesMingguIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereBetween('sl_customer_activity.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function listAktifitasTelesalesBulanIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function listAktifitasTelesalesTahunIni(Request $request) {
+        $arrData = [];
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('is_activity',1)
+            ->whereYear('sl_customer_activity.created_at', Carbon::now()->year)
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function pivotAktifitasSales (Request $request){
+        $tanggalDari = $request->tanggalDari;
+        $tanggalSampai = $request->tanggalSampai;
+
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $data = DB::table('sl_customer_activity')
+        ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+        ->join($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
+        ->leftJoin('sl_quotation', 'sl_quotation.id', '=', 'sl_customer_activity.quotation_id')
+        ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+        ->leftJoin('m_status_leads', 'sl_leads.status_leads_id', '=', 'm_status_leads.id')
+        ->whereNull('sl_customer_activity.deleted_at')
+        ->where('is_activity',1)
+        ->whereBetween('sl_customer_activity.tgl_activity', [$tanggalDari, $tanggalSampai])
+        ->select('sl_customer_activity.tgl_activity as Tanggal','sl_customer_activity.tipe as Tipe',$db2.'.m_user.full_name as User',$db2.'.m_branch.name as Branch','m_status_leads.nama as Status_Leads','sl_quotation.nomor as Nomor_Quotation','sl_leads.nama_perusahaan as Nama_Perusahaan')
+        ->get();
+
+        foreach ($data as $key => $value) {
+            $value->Bulan = Carbon::createFromFormat('Y-m-d', $value->Tanggal)->isoFormat('MMMM');
+            $value->Tahun = Carbon::createFromFormat('Y-m-d', $value->Tanggal)->year;
+            $value->Tanggal = Carbon::createFromFormat('Y-m-d',$value->Tanggal)->isoFormat('D MMMM Y');
+        }
+
+        return $data;
     }
 }

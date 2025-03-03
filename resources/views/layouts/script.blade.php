@@ -10,7 +10,7 @@
         <table id="normal-modal-datatable" class="table table-striped table-bordered" style="width:100%">
           <thead>
             <tr>
-              
+
             </tr>
           </thead>
           <tbody>
@@ -23,7 +23,6 @@
 
 <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <!-- <script src="{{ asset('public/assets/vendor/libs/jquery/jquery.js') }}"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
     <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>
@@ -98,7 +97,7 @@
                 (dismiss) => {
                 if (dismiss === 'timer') {
                     console.log('closed by timer!!!!');
-                    Swal.fire({ 
+                    Swal.fire({
                     title: 'Finished!',
                     type: 'success',
                     timer: 2000,
@@ -120,7 +119,7 @@
         //         $(errname).html("");
         //     });
         // });
-        
+
         $.fn.serializeObject = function() {
             var o = {};
             var a = this.serializeArray();
@@ -147,7 +146,7 @@
     </script>
     <!-- Custom script -->
 
-    <script>  
+    <script>
   function openNormalDataTableModal(url, title) {
     $('#normalModalDatatable .modal-title').text(title);
     $('#normalModalDatatable').modal('show');

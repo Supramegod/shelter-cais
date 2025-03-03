@@ -9,8 +9,7 @@
 <style>
   .card {
     padding: 20px; /* Sesuaikan dengan kebutuhan */
-    width: auto; /* Menyesuaikan lebar dengan konten */
-    max-width: fit-content !important; /* Menghindari card melebihi batas container */
+    width: 100%; /* Menyesuaikan lebar dengan konten */
     box-sizing: border-box; /* Agar padding termasuk dalam ukuran total */
   }
 </style>
@@ -62,12 +61,12 @@
         </div>
       </div>
       <!-- /Bar Charts -->
-      <!-- <div class="card container-fluid" style="width: auto;">
+      <div class="card container-fluid" style="width: auto;">
         <div class="row">
-          <div id="output" style="margin: 30px;"></div>
+          <div id="output"></div>
         </div>
-        
-      </div>   -->
+
+      </div>
     </div>
 </div>
 @endsection
@@ -135,7 +134,7 @@
 
   const barChartKebutuhanPerBranch = document.getElementById('barChartKebutuhanPerBranch');
 
-  
+
   if (barChartKebutuhanPerBranch) {
     const barChartKebutuhanPerBranchVar = new Chart(barChartKebutuhanPerBranch, {
       type: 'bar',
@@ -196,7 +195,7 @@
   const branchesWithCustomerData = @json($branchesWithCustomerData);
   let arrTarget = [];
   let arrActual = [];
-  
+
   branchesWithCustomerData.forEach(element => {
     arrTarget.push(element.data.target);
     arrActual.push(element.data.actual);
@@ -204,7 +203,7 @@
 
   const barChartTargetActual = document.getElementById('barChartTargetActual');
 
-  
+
   if (barChartTargetActual) {
     const barChartTargetActualVar = new Chart(barChartTargetActual, {
       type: 'bar',

@@ -67,6 +67,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(DashboardController::class)->group(function() {
         Route::get('/dashboard/approval', 'dashboardApproval')->name('dashboard-approval');
         Route::get('/dashboard/aktifitas-sales', 'dashboardAktifitasSales')->name('dashboard-aktifitas-sales');
+        Route::get('/dashboard/aktifitas-telesales', 'dashboardAktifitasTelesales')->name('dashboard-aktifitas-telesales');
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
 
@@ -80,6 +81,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-minggu-ini', 'listAktifitasSalesMingguIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-minggu-ini');
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-bulan-ini', 'listAktifitasSalesBulanIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-bulan-ini');
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-tahun-ini', 'listAktifitasSalesTahunIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-tahun-ini');
+        Route::get('/dashboard/aktifitas-sales/pivot/aktifitas-sales', 'pivotAktifitasSales')->name('dashboard.aktifitas-sales.pivot.aktifitas-sales');
+
+        Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-hari-ini', 'listAktifitasTelesalesHariIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-hari-ini');
+        Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-minggu-ini', 'listAktifitasTelesalesMingguIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-minggu-ini');
+        Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-bulan-ini', 'listAktifitasTelesalesBulanIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-bulan-ini');
+        Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-tahun-ini', 'listAktifitasTelesalesTahunIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-tahun-ini');
     });
 
     Route::controller(LeadsController::class)->group(function() {
@@ -137,7 +144,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/customer-activity/send-email', 'sendEmail')->name('customer-activity.send-email');
     });
 
-    
+
     Route::controller(SpkController::class)->group(function() {
         Route::get('/sales/spk', 'index')->name('spk');
         Route::get('/sales/spk/add', 'add')->name('spk.add');
@@ -304,7 +311,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/aplikasi-pendukung/list', 'list')->name('aplikasi-pendukung.list'); // ajax
 
     });
-    
+
     Route::controller(JenisBarangController::class)->group(function() {
         Route::get('/master/jenis-barang', 'index')->name('jenis-barang');
         Route::get('/master/jenis-barang/view/{id}', 'view')->name('jenis-barang.view');
@@ -337,7 +344,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/perusahaan/list', 'list')->name('perusahaan.list'); // ajax
 
     });
-    
+
     Route::controller(ManagementFeeController::class)->group(function() {
         Route::get('/master/management-fee', 'index')->name('management-fee');
         Route::get('/master/management-fee/add', 'add')->name('management-fee.add');
@@ -349,7 +356,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/management-fee/list', 'list')->name('management-fee.list'); // ajax
 
     });
-    
+
     Route::controller(JenisVisitController::class)->group(function() {
         Route::get('/master/jenis-visit', 'index')->name('jenis-visit');
         Route::get('/master/jenis-visit/add', 'add')->name('jenis-visit.add');
@@ -373,14 +380,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/salary-rule/list', 'list')->name('salary-rule.list'); // ajax
 
     });
-    
+
     Route::controller(StatusLeadsController::class)->group(function() {
         Route::get('/master/status-leads', 'index')->name('status-leads');
 
         Route::get('/master/status-leads/list', 'list')->name('status-leads.list'); // ajax
 
     });
-    
+
     Route::controller(TunjanganController::class)->group(function() {
         Route::get('/master/tunjangan', 'index')->name('tunjangan');
         Route::get('/master/tunjangan/add', 'add')->name('tunjangan.add');
@@ -392,7 +399,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/tunjangan/list', 'list')->name('tunjangan.list'); // ajax
 
     });
-    
+
     Route::controller(TunjanganJabatanController::class)->group(function() {
         Route::get('/master/tunjangan-jabatan', 'index')->name('tunjangan-jabatan');
         Route::get('/master/tunjangan-jabatan/add', 'add')->name('tunjangan-jabatan.add');
@@ -405,7 +412,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/tunjangan-jabatan/get-kebutuhan-detail', 'getKebutuhanDetail')->name('tunjangan-jabatan.get-kebutuhan-detail'); // ajax
 
     });
-    
+
     Route::controller(BarangController::class)->group(function() {
         Route::get('/master/barang', 'index')->name('barang');
         Route::get('/master/barang/add', 'add')->name('barang.add');
@@ -416,14 +423,14 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/barang/list', 'list')->name('barang.list'); // ajax
     });
-    
+
     Route::controller(KebutuhanController::class)->group(function() {
         Route::get('/master/kebutuhan', 'index')->name('kebutuhan');
         Route::get('/master/kebutuhan/view/{id}', 'view')->name('kebutuhan.view');
 
         Route::get('/master/kebutuhan/list', 'list')->name('kebutuhan.list'); // ajax
         Route::get('/master/kebutuhan/list-detail', 'listDetail')->name('kebutuhan.list-detail'); // ajax
-        
+
         Route::get('/master/kebutuhan/list-detail-tunjangan', 'listDetailTunjangan')->name('kebutuhan.list-detail-tunjangan'); // ajax
         Route::post('/master/kebutuhan/delete-detail-tunjangan', 'deleteDetailTunjangan')->name('kebutuhan.delete-detail-tunjangan');
         Route::post('/master/kebutuhan/add-detail-tunjangan', 'addDetailTunjangan')->name('kebutuhan.add-detail-tunjangan');
@@ -432,13 +439,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/kebutuhan/delete-detail-requirement', 'deleteDetailRequirement')->name('kebutuhan.delete-detail-requirement');
         Route::post('/master/kebutuhan/add-detail-requirement', 'addDetailrequiRement')->name('kebutuhan.add-detail-requirement');
     });
-    
+
     Route::controller(TimSalesController::class)->group(function() {
         Route::get('/master/tim-sales', 'index')->name('tim-sales');
         Route::get('/master/tim-sales/add', 'add')->name('tim-sales.add');
         Route::get('/master/tim-sales/view/{id}', 'view')->name('tim-sales.view');
         Route::post('/master/tim-sales/save', 'save')->name('tim-sales.save');
-        
+
         Route::post('/master/tim-sales/delete', 'delete')->name('tim-sales.delete');
 
         Route::post('/master/tim-sales/add-detail-sales', 'addDetailSales')->name('tim-sales.add-detail-sales');
@@ -449,18 +456,18 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/tim-sales/list', 'list')->name('tim-sales.list'); // ajax
     });
 
-    
+
     Route::controller(TrainingController::class)->group(function() {
         Route::get('/master/training', 'index')->name('training');
         Route::get('/master/training/add', 'add')->name('training.add');
         Route::get('/master/training/view/{id}', 'view')->name('training.view');
         Route::post('/master/training/save', 'save')->name('training.save');
-        
+
         Route::post('/master/training/delete', 'delete')->name('training.delete');
 
         Route::get('/master/training/list', 'list')->name('training.list'); // ajax
     });
-    
+
     Route::controller(UmpController::class)->group(function() {
         Route::get('/master/ump', 'index')->name('ump');
         Route::get('/master/ump/add', 'add')->name('ump.add');

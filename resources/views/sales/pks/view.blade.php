@@ -137,7 +137,7 @@
           <!-- <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="4"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Utama</button>
           </div> -->
-          @elseif($data->status_pks_id == 5 && Auth::user()->role_id==29)
+          @elseif($data->status_pks_id == 5)
           <div class="col-12 text-center mt-2">
             <button id="btn-upload-pks" class="btn btn-primary w-100 waves-effect waves-light">
               <span class="me-1">Upload PKS</span>
@@ -195,7 +195,7 @@
 
 @section('pageScript')
 <script>
-  @if(session()->has('success'))  
+  @if(session()->has('success'))
     Swal.fire({
       title: 'Pemberitahuan',
       html: '{{session()->get('success')}}',
@@ -209,7 +209,7 @@
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('pks')}}");
   });
-  
+
   $('#btn-ajukan-ulang').on('click',function () {
     Swal.fire({
       title: 'Konfirmasi',
@@ -257,8 +257,8 @@
             let url = baseUrl.replace(':pks', {{$data->id}});
             // Tambahkan alasan sebagai parameter URL
             url += `?alasan=${encodeURIComponent(alasan)}`;
-              
-            location.href = url;            
+
+            location.href = url;
           } else if (result.dismiss === Swal.DismissReason.cancel) {
             Swal.fire({
               title: 'Dibatalkan',
@@ -280,7 +280,7 @@
       }
     });
   });
-  
+
 
   $('#btn-upload-pks').on('click', function() {
         // Menampilkan SweetAlert dengan form upload
@@ -397,7 +397,7 @@
             Swal.showLoading()
           }
         });
-        
+
         let formData = {
           "id":$(this).data('id'),
           "_token": "{{ csrf_token() }}"
@@ -416,7 +416,7 @@
               });
               return;
             }
-            
+
             Swal.close();
             let timerInterval;
             Swal.fire({
@@ -435,7 +435,7 @@
               willClose: () => {
                 clearInterval(timerInterval);
               }
-            }).then((result) => {    
+            }).then((result) => {
               /* Read more about handling dismissals below */
               if (result.dismiss === Swal.DismissReason.timer) {
                 location.reload();
