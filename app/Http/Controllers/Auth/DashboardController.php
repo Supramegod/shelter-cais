@@ -765,12 +765,15 @@ class DashboardController extends Controller
 
 
     public function listAktifitasSalesHariIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
 
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
-            ->where('is_activity',1)
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->whereDate('sl_customer_activity.created_at', Carbon::today()->toDateString())
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
@@ -788,12 +791,15 @@ class DashboardController extends Controller
     }
 
     public function listAktifitasSalesMingguIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
 
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
             ->where('is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->whereBetween('sl_customer_activity.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
@@ -811,12 +817,15 @@ class DashboardController extends Controller
     }
 
     public function listAktifitasSalesBulanIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
 
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
             ->where('is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
@@ -834,12 +843,15 @@ class DashboardController extends Controller
     }
 
     public function listAktifitasSalesTahunIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
 
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
             ->where('is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->whereYear('sl_customer_activity.created_at', Carbon::now()->year)
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
@@ -857,12 +869,15 @@ class DashboardController extends Controller
     }
 
     public function listAktifitasTelesalesHariIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
 
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
             ->where('is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->whereDate('sl_customer_activity.created_at', Carbon::today()->toDateString())
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
@@ -880,12 +895,15 @@ class DashboardController extends Controller
     }
 
     public function listAktifitasTelesalesMingguIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
 
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
             ->where('is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->whereBetween('sl_customer_activity.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
@@ -903,12 +921,15 @@ class DashboardController extends Controller
     }
 
     public function listAktifitasTelesalesBulanIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
 
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
             ->where('is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->whereMonth('sl_customer_activity.created_at', Carbon::now()->month)
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
@@ -926,12 +947,14 @@ class DashboardController extends Controller
     }
 
     public function listAktifitasTelesalesTahunIni(Request $request) {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $arrData = [];
-
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
             ->whereNull('sl_customer_activity.deleted_at')
             ->where('is_activity',1)
+            ->whereIn($db2.'.m_user.role_id', [30])
             ->whereYear('sl_customer_activity.created_at', Carbon::now()->year)
             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
