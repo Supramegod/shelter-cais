@@ -288,6 +288,7 @@ class DashboardController extends Controller
 
     public function dashboardAktifitasTelesales(Request $request) {
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $cabangList = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
 
         $aktifitasTelesalesHariIni = DB::table('sl_customer_activity')
             ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
@@ -477,7 +478,7 @@ class DashboardController extends Controller
 
         $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
 
-        return view('home.dashboard-aktifitas-telesales', compact('jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasTelesalesByTipePerTanggal','aktifitasTelesalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','telesales','aktifitasTelesalesHariIni','aktifitasTelesalesMingguIni','aktifitasTelesalesBulanIni','aktifitasTelesalesTahunIni'));
+        return view('home.dashboard-aktifitas-telesales', compact('cabangList','jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasTelesalesByTipePerTanggal','aktifitasTelesalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','telesales','aktifitasTelesalesHariIni','aktifitasTelesalesMingguIni','aktifitasTelesalesBulanIni','aktifitasTelesalesTahunIni'));
     }
 
 
@@ -1117,4 +1118,78 @@ class DashboardController extends Controller
         return DataTables::of($data)
             ->make(true);
     }
+
+    public function laporanMingguanTelesales(Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $branch_id = $request->branch_id;
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
+            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->select(
+                $db2.'.m_user.full_name as nama_sales',
+                $db2.'.m_branch.name as cabang',
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w1_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w2_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w3_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w4_appt'),
+            )
+            ->whereMonth('sl_customer_activity.created_at', $bulan)
+            ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->whereIn($db2.'.m_user.role_id', [30])
+            ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
+            ->orderBy($db2.'.m_branch.name', 'asc')
+            ->orderBy($db2.'.m_user.full_name', 'asc');
+
+        if($branch_id != ""){
+            $data = $data->where($db2.'.m_branch.id', $branch_id);
+        }
+        $data = $data->get();
+
+        foreach ($data as $key => $value) {
+            $value->nomor = $key+1;
+        }
+        return DataTables::of($data)
+            ->make(true);
+    }
+
+    public function laporanBulananTelesales(Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $branch_id = $request->branch_id;
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
+            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->select(
+                $db2.'.m_user.full_name as nama_sales',
+                $db2.'.m_branch.name as cabang',
+                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as jumlah_appt'),
+            )
+            ->whereMonth('sl_customer_activity.created_at', $bulan)
+            ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->whereIn($db2.'.m_user.role_id', [30])
+            ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
+            ->orderBy($db2.'.m_branch.name', 'asc')
+            ->orderBy($db2.'.m_user.full_name', 'asc');
+
+        if($branch_id != ""){
+            $data = $data->where($db2.'.m_branch.id', $branch_id);
+        }
+        $data = $data->get();
+
+        foreach ($data as $key => $value) {
+            $value->nomor = $key+1;
+        }
+        return DataTables::of($data)
+            ->make(true);
+    }
+
 }

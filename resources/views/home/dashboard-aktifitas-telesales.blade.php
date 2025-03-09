@@ -72,6 +72,146 @@
         </div>
     </div>
     <div class="row gy-4 mb-5">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header header-elements">
+                    <h5 class="card-title mb-0">Laporan Bulanan Aktifitas Penjualan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="cabangBulanan" class="form-label">Cabang</label>
+                            <select class="form-control" id="cabangBulanan" name="cabang">
+                                <option value="">- Semua Cabang -</option>
+                                @foreach($cabangList as $cabang)
+                                    <option value="{{ $cabang->id }}">{{ $cabang->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="bulanBulanan" class="form-label">Bulan</label>
+                            <select class="form-control" id="bulanBulanan" name="bulan">
+                                <option value="01">Januari</option>
+                                <option value="02">Februari</option>
+                                <option value="03">Maret</option>
+                                <option value="04">April</option>
+                                <option value="05">Mei</option>
+                                <option value="06">Juni</option>
+                                <option value="07">Juli</option>
+                                <option value="08">Agustus</option>
+                                <option value="09">September</option>
+                                <option value="10">Oktober</option>
+                                <option value="11">November</option>
+                                <option value="12">Desember</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tahunBulanan" class="form-label">Tahun</label>
+                            <input type="number" class="form-control" id="tahunBulanan" name="tahun" min="2000" max="2100" value="{{ date('Y') }}">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" id="filterButtonBulanan">
+                                <i class="mdi mdi-magnify"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive overflow-hidden table-data-bulanan">
+                        <table id="table-data-bulanan" class="dt-column-search table w-100 table-hover" style="white-space: nowrap;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" rowspan="2">No.</th>
+                                    <th class="text-center" rowspan="2">Nama Telesales</th>
+                                    <th class="text-center" rowspan="2">Cabang</th>
+                                    <th class="text-center" id="label-laporan-bulanan"></th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">Jumlah Appt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- data table ajax --}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row gy-4 mb-5">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header header-elements">
+                    <h5 class="card-title mb-0">Laporan Mingguan Aktifitas Penjualan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="cabang" class="form-label">Cabang</label>
+                            <select class="form-control" id="cabang" name="cabang">
+                                <option value="">- Semua Cabang -</option>
+                                @foreach($cabangList as $cabang)
+                                    <option value="{{ $cabang->id }}">{{ $cabang->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="bulan" class="form-label">Bulan</label>
+                            <select class="form-control" id="bulan" name="bulan">
+                                <option value="01">Januari</option>
+                                <option value="02">Februari</option>
+                                <option value="03">Maret</option>
+                                <option value="04">April</option>
+                                <option value="05">Mei</option>
+                                <option value="06">Juni</option>
+                                <option value="07">Juli</option>
+                                <option value="08">Agustus</option>
+                                <option value="09">September</option>
+                                <option value="10">Oktober</option>
+                                <option value="11">November</option>
+                                <option value="12">Desember</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tahun" class="form-label">Tahun</label>
+                            <input type="number" class="form-control" id="tahun" name="tahun" min="2000" max="2100" value="{{ date('Y') }}">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" id="filterButton">
+                                <i class="mdi mdi-magnify"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive overflow-hidden table-data">
+                        <table id="table-data" class="dt-column-search table w-100 table-hover" style="white-space: nowrap;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" rowspan="3">No.</th>
+                                    <th class="text-center" rowspan="3">Nama Telesales</th>
+                                    <th class="text-center" rowspan="3">Cabang</th>
+                                    <th class="text-center" colspan="16" id="label-laporan-mingguan"></th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">W1</th>
+                                    <th class="text-center">W2</th>
+                                    <th class="text-center">W3</th>
+                                    <th class="text-center">W4</th>
+                                </tr>
+                                <tr>
+                                    @for($i = 1; $i <= 4; $i++)
+                                        <th class="text-center">Appt</th>
+                                    @endfor
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- data table ajax --}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row gy-4 mb-5">
         <div class="col-lg-6 col-12 mb-4">
             <div class="card">
                 <div class="card-header header-elements">
@@ -770,6 +910,121 @@
         });
     });
         </script>
+<script>
+    let month = new Date().getMonth() + 1;
+    $('#bulan').val(month < 10 ? '0' + month : month);
+    $(document).ready(function() {
+        function loadDataTable() {
+            $('#label-laporan-mingguan').text($('#bulan option:selected').text() + ' - ' + $('#tahun').val());
 
+            var table = $('#table-data').DataTable({
+                scrollX: true,
+                "iDisplayLength": 25,
+                'processing': true,
+                'language': {
+                    'loadingRecords': '&nbsp;',
+                    'processing': 'Loading...'
+                },
+                ajax: {
+                    url: "{{ route('dashboard.aktifitas-telesales.tabel.laporan-mingguan-telesales') }}",
+                    data: function (d) {
+                        d.bulan = $('#bulan').val();
+                        d.tahun = $('#tahun').val();
+                        d.branch_id = $('#cabang').val();
+                    },
+                },
+                "order":[
+                    [0,'asc']
+                ],
+                columns:[{
+                    data : 'nomor',
+                    name : 'nomor',
+                },{
+                    data : 'nama_sales',
+                    name : 'nama_sales',
+                },{
+                    data : 'cabang',
+                    name : 'cabang',
+                },{
+                    data : 'w1_appt',
+                    name : 'w1_appt',
+                    className:'text-center'
+                },{
+                    data : 'w2_appt',
+                    name : 'w2_appt',
+                    className:'text-center'
+                },{
+                    data : 'w3_appt',
+                    name : 'w3_appt',
+                    className:'text-center'
+                },{
+                    data : 'w4_appt',
+                    name : 'w4_appt',
+                    className:'text-center'
+                }],
+                "language": datatableLang
+            });
+        }
+
+        loadDataTable();
+
+        $('#filterButton').on('click', function() {
+            $('#table-data').DataTable().destroy();
+            loadDataTable();
+        });
+    });
+</script>
+<script>
+    let monthBulanan = new Date().getMonth() + 1;
+    $('#bulanBulanan').val(monthBulanan < 10 ? '0' + monthBulanan : monthBulanan);
+    $(document).ready(function() {
+        function loadDataTableBulanan() {
+            $('#label-laporan-bulanan').text($('#bulanBulanan option:selected').text() + ' - ' + $('#tahunBulanan').val());
+
+            var table = $('#table-data-bulanan').DataTable({
+                scrollX: true,
+                "iDisplayLength": 25,
+                'processing': true,
+                'language': {
+                    'loadingRecords': '&nbsp;',
+                    'processing': 'Loading...'
+                },
+                ajax: {
+                    url: "{{ route('dashboard.aktifitas-telesales.tabel.laporan-bulanan-telesales') }}",
+                    data: function (d) {
+                        d.bulan = $('#bulanBulanan').val();
+                        d.tahun = $('#tahunBulanan').val();
+                        d.branch_id = $('#cabangBulanan').val();
+                    },
+                },
+                "order":[
+                    [0,'asc']
+                ],
+                columns:[{
+                    data : 'nomor',
+                    name : 'nomor',
+                },{
+                    data : 'nama_sales',
+                    name : 'nama_sales',
+                },{
+                    data : 'cabang',
+                    name : 'cabang',
+                },{
+                    data : 'jumlah_appt',
+                    name : 'jumlah_appt',
+                    className:'text-center'
+                }],
+                "language": datatableLang
+            });
+        }
+
+        loadDataTableBulanan();
+
+        $('#filterButtonBulanan').on('click', function() {
+            $('#table-data-bulanan').DataTable().destroy();
+            loadDataTableBulanan();
+        });
+    });
+</script>
 @endsection
 
