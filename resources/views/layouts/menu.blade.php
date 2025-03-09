@@ -80,7 +80,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,29,30,31,33,52,96,97,40,99]))
+        @if(in_array(Auth::user()->role_id,[2,8,56,29,30,31,33,52,96,97,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('customer-activity'))) active @endif">
             <a href="{{route('customer-activity')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-calendar-check-outline"></i>
@@ -96,7 +96,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,29,31,33]))
+        @if(in_array(Auth::user()->role_id,[2,29,31,33,56]))
         <li class="menu-item @if(str_contains(Request::url(), route('spk'))) active @endif">
             <a href="{{route('spk')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
@@ -104,7 +104,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,29,31,33]))
+        @if(in_array(Auth::user()->role_id,[2,29,31,33,56]))
         <li class="menu-item @if(str_contains(Request::url(), route('pks'))) active @endif">
             <a href="{{route('pks')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-file-sign"></i>

@@ -92,6 +92,8 @@ class DashboardController extends Controller
 
     public function dashboardAktifitasSales(Request $request) {
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $cabangList = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
+
 
         $aktifitasSalesHariIni = DB::table('sl_customer_activity')
             ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
@@ -281,7 +283,7 @@ class DashboardController extends Controller
 
         $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
 
-        return view('home.dashboard-aktifitas-sales', compact('jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
+        return view('home.dashboard-aktifitas-sales', compact('cabangList','jenisVisit','jumlahAktifitasVisit','statusLeads','jumlahAktifitasStatusLeads','aktifitasSalesByTipePerTanggal','aktifitasSalesPerTanggal','warna','tipe','jumlahAktifitasTipe','jumlahAktifitas','sales','aktifitasSalesHariIni','aktifitasSalesMingguIni','aktifitasSalesBulanIni','aktifitasSalesTahunIni'));
     }
 
     public function dashboardAktifitasTelesales(Request $request) {
@@ -1022,5 +1024,95 @@ class DashboardController extends Controller
         }
 
         return $data;
+    }
+
+    public function laporanMingguanSales(Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $branch_id = $request->branch_id;
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
+            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->select(
+                $db2.'.m_user.full_name as nama_sales',
+                $db2.'.m_branch.name as cabang',
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w1_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w1_visit'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w1_quot'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w1_spk'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w2_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w2_visit'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w2_quot'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w2_spk'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w3_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w3_visit'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w3_quot'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w3_spk'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w4_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w4_visit'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w4_quot'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w4_spk')
+            )
+            ->whereMonth('sl_customer_activity.created_at', $bulan)
+            ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
+            ->orderBy($db2.'.m_branch.name', 'asc')
+            ->orderBy($db2.'.m_user.full_name', 'asc');
+
+        if($branch_id != ""){
+            $data = $data->where($db2.'.m_branch.id', $branch_id);
+        }
+        $data = $data->get();
+
+        foreach ($data as $key => $value) {
+            $value->nomor = $key+1;
+        }
+        return DataTables::of($data)
+            ->make(true);
+    }
+
+    public function laporanBulananSales(Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $branch_id = $request->branch_id;
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
+            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->select(
+                $db2.'.m_user.full_name as nama_sales',
+                $db2.'.m_branch.name as cabang',
+                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as jumlah_appt'),
+                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as jumlah_visit'),
+                DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as jumlah_quot'),
+                DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as jumlah_spk'),
+            )
+            ->whereMonth('sl_customer_activity.created_at', $bulan)
+            ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
+            ->orderBy($db2.'.m_branch.name', 'asc')
+            ->orderBy($db2.'.m_user.full_name', 'asc');
+
+        if($branch_id != ""){
+            $data = $data->where($db2.'.m_branch.id', $branch_id);
+        }
+        $data = $data->get();
+
+        foreach ($data as $key => $value) {
+            $value->nomor = $key+1;
+            $value->persen_appt_to_visit = ($value->jumlah_visit == 0 ? 0 : round(($value->jumlah_appt / $value->jumlah_visit) * 100, 2))."%";
+            $value->persen_visit_to_quot = ($value->jumlah_visit == 0 ? 0 : round(($value->jumlah_quot / $value->jumlah_visit) * 100, 2))."%";
+            $value->persen_quot_to_spk = ($value->jumlah_quot == 0 ? 0 : round(($value->jumlah_spk / $value->jumlah_quot) * 100, 2))."%";
+            $value->jumlah_aktual_spk = 0;
+        }
+        return DataTables::of($data)
+            ->make(true);
     }
 }

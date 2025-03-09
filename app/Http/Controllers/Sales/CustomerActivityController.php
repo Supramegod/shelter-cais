@@ -34,7 +34,7 @@ class CustomerActivityController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
@@ -72,7 +72,7 @@ class CustomerActivityController extends Controller
                 }else{
                     $leads->kebutuhan = "";
                 }
-                
+
                 $timSalesId = DB::table('m_tim_sales')->where('id',$leads->tim_sales_id)->first();
                 $timSalesDId = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
                 if($timSalesId !=null){
@@ -101,7 +101,7 @@ class CustomerActivityController extends Controller
                     $leads->branchManager = $branchManager->full_name;
                 }
             }
-            
+
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $nowd = Carbon::now()->toDateString();
             $statusLeads = DB::table('m_status_leads')->whereNull('deleted_at')->where('id','!=','1')->where('id','!=','2')->get();
@@ -119,7 +119,7 @@ class CustomerActivityController extends Controller
                 $tim_sales_d_id = $dataSalesD->id;
             }
             $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
-            
+
             return view('sales.customer-activity.add',compact('jenisVisit','spvRoList','roList','crmList','leads','now','nowd','statusLeads','timSales','tim_sales_id','tim_sales_d_id'));
         } catch (\Exception $e) {
             dd($e);
@@ -127,7 +127,7 @@ class CustomerActivityController extends Controller
             abort(500);
         }
     }
-    
+
     public function view (Request $request,$id){
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
@@ -138,7 +138,7 @@ class CustomerActivityController extends Controller
             $data = DB::table('sl_customer_activity')->where('id',$id)->first();
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y HH:mm');
             $data->stgl_activity = Carbon::createFromFormat('Y-m-d',$data->tgl_activity)->isoFormat('D MMMM Y');
-            
+
             $leads = DB::table('sl_leads')->where('id',$data->leads_id)->first();
             $branchLeads = DB::connection('mysqlhris')->table('m_branch')->where('id',$leads->branch_id)->first();
             $kebutuhanLeads = DB::table('m_kebutuhan')->where('id',$leads->kebutuhan_id)->first();
@@ -154,13 +154,13 @@ class CustomerActivityController extends Controller
                 $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
                 $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
             }
-            
-            // inisialisasi 
+
+            // inisialisasi
             $data->status_leads = null;
             $data->tim_sales = null;
             $data->nama_sales = null;
 
-            // isi keterangan 
+            // isi keterangan
             $statusAct = DB::table('m_status_leads')->where('id',$data->status_leads_id)->first();
             if($statusAct !=null){
                 $data->status_leads = $statusAct->nama;
@@ -170,7 +170,7 @@ class CustomerActivityController extends Controller
             if($timSales !=null){
                 $data->tim_sales = $timSales->nama;
             }
-            
+
             $timSalesD = DB::table('m_tim_sales_d')->where('id',$data->tim_sales_d_id)->first();
             if($timSalesD !=null){
                 $namaSales = DB::connection('mysqlhris')->table('m_user')->where('id',$timSalesD->user_id)->first();
@@ -196,18 +196,21 @@ class CustomerActivityController extends Controller
             $validator = Validator::make($request->all(), [
                 'leads' => 'required',
                 'tgl_activity' => 'required',
-                'tipe' => 'required'
+                'tipe' => 'required',
+                'tgl_realisasi' => 'nullable|date_format:Y-m-d',
+                'tgl_realisasi_telepon' => 'nullable|date_format:Y-m-d'
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
                 'max' => 'Masukkan :attribute maksimal :max',
                 'required' => ':attribute harus di isi',
+                'date_format' => 'isi dengan format yang benar',
             ]);
-    
+
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
             }else{
                 // dd($request);
-                // validator tipe 
+                // validator tipe
                 // if($request->tipe=="Telepon" || $request->tipe=="Online Meeting"){
                 //     $validator = Validator::make($request->all(), [
                 //         'tgl_realisasi_telepon' => 'required',
@@ -264,15 +267,15 @@ class CustomerActivityController extends Controller
                 //         'required' => ':attribute harus di isi',
                 //     ]);
                 // }
-                // // else if($request->tipe=="Ubah Status"){
-                // //     $validator = Validator::make($request->all(), [
-                // //         'status_leads_id' => 'required',
-                // //     ], [
-                // //         'min' => 'Masukkan :attribute minimal :min',
-                // //         'max' => 'Masukkan :attribute maksimal :max',
-                // //         'required' => ':attribute harus di isi',
-                // //     ]);
-                // // }
+                // else if($request->tipe=="Ubah Status"){
+                //     $validator = Validator::make($request->all(), [
+                //         'status_leads_id' => 'required',
+                //     ], [
+                //         'min' => 'Masukkan :attribute minimal :min',
+                //         'max' => 'Masukkan :attribute maksimal :max',
+                //         'required' => ':attribute harus di isi',
+                //     ]);
+                // }
                 // else if($request->tipe=="Pilih Sales"){
                 //     $validator = Validator::make($request->all(), [
                 //         'tim_sales_id' => 'required',
@@ -371,7 +374,7 @@ class CustomerActivityController extends Controller
                 if($request->email !=null){
                     $email = $request->email;
                 }
-                
+
                 if($request->status_leads_id !=null) {
                     $statusLeads = $request->status_leads_id;
                 }
@@ -385,7 +388,7 @@ class CustomerActivityController extends Controller
                 if($request->tim_sales_d_id !=null){
                     $timSalesDId = $request->tim_sales_d_id;
                 }
-                
+
                 if($request->spv_ro !=null){
                     $roId = $request->spv_ro;
                     $roName = DB::connection('mysqlhris')->table('m_user')->where('id',$roId)->first();
@@ -470,7 +473,7 @@ class CustomerActivityController extends Controller
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
-                    
+
                     // save file
                     if($request->file('files') != null){
                         foreach ($request->file('files') as $key => $value) {
@@ -480,7 +483,7 @@ class CustomerActivityController extends Controller
                             $filename = $file->getClientOriginalName();
                             $filename = str_replace(".".$extension,"",$filename);
                             $originalName = $filename.date("YmdHis").rand(10000,99999).".".$extension."";
-                    
+
                             Storage::disk('bukti-activity')->put($originalName, file_get_contents($file));
 
                             $link = env('APP_URL').'/public/uploads/customer-activity/'.$originalName;
@@ -494,7 +497,7 @@ class CustomerActivityController extends Controller
                             ]);
                         }
                     }
-                    
+
                     $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';
                 }
 
@@ -509,7 +512,7 @@ class CustomerActivityController extends Controller
                         ]);
                     };
                 }
-                
+
 
                 if($request->tipe=="Pilih Sales"){
                     DB::table('sl_leads')->where('id',$request->leads_id)->update([
@@ -531,7 +534,7 @@ class CustomerActivityController extends Controller
                             $roId3 = $value;
                         }
                     }
-                    
+
                     DB::table('sl_leads')->where('id',$request->leads_id)->update([
                         'ro_id' => $roId,
                         'ro' => $roName,
@@ -584,7 +587,7 @@ class CustomerActivityController extends Controller
             ]);
 
             $msgSave = 'Customer activity berhasil dihapus.';
-            
+
             DB::commit();
             return redirect()->route('customer-activity')->with('success', $msgSave);
         } catch (\Exception $e) {
@@ -612,7 +615,7 @@ class CustomerActivityController extends Controller
                         ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
                         ->select($db2.'.m_role.name as role','sl_customer_activity.created_by','sl_customer_activity.email','sl_customer_activity.notulen','sl_customer_activity.jenis_visit','sl_customer_activity.link_bukti_foto','sl_customer_activity.penerima','sl_customer_activity.jam_realisasi','sl_customer_activity.tgl_realisasi','sl_customer_activity.notes_tipe','sl_customer_activity.start','sl_customer_activity.end','sl_customer_activity.durasi','m_status_leads.nama as status_leads','sl_customer_activity.leads_id','sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_leads.nama_perusahaan as nama', $db2.'.m_branch.name as branch', 'm_kebutuhan.nama as kebutuhan','m_tim_sales_d.nama as sales','sl_customer_activity.notes as keterangan')
                         ->whereNull('sl_customer_activity.deleted_at');
-            
+
             if(!empty($request->tgl_dari)){
                 $data = $data->where('sl_customer_activity.tgl_activity','>=',$request->tgl_dari);
             }else{
@@ -677,7 +680,7 @@ class CustomerActivityController extends Controller
             }
 
             $data = $data->get();
-                        
+
 
             foreach ($data as $key => $value) {
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
@@ -744,7 +747,7 @@ class CustomerActivityController extends Controller
 
         return $nomor;
     }
-    
+
     public function trackActivity (Request $request,$leadsId){
         try {
             $tipe = "Leads";
@@ -752,7 +755,7 @@ class CustomerActivityController extends Controller
             if ($request->quotation_id != null) {
                 $tipe = "Quotation";
             }else if ($request->spk_id != null) {
-                $tipe = "SPK"; 
+                $tipe = "SPK";
             }else if ($request->pks_id != null) {
                 $tipe = "PKS";
             }

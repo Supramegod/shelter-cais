@@ -82,6 +82,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-bulan-ini', 'listAktifitasSalesBulanIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-bulan-ini');
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-tahun-ini', 'listAktifitasSalesTahunIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-tahun-ini');
         Route::get('/dashboard/aktifitas-sales/pivot/aktifitas-sales', 'pivotAktifitasSales')->name('dashboard.aktifitas-sales.pivot.aktifitas-sales');
+        Route::get('/dashboard/aktifitas-sales/tabel/laporan-mingguan-sales', 'laporanMingguanSales')->name('dashboard.aktifitas-sales.tabel.laporan-mingguan-sales');
+        Route::get('/dashboard/aktifitas-sales/tabel/laporan-bulanan-sales', 'laporanBulananSales')->name('dashboard.aktifitas-sales.tabel.laporan-bulanan-sales');
 
         Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-hari-ini', 'listAktifitasTelesalesHariIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-hari-ini');
         Route::get('/dashboard/aktifitas-telesales/modal/aktifitas-telesales-minggu-ini', 'listAktifitasTelesalesMingguIni')->name('dashboard.aktifitas-telesales.modal.aktifitas-telesales-minggu-ini');

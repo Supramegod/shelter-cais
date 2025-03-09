@@ -33,7 +33,7 @@ class LeadsController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
@@ -95,7 +95,7 @@ class LeadsController extends Controller
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
-        
+
     }
 
     public function list (Request $request){
@@ -111,7 +111,7 @@ class LeadsController extends Controller
                         ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at')
                         ->whereNull('sl_leads.customer_id');
-            
+
             if(!empty($request->tgl_dari)){
                 $data = $data->where('sl_leads.tgl_leads','>=',$request->tgl_dari);
             }else{
@@ -170,8 +170,8 @@ class LeadsController extends Controller
 
             //     }
             // };
-            
-            $data = $data->get();          
+
+            $data = $data->get();
 
             foreach ($data as $key => $value) {
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
@@ -251,8 +251,8 @@ class LeadsController extends Controller
                         ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNotNull('sl_leads.deleted_at')
                         ->whereNull('sl_leads.customer_id');
-            
-            $data = $data->get();          
+
+            $data = $data->get();
 
             foreach ($data as $key => $value) {
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
@@ -280,7 +280,7 @@ class LeadsController extends Controller
                 'max' => 'Masukkan :attribute maksimal :max',
                 'required' => ':attribute harus di isi',
             ]);
-    
+
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
             }else{
@@ -326,7 +326,7 @@ class LeadsController extends Controller
                     $companies = DB::table('sl_leads')->whereNull('deleted_at')->pluck('nama_perusahaan');
                     foreach ($companies as $company) {
                         if (similar_text(strtolower($request->nama_perusahaan), strtolower($company), $percent)) {
-                            if ($percent > 80) { // jika kemiripan lebih dari 80%
+                            if ($percent > 95) { // jika kemiripan lebih dari 80%
                                 $validator->errors()->add('nama_perusahaan', 'Nama perusahaan terlalu mirip dengan : ' . $company.' Silahkan infokan ke Telesales atau Admin IT');
                                 return back()->withErrors($validator->errors())->withInput();
                             }
@@ -385,7 +385,7 @@ class LeadsController extends Controller
                             'tim_sales_d_id' =>$timSalesD->id
                         ]);
                     }
-                    
+
                     $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan dengan nomor : '.$nomor.' !';
                 }
             }
@@ -409,7 +409,7 @@ class LeadsController extends Controller
             ]);
 
             $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil direstore.';
-            
+
             DB::commit();
             return redirect()->route('leads')->with('success', $msgSave);
         } catch (\Exception $e) {
@@ -429,7 +429,7 @@ class LeadsController extends Controller
             ]);
 
             $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil dihapus.';
-            
+
             DB::commit();
             return redirect()->route('leads')->with('success', $msgSave);
         } catch (\Exception $e) {
@@ -441,14 +441,14 @@ class LeadsController extends Controller
     public function generateNomor (){
         //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
 
-        //dapatkan dulu last leads 
+        //dapatkan dulu last leads
         $nomor = "AAAAA";
 
         $lastLeads = DB::table('sl_leads')->orderBy('id', 'DESC')->first();
         if($lastLeads!=null){
             $nomor = $lastLeads->nomor;
             $chars = str_split($nomor);
-            for ($i=count($chars)-1; $i >= 0; $i--) { 
+            for ($i=count($chars)-1; $i >= 0; $i--) {
                 //dapatkan ascii dari character
                 $ascii = ord($chars[$i]);
 
@@ -466,7 +466,7 @@ class LeadsController extends Controller
             }
             if(strlen($nomor)<5){
                 $jumlah = 5-strlen($nomor);
-                for ($i=0; $i < $jumlah; $i++) { 
+                for ($i=0; $i < $jumlah; $i++) {
                     $nomor = $nomor."A";
                 }
             }
@@ -478,11 +478,11 @@ class LeadsController extends Controller
     public function generateNomorLanjutan ($nomor){
         //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
 
-        //dapatkan dulu last leads 
+        //dapatkan dulu last leads
         // $nomor = "AAAAA";
 
         $chars = str_split($nomor);
-        for ($i=count($chars)-1; $i >= 0; $i--) { 
+        for ($i=count($chars)-1; $i >= 0; $i--) {
             //dapatkan ascii dari character
             $ascii = ord($chars[$i]);
 
@@ -500,7 +500,7 @@ class LeadsController extends Controller
         }
         if(strlen($nomor)<5){
             $jumlah = 5-strlen($nomor);
-            for ($i=0; $i < $jumlah; $i++) { 
+            for ($i=0; $i < $jumlah; $i++) {
                 $nomor = $nomor."A";
             }
         }
@@ -526,7 +526,7 @@ class LeadsController extends Controller
                 'required' => ':attribute harus di isi',
                 'mimes' => 'tipe file harus csv,xls atau xlsx',
             ]);
-    
+
             $array = null;
             $datas = [];
             if ($validator->fails()) {
@@ -702,7 +702,7 @@ class LeadsController extends Controller
                 if($lJenisPerusahaan!=null){
                     $jenisPerusahaan = $lJenisPerusahaan->id;
                 }
-                
+
                 $timSalesD = null;
                 $timSales = null;
                 if($ltimSalesD!=null){
@@ -747,9 +747,9 @@ class LeadsController extends Controller
                     'user_id' => Auth::user()->id,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
-                ]);    
+                ]);
             }
-            
+
             $msgSave = 'Import Leads berhasil Dilakukan !';
 
             DB::commit();
@@ -782,7 +782,7 @@ class LeadsController extends Controller
         ->OrderBy('id','asc')
         ->get();
     }
-    
+
 
     public function availableLeads (Request $request){
         try {
@@ -835,9 +835,9 @@ class LeadsController extends Controller
 
                 }
             };
-            
+
             $data = $data->get();
-                        
+
 
             foreach ($data as $key => $value) {
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
@@ -882,7 +882,7 @@ class LeadsController extends Controller
                         ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at')
                         ->whereNull('sl_leads.leads_id');
-            
+
             //divisi sales
             if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
                 // sales
@@ -921,9 +921,9 @@ class LeadsController extends Controller
 
                 }
             };
-            
+
             $data = $data->get();
-                        
+
 
             foreach ($data as $key => $value) {
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');

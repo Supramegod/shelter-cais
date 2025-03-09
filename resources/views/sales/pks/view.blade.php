@@ -295,11 +295,23 @@
             confirmButtonText: 'Upload',
             preConfirm: () => {
                 const fileInput = document.getElementById('file');
+
+                // Validasi jika file tidak dipilih
                 if (!fileInput.files.length) {
                     Swal.showValidationMessage('Silakan pilih file terlebih dahulu');
                     return false;
                 }
-                return fileInput.files[0];  // Mengembalikan file yang dipilih
+
+                const file = fileInput.files[0];
+                const maxSize = 4 * 1024 * 1024; // 4MB dalam byte
+
+                // Validasi ukuran file
+                if (file.size > maxSize) {
+                    Swal.showValidationMessage('Ukuran file terlalu besar! Maksimum 4MB.');
+                    return false;
+                }
+
+                return file; // Mengembalikan file yang dipilih
             }
         }).then((result) => {
             if (result.isConfirmed) {
