@@ -1059,6 +1059,7 @@ class DashboardController extends Controller
             )
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
             ->orderBy($db2.'.m_branch.name', 'asc')
             ->orderBy($db2.'.m_user.full_name', 'asc');
@@ -1096,6 +1097,7 @@ class DashboardController extends Controller
             )
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
             ->orderBy($db2.'.m_branch.name', 'asc')
             ->orderBy($db2.'.m_user.full_name', 'asc');

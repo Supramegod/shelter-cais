@@ -122,7 +122,7 @@
                                     <th class="text-center" rowspan="2">No.</th>
                                     <th class="text-center" rowspan="2">Nama Sales</th>
                                     <th class="text-center" rowspan="2">Cabang</th>
-                                    <th class="text-center" colspan="8" id="label-laporan-bulanan"></th>
+                                    <th class="text-center" colspan="8" id="label-laporan-bulanan">sss</th>
                                 </tr>
                                 <tr>
                                     <th class="text-center">Jumlah Appt</th>
