@@ -7,7 +7,7 @@
     width: 100% !important;
   }
 </style>
-<div class="container-fluid flex-grow-1 container-p-y"> 
+<div class="container-fluid flex-grow-1 container-p-y">
   <div class="col-12 col-lg-12">
     <div class="card mb-2">
       <div class="card-header pb-1">
@@ -77,6 +77,14 @@
               </button>
               <ul class="dropdown-menu" aria-labelledby="btncetak">
                 <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-quotation',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Quotation</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-coss',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Harga Jual</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-hpp',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak HPP</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-gpm',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak GPM</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-kaporlap',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Kaporlap</a></li>
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-devices',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Devices</a></li>
+                @if($quotation->kebutuhan_id==3)
+                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-chemical',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Chemical</a></li>
+                @endif
               </ul>
             </div>
             @endif
@@ -247,7 +255,7 @@
                 <td>: {{$quotation->program_bpjs}}</td>
                 @else
                 <td>Nominal</td>
-                <td colspan="2">: Rp {{number_format($quotation->nominal_takaful,2,",",".")}}</td>                
+                <td colspan="2">: Rp {{number_format($quotation->nominal_takaful,2,",",".")}}</td>
                 @endif
               </tr>
               @if($quotation->penjamin =="BPJS")
@@ -534,7 +542,7 @@
                           <th >{{$detailJabatan->jumlah_hc}}</th>
                           @endforeach
                         </tr>
-                      </thead>              
+                      </thead>
                       <tbody>
                         @php $nomorUrut = 1; @endphp
                         <tr class="">
@@ -616,7 +624,7 @@
                           @foreach($quotation->quotation_detail as $detailJabatan)
                           <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_ketenagakerjaan,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-magnify text-primary view-bpjs" data-persen-bpjs-jkk="{{$detailJabatan->persen_bpjs_jkk}}" data-persen-bpjs-jkm="{{$detailJabatan->persen_bpjs_jkm}}" data-persen-bpjs-jht="{{$detailJabatan->persen_bpjs_jht}}" data-persen-bpjs-jp="{{$detailJabatan->persen_bpjs_jp}}" data-bpjs-jkk="{{$detailJabatan->bpjs_jkk}}" data-bpjs-jkm="{{$detailJabatan->bpjs_jkm}}" data-bpjs-jht="{{$detailJabatan->bpjs_jht}}" data-bpjs-jp="{{$detailJabatan->bpjs_jp}}"></i></a></td>
                           @endforeach
-                        </tr>                      
+                        </tr>
                         @php $nomorUrut++; @endphp
                         <tr class="">
                           <td style="text-align:center">{{$nomorUrut}}</td>
@@ -658,8 +666,8 @@
                         @php $nomorUrut++; @endphp
                         <tr class="">
                           <td style="text-align:center">{{$nomorUrut}}</td>
-                          <td style="text-align:left" class="">Bunga Bank ( {{$quotation->top}} ) &nbsp; 
-                            
+                          <td style="text-align:left" class="">Bunga Bank ( {{$quotation->top}} ) &nbsp;
+
                           </td>
                           <td style="text-align:center">{{$quotation->persen_bunga_bank}} %</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
@@ -669,7 +677,7 @@
                         @php $nomorUrut++; @endphp
                         <tr class="">
                           <td style="text-align:center">{{$nomorUrut}}</td>
-                          <td style="text-align:left" class="">Insentif 
+                          <td style="text-align:left" class="">Insentif
                           </td>
                           <td style="text-align:center">{{$quotation->persen_insentif}} % </td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
@@ -729,7 +737,7 @@
                           <td colspan="2" style="text-align:right" class="fw-bold">PEMBULATAN</td>
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pembulatan,2,",",".")}}</td>
-                        </tr>             
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -756,7 +764,7 @@
                           <th colspan="{{$site->jumlah_detail}}" style="vertical-align: middle;">{{$site->nama_site}}</th>
                           @endforeach
                         </tr>+
-                      </thead>              
+                      </thead>
                       <tbody>
                         <tr>
                           <td class="fw-bold">Structure</td>
@@ -959,11 +967,11 @@
   Tunjangan overtime flat total 75 jam. <span class="text-danger">*jika system jam kerja 12 jam </span> <br>
   Tunjangan hari raya ditagihkan provisi setiap bulan. (upah/12) <br>
   @if($quotation->program_bpjs=="2 BPJS")
-  BPJS Ketenagakerjaan 2 Program (JKK, JKM). 
+  BPJS Ketenagakerjaan 2 Program (JKK, JKM).
   @elseif($quotation->program_bpjs=="3 BPJS")
-  BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT). 
+  BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT).
   @elseif($quotation->program_bpjs=="4 BPJS")
-  BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP). 
+  BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
   @endif
   <span class="text-danger">Pengalian base on upah</span>		<br>
   BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
@@ -1040,11 +1048,11 @@
                         </tr>
                       </tbody>
                       @if($quotation->ppn_pph_dipotong=="Management Fee")
-                      
+
                       @else
-                      
+
                       @endif
-                      
+
                     </table>
                   </div>
                 </div>
@@ -1456,7 +1464,7 @@
           data: function (d) {
               d.quotation_id = {{$quotation->id}};
           },
-      },   
+      },
       "order":[
           [0,'asc']
       ],
@@ -1543,7 +1551,7 @@
         Swal.showLoading();
       }
     });
-      
+
     $.ajax({
       type: "POST",
       url: "{{route('quotation.approve-quotation')}}",
@@ -1579,7 +1587,7 @@
       }
     });
   }
-  
+
   $('body').on('click', '#approve-quotation', function() {
     Swal.fire({
       icon: "question",
@@ -1592,7 +1600,7 @@
       confirmButtonColor: '#28a745',
       denyButtonColor: '#ff4d49',
       cancelButtonColor: '#6c757d',
-    }).then((result) => {            
+    }).then((result) => {
       if (result.isConfirmed || result.isDenied) {
         let approve = false;
         $msg = "Data berhasil tidak disetujui.";
@@ -1653,7 +1661,7 @@
           data: function (d) {
               d.quotation_id = {{$quotation->id}};
           },
-      },   
+      },
       "order":[
           [0,'asc']
       ],
@@ -1674,7 +1682,7 @@
       }],
       "language": datatableLang,
     });
-  
+
     @foreach($quotation->detail as $kkd => $detail)
       let tableRequirement{{$detail->id}} = $('#table-data-requirement-{{$detail->id}}').DataTable({
         scrollX: true,
@@ -1693,7 +1701,7 @@
             data: function (d) {
                 d.quotation_detail_id = {{$detail->id}};
             },
-        },   
+        },
         "order":[
             [0,'asc']
         ],
@@ -1739,7 +1747,7 @@
               $.ajax({
                 type: "POST",
                 url: "{{route('quotation.add-detail-requirement')}}",
-                data: { 
+                data: {
                   "_token": "{{ csrf_token() }}",
                   requirement: result.value,
                   quotation_detail_id:{{$detail->id}}
@@ -1783,7 +1791,7 @@
         }
       });
     });
-    
+
     let baseUrl = "{{ route('quotation.copy-quotation', ['qasal' => ':qasal', 'qtujuan' => ':qtujuan']) }}";
 
     function redirectToQuotationCopy(qasal, qtujuan) {
@@ -1791,7 +1799,7 @@
         let url = baseUrl.replace(':qasal', qasal).replace(':qtujuan', qtujuan);
         location.href = url;
     }
-    
+
     $("#simpan-copy-quotation").on('click',function() {
         let msg = "";
         let qasal = $("#quotationAsal").val();
@@ -1806,7 +1814,7 @@
         }
 
         if(msg == ""){
-            $("#quotationModal").modal("hide");                           
+            $("#quotationModal").modal("hide");
 
             Swal.fire({
                 title: 'Apakah Anda yakin?',
@@ -1824,7 +1832,7 @@
                 }
             });
         }else{
-            $("#quotationModal").modal("hide");                           
+            $("#quotationModal").modal("hide");
             Swal.fire({
             title: "Pemberitahuan",
             html: msg,
@@ -1832,11 +1840,11 @@
             });
         }
     });
-    
+
     $("#btn-copy-quotation").on("click",function(){
       $("#quotationModal").modal("show");
     })
-    
+
     $("#btn-ajukan-quotation").on("click",function(){
       Swal.fire({
         title: 'Konfirmasi',
@@ -1884,10 +1892,10 @@
               let url = baseUrl.replace(':quotation', {{$quotation->id}});
               // Tambahkan alasan sebagai parameter URL
               url += `?alasan=${encodeURIComponent(alasan)}`;
-                
+
               location.href = url;
               console.log("gogo");
-              
+
             } else if (result.dismiss === Swal.DismissReason.cancel) {
               Swal.fire({
                 title: 'Dibatalkan',

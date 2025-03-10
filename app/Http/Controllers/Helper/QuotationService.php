@@ -21,7 +21,7 @@ class QuotationService
         if (!strpos($quotation->durasi_kerjasama, 'tahun')) {
             $provisi = (int)str_replace(" bulan", "", $quotation->durasi_kerjasama);
         }
-        $quotation->provisi = $provisi;        
+        $quotation->provisi = $provisi;
 
         foreach ($quotation->quotation_detail as $kbd) {
             $hpp = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
@@ -64,7 +64,7 @@ class QuotationService
         }
         if($persenInsentif != 0 && $persenInsentif != null){
             $insentif = $quotation->nominal_management_fee_coss * ($quotation->persen_insentif / 100) / $jumlahHc;
-        }        
+        }
         // Hitung ulang sub total personil
         foreach ($quotation->quotation_detail as $kbd) {
             $hpp = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
@@ -243,7 +243,7 @@ class QuotationService
             $kbd->bpjs_jht = $upahBpjs * 3.7 / 100;
             $kbd->persen_bpjs_jht = 3.7;
         }
-        
+
         // Hitung JP (jika program BPJS mencakup JP)
         if ($kbd->bpjs_jp === null) {
             $kbd->bpjs_jp = $upahBpjs * 2 / 100;
@@ -254,7 +254,7 @@ class QuotationService
         if ($kbd->bpjs_kes === null) {
             $kbd->bpjs_kes = $upahBpjsKes * 4 / 100;
             $kbd->persen_bpjs_kes = 4;
-        } 
+        }
 
         if($kbd->is_bpjs_jkk=="0"){
             $kbd->bpjs_jkk = 0;
@@ -276,7 +276,7 @@ class QuotationService
         //     $kbd->bpjs_kes = 0;
         //     $kbd->persen_bpjs_kes = 0;
         // }
-        
+
         $kbd->persen_bpjs_ketenagakerjaan = $kbd->persen_bpjs_jkk+$kbd->persen_bpjs_jkm+$kbd->persen_bpjs_jht+$kbd->persen_bpjs_jp;
         $kbd->bpjs_ketenagakerjaan = $kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp;
         $quotation->persen_bpjs_ketenagakerjaan = $kbd->persen_bpjs_ketenagakerjaan;
@@ -341,7 +341,7 @@ class QuotationService
         }
         $quotation->nominal_lembur = $kbd->lembur;
     }
-    
+
     private function calculateTotalPersonnel($kbd, $quotation, $totalTunjangan)
     {
         // Hitung total personal seperti pada kode
@@ -380,7 +380,7 @@ class QuotationService
             }
         }
         $kbd->personil_kaporlap = $personilKaporlap;
-        
+
         if ($personilKaporlapCoss === null) {
             $personilKaporlapCoss = $personilKaporlap;
         }
@@ -392,7 +392,7 @@ class QuotationService
     {
         $personilDevices = $hpp->provisi_peralatan;
         $personilDevicesCoss = $coss->provisi_peralatan;
-        
+
         if($personilDevices === null){
             $deviceItems = DB::table('sl_quotation_devices')
             ->whereNull('deleted_at')
@@ -458,7 +458,7 @@ class QuotationService
             $personilChemicalCoss = $personilChemical;
         }
 
-        $kbd->personil_chemical_coss = $personilChemical;
+        $kbd->personil_chemical_coss = $personilChemicalCoss;
     }
 
     private function calculateCoss(&$quotation, $jumlahHc, $provisi)

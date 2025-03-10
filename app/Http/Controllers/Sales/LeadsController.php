@@ -305,7 +305,7 @@ class LeadsController extends Controller
                         'updated_by' => Auth::user()->name
                     ]);
 
-                    // //insert ke activity sebagai activity pertama
+                    //insert ke activity sebagai activity pertama
                     // $customerActivityController = new CustomerActivityController();
                     // $nomorActivity = $customerActivityController->generateNomor($request->id);
 

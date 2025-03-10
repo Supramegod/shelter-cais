@@ -255,8 +255,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/add-biaya-monitoring', 'addBiayaMonitoring')->name('quotation.add-biaya-monitoring');
 
         Route::get('/sales/quotation/cetak-checklist/{id}', 'cetakChecklist')->name('quotation.cetak-checklist');
-        Route::get('/sales/quotation/cetak-coss/{id}', 'cetakCoss')->name('quotation.cetak-coss');
-        Route::get('/sales/quotation/cetak-quotation/{id}', 'cetakQuotation')->name('quotation.cetak-quotation');
         Route::post('/sales/quotation/add-quotation-training', 'addQuotationTraining')->name('quotation.add-quotation-training');
         Route::post('/sales/quotation/add-barang', 'addBarang')->name('quotation.add-barang');
 
@@ -290,6 +288,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/save-add-site', 'saveAddSite')->name('quotation.save-add-site');
         Route::get('/sales/quotation/get-site-list', 'getSiteList')->name('quotation.get-site-list'); // ajax
 
+        // CETAKAN
+        Route::get('/sales/quotation/cetak-hpp/{id}', 'cetakHpp')->name('quotation.cetak-hpp');
+        Route::get('/sales/quotation/cetak-coss/{id}', 'cetakCoss')->name('quotation.cetak-coss');
+        Route::get('/sales/quotation/cetak-gpm/{id}', 'cetakGpm')->name('quotation.cetak-gpm');
+        Route::get('/sales/quotation/cetak-quotation/{id}', 'cetakQuotation')->name('quotation.cetak-quotation');
+        Route::get('/sales/quotation/cetak-kaporlap/{id}', 'cetakKaporlap')->name('quotation.cetak-kaporlap');
+        Route::get('/sales/quotation/cetak-devices/{id}', 'cetakDevices')->name('quotation.cetak-devices');
+        Route::get('/sales/quotation/cetak-chemical/{id}', 'cetakChemical')->name('quotation.cetak-chemical');
     });
 
 
