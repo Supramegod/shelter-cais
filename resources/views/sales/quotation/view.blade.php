@@ -80,10 +80,10 @@
                 <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-coss',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Harga Jual</a></li>
                 <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-hpp',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak HPP</a></li>
                 <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-gpm',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak GPM</a></li>
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-kaporlap',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Kaporlap</a></li>
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-devices',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Devices</a></li>
+                <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-kaporlap',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Kaporlap</a></li> -->
+                <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-devices',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Devices</a></li> -->
                 @if($quotation->kebutuhan_id==3)
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-chemical',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Chemical</a></li>
+                <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-chemical',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Chemical</a></li> -->
                 @endif
               </ul>
             </div>
