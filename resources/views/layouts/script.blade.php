@@ -23,6 +23,8 @@
 
 <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
+    <!-- build:js assets/public/assets/vendor/js/core.js -->
+    <script src="{{ asset('public/assets/vendor/libs/jquery/jquery.js') }}"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
     <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>
@@ -61,8 +63,8 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
 
-    <!-- <script src="{{ asset('public/assets/js/form-wizard-numbered.js') }}"></script> -->
-    <!-- <script src="{{ asset('public/assets/js/form-wizard-validation.js') }}"></script> -->
+    <!-- <script src="{{ asset('js/form-wizard-numbered.js') }}"></script> -->
+    <!-- <script src="{{ asset('js/form-wizard-validation.js') }}"></script> -->
     <script>
         var datatableLang = {
             "processing": '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>',

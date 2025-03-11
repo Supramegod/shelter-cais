@@ -52,6 +52,12 @@
                     </a>
                 </li>
                 @endif
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
+                    <a href="{{route('dashboard-sdt-training')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Dashboard SDT Training</div>
+                    </a>
+                </li>
             </ul>
         </li>
         @endif
@@ -121,6 +127,28 @@
         </li>
         @endif
         @if(in_array(Auth::user()->role_id,[2]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
+                <div data-i18n="Kontrak">Training</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{route('sdt-training')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Data">Training Data</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Site">Training Site</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2]))
         <!-- MASTER DATA -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -144,6 +172,54 @@
                     <a href="{{route('training')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Training">Training</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                    <a href="javascript:void(0)" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Materi">Training SDT</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                        <a href="{{route('training-materi')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Materi">Training Materi</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-divisi'))) active @endif">
+                        <a href="{{route('training-divisi')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Divisi">Training Divisi</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-trainer'))) active @endif">
+                        <a href="{{route('training-trainer')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Trainer">Training Trainer</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-area'))) active @endif">
+                        <a href="{{route('training-area')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Area">Training Area</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                        <a href="{{route('training-client')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Client">Training Client</div>
+                        </a>
+                    </li>
+                    </ul>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('whatsapp'))) active @endif">
+                    <a href="{{route('whatsapp')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="whatsapp">Whatsapp</div>
                     </a>
                 </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('platform'))) active @endif">
@@ -224,26 +300,8 @@
                         <div data-i18n="UMK">UMK</div>
                     </a>
                 </li>
-
             </ul>
         </li>
-        @endif
-        @if(in_array(Auth::user()->role_id,[2]))
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-cogs"></i>
-                <div data-i18n="Master Data">Konfigurasi</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item @if(str_contains(Request::url(), route('entitas'))) active @endif">
-                    <a href="{{route('entitas')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Entitas">Entitas</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        @endif
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-list-box"></i>
@@ -258,7 +316,7 @@
                 </li>
             </ul>
         </li>
-
+        @endif
 
 
 

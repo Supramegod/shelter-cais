@@ -90,6 +90,27 @@ class DashboardController extends Controller
         return view('home.dashboard-approval',compact('jumlahMenungguManagerCrm','dataBelumLengkap','dataMenungguApproval','dataMenungguAnda','jumlahMenungguApproval','jumlahMenungguDirSales','jumlahMenungguDirkeu','jumlahMenungguDirut','quotationBelumLengkap'));
     }
 
+    public function dashboardSdtTraining(Request $request){
+        $jumlahTraining = DB::table('sdt_training')
+            ->where('is_aktif', 1)
+            ->count();
+
+        $jumlahClient = DB::table('m_training_client')
+            ->where('is_aktif', 1)
+            ->count();
+
+        $jumlahTrainer = DB::table('m_training_trainer')
+            ->where('is_aktif', 1)
+            ->count();
+
+        $jumlahMateri = DB::table('m_training_materi')
+            ->where('is_aktif', 1)
+            ->count();
+
+      
+        return view('home.dashboard-sdt-training',compact('jumlahTraining','jumlahClient','jumlahTrainer','jumlahMateri'));
+    }
+
     public function dashboardAktifitasSales(Request $request) {
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $cabangList = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();

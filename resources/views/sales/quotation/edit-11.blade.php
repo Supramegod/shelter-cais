@@ -746,8 +746,8 @@
 @endsection
 
 @section('pageScript')  
-<script src="{{ asset('public/assets/js/forms-selects.js') }}"></script>
-<script src="{{ asset('public/assets/vendor/libs/select2/select2.js') }}"></script>
+<script src="{{ asset('js/forms-selects.js') }}"></script>
+<script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
 
 <script>
 

@@ -75,6 +75,20 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        'sdt-training-image' => [
+            'driver' => 'local',
+            'root' => public_path(). '/uploads/sdt-training/image',
+            'url' => env('APP_URL').'/public/uploads/sdt-training/image',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'sdt-training-file' => [
+            'driver' => 'local',
+            'root' => public_path(). '/uploads/sdt-training/file',
+            'url' => env('APP_URL').'/public/uploads/sdt-training/file',
+            'visibility' => 'public',
+            'throw' => false,
+        ]
 
     ],
 

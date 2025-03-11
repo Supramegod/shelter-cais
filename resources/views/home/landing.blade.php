@@ -5,7 +5,7 @@
   class="light-style layout-menu-fixed layout-compact"
   dir="ltr"
   data-theme="theme-default"
-  data-assets-path="{{ asset('public/assets/') }}"
+  data-assets-path="{{ asset('') }}"
 >
   <head>
     <meta charset="utf-8" />
@@ -56,7 +56,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
     <script src="{{ asset('public/assets/vendor/js/helpers.js') }}"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="{{ asset('public/assets/js/front-config.js') }}"></script>
+    <script src="{{ asset('js/front-config.js') }}"></script>
 
   </head>
 
@@ -210,7 +210,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
     <footer class="landing-footer">
       <div class="footer-top position-relative overflow-hidden" style="background-color:#121240 !important">
         <img
-          src="../../assets/img/front-pages/backgrounds/footer-bg.png"
+          src="../../assets/public/assets/img/front-pages/backgrounds/footer-bg.png"
           alt="footer bg"
           class="footer-bg banner-bg-img" />
         <div class="container position-relative">
@@ -287,7 +287,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
     <!-- Footer: End -->
 
     <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
+    <!-- build:js assets/public/assets/vendor/js/core.js -->
      
     <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>

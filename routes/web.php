@@ -6,6 +6,7 @@ use App\Http\Middleware\VerifyFastApiKey;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\Fitur\ContactController;
+use App\Http\Controllers\Fitur\SdtTrainingInviteController;
 
 use App\Http\Controllers\Sales\LeadsController;
 use App\Http\Controllers\Sales\CustomerController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Sales\QuotationController;
 use App\Http\Controllers\Sales\SpkController;
 use App\Http\Controllers\Sales\PksController;
 use App\Http\Controllers\Sales\MonitoringKontrakController;
+use App\Http\Controllers\Sales\WhatsappController;
 
 use App\Http\Controllers\Master\PlatformController;
 use App\Http\Controllers\Master\AplikasiPendukungController;
@@ -33,6 +35,13 @@ use App\Http\Controllers\Master\TimSalesController;
 use App\Http\Controllers\Master\TrainingController;
 use App\Http\Controllers\Master\UmpController;
 use App\Http\Controllers\Master\UmkController;
+use App\Http\Controllers\Master\TrainingMateriController;
+use App\Http\Controllers\Master\TrainingDivisiController;
+use App\Http\Controllers\Master\TrainingTrainerController;
+use App\Http\Controllers\Master\TrainingAreaController;
+use App\Http\Controllers\Master\TrainingClientController;
+
+use App\Http\Controllers\Sdt\SdtTrainingController;
 
 use App\Http\Controllers\Setting\EntitasController;
 
@@ -53,6 +62,17 @@ Route::controller(ContactController::class)->group(function() {
     Route::post('/webhook-endpoint/{key}', 'handleWebhook')->name('webhook-endpoint');
 });
 
+Route::controller(SdtTrainingInviteController::class)->group(function() {
+    Route::get('/sdt-training', 'invite')->name('invite');
+    Route::get('/sdt-training/nik', 'dataNik')->name('invite-nik');
+    Route::post('/sdt-training-save', 'pesertaSave')->name('invite-save');
+
+    Route::post('/sdt-training-pdf', 'testPdf')->name('invite-pdf');
+    Route::post('/sdt-training-pdf-web', 'testPdfWeb')->name('invite-pdf-web');
+
+    // Route::post('/webhook-endpoint/{key}', 'handleWebhook')->name('webhook-endpoint');
+});
+
 Route::controller(QuotationController::class)->group(function() {
     Route::get('/view/checklist/{id}/{key}', 'viewChecklist')->name('quotation.view-checklist');
 });
@@ -70,6 +90,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-telesales', 'dashboardAktifitasTelesales')->name('dashboard-aktifitas-telesales');
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
+        Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
 
 
         // list
@@ -499,6 +520,90 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
     });
 
+    Route::controller(TrainingMateriController::class)->group(function() {
+        Route::get('/master/training-materi', 'index')->name('training-materi');
+        Route::get('/master/training-materi/add', 'add')->name('training-materi.add');
+        Route::get('/master/training-materi/view/{id}', 'view')->name('training-materi.view');
+        Route::post('/master/training-materi/save', 'save')->name('training-materi.save');
+
+        Route::get('/master/training-materi/list', 'list')->name('training-materi.list'); // ajax
+        Route::post('/master/training-materi/delete', 'delete')->name('training-materi.delete');
+        // Route::get('/master/training-materi/list-training-materi', 'listUmk')->name('training-materi.list-umk'); // ajax
+    });
+
+    Route::controller(TrainingDivisiController::class)->group(function() {
+        Route::get('/master/training-divisi', 'index')->name('training-divisi');
+        Route::get('/master/training-divisi/add', 'add')->name('training-divisi.add');
+        Route::get('/master/training-divisi/view/{id}', 'view')->name('training-divisi.view');
+        Route::post('/master/training-divisi/save', 'save')->name('training-divisi.save');
+        Route::post('/master/training-divisi/delete', 'delete')->name('training-divisi.delete');
+        Route::get('/master/training-divisi/list', 'list')->name('training-divisi.list'); // ajax
+    });
+
+    Route::controller(TrainingTrainerController::class)->group(function() {
+        Route::get('/master/training-trainer', 'index')->name('training-trainer');
+        Route::get('/master/training-trainer/add', 'add')->name('training-trainer.add');
+        Route::get('/master/training-trainer/view/{id}', 'view')->name('training-trainer.view');
+        Route::post('/master/training-trainer/save', 'save')->name('training-trainer.save');
+        Route::post('/master/training-trainer/delete', 'delete')->name('training-trainer.delete');
+        Route::get('/master/training-trainer/list', 'list')->name('training-trainer.list'); // ajax
+    });
+
+    Route::controller(TrainingAreaController::class)->group(function() {
+        Route::get('/master/training-area', 'index')->name('training-area');
+        Route::get('/master/training-area/add', 'add')->name('training-area.add');
+        Route::get('/master/training-area/view/{id}', 'view')->name('training-area.view');
+        Route::post('/master/training-area/save', 'save')->name('training-area.save');
+        Route::post('/master/training-area/delete', 'delete')->name('training-area.delete');
+        Route::get('/master/training-area/list', 'list')->name('training-area.list'); // ajax
+    });
+
+    Route::controller(TrainingClientController::class)->group(function() {
+        Route::get('/master/training-client', 'index')->name('training-client');
+        Route::get('/master/training-client/add', 'add')->name('training-client.add');
+        Route::get('/master/training-client/view/{id}', 'view')->name('training-client.view');
+        Route::post('/master/training-client/save', 'save')->name('training-client.save');
+        Route::post('/master/training-client/delete', 'delete')->name('training-client.delete');
+        Route::get('/master/training-client/list', 'list')->name('training-client.list'); // ajax
+    });
+
+    Route::controller(SdtTrainingController::class)->group(function() {
+
+        Route::get('/sdt/sdt-training', 'index')->name('sdt-training');
+        Route::get('/sdt/sdt-training/add', 'add')->name('sdt-training.add');
+        Route::get('/sdt/sdt-training/view/{id}', 'view')->name('sdt-training.view');
+        //
+        // Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
+        // Route::get('/sales/leads/import', 'import')->name('leads.import');
+        // Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
+
+        // Route::post('/sales/leads/inquiry-import', 'inquiryImport')->name('leads.inquiry-import');
+        // Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
+        Route::post('/sdt/sdt-training/save', 'save')->name('sdt-training.save');
+        Route::post('/sdt/sdt-training/delete', 'delete')->name('sdt-training.delete');
+        Route::post('/sdt/sdt-training/delete-trainer', 'deleteTrainer')->name('sdt-training.delete-trainer');
+        Route::post('/sdt/sdt-training/add-client', 'addClient')->name('sdt-training.add-client');
+        Route::post('/sdt/sdt-training/add-peserta', 'addPeserta')->name('sdt-training.add-peserta');
+        Route::post('/sdt/sdt-training/add-trainer', 'addTrainer')->name('sdt-training.add-trainer');
+        Route::post('/sdt/sdt-training/delete-peserta', 'deletePeserta')->name('sdt-training.delete-peserta');
+        Route::post('/sdt/sdt-training/delete-gallery', 'deleteGallery')->name('sdt-training.delete-gallery');
+        Route::post('/sdt/sdt-training/send-message', 'sendMessage')->name('sdt-training.send-message');
+
+        Route::post('/sdt/sdt-training/upload-image', 'uploadImage')->name('sdt-training.upload-image');
+
+        Route::get('/sdt/sdt-training/data-galeri', 'dataGaleri')->name('sdt-training.data-galeri');
+        Route::get('/sdt/sdt-training/client-peserta', 'clientpeserta')->name('sdt-training.client-peserta');
+        Route::get('/sdt/sdt-training/data-trainer', 'dataTrainer')->name('sdt-training.data-trainer');
+        Route::get('/sdt/sdt-training/list', 'list')->name('sdt-training.list');
+
+        // Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
+        // Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
+        // Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation'); // ajax
+
+        // Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads'); // ajax
+        // Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads'); // ajax
+    });
+
     Route::controller(MonitoringKontrakController::class)->group(function() {
         Route::get('/sales/monitoring-kontrak', 'index')->name('monitoring-kontrak');
         Route::get('/sales/monitoring-kontrak/list', 'list')->name('monitoring-kontrak.list');
@@ -523,5 +628,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/log/notifikasi', 'index')->name('notifikasi');
         Route::get('/log/notifikasi/list', 'list')->name('notifikasi.list'); // ajax
         Route::post('/log/notifikasi/read', 'read')->name('notifikasi.read');
+    });
+    Route::controller(WhatsappController::class)->group(function() {
+        Route::get('/whatsapp/login', 'login')->name('whatsapp.login');
+        Route::get('/whatsapp', 'index')->name('whatsapp');
+        Route::get('/whatsapp/list', 'list')->name('whatsapp.list');
+        Route::post('/whatsapp/connectQr', 'connectQr')->name('whatsapp.connectQr');
+        Route::post('/whatsapp/connectStatus', 'connectStatus')->name('whatsapp.connectStatus');
+        Route::post('/whatsapp/message', 'message')->name('whatsapp.message');
     });
 });
