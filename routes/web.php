@@ -42,6 +42,7 @@ use App\Http\Controllers\Master\TrainingAreaController;
 use App\Http\Controllers\Master\TrainingClientController;
 
 use App\Http\Controllers\Sdt\SdtTrainingController;
+use App\Http\Controllers\Sdt\TrainingSiteController;
 
 use App\Http\Controllers\Setting\EntitasController;
 
@@ -602,6 +603,16 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads'); // ajax
         // Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads'); // ajax
+    });
+
+    Route::controller(TrainingSiteController::class)->group(function() {
+        Route::get('/sdt/training-site', 'index')->name('training-site');
+        // Route::get('/master/training-client/add', 'add')->name('training-client.add');
+        // Route::get('/master/training-client/view/{id}', 'view')->name('training-client.view');
+        // Route::post('/master/training-client/save', 'save')->name('training-client.save');
+        // Route::post('/master/training-client/delete', 'delete')->name('training-client.delete');
+        Route::get('/sdt/training-site/list', 'list')->name('training-site.list'); // ajax
+        Route::get('/sdt/training-site/history', 'historyTrainingByClient')->name('training-site.history'); 
     });
 
     Route::controller(MonitoringKontrakController::class)->group(function() {
