@@ -628,7 +628,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                    <a href="{{route('training-site')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Training Site">Training Site</div>
                     </a>
