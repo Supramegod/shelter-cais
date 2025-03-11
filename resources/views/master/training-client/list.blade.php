@@ -105,8 +105,8 @@
                     name : 'client',
                     className:'text-left'
                 },{
-                    data : 'area_id',
-                    name : 'area_id',
+                    data : 'area_name',
+                    name : 'area_name',
                     className:'text-center'
                 },{
                     data : 'kab_kota',

@@ -11,75 +11,151 @@
       <div class="card mb-4">
         <h5 class="card-header">
           <div class="d-flex justify-content-between">
-            <!-- <span>SDT Training</span> -->
+            <span>SDT Training Detail</span>
           </div>
         </h5>
+        <div class="row">
+          <div class="col-md-5">
+            <div id="carouselExample" class="carousel slide" style="margin: 15px;">
+              <div class="carousel-indicators">
+                @foreach($listImage as $value)
+                  <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ $loop->index }}" class="@if($loop->index == 0) active @endif" aria-current="true" aria-label="Slide {{ $loop->index }}"></button>
+                @endforeach
+                <!-- <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button> -->
+              </div>
+
+              <div class="carousel-inner">
+                @foreach($listImage as $value)
+                <div class="carousel-item @if($loop->index == 0) active @endif" style="height: 450px; width:700px">
+                  <img style="border-radius: 1%; width: 100%;max-height: 100%" src="{{$value->path}}" class="d-block w-100" alt="...">
+                  <div class="carousel-caption d-none d-md-block">
+                    <h5>{{$value->nama}}</h5>
+                    <p>{{$value->keterangan}}</p>
+                  </div>
+                </div>
+                @endforeach
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+              <form class="card-body overflow-hidden" action="{{route('sdt-training.save')}}" method="POST">
+              @csrf
+              <!-- <h6>1. Informasi Perusahaan</h6> -->
+              <input type="hidden" name="id" value="{{$data->id_training}}">
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($listBu as $value)
+                      <option value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
+                <label class="col-sm-2 col-form-label text-sm-end">Tempat <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="tempat_id" name="tempat_id" class="select2 form-select @if ($errors->any()) @if($errors->has('tempat_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih Tempat -</option>
+                        <option value="1" @if($data->id_pel_tempat == '1') selected @endif>IN DOOR</option>
+                        <option value="2" @if($data->id_pel_tempat == '2') selected @endif>OUT DOOR</option>
+                    </select>
+                    @if($errors->has('tempat_id'))
+                      <div class="invalid-feedback">{{$errors->first('tempat_id')}}</div>
+                    @endif
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($listMateri as $value)
+                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->materi}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
+                <label class="col-sm-2 col-form-label text-sm-end">Tipe <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="tipe_id" name="tipe_id" class="select2 form-select @if ($errors->any()) @if($errors->has('tipe_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih Tipe -</option>
+                        <option value="1" @if($data->id_pel_tipe == '1') selected @endif>ON SITE</option>
+                        <option value="2" @if($data->id_pel_tipe == '2') selected @endif>OFF SITE</option>
+                    </select>
+                    @if($errors->has('tipe_id'))
+                      <div class="invalid-feedback">{{$errors->first('tipe_id')}}</div>
+                    @endif
+                  </div>
+                </div>
+              </div>  
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Waktu Mulai <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                  <input type="datetime-local" id="start_date" name="start_date" value="{{$data->waktu_mulai}}" class="form-control @if ($errors->any())   @endif">
+                    @if($errors->has('start_date'))
+                      <div class="invalid-feedback">{{$errors->first('start_date')}}</div>
+                    @endif
+                  </div>
+                </div>
+
+                <label class="col-sm-2 col-form-label text-sm-end">Waktu Selesai <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                  <input type="datetime-local" id="end_date" name="end_date" value="{{$data->waktu_selesai}}" class="form-control @if ($errors->any())   @endif">
+                    @if($errors->has('end_date'))
+                      <div class="invalid-feedback">{{$errors->first('end_date')}}</div>
+                    @endif
+                  </div>
+                </div>
+              </div>  
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
+                <div class="col-sm-10">
+                  <div class="form-floating form-floating-outline mb-4">
+                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="keterangan" id="keterangan" placeholder="">{{$data->keterangan}}</textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="pt-4">
+                <div class="row justify-content-end">
+                  <div class="col-sm-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Update</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          <div>
+        </div>
+        
         <div class="card-body overflow-hidden">
           @csrf
-          <input type="hidden" id="training_id" value="{{$data->id_training}}">
-          
-          <h6>Peserta Training</h6>
-            <div class="position-relative">
-              <!-- <label class="col-sm-2 col-form-label text-center">Nama Perusahaan / Client</label> -->
-              <div class="col-sm-2 ">
-                  <select id="nama_perusahaan" name="nama_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                    <option value="">- Pilih Perusahaan -</option>
-                    @foreach($namaPerusahaan as $value)
-                    <option value="{{$value->id}}"> {{$value->client}}</option>
-                    @endforeach
-                  </select>
-              </div>  
-            </div>
-            <div class="table-responsive overflow-hidden table-data-client">
-                <table id="table-data-client" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                    <thead>
-                    <!-- no, nik, nama, no whatsapp, aksi -->
-                        <tr>
-                            <th class="text-center">NIK</th>
-                            <th class="text-center">Nama</th>
-                            <th class="text-center">No Whatsapp</th>
-                            <th class="text-center">Status Kirim</th>
-                            <th class="text-center">Hadir</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- data table ajax --}}
-                    </tbody>
-                </table>
-            </div>
-      
-          
-          <br>
-          <br>
-          <br>
-
-          <h6>Trainer</h6>
-          <div class="row mb-2">
-            <div class="table-responsive overflow-hidden table-data-trainer">
-                <table id="table-data-trainer" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Nama</th>
-                            <th class="text-center">Divisi</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- data table ajax --}}
-                    </tbody>
-                </table>
-            </div>
-          </div>
-          <hr class="my-4 mx-4">
-         
-          
-          <hr class="my-4 mx-4">
-          <div class="pt-4">
-          </div>
         </div>
       </div>
     </div>
+    </div>
+    </div>
+
     <div class="col-md-3">
       <div class="row">
         <div class="card h-100">
@@ -94,30 +170,6 @@
             </div>
           </div>
           <div class="card-body">
-            @if(in_array(Auth::user()->role_id,[29,30,31,32,33,48,49]))
-            <div class="col-12 text-center">
-              <button id="btn-update" class="btn btn-primary w-100 waves-effect waves-light">
-                <span class="me-1">Update Data</span>
-                <i class="mdi mdi-content-save scaleX-n1-rtl"></i>
-              </button>
-            </div>
-            @endif
-            @if(in_array(Auth::user()->role_id,[29,31,32,33]))
-            <!-- <div class="col-12 text-center mt-2">
-              <button id="btn-quotation" class="btn btn-success w-100 waves-effect waves-light">
-                <span class="me-1">Create Quotation</span>
-                <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
-              </button>
-            </div> -->
-            @endif
-            @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
-            <!-- <div class="col-12 text-center mt-2">
-              <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Create Activity</span>
-                <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
-              </button>
-            </div> -->
-            @endif
             <div class="col-12 text-center mt-2">
               <button id="btn-send-message" class="btn btn-info w-100 waves-effect waves-light">
                 <span class="me-1">Kirim Undangan</span>
@@ -130,18 +182,18 @@
                   <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
               </button>
             </div>
-            <div class="col-12 text-center mt-2">
+            <!-- <div class="col-12 text-center mt-2">
               <button id="btn-add-peserta" class="btn btn-success w-100 waves-effect waves-light">
                 <span class="me-1">Tambah Peserta</span>
                   <i class="mdi mdi-account-multiple-plus scaleX-n1-rtl"></i>
               </button>
-            </div>
-            <div class="col-12 text-center mt-2">
+            </div> -->
+            <!-- <div class="col-12 text-center mt-2">
               <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light">
                 <span class="me-1">Tambah Trainer</span>
                   <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
               </button>
-            </div>
+            </div> -->
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
@@ -158,9 +210,124 @@
           </div>
         </div>
       </div>
-
+      </div>
     </div>
+  
+    <div class="row">
+      <!-- Form Label Alignment -->
+      <div class="col-md-9">
+        <div class="card mb-4">
+          <h5 class="card-header">
+            <div class="d-flex justify-content-between">
+              <span>Trainer</span>
+            </div>
+          </h5>
+          <div class="card-body overflow-hidden">
+            @csrf  
+              <div class="table-responsive overflow-hidden">
+                  <table id="table-data-trainer" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Nama</th>
+                            <th class="text-left">Divisi</th>
+                            <th class="text-left">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- data table ajax --}}
+                    </tbody>
+                </table>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+
+    <div class="row">
+    <!-- Form Label Alignment -->
+    <div class="col-md-9">
+      <div class="card mb-4">
+        <h5 class="card-header">
+          <div class="d-flex justify-content-between">
+            <span>Peserta Training</span>
+          </div>
+        </h5>
+        <div class="card-body overflow-hidden">
+          @csrf
+          <input type="hidden" id="training_id" value="{{$data->id_training}}">
+          <div class="position-relative">
+              <!-- <label class="col-sm-2 col-form-label text-center">Nama Perusahaan / Client</label> -->
+              <div class="col-sm-2 ">
+                  <select id="nama_perusahaan" name="nama_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                    <option value="">- Pilih Perusahaan -</option>
+                    @foreach($namaPerusahaan as $value)
+                    <option value="{{$value->id}}"> {{$value->client}}</option>
+                    @endforeach
+                  </select>
+              </div>  
+            </div>  
+            <div class="table-responsive overflow-hidden">
+              <table id="table-data-client" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                  <thead>
+                  <!-- no, nik, nama, no whatsapp, aksi -->
+                      <tr>
+                          <th class="text-left">NIK</th>
+                          <th class="text-left">Nama</th>
+                          <th class="text-left">No Whatsapp</th>
+                          <th class="text-left">Status Kirim</th>
+                          <th class="text-left">Hadir</th>
+                          <th class="text-center">Aksi</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {{-- data table ajax --}}
+                  </tbody>
+              </table>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
   </div>
+
+  <div class="row">
+    <!-- Form Label Alignment -->
+    <div class="col-md-9">
+      <div class="card mb-4">
+        <h5 class="card-header">
+          <div class="d-flex justify-content-between">
+            <span>Galeri Kegiatan</span>
+          </div>
+        </h5>
+        <div class="card-body overflow-hidden">
+          @csrf
+          <input type="hidden" id="training_id" value="{{$data->id_training}}">
+            
+            <div class="table-responsive overflow-hidden">
+                <table id="table-data-gallery" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                    <thead>
+                    <!-- no, nik, nama, no whatsapp, aksi -->
+                        <tr>
+                            <th class="text-left">Nama</th>
+                            <th class="text-left">Keterangan</th>
+                            <th class="text-left">Gambar</th>
+                            <th class="text-left">Created Date</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- data table ajax --}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+  
+
 </div>
 <!--/ Content -->
 @endsection
@@ -207,11 +374,11 @@
       columns:[{
           data : 'nama',
           name : 'nama',
-          className:'text-center'
+          className:'text-left'
       },{
           data : 'divisi',
           name : 'divisi',
-          className:'text-center'
+          className:'text-left'
       },{
           data : 'aksi',
           name : 'aksi',
@@ -221,7 +388,70 @@
       }],
       "language": datatableLang,
       dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
-      buttons: []
+      buttons: [
+            {
+            text: '<i class="mdi mdi-account-multiple-outline me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Trainer</span>',
+            className: 'btn-add-trainer btn btn-label-primary waves-effect waves-light',
+            action: function (e, dt, node, config)
+                {
+                    $('#modal-gallery').modal('show');
+                }
+            }
+        ]
+  });
+
+  var table = $('#table-data-gallery').DataTable({
+      scrollX: true,
+      "iDisplayLength": 25,
+      'processing': true,
+      'language': {
+      'loadingRecords': '&nbsp;',
+      'processing': 'Loading...'
+  },
+      ajax: {
+          url: "{{ route('sdt-training.data-galeri') }}",
+          data: function (d) {
+              d.training_id = $('#training_id').val();
+          },
+      },      
+      "order":[
+          [0,'desc']
+      ],
+      columns:[{
+          data : 'nama',
+          name : 'nama',
+          className:'text-left'
+      },{
+          data : 'keterangan',
+          name : 'keterangan',
+          className:'text-left'
+      },{
+          data : 'path',
+          name : 'path',
+          className:'text-left'
+      },{
+          data : 'created_at',
+          name : 'created_at',
+          className:'text-left'
+      },{
+          data : 'aksi',
+          name : 'aksi',
+          width: "10%",
+          orderable: false,
+          searchable: false,
+      }],
+      "language": datatableLang,
+      dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+      buttons: [
+            {
+            text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Gambar Kegiatan</span>',
+            className: 'create-new btn btn-label-primary waves-effect waves-light',
+            action: function (e, dt, node, config)
+                {
+                    $('#modal-gallery').modal('show');
+                }
+            }
+        ],
   });
 
   $('#nama_perusahaan').on('change', function() {
@@ -255,23 +485,23 @@
         columns:[{
             data : 'nik',
             name : 'nik',
-            className:'text-center'
+            className:'text-left'
         },{
             data : 'nama',
             name : 'nama',
-            className:'text-center'
+            className:'text-left'
         },{
             data : 'no_whatsapp',
             name : 'no_whatsapp',
-            className:'text-center'
+            className:'text-left'
         },{
             data : 'status_whatsapp',
             name : 'status_kirim',
-            className:'text-center'
+            className:'text-left'
         },{
             data : 'status_hadir',
             name : 'hadir',
-            className:'text-center'
+            className:'text-left'
         },{
             data : 'aksi',
             name : 'aksi',
@@ -281,7 +511,16 @@
         }],
         "language": datatableLang,
         dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
-        buttons: []
+        buttons: [
+            {
+            text: '<i class="mdi mdi-account-multiple-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Peserta</span>',
+            className: 'btn-add-peserta btn btn-label-primary waves-effect waves-light',
+            action: function (e, dt, node, config)
+                {
+                   $('#modal-peserta').modal('show');  
+                }
+            }
+        ]
     });
 
   });
@@ -320,6 +559,63 @@
                               timerProgressBar: true,
                               willClose: () => {
                                   $(table).DataTable().ajax.reload();
+                              }
+                          })
+                      } else {
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'error'
+                          })
+                      }
+                  },
+                  error:function(error){
+                      Swal.fire({
+                          title: 'Pemberitahuan',
+                          text: error,
+                          icon: 'error'
+                      })
+                  }
+              });
+          }
+      });
+  });
+
+  $('body').on('click', '.btn-delete-gallery', function() {
+      let id = $(this).data('id');
+      Swal.fire({
+          title: 'Konfirmasi',
+          text: 'Apakah anda ingin hapus gallery?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: 'primary',
+          cancelButtonColor: 'warning',
+          confirmButtonText: 'Hapus'
+      }).then(function (result) {
+          console.log(result)
+          if (result.isConfirmed) {
+              let formData = {
+                  "id":id,
+                  "_token": "{{ csrf_token() }}"
+              };
+
+              let table ='#table-data-gallery';
+              $.ajax({
+                  type: "POST",
+                  url: "{{route('sdt-training.delete-gallery')}}",
+                  data:formData,
+                  success: function(response){
+                      console.log(response)
+                      if (response.success) {
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'success',
+                              timer: 1000,
+                              timerProgressBar: true,
+                              willClose: () => {
+                                  // $(table).DataTable().ajax.reload();
+                                  location.reload();
                               }
                           })
                       } else {
@@ -438,20 +734,30 @@
     $('#modal-client').modal('show');  
   });
 
-  $('#btn-add-peserta').on('click',function(){
-    $('#modal-peserta').modal('show');  
-  });
+  // $('#btn-add-gallery').on('click',function(){
+  //   $('#modal-gallery').modal('show');  
+  // });
+
+  // $('#btn-add-peserta').on('click',function(){
+  //   $('#modal-peserta').modal('show');  
+  // });
 
   $('#btn-add-trainer').on('click',function(){
     $('#modal-trainer').modal('show');  
   });
 
+  $('#btn-send-message').on('click',function(){
+    $('#modal-link').modal('show');  
+  });
 
   $(document).ready(function() {
 
-    $('#btn-send-message').on('click',function(){
+    $('#btn-kirim-wa').on('click',function(){
         let id = $('#training_id').val();
+        let noWa = $('#link-wa').val();
+      
         Swal.fire({
+            target: document.getElementById('modal-link'),
             title: 'Konfirmasi',
             text: 'Apakah anda ingin kirim undangan whatsapp ?',
             icon: 'question',
@@ -464,6 +770,7 @@
             if (result.isConfirmed) {
                 let formData = {
                     "id":id,
+                    "no_wa" :noWa,
                     "_token": "{{ csrf_token() }}"
                 };
 
@@ -482,7 +789,8 @@
                                 timer: 1000,
                                 timerProgressBar: true,
                                 willClose: () => {
-                                    $(table).DataTable().ajax.reload();
+                                    // $(table).DataTable().ajax.reload();
+                                    $('#modal-link').modal('hide');  
                                 }
                             })
                         } else {
@@ -682,6 +990,34 @@
   // })
 </script>
 
+<div class="modal fade" id="modal-link" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Kirim Link Training : <p id="nama"></p></h4>
+        </div>
+        <br>
+        <div class="row mb-3">    
+            <label class="col-sm-3 col-form-label text-sm-end">No Whatsapp <span class="text-danger">delimiter comma</span></label>
+            <div class="col-sm-9">
+              <div class="position-relative">
+                <input type="text" id="link-wa" value="" class="form-control @if ($errors->any())   @endif">
+              </div>
+            </div>
+        </div>  
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-kirim-wa" class="btn btn-primary">Kirim</button>
+        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="modal-client" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
     <div class="modal-content p-3 p-md-5">
@@ -754,6 +1090,62 @@
   </div>
 </div>
 
+<div class="modal fade" id="modal-gallery" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Tambah Gallery <p id="nama"></p></h4>
+        </div>
+        <br>
+        <div class="row mb-3">    
+          <form action="{{route('sdt-training.upload-image')}}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <!-- <h6>1. Informasi Perusahaan</h6> -->
+            <input type="hidden" name="id" value="{{$data->id_training}}">
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-sm-end">Nama</label>
+              <div class="col-sm-9">
+                <div class="position-relative">
+                  <input type="text" name="nama" value="" class="form-control @if ($errors->any())   @endif">
+                </div>
+              </div>
+            </div> 
+            
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-sm-end">File</label>
+              <div class="col-sm-9">
+                <div class="position-relative">
+                  <input type="file" name="image" class="form-control @if ($errors->any())   @endif">
+                </div>
+              </div>
+            </div> 
+
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-sm-end">Keterangan</label>
+              <div class="col-sm-9">
+                <div class="form-floating form-floating-outline mb-4">
+                  <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="keterangan" placeholder=""></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="pt-4">
+              <div class="row justify-content-end">
+                <div class="col-sm-12 d-flex justify-content-end">
+                  <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Add Gallery</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>  
+        <!-- </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="modal-trainer" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
     <div class="modal-content p-3 p-md-5">
@@ -791,45 +1183,4 @@
   </div>
 </div>
 
-
-<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> -->
-<!-- <div id="myModal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h3 id="myModalLabel">Panel</h3>
-      </div>
-      <div class="modal-body" style="max-height: 800px">
-        <select id="select2insidemodal" multiple="multiple">
-          <option value="AL">Alabama</option>
-            ...
-          <option value="WY">Wyoming</option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-<!-- <div class="modal" id="modal-trainer" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div> -->
 @endsection

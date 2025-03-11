@@ -15,6 +15,7 @@ use \stdClass;
 use App\Exports\LeadsTemplateExport;
 use App\Exports\LeadsExport;
 use App\Http\Controllers\Sales\CustomerActivityController;
+use Illuminate\Support\Facades\Storage;
 
 
 class SdtTrainingController extends Controller
@@ -78,11 +79,10 @@ class SdtTrainingController extends Controller
                     ->where('id_training', $id)
                     ->first();
 
-            // $data->stgl_leads = Carbon::createFromFormat('Y-m-d',$data->tgl_leads)->isoFormat('D MMMM Y');
-            // $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
+            $listBu = DB::table('m_training_laman')->orderBy('laman', 'ASC')->get();
+            $listMateri = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
 
-            // $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
-            // $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
+            $listImage = DB::table('sdt_training_file')->where('is_active', 1)->where('type', 'image')->where('training_id', $id)->orderBy('id', 'ASC')->get();
             $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
             $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
             $namaPerusahaan = DB::table('sdt_training_client as tr')
@@ -104,18 +104,7 @@ class SdtTrainingController extends Controller
             
                 // dd($peserta);
 
-            // dd($data);
-            // dd($namaPerusahaan);
-            // $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
-            // $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
-
-            // $activity = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id',$id)->orderBy('created_at','desc')->limit(5)->get();
-            // foreach ($activity as $key => $value) {
-            //     $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
-            //     $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
-            // }
-
-            return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta'));
+            return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta', 'listBu', 'listMateri', 'listImage'));
             // return view('sdt.training.view',compact('activity','data','branch','jabatanPic','namaPerusahaan','kebutuhan','platform'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -205,7 +194,34 @@ class SdtTrainingController extends Controller
                     <div class="btn-delete-peserta btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                 </div>';
             })
+            
             ->rawColumns(['aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            // dd($e);
+            abort(500);
+        }
+    }
+
+    public function dataGaleri (Request $request){
+        try {
+            $data = DB::table('sdt_training_file')
+            ->where('training_id', $request->training_id)
+            ->where('is_active', 1)
+            ->get();          
+
+            // dd($data);
+            return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+                return '<div class="justify-content-center d-flex">
+                    <div class="btn-delete-gallery btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                </div>';
+            })
+            ->editColumn('path', function ($data) {
+                return '<img src="'.$data->path.'" alt="" border=3 height=100 width=150></img>';
+            })
+            ->rawColumns(['aksi', 'path'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -271,94 +287,88 @@ class SdtTrainingController extends Controller
     //     }
     // }
 
+    public function uploadImage(Request $request)
+    {
+        $file = $request->file('image');
+        $id = $request->id;
+        $extension = $file->getClientOriginalExtension();
+
+        $filename = $file->getClientOriginalName();
+        $filename = str_replace(".".$extension,"",$filename);
+        $originalName = $id.$filename.".".$extension."";
+        $current_date_time = Carbon::now()->toDateTimeString();
+
+        // dd($originalName);
+        Storage::disk('sdt-training-image')->put($originalName, file_get_contents($file));
+
+        $link = env('APP_URL').'/public/uploads/sdt-training/image/'.$originalName;
+
+        DB::table('sdt_training_file')->insert([
+            'training_id' => $id,
+            'type' => 'image',
+            'path' => $link,
+            'file_name' => $originalName,
+            'nama' => $request->nama,
+            'keterangan' => $request->keterangan,
+            'created_at' => $current_date_time,
+            'is_active' => 1
+        ]);
+
+        return redirect()->back()->with('success', "Berhasil menambahkan gallery");
+    }
+
     public function save(Request $request) {
         try {
             DB::beginTransaction();
 
-            // $validator = Validator::make($request->all(), [
-            //     'nama_perusahaan' => 'required|max:100|min:3',
-            //     'pic' => 'required',
-            //     'branch' => 'required',
-            //     'kebutuhan' => 'required'
-            // ], [
-            //     'min' => 'Masukkan :attribute minimal :min',
-            //     'max' => 'Masukkan :attribute maksimal :max',
-            //     'required' => ':attribute harus di isi',
-            // ]);
-    
-            // if ($validator->fails()) {
-            //     return back()->withErrors($validator->errors())->withInput();
-            // }else{
-                $current_date_time = Carbon::now()->toDateTimeString();
-
-                $msgSave = '';
-                if(!empty($request->id)){
-                    // DB::table('sl_leads')->where('id',$request->id)->update([
-                    //     'nama_perusahaan' => $request->nama_perusahaan,
-                    //     'telp_perusahaan' => $request->telp_perusahaan,
-                    //     'jenis_perusahaan_id' => $request->jenis_perusahaan,
-                    //     'branch_id' => $request->branch,
-                    //     'platform_id' => $request->platform,
-                    //     'kebutuhan_id' => $request->kebutuhan,
-                    //     'alamat' => $request->alamat_perusahaan,
-                    //     'pic' => $request->pic,
-                    //     'jabatan' => $request->jabatan_pic,
-                    //     'no_telp' => $request->no_telp,
-                    //     'email' => $request->email,
-                    //     'notes' => $request->detail_leads,
-                    //     'updated_at' => $current_date_time,
-                    //     'updated_by' => Auth::user()->name
-                    // ]);
-
-                    // //insert ke activity sebagai activity pertama
-                    // $customerActivityController = new CustomerActivityController();
-                    // $nomorActivity = $customerActivityController->generateNomor($request->id);
-
-                    // $activityId = DB::table('sl_customer_activity')->insertGetId([
-                    //     'leads_id' => $request->id,
-                    //     'branch_id' => $request->branch,
-                    //     'tgl_activity' => $current_date_time,
-                    //     'nomor' => $nomorActivity,
-                    //     'notes' => 'Leads diubah',
-                    //     'tipe' => 'Leads',
-                    //     'is_activity' => 0,
-                    //     'created_at' => $current_date_time,
-                    //     'created_by' => Auth::user()->full_name
-                    // ]);
-
-                    $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil disimpan.';
-                }else{
-                    
-                    // $nomor = $this->generateNomor();
-                    $trainingId = DB::table('sdt_training')->insertGetId([
-                        'keterangan' => $request->keterangan,
-                        'waktu_mulai' => $request->start_date,
-                        'waktu_selesai' => $request->end_date,
-                        'id_pel_tipe' => $request->tipe_id,
-                        'id_pel_tempat' => $request->tempat_id,
-                        'id_materi' => $request->materi_id,
-                        'id_user' => Auth::user()->id,
-                        'created_at' => $current_date_time
-                    ]);
-                    
-                    foreach ($request->client_id as $x) {
-                        $trainingClient = DB::table('sdt_training_client')->insertGetId([
-                            'id_client' => (int) $x,
-                            // 'peserta_hadir' => $request->peserta,
-                            'id_training' => $trainingId
-                        ]);    
-                        // dd($trainingClient);
-                    }
-                    
-                    foreach ($request->trainer_id as $x) {
-                        $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
-                            'id_trainer' => (int) $x,
-                            'id_training' => $trainingId
-                        ]);
-                    }
-                    
-                    $msgSave = 'Training berhasil disimpan ';
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $msgSave = '';
+            
+            if(!empty($request->id)){
+                DB::table('sdt_training')->where('id_training',$request->id)->update([
+                    'keterangan' => $request->keterangan,
+                    'waktu_mulai' => $request->start_date,
+                    'waktu_selesai' => $request->end_date,
+                    'id_pel_tipe' => $request->tipe_id,
+                    'id_pel_tempat' => $request->tempat_id,
+                    'id_materi' => $request->materi_id,
+                    'id_laman' => $request->laman_id,
+                    'updated_at' => $current_date_time
+                ]);
+                $msgSave = 'Training berhasil diubah.';
+            }else{
+                
+                // $nomor = $this->generateNomor();
+                $trainingId = DB::table('sdt_training')->insertGetId([
+                    'keterangan' => $request->keterangan,
+                    'waktu_mulai' => $request->start_date,
+                    'waktu_selesai' => $request->end_date,
+                    'id_pel_tipe' => $request->tipe_id,
+                    'id_pel_tempat' => $request->tempat_id,
+                    'id_materi' => $request->materi_id,
+                    'id_laman' => $request->laman_id,
+                    'id_user' => Auth::user()->id,
+                    'created_at' => $current_date_time
+                ]);
+                
+                foreach ($request->client_id as $x) {
+                    $trainingClient = DB::table('sdt_training_client')->insertGetId([
+                        'id_client' => (int) $x,
+                        // 'peserta_hadir' => $request->peserta,
+                        'id_training' => $trainingId
+                    ]);    
+                    // dd($trainingClient);
                 }
+                
+                foreach ($request->trainer_id as $x) {
+                    $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
+                        'id_trainer' => (int) $x,
+                        'id_training' => $trainingId
+                    ]);
+                }
+                
+                $msgSave = 'Training berhasil disimpan ';
+            }
             // }
             DB::commit();
             return redirect()->back()->with('success', $msgSave);
@@ -500,6 +510,34 @@ class SdtTrainingController extends Controller
         }
     }
 
+    public function deleteGallery(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $data = DB::table('sdt_training_file')
+                    ->where('id', $request->id)
+                    ->first();
+
+            DB::table('sdt_training_file')->where('id', $request->id)->update([
+                'is_active' => 0 
+            ]);
+
+            Storage::disk('sdt-training-image')->delete($data->file_name);
+
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'message'   => "Gagal menghapus data"
+            ], 200);
+        }
+    }
+
     public function deleteTrainer(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
@@ -537,35 +575,36 @@ class SdtTrainingController extends Controller
 
     public function sendMessage(Request $request){
         try {
-            $dataPeserta = DB::table('sdt_training_client_detail')
-                ->where('status_whatsapp', 'Belum Kirim')
-                ->where('is_active', 1)
-                ->where('no_whatsapp', '!=', '')
-                ->where('training_id', $request->id)
-                ->get();
+            // $dataPeserta = DB::table('sdt_training_client_detail')
+            //     ->where('status_whatsapp', 'Belum Kirim')
+            //     ->where('is_active', 1)
+            //     ->where('no_whatsapp', '!=', '')
+            //     ->where('training_id', $request->id)
+            //     ->get();
                 
-                $current_date_time = Carbon::now()->toDateTimeString();
-                foreach ($dataPeserta as $key => $value) {
-                    // $value->tgl_leads = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_leads)->isoFormat('D MMMM Y');
-                    DB::table('sdt_training_client_detail')->where('id', $value->id)
-                    ->update([
-                        'status_whatsapp' => 'Waiting'
-                    ]);
-                    
-                    DB::table('whatsapp_message')->insert([
-                        'nomor_wa' => $value->no_whatsapp,
-                        'message' => 'test',
-                        'type' => '',
-                        'status' => 'Waiting',
-                        'created_date' => $current_date_time,
-                        'support_id' => $value->id,
-                        'is_active' => 1
-                    ]);
-
-                    // dd($dataPeserta);
-                }   
-
+            $myarray = explode(',', $request->no_wa);
+            $current_date_time = Carbon::now()->toDateTimeString();
+            foreach ($myarray as $key => $value) {
                 
+                // DB::table('sdt_training_client_detail')->where('id', $value->id)
+                // ->update([
+                //     'status_whatsapp' => 'Waiting'
+                // ]);
+                
+                DB::table('whatsapp_message')->insert([
+                    'nomor_wa' => $value,
+                    'message' => 'test',
+                    'type' => '',
+                    'status' => 'Waiting',
+                    'created_date' => $current_date_time,
+                    'support_id' => $request->id,
+                    'is_active' => 1
+                ]);
+
+                // dd($value);
+            }   
+            
+            // dd($myarray);
             return response()->json([
                 'success'   => true,
                 'data'      => [],

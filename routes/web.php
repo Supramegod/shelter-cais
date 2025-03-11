@@ -6,6 +6,7 @@ use App\Http\Middleware\VerifyFastApiKey;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\Fitur\ContactController;
+use App\Http\Controllers\Fitur\SdtTrainingInviteController;
 
 use App\Http\Controllers\Sales\LeadsController;
 use App\Http\Controllers\Sales\CustomerController;
@@ -55,6 +56,17 @@ Route::controller(ContactController::class)->group(function() {
     Route::get('/contact', 'contact')->name('contact');
     Route::post('/contact-save', 'contactSave')->name('contact.save');
     Route::post('/webhook-endpoint/{key}', 'handleWebhook')->name('webhook-endpoint');
+});
+
+Route::controller(SdtTrainingInviteController::class)->group(function() {
+    Route::get('/sdt-training', 'invite')->name('invite');
+    Route::get('/sdt-training/nik', 'dataNik')->name('invite-nik');
+    Route::post('/sdt-training-save', 'pesertaSave')->name('invite-save');
+
+    Route::post('/sdt-training-pdf', 'testPdf')->name('invite-pdf');
+    Route::post('/sdt-training-pdf-web', 'testPdfWeb')->name('invite-pdf-web');
+
+    // Route::post('/webhook-endpoint/{key}', 'handleWebhook')->name('webhook-endpoint');
 });
 
 Route::controller(QuotationController::class)->group(function() {
@@ -532,11 +544,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sdt/sdt-training/add-peserta', 'addPeserta')->name('sdt-training.add-peserta');
         Route::post('/sdt/sdt-training/add-trainer', 'addTrainer')->name('sdt-training.add-trainer');
         Route::post('/sdt/sdt-training/delete-peserta', 'deletePeserta')->name('sdt-training.delete-peserta');
+        Route::post('/sdt/sdt-training/delete-gallery', 'deleteGallery')->name('sdt-training.delete-gallery');
         Route::post('/sdt/sdt-training/send-message', 'sendMessage')->name('sdt-training.send-message');
 
+        Route::post('/sdt/sdt-training/upload-image', 'uploadImage')->name('sdt-training.upload-image');
+
+        Route::get('/sdt/sdt-training/data-galeri', 'dataGaleri')->name('sdt-training.data-galeri');
         Route::get('/sdt/sdt-training/client-peserta', 'clientpeserta')->name('sdt-training.client-peserta');
         Route::get('/sdt/sdt-training/data-trainer', 'dataTrainer')->name('sdt-training.data-trainer');
-        Route::get('/sdt/sdt-training/list', 'list')->name('sdt-training.list'); // ajax
+        Route::get('/sdt/sdt-training/list', 'list')->name('sdt-training.list'); 
+
         // Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
         // Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
         // Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation'); // ajax

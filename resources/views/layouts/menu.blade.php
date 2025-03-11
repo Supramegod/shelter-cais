@@ -615,13 +615,26 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-item @if(str_contains(Request::url(), route('sdt-training'))) active @endif">
-            <a href="{{route('sdt-training')}}" class="menu-link">
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
-                <div data-i18n="Training Data">Training Data</div>
+                <div data-i18n="Kontrak">Training</div>
             </a>
-        </li>
-        
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{route('sdt-training')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Data">Training Data</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Site">Training Site</div>
+                    </a>
+                </li>
+            </ul>
+        </li>        
         @endif
 
 

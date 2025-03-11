@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'Excel' => Maatwebsite\Excel\Facades\Excel::class,
             'verify_leads_api' => \App\Http\Middleware\VerifyLeadsApiKey::class,
+            'PDF' => Barryvdh\DomPDF\Facade::class,
         ]);
         $middleware->validateCsrfTokens(except: [
             '/api/contact-save', // <-- exclude this route

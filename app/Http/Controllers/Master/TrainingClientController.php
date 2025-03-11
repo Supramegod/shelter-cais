@@ -20,7 +20,11 @@ class TrainingClientController extends Controller
 
     public function list(Request $request){
         try {
-            $data = DB::table('m_training_client')->where('is_aktif', 1)->get();
+            $data = DB::table('m_training_client as cl')
+            ->leftJoin('m_training_area as area','area.id','=', 'cl.area_id')
+            ->select("cl.id", "cl.client", "area.area as area_name", "cl.kab_kota", "cl.tgl_gabung", "cl.jml_karyawan", "cl.target_per_tahun") 
+            ->where('cl.is_aktif', 1)
+            ->get();
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
