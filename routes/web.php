@@ -159,9 +159,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(CustomerActivityController::class)->group(function() {
         Route::get('/sales/customer-activity', 'index')->name('customer-activity');
         Route::get('/sales/customer-activity/add', 'add')->name('customer-activity.add');
+        Route::get('/sales/customer-activity/add-activity-kontrak/{id}', 'addActivityKontrak')->name('customer-activity.add-activity-kontrak');
         Route::get('/sales/customer-activity/view/{id}', 'view')->name('customer-activity.view');
 
         Route::post('/sales/customer-activity/save', 'save')->name('customer-activity.save');
+        Route::post('/sales/customer-activity/save-activity-kontrak', 'saveActivityKontrak')->name('customer-activity.save-activity-kontrak');
         Route::post('/sales/customer-activity/delete', 'delete')->name('customer-activity.delete');
 
         Route::get('/sales/customer-activity/track/{leadsId}', 'trackActivity')->name('customer-activity.track');
@@ -169,6 +171,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/customer-activity/list', 'list')->name('customer-activity.list'); // ajax
         Route::get('/sales/customer-activity/member-tim-sales', 'memberTimSales')->name('customer-activity.member-tim-sales'); // ajax
         Route::post('/sales/customer-activity/send-email', 'sendEmail')->name('customer-activity.send-email');
+
+        Route::get('/sales/customer-activity/modal/list-activity-kontrak', 'listActivityKontrak')->name('customer-activity.modal.list-activity-kontrak'); // ajax
     });
 
 
@@ -612,7 +616,7 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::post('/master/training-client/save', 'save')->name('training-client.save');
         // Route::post('/master/training-client/delete', 'delete')->name('training-client.delete');
         Route::get('/sdt/training-site/list', 'list')->name('training-site.list'); // ajax
-        Route::get('/sdt/training-site/history', 'historyTrainingByClient')->name('training-site.history'); 
+        Route::get('/sdt/training-site/history', 'historyTrainingByClient')->name('training-site.history');
     });
 
     Route::controller(MonitoringKontrakController::class)->group(function() {

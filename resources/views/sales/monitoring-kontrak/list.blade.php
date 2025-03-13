@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','PKS')
+@section('title','Monitoring Kontrak')
 @section('pageStyle')
 <style>
     .dt-buttons {width: 100%;}
@@ -54,18 +54,18 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th></th>
+                                    <th class="text-center">Aksi</th>
                                     <th class="text-center">No PKS</th>
-                                    <th class="text-center">No SPK</th>
-                                    <th class="text-center">No Quotation</th>
-                                    <th class="text-center">Tanggal Kontrak</th>
                                     <th class="text-center">Customer</th>
                                     <th class="text-center">Site</th>
-                                    <th class="text-center">Mulai Kontrak</th>
+                                    <th class="text-center">Awal Kontrak</th>
                                     <th class="text-center">Akhir Kontrak</th>
                                     <th class="text-center">Berakhir Dalam</th>
-                                    <th class="text-center">Created By</th>
-                                    <th class="text-center">Aksi</th>
+                                    <th class="text-center">Sales</th>
+                                    <th class="text-center">CRM</th>
+                                    <th class="text-center">RO</th>
+                                    <th class="text-center">Aktifitas</th>
+                                    <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -85,16 +85,16 @@
 
 @section('pageScript')
 <script>
-    let dt_filter_table = $('.dt-column-search');
+    // let dt_filter_table = $('.dt-column-search');
     // Formatting function for row details - modify as you need
-    function format(d) {
-        return (
-            '<dl>' +
-            '<dt>Status Leads Saat Ini :</dt>' +
-            '<dd style="font-weight:bold;color:#000056">trial</dd>' +
-            '</dl>'
-        );
-    }
+    // function format(d) {
+    //     return (
+    //         '<dl>' +
+    //         '<dt>Status Leads Saat Ini :</dt>' +
+    //         '<dd style="font-weight:bold;color:#000056">trial</dd>' +
+    //         '</dl>'
+    //     );
+    // }
 
     var table = $('#table-data').DataTable({
         scrollX: true,
@@ -114,35 +114,25 @@
         "createdRow": function( row, data, dataIndex){
             $('td', row).css('background-color', data.warna_row);
             $('td', row).css('color', data.warna_font);
-        },     
+        },
         "order":[
             [0,'desc']
         ],
+
         columns:[{
             data : 'id',
             name : 'id',
             visible: false,
             searchable: false
         },{
-            className: 'dt-control',
+            data : 'aksi',
+            name : 'aksi',
+            width: "10%",
             orderable: false,
-            data: null,
-            defaultContent: ''
+            searchable: false,
         },{
             data : 'nomor',
             name : 'nomor',
-            className:'text-center'
-        },{
-            data : 'nomor_spk',
-            name : 'nomor_spk',
-            className:'text-center'
-        },{
-            data : 'nomor_quotation',
-            name : 'nomor_quotation',
-            className:'text-center'
-        },{
-            data : 'tgl_pks',
-            name : 'tgl_pks',
             className:'text-center'
         },{
             data : 'nama_perusahaan',
@@ -153,8 +143,8 @@
             name : 'nama_site',
             className:'text-center'
         },{
-            data : 'mulai_kontrak',
-            name : 'mulai_kontrak',
+            data : 's_mulai_kontrak',
+            name : 's_mulai_kontrak',
             className:'text-center'
         },{
             data : 's_kontrak_selesai',
@@ -165,15 +155,25 @@
             name : 'berakhir_dalam',
             className:'text-center'
         },{
-            data : 'created_by',
-            name : 'created_by',
+            data : 'sales',
+            name : 'sales',
             className:'text-center'
         },{
-            data : 'aksi',
-            name : 'aksi',
-            width: "10%",
-            orderable: false,
-            searchable: false,
+            data : 'crm',
+            name : 'crm',
+            className:'text-center'
+        },{
+            data : 'ro',
+            name : 'ro',
+            className:'text-center'
+        },{
+            data : 'aktifitas',
+            name : 'aktifitas',
+            className:'text-center'
+        },{
+            data : 'status',
+            name : 'status',
+            className:'text-center'
         }],
         "language": datatableLang,
         dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
@@ -220,13 +220,13 @@
                 className: 'dropdown-item',
                 orientation: 'landscape',
                 customize: function(doc) {
-                        doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                        doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                     },
                 exportOptions: {
                     columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                     orientation: 'landscape',
                     customize: function(doc) {
-                        doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                        doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                     },
                     // prevent avatar to be display
                     format: {
@@ -248,7 +248,7 @@
                 },
             ]
             },{
-                text: '<i class="mdi mdi-delete me-sm-1"></i> <span class="d-none d-sm-inline-block">Terminated Kontrak</span>',
+                text: '<i class="mdi mdi-delete me-sm-1"></i> <span class="d-none d-sm-inline-block">List Kontrak Terminated</span>',
                 className: 'btn btn-label-danger waves-effect waves-light',
                 action: function (e, dt, node, config)
                     {
@@ -260,19 +260,19 @@
     });
 
     // Add event listener for opening and closing details
-    table.on('click', 'td.dt-control', function (e) {
-        let tr = e.target.closest('tr');
-        let row = table.row(tr);
-    
-        if (row.child.isShown()) {
-            // This row is already open - close it
-            row.child.hide();
-        }
-        else {
-            // Open this row
-            // row.child(format(row.data())).show();
-        }
-    });
+    // table.on('click', 'td.dt-control', function (e) {
+    //     let tr = e.target.closest('tr');
+    //     let row = table.row(tr);
+
+    //     if (row.child.isShown()) {
+    //         // This row is already open - close it
+    //         row.child.hide();
+    //     }
+    //     else {
+    //         // Open this row
+    //         // row.child(format(row.data())).show();
+    //     }
+    // });
 
     // ajax terminate kontrak dengan swal konfirmasi terminate kontrak
     function terminateKontrak(id){
@@ -316,7 +316,7 @@
             }
         });
     }
-    
+
     $(document).on('click', '.btn-terminate-kontrak', function(){
         let id = $(this).data('id');
         Swal.fire({

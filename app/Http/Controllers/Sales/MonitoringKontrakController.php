@@ -27,7 +27,7 @@ class MonitoringKontrakController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
         return view('sales.monitoring-kontrak.list',compact('tglDari','tglSampai'));
     }
     public function indexTerminate (Request $request){
@@ -43,7 +43,7 @@ class MonitoringKontrakController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
         return view('sales.monitoring-kontrak.list-terminate',compact('tglDari','tglSampai'));
     }
 
@@ -54,33 +54,37 @@ class MonitoringKontrakController extends Controller
                 ->whereNull('sl_pks.deleted_at')
                 ->whereNull('sl_spk.deleted_at')
                 ->whereNull('sl_quotation.deleted_at')
-                ->where('sl_pks.status_pks_id',7)
-                ->select('sl_quotation.leads_id','sl_quotation.kontrak_selesai','sl_quotation.mulai_kontrak','sl_pks.spk_id','sl_pks.quotation_id','sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation.kebutuhan','sl_pks.status_pks_id','sl_quotation.nomor as nomor_quotation',
-                DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
-                    FROM sl_quotation_site 
-                    WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site')
+                ->whereNotNull('sl_quotation.mulai_kontrak')
+                ->whereNotNull('sl_quotation.kontrak_selesai')
+                // ->where('sl_pks.status_pks_id',7)
+                ->select('sl_pks.status_pks_id','sl_quotation.leads_id','sl_pks.id','sl_pks.nomor','sl_pks.nama_perusahaan','sl_quotation.mulai_kontrak','sl_quotation.kontrak_selesai',
+                DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
+                    FROM sl_quotation_site
+                    WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site'),
+                    DB::raw("'' as sales"),
+                    DB::raw("'' as ro"),
+                    DB::raw("'' as crm"),
+                    DB::raw('(SELECT COUNT(*) FROM sl_customer_activity WHERE sl_customer_activity.pks_id = sl_pks.id AND sl_customer_activity.deleted_at IS NULL AND sl_customer_activity.is_activity = 1) as aktifitas'),
                 )
                 ->get();
 
         foreach ($data as $key => $value) {
-            $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
-            $value->mulai_kontrak = Carbon::createFromFormat('Y-m-d',$value->mulai_kontrak)->isoFormat('D MMMM Y');
+            $value->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$value->mulai_kontrak)->isoFormat('D MMMM Y');
             $value->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$value->kontrak_selesai)->isoFormat('D MMMM Y');
-            $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
             $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
         }
 
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
-            if (!in_array(Auth::user()->role_id,[2,54,55])) {
-                return "";
-            }
+            // if (!in_array(Auth::user()->role_id,[2,54,55])) {
+            //     return "";
+            // }
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
             $aksi = "";
+            $aksi .= '&nbsp;<a href="'.route('customer-activity.add-activity-kontrak',$data->id).'" class="btn btn-sm btn-info">Buat Activity</a>';
 
             if($selisih<=90 && $selisih !=0){
                 $aksi .= '&nbsp;<a href="#" class="btn btn-sm btn-success">Send Email</a>';
-                $aksi .= '&nbsp;<a href="'.route('customer-activity.add',['leads_id'=>$data->leads_id]).'" class="btn btn-sm btn-info">Buat Activity</a>';
                 $aksi .= '&nbsp;<a href="'.route('quotation.add', ['leads_id' => $data->leads_id, 'tipe' => 'Quotation Lanjutan']).'" class="btn btn-sm btn-primary">Buat Quotation</a>';
             }
             if($selisih == 0){
@@ -121,13 +125,10 @@ class MonitoringKontrakController extends Controller
         ->editColumn('nomor', function ($data) {
             return '<a href="'.route('pks.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
         })
-        ->editColumn('nomor_spk', function ($data) {
-            return '<a href="'.route('spk.view',$data->spk_id).'" style="font-weight:bold;color:#000056">'.$data->nomor_spk.'</a>';
+        ->editColumn('aktifitas', function ($data) {
+            return '<button class="btn btn-sm btn-info" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-activity-kontrak',['pks_id' => $data->id]).'`,`DATA AKTIFITAS PADA KONTRAK '.$data->nomor.'`)">'.$data->aktifitas.'</button>';
         })
-        ->editColumn('nomor_quotation', function ($data) {
-            return '<a href="'.route('quotation.view',$data->quotation_id).'" style="font-weight:bold;color:#000056">'.$data->nomor_quotation.'</a>';
-        })
-        ->rawColumns(['aksi','nomor','nama_site','nomor_spk','nomor_quotation'])
+        ->rawColumns(['aksi','nomor','nama_site','aktifitas'])
         ->make(true);
     }
 
@@ -137,8 +138,8 @@ class MonitoringKontrakController extends Controller
                 ->leftJoin('sl_quotation','sl_pks.quotation_id','sl_quotation.id')
                 ->where('sl_pks.status_pks_id',100)
                 ->select('sl_quotation.leads_id','sl_quotation.kontrak_selesai','sl_quotation.mulai_kontrak','sl_pks.spk_id','sl_pks.quotation_id','sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation.kebutuhan','sl_pks.status_pks_id','sl_quotation.nomor as nomor_quotation',
-                DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ") 
-                    FROM sl_quotation_site 
+                DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
+                    FROM sl_quotation_site
                     WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site')
                 )
                 ->get();
@@ -173,20 +174,20 @@ class MonitoringKontrakController extends Controller
 
     function hitungBerakhirKontrak($tanggalBerakhir) {
         // Tanggal saat ini
-        $tanggalSekarang = Carbon::now()->format('Y-m-d'); 
+        $tanggalSekarang = Carbon::now()->format('Y-m-d');
         $tanggalSekarang = Carbon::createFromFormat('Y-m-d', $tanggalSekarang);
 
         // Buat objek tanggal dari input
-        $tanggalBerakhir = Carbon::createFromFormat('Y-m-d', $tanggalBerakhir); 
-        
+        $tanggalBerakhir = Carbon::createFromFormat('Y-m-d', $tanggalBerakhir);
+
         // Jika kontrak sudah habis
         if ($tanggalSekarang->greaterThanOrEqualTo($tanggalBerakhir)) {
             return "Kontrak habis";
         }
-    
+
         // Hitung selisih
         $selisih = $tanggalSekarang->diff($tanggalBerakhir);
-    
+
         // Format output hanya jika nilainya lebih dari 0
         $hasil = [];
         if ($selisih->y > 0) {
@@ -198,17 +199,17 @@ class MonitoringKontrakController extends Controller
         if ($selisih->d > 0) {
             $hasil[] = "{$selisih->d} hari";
         }
-    
+
         // Gabungkan hasil menjadi string
         return implode(', ', $hasil);
     }
     function selisihKontrakBerakhir($tanggalBerakhir) {
          // Tanggal sekarang
-        $tanggalSekarang = Carbon::now(); 
-        
+        $tanggalSekarang = Carbon::now();
+
         // Tanggal kontrak berakhir
-        $tanggalBerakhir = Carbon::createFromFormat('Y-m-d', $tanggalBerakhir); 
-        
+        $tanggalBerakhir = Carbon::createFromFormat('Y-m-d', $tanggalBerakhir);
+
         // Jika kontrak sudah habis
         if ($tanggalSekarang->greaterThanOrEqualTo($tanggalBerakhir)) {
             return 0;
@@ -216,7 +217,7 @@ class MonitoringKontrakController extends Controller
 
         // Hitung selisih dalam hari
         $selisihHari = $tanggalSekarang->diffInDays($tanggalBerakhir);
-        
+
         return $selisihHari;
     }
 
@@ -242,7 +243,7 @@ class MonitoringKontrakController extends Controller
             // update deleted at dan deleted by semua detail dari quotation
             DB::table('sl_quotation_aplikasi')->where('quotation_id',$quotationId)->update(
                 ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
-            ); 
+            );
             DB::table('sl_quotation_chemical')->where('quotation_id',$quotationId)->update(
                 ['deleted_at'=>$current_date_time,'deleted_by'=>Auth::user()->id]
             );

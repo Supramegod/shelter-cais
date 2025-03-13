@@ -128,6 +128,31 @@ class CustomerActivityController extends Controller
         }
     }
 
+    public function addActivityKontrak ($id){
+        try {
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            if($pks == null){
+                abort(404);
+            }
+            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
+
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $nowd = Carbon::now()->toDateString();
+
+            $quotation->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
+            $quotation->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+
+            $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+
+            $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
+
+            return view('sales.customer-activity.add-activity-pks',compact('now','nowd','pks','jenisVisit','quotation'));
+        } catch (\Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
     public function view (Request $request,$id){
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
@@ -809,4 +834,167 @@ class CustomerActivityController extends Controller
             abort(500);
         }
     }
+
+    public function saveActivityKontrak (Request $request){
+        try {
+            DB::beginTransaction();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $id = $request->id;
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
+            $nomor = $this->generateNomor($pks->leads_id);
+
+            //optional
+            $start = null;
+            $end = null;
+            $durasi = null;
+            $tglRealisasi = null;
+            $jamRealisasi = null;
+            $notesTipe = null;
+            $linkBuktiFoto = null;
+            $penerima = null;
+            $jenisVisit = null;
+            $notulen = null;
+            $email = null;
+
+            $msgSave = '';
+
+            if($request->start !=null){
+                $start = $request->start;
+            }
+
+            if($request->end !=null){
+                $end = $request->end;
+            }
+
+            if($request->durasi !=null){
+                $durasi = $request->durasi;
+            }
+
+            if($request->tgl_realisasi_telepon !=null){
+                $tglRealisasi = $request->tgl_realisasi_telepon;
+            }
+
+            if($request->tgl_realisasi !=null){
+                $tglRealisasi = $request->tgl_realisasi;
+            }
+
+            if($request->jam_realisasi !=null){
+                $jamRealisasi = $request->jam_realisasi;
+            }
+
+            if($request->notes_tipe !=null){
+                $notesTipe = $request->notes_tipe;
+            }
+
+            if($request->penerima !=null){
+                $penerima = $request->penerima;
+            }
+
+            if($request->jenis_visit !=null){
+                $djenisVisit = DB::table('m_jenis_visit')->where('id', $request->jenis_visit)->first();
+                if($djenisVisit != null){
+                    $jenisVisit = $djenisVisit->nama;
+                }
+            }
+
+            if($request->notulen !=null){
+                $notulen = $request->notulen;
+            }
+
+            if($request->email !=null){
+                $email = $request->email;
+            }
+
+            if($request->status_leads_id !=null) {
+                $statusLeads = $request->status_leads_id;
+            }
+
+            $id = DB::table('sl_customer_activity')->insertGetId([
+                'tgl_activity' => $request->tgl_activity,
+                'branch_id' => $leads->branch_id,
+                'nomor' => $nomor,
+                'pks_id' => $pks->id,
+                'leads_id' => $leads->id,
+                'notes' => $request->notes,
+                'tipe' => $request->tipe,
+                'start' => $start,
+                'end' => $end,
+                'durasi' => $durasi,
+                'tgl_realisasi' => $tglRealisasi,
+                'jam_realisasi' => $jamRealisasi,
+                'penerima' => $penerima,
+                'notes_tipe' => $notesTipe,
+                'link_bukti_foto' => $linkBuktiFoto,
+                'notulen' => $notulen,
+                'email' => $email,
+                'jenis_visit' => $jenisVisit,
+                'jenis_visit_id' => $request->jenis_visit,
+                'is_activity' => 1,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            // save file
+            if($request->file('files') != null){
+                foreach ($request->file('files') as $key => $value) {
+                    $file = $request->file('files')[$key];
+                    $extension = $file->getClientOriginalExtension();
+
+                    $filename = $file->getClientOriginalName();
+                    $filename = str_replace(".".$extension,"",$filename);
+                    $originalName = $filename.date("YmdHis").rand(10000,99999).".".$extension."";
+
+                    Storage::disk('bukti-activity')->put($originalName, file_get_contents($file));
+
+                    $link = env('APP_URL').'/public/uploads/customer-activity/'.$originalName;
+
+                    DB::table('sl_customer_activity_file')->insert([
+                        'customer_activity_id' => $id,
+                        'nama_file' => $request->namafiles[$key],
+                        'url_file' => $link,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json(['status' => 'success', 'message' => 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
+        }
+    }
+
+    public function listActivityKontrak (Request $request){
+        try {
+            $data = [];
+            if (!empty($request->pks_id)) {
+                $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+                $data = DB::table('sl_customer_activity')
+                            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_customer_activity.notulen','sl_customer_activity.notes','sl_customer_activity.created_at','sl_customer_activity.created_by as created_by')
+                            ->whereNull('sl_customer_activity.deleted_at')
+                            ->where('is_activity',1)
+                            ->where('pks_id',$request->pks_id)->get();
+
+            }
+
+            return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+                return '<div class="justify-content-center d-flex">
+                                    <a href="'.route('customer-activity.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                        </div>';
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
 }

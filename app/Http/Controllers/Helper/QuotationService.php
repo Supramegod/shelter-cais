@@ -485,6 +485,8 @@ class QuotationService
         $quotation->total_invoice_coss = $quotation->grand_total_sebelum_pajak_coss + $quotation->ppn_coss + $quotation->pph_coss;
         $quotation->pembulatan_coss = ceil($quotation->total_invoice_coss / 1000) * 1000;
 
+        $quotation->margin_coss = $quotation->grand_total_sebelum_pajak_coss-$quotation->total_sebelum_management_fee;
+        $quotation->gpm_coss = $quotation->margin_coss/$quotation->grand_total_sebelum_pajak_coss*100;
         // bunga bank dan insentif
         // $pengaliTop = 0;
         // if ($quotation->top == "Kurang Dari 7 Hari") {
@@ -516,6 +518,9 @@ class QuotationService
         $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
         $quotation->total_invoice = $quotation->grand_total_sebelum_pajak + $quotation->ppn + $quotation->pph;
         $quotation->pembulatan = ceil($quotation->total_invoice / 1000) * 1000;
+
+        $quotation->margin = $quotation->grand_total_sebelum_pajak-$quotation->total_sebelum_management_fee;
+        $quotation->gpm = $quotation->margin/$quotation->grand_total_sebelum_pajak*100;
 
         // bunga bank dan insentif
         // $pengaliTop = 0;
