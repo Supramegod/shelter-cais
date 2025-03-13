@@ -589,6 +589,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sdt/sdt-training/delete-peserta', 'deletePeserta')->name('sdt-training.delete-peserta');
         Route::post('/sdt/sdt-training/delete-gallery', 'deleteGallery')->name('sdt-training.delete-gallery');
         Route::post('/sdt/sdt-training/send-message', 'sendMessage')->name('sdt-training.send-message');
+        Route::post('/sdt/sdt-training/save-message', 'saveMessage')->name('sdt-training.save-message');
 
         Route::post('/sdt/sdt-training/upload-image', 'uploadImage')->name('sdt-training.upload-image');
 
@@ -597,12 +598,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sdt/sdt-training/data-trainer', 'dataTrainer')->name('sdt-training.data-trainer');
         Route::get('/sdt/sdt-training/list', 'list')->name('sdt-training.list');
 
-        // Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
-        // Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
-        // Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation'); // ajax
-
-        // Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads'); // ajax
-        // Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads'); // ajax
     });
 
     Route::controller(TrainingSiteController::class)->group(function() {

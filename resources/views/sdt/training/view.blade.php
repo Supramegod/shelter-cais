@@ -129,7 +129,23 @@
                 </div>
               </div>  
 
-              <div class="row mb-3">
+              <div class="row">
+                <label class="col-sm-2 col-form-label text-sm-end">Alamat <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="form-floating form-floating-outline mb-4">
+                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="alamat" id="alamat" placeholder="">{{$data->alamat}}</textarea>
+                  </div>
+                </div>
+
+                <label class="col-sm-2 col-form-label text-sm-end">Link Zoom <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="form-floating form-floating-outline mb-4">
+                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="link_zoom" id="link_zoom" placeholder="">{{$data->link_zoom}}</textarea>
+                  </div>
+                </div>
+              </div>  
+
+              <div class="row">
                 <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
                 <div class="col-sm-10">
                   <div class="form-floating form-floating-outline mb-4">
@@ -182,18 +198,18 @@
                   <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
               </button>
             </div>
-            <!-- <div class="col-12 text-center mt-2">
-              <button id="btn-add-peserta" class="btn btn-success w-100 waves-effect waves-light">
-                <span class="me-1">Tambah Peserta</span>
+            <div class="col-12 text-center mt-2">
+              <button id="btn-pesan-undangan" class="btn btn-success w-100 waves-effect waves-light">
+                <span class="me-1">Pesan Undangan</span>
                   <i class="mdi mdi-account-multiple-plus scaleX-n1-rtl"></i>
               </button>
-            </div> -->
-            <!-- <div class="col-12 text-center mt-2">
-              <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light">
-                <span class="me-1">Tambah Trainer</span>
-                  <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
+            </div>
+            <div class="col-12 text-center mt-2">
+              <button id="btn-generate-pdf" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Generate PDF</span>
+                  <i class="mdi mdi-file-pdf-box scaleX-n1-rtl"></i>
               </button>
-            </div> -->
+            </div>
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
@@ -726,12 +742,15 @@
 
 
   $('#btn-kembali').on('click',function () {
-    window.history.go(-1); return false;
-    // window.location.replace("{{route('leads')}}");
+    window.location.href = '{{route("sdt-training")}}';
   });
 
   $('#btn-add-client').on('click',function(){
     $('#modal-client').modal('show');  
+  });
+
+  $('#btn-pesan-undangan').on('click',function(){
+    $('#modal-pesan-undangan').modal('show');  
   });
 
   // $('#btn-add-gallery').on('click',function(){
@@ -814,6 +833,62 @@
     });
 
     $('#btn-add-client-save').on('click',function(){
+      $('#modal-client').modal('hide');
+      let id = $('#training_id').val();
+      let client_id = $('#client_id').val();
+    
+      if(client_id == ''){
+        Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: "Mohon untuk memilih data client yang akan di tambahkan",
+                  icon: 'error'
+              })
+      }else{
+        let formData = {
+            "id":id,
+            "client_id":client_id,
+            "_token": "{{ csrf_token() }}"
+        };
+
+        let table ='#table-data-client';
+        $.ajax({
+            type: "POST",
+            url: "{{route('sdt-training.add-client')}}",
+            data:formData,
+            success: function(response){
+                // console.log(response);
+                // alert(response)
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+      }
+    });
+
+    $('#btn-generate-pdf').on('click',function(){
       $('#modal-client').modal('hide');
       let id = $('#training_id').val();
       let client_id = $('#client_id').val();
@@ -974,12 +1049,62 @@
           }
       });
     });
+
+    $('#btn-add-pesan-undangan-save').on('click',function(){
+      $('#modal-pesan-undangan').modal('hide');
+      
+      let id = $('#training_id').val();
+      let pesan = $('#pesan-undangan').val();
+      // alert(id + ' ' + pesan);
+      let formData = {
+          "id":id,
+          "pesan_undangan": pesan,
+          "_token": "{{ csrf_token() }}"
+      };
+
+      $.ajax({
+          type: "POST",
+          url: "{{route('sdt-training.save-message')}}",
+          data:formData,
+          success: function(response){
+              // console.log(response);
+              // alert(response)
+              if (response.success) {
+                  Swal.fire({
+                      title: 'Pemberitahuan',
+                      text: response.message,
+                      icon: 'success',
+                      timer: 1000,
+                      timerProgressBar: true,
+                      willClose: () => {
+                      }
+                  })
+              } else {
+                  Swal.fire({
+                      title: 'Pemberitahuan',
+                      text: response.message,
+                      icon: 'error'
+                  })
+              }
+          },
+          error:function(error){
+              Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: error,
+                  icon: 'error'
+              })
+          }
+      });
+    });
+
     // $('#select2insidemodal').select2();
     // $("#trainer_id").select2({
     //   dropdownParent: $("#modal-trainer")
     // });
   });
 
+
+  
   
   
   // $("#select2Input").select2({ dropdownParent: "#modal-container" });
@@ -1048,6 +1173,34 @@
       <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
         <button id="btn-add-client-save" class="btn btn-primary">Add Peserta</button>
+        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-pesan-undangan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Isi Pesan Undangan : <p id="nama"></p></h4>
+        </div>
+        
+        <div class="row">    
+            <!-- <label class="col-sm-3 col-form-label text-sm-end">Client <span class="text-danger">*</span></label> -->
+            <div class="col-sm-12">
+              <div class="position-relative">
+                <textarea style="height: 100% !important;" rows="12" cols="50" class="form-control h-px-100 @if ($errors->any())   @endif" name="pesan-undangan" id="pesan-undangan" placeholder="">{{$message}}</textarea>
+              </div>
+            </div>
+        </div>  
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-add-pesan-undangan-save" class="btn btn-primary">Save</button>
         <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
       </div>
     </div>

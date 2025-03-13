@@ -45,10 +45,10 @@
               </div>
             </div>
 
-            <label class="col-sm-1 col-form-label text-sm-end">Peserta</label>
+            <!-- <label class="col-sm-1 col-form-label text-sm-end">Peserta</label>
             <div class="col-sm-2">
               <input type="number" id="peserta" name="peserta" value="{{old('peserta')}}" class="form-control @if ($errors->any())   @endif">
-            </div>
+            </div> -->
             
           </div>
           <div class="row mb-3">
@@ -118,7 +118,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Waktu Mulai <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-              <input type="date" id="start_date" name="start_date" value="{{old('start_date')}}" class="form-control @if ($errors->any())   @endif">
+              <input type="datetime-local" id="start_date" name="start_date" value="{{old('start_date')}}" class="form-control @if ($errors->any())   @endif">
                 @if($errors->has('start_date'))
                   <div class="invalid-feedback">{{$errors->first('start_date')}}</div>
                 @endif
@@ -128,13 +128,29 @@
             <label class="col-sm-1 col-form-label text-sm-end">Waktu Selesai <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-              <input type="date" id="end_date" name="end_date" value="{{old('end_date')}}" class="form-control @if ($errors->any())   @endif">
+              <input type="datetime-local" id="end_date" name="end_date" value="{{old('end_date')}}" class="form-control @if ($errors->any())   @endif">
                 @if($errors->has('end_date'))
                   <div class="invalid-feedback">{{$errors->first('end_date')}}</div>
                 @endif
               </div>
             </div>
           </div>  
+
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Alamat</label>
+            <div class="col-sm-3">
+              <div class="form-floating form-floating-outline mb-4">
+                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="alamat" id="alamat" placeholder="">{{old('alamat')}}</textarea>
+              </div>
+            </div>
+
+            <label class="col-sm-1 col-form-label text-sm-end">Link Zoom</label>
+            <div class="col-sm-3">
+              <div class="form-floating form-floating-outline mb-4">
+                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="link_zoom" id="link_zoom" placeholder="">{{old('link_zoom')}}</textarea>
+              </div>
+            </div>
+          </div>
 
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
@@ -253,6 +269,8 @@
         confirmButton: 'btn btn-primary waves-effect waves-light'
       },
       buttonsStyling: false
+    }).then(function() {
+        window.location.href = '{{route("sdt-training")}}';
     });
   @endif
 </script>
