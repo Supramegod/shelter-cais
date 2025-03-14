@@ -109,7 +109,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
       <section id="landingContact" class="section-py bg-body landing-contact" style="padding-top:2rem !important">
         <div class="container bg-icon-left position-relative">
         <!-- pesertaSave -->
-            <form class="card-body overflow-hidden" action="{{route('invite-pdf')}}" method="POST">
+            <form class="card-body overflow-hidden" action="{{route('invite-save')}}" method="POST">
                 @csrf
                 <img
                     src="{{ asset('public/assets/img/front-pages/icons/bg-left-icon-light.png') }}"

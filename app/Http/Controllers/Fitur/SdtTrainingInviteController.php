@@ -17,6 +17,7 @@ class SdtTrainingInviteController extends Controller
 {
     public function testPdf(Request $request)
     {
+        
         // $pdf = PDF::loadHTML('<h1>Test</h1>');
         // $pdf = PDF::make('dompdf.wrapper');
         // $pdf = PDF::loadHTML('<h1>Test</h1>');
@@ -66,9 +67,9 @@ class SdtTrainingInviteController extends Controller
         $listImage = DB::table('sdt_training_file')->where('is_active', 1)->where('type', 'image')->where('training_id', $request->training_id)->orderBy('id', 'ASC')->get();
         $pdf = PDF::loadView('sdt.training.report', ['trainer' => $trainer, 'client' => $client, 'peserta' => $peserta, 'data' => $data, 'listImage' => $listImage]);
         $pdf->set_option('isRemoteEnabled', true);
-        // return $pdf->stream();
-        // dd( $request->training_id);
-        return $pdf->download("SDT-Training.pdf");
+        return $pdf->stream();
+        
+        // return $pdf->download("SDT-Training.pdf");
     }
 
     public function testPdfWeb(Request $request)

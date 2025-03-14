@@ -339,9 +339,10 @@ class SdtTrainingController extends Controller
                     'alamat' => $request->alamat,
                     'link_zoom' => $request->link_zoom,
                     'updated_at' => $current_date_time,
-                    'enable' => $request->enable
+                    'enable' => ($request->enable == 'on' ? 1 : 0)
                 ]);
                 $msgSave = 'Training berhasil diubah.';
+                
             }else{
                 $message = "*Undangan Training Shelter*
                 Tanggal Jam : {tanggal}

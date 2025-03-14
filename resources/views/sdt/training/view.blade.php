@@ -217,6 +217,7 @@
             </div>
             <div class="col-12 text-center mt-2">
               <form action="{{route('invite-pdf')}}" method="POST">
+              @csrf
                 <input hidden type="text" class="form-control" id="training_id" name="training_id" placeholder="Training id" value="{{$data->id_training}}"/>  
                 <button type="submit"  class="btn btn-warning w-100 waves-effect waves-light">
                   <span class="me-1">Generate PDF</span>
