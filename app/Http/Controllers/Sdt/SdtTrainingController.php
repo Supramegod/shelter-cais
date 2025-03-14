@@ -338,7 +338,8 @@ class SdtTrainingController extends Controller
                     'id_laman' => $request->laman_id,
                     'alamat' => $request->alamat,
                     'link_zoom' => $request->link_zoom,
-                    'updated_at' => $current_date_time
+                    'updated_at' => $current_date_time,
+                    'enable' => $request->enable
                 ]);
                 $msgSave = 'Training berhasil diubah.';
             }else{
@@ -511,14 +512,11 @@ class SdtTrainingController extends Controller
 
     public function saveMessage(Request $request) {
         try {
-            dd($request->id . " " . $request->pesan_undangan);
+            // dd($request->id . " " . $request->pesan_undangan);
             DB::beginTransaction();
-            $DB::table('sdt_training')->where('id_training',$request->id)->update([
-                'link_zoom' => $request->pesan_undangan
+            DB::table('sdt_training')->where('id_training',$request->id)->update([
+                'whatsapp_message' => $request->pesan_undangan
             ]);
-            
-            
-            $msgSave = 'Training berhasil diubah.';
             
             DB::commit();
             return response()->json([
@@ -623,23 +621,62 @@ class SdtTrainingController extends Controller
             //     ->where('training_id', $request->id)
             //     ->get();
             
-            $data = DB::table('sdt_training')
-                    ->where('is_aktif', 1)
-                    ->where('id_training', $request->id)
-                    ->first();
+            // $data = DB::table('sdt_training')
+            //         ->where('is_aktif', 1)
+            //         ->where('id_training', $request->id)
+            //         ->first();
+
+            $data = DB::table('sdt_training as tr')
+                        ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
+                        ->leftJoin('sdt_training_client as stc','stc.id_training', '=', DB::raw('tr.id_training AND stc.is_active = 1'))
+                        ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
+                        ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
+                        ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
+                        ->leftJoin('sdt_training_client_detail as stcd', 'stcd.training_id', '=', DB::raw('tr.id_training AND stcd.is_active = 1'))
+                        
+                        ->select(
+                            "tr.id_training as id",
+                            "mtm.materi", 
+                            "tr.waktu_mulai", 
+                            "tr.waktu_selesai", 
+                            DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
+                            DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
+                            DB::raw("group_concat(distinct mtc.client separator ', ') AS client"),
+                            DB::raw("count(mtc.client) AS total_client"),
+                            // DB::raw("sum(stc.peserta_hadir) AS total_peserta"),
+                            DB::raw("count(distinct stcd.id) AS total_peserta"),
+                            DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
+                            DB::raw("count(distinct mtt.id) AS total_trainer"),
+                            "tr.link_zoom",
+                            "tr.keterangan",
+                            "tr.alamat",
+                            "tr.whatsapp_message"
+                        )
+                        ->where('tr.is_aktif', 1)
+                        ->where('tr.id_training', $request->id)
+                        ->groupBy('tr.id_training')
+                        ->first();
+
+            $message = str_replace(
+                array('{tanggal}', '{keterangan}', '{tempat}', '{zoom}', '{alamat}', '{tipe}', '{materi}', '{trainer}', '{link}'), 
+                array($data->waktu_mulai, $data->keterangan, $data->tempat, $data->link_zoom, $data->alamat, $data->tipe, $data->materi, $data->trainer, url('sdt-training?id=').$request->id), 
+                $data->whatsapp_message); 
 
             $myarray = explode(',', $request->no_wa);
             $current_date_time = Carbon::now()->toDateTimeString();
             foreach ($myarray as $key => $value) {
-                
-                // DB::table('sdt_training_client_detail')->where('id', $value->id)
-                // ->update([
-                //     'status_whatsapp' => 'Waiting'
-                // ]);
-                
+                $baseNumber = substr($value,0, 2);
+                if($baseNumber == '08'){
+                    $baseNumber = '62' . substr($value,1);
+                }else if($baseNumber == '+6'){
+                    $baseNumber = '62' . substr($value,2);
+                }
+
+                // dd($baseNumber);    
+                          
                 DB::table('whatsapp_message')->insert([
-                    'nomor_wa' => $value,
-                    'message' => $data->whatsapp_message,
+                    'nomor_wa' => $baseNumber,
+                    'message' => $message,
                     'type' => '',
                     'status' => 'Waiting',
                     'created_date' => $current_date_time,

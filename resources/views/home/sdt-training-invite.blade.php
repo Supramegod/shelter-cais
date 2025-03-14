@@ -235,9 +235,11 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                                 <!-- <button type="submit" class="btn btn-primary mt-3">Kirim</button> -->
                                 <div class="pt-4">
                                   <div class="row justify-content-end">
+                                  @if($data->enable == '1')
                                     <div class="col-sm-12 d-flex justify-content-center">
                                       <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Submit</button>
                                     </div>
+                                  @endif
                                   </div>
                                 </div>
                             

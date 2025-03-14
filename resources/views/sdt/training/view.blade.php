@@ -53,6 +53,17 @@
               <!-- <h6>1. Informasi Perusahaan</h6> -->
               <input type="hidden" name="id" value="{{$data->id_training}}">
               <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Absensi Active</label>
+                <div class="col-sm-4">
+                  <div class="position-relative">  
+                    <div class="form-check form-switch" >
+                      <input style="width: 60px; height: 30px;" class="form-check-input form-control" type="checkbox" role="switch" id="enable" name="enable" @if($data->enable == '1') checked @endif>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
                 <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
                 <div class="col-sm-4">
                   <div class="position-relative">
@@ -205,17 +216,22 @@
               </button>
             </div>
             <div class="col-12 text-center mt-2">
-              <button id="btn-generate-pdf" class="btn btn-warning w-100 waves-effect waves-light">
-                <span class="me-1">Generate PDF</span>
-                  <i class="mdi mdi-file-pdf-box scaleX-n1-rtl"></i>
-              </button>
+              <form action="{{route('invite-pdf')}}" method="POST">
+                <input hidden type="text" class="form-control" id="training_id" name="training_id" placeholder="Training id" value="{{$data->id_training}}"/>  
+                <button type="submit"  class="btn btn-warning w-100 waves-effect waves-light">
+                  <span class="me-1">Generate PDF</span>
+                    <i class="mdi mdi-file-pdf-box scaleX-n1-rtl"></i>
+                </button>
+              </form>
             </div>
+
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
                 <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
               </button>
             </div>
+
             <hr class="my-4 mx-4">
             <!-- <div class="col-12 text-center mt-2">
               <button id="btn-delete" class="btn btn-danger w-100 waves-effect waves-light">
@@ -742,6 +758,7 @@
 
 
   $('#btn-kembali').on('click',function () {
+    // alert('jljljjj');
     window.location.href = '{{route("sdt-training")}}';
   });
 
@@ -888,50 +905,32 @@
       }
     });
 
+    function downloadFile(response) {
+      alert(response);
+      var blob = new Blob([response], {type: 'application/pdf'})
+      var url = URL.createObjectURL(blob);
+      location.assign(url);
+    } 
+
     $('#btn-generate-pdf').on('click',function(){
-      $('#modal-client').modal('hide');
       let id = $('#training_id').val();
-      let client_id = $('#client_id').val();
-    
-      if(client_id == ''){
-        Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: "Mohon untuk memilih data client yang akan di tambahkan",
-                  icon: 'error'
-              })
-      }else{
-        let formData = {
-            "id":id,
-            "client_id":client_id,
+      let formData = {
+            "training_id": id,
             "_token": "{{ csrf_token() }}"
         };
 
-        let table ='#table-data-client';
         $.ajax({
-            type: "POST",
-            url: "{{route('sdt-training.add-client')}}",
+            type: "GET",
+            url: "{{route('invite-pdf')}}",
             data:formData,
             success: function(response){
-                // console.log(response);
-                // alert(response)
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'success',
-                        timer: 1000,
-                        timerProgressBar: true,
-                        willClose: () => {
-                            
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'error'
-                    })
-                }
+              downloadFile(response);
+              // Create a link element to download the file
+                // var blob = new Blob([response], { type: 'application/pdf' });
+                // var link = document.createElement('a');
+                // link.href = URL.createObjectURL(blob);
+                // link.download = 'your-pdf-file.pdf';
+                // link.click();
             },
             error:function(error){
                 Swal.fire({
@@ -941,7 +940,6 @@
                 })
             }
         });
-      }
     });
     
     $('#btn-add-peserta-save').on('click',function(){
@@ -1063,38 +1061,39 @@
       };
 
       $.ajax({
-          type: "POST",
-          url: "{{route('sdt-training.save-message')}}",
-          data:formData,
-          success: function(response){
-              // console.log(response);
-              // alert(response)
-              if (response.success) {
-                  Swal.fire({
-                      title: 'Pemberitahuan',
-                      text: response.message,
-                      icon: 'success',
-                      timer: 1000,
-                      timerProgressBar: true,
-                      willClose: () => {
-                      }
-                  })
-              } else {
-                  Swal.fire({
-                      title: 'Pemberitahuan',
-                      text: response.message,
-                      icon: 'error'
-                  })
-              }
-          },
-          error:function(error){
-              Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: error,
-                  icon: 'error'
-              })
-          }
-      });
+            type: "POST",
+            url: "{{route('sdt-training.save-message')}}",
+            data:formData,
+            success: function(response){
+                // console.log(response);
+                // alert(response)
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                          location.reload();
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
     });
 
     // $('#select2insidemodal').select2();
