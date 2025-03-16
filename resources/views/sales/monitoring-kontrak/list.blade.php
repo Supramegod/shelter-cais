@@ -22,33 +22,6 @@
                     </div>
                 </div>
                 <div class="card-body pt-4">
-                    <form>
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <input type="date" class="form-control" id="tgl_dari" name="tgl_dari" value="{{$tglDari}}">
-                                            <label for="tgl_dari">Tanggal Dari</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <input type="date" class="form-control" id="tgl_sampai" name="tgl_sampai" value="{{$tglSampai}}">
-                                            <label for="tgl_sampai">Tanggal Sampai</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-lg btn-primary waves-effect waves-light">Filter</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                     <div class="table-responsive overflow-hidden table-data">
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                             <thead>
@@ -127,7 +100,6 @@
         },{
             data : 'aksi',
             name : 'aksi',
-            width: "10%",
             orderable: false,
             searchable: false,
         },{

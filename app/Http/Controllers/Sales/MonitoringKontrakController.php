@@ -47,23 +47,62 @@ class MonitoringKontrakController extends Controller
         return view('sales.monitoring-kontrak.list-terminate',compact('tglDari','tglSampai'));
     }
 
+    public function view (Request $request,$pksId){
+        try {
+           $pks = DB::table('sl_pks')->where('id',$pksId)->first();
+
+            $data = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('pks_id',$pksId)->orderBy('created_at','desc')->get();
+            foreach ($data as $key => $value) {
+                $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
+                $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+            }
+
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('id',$leads->jenis_perusahaan_id)->first();
+            if($jenisPerusahaan !=null){ $leads->jenis_perusahaan = $jenisPerusahaan->nama; }else{ $leads->jenis_perusahaan = ""; }
+
+            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
+            $quotation->detail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->get();
+            $quotation->site = DB::table('sl_site')->where('quotation_id',$quotation->id)->get();
+
+            $pks->berakhir_dalam = $this->hitungBerakhirKontrak($quotation->kontrak_selesai);
+            $quotation->mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
+            $quotation->kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+
+            $spk =  DB::table('sl_spk')->where('id',$pks->spk_id)->first();
+
+            return view('sales.monitoring-kontrak.view',compact('data','leads','quotation','spk','pks'));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function list (Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
         $data = DB::table('sl_pks')
                 ->leftJoin('sl_spk','sl_spk.id','sl_pks.spk_id')
                 ->leftJoin('sl_quotation','sl_pks.quotation_id','sl_quotation.id')
+                ->Join('sl_leads','sl_pks.leads_id','sl_leads.id')
                 ->whereNull('sl_pks.deleted_at')
                 ->whereNull('sl_spk.deleted_at')
                 ->whereNull('sl_quotation.deleted_at')
                 ->whereNotNull('sl_quotation.mulai_kontrak')
                 ->whereNotNull('sl_quotation.kontrak_selesai')
-                // ->where('sl_pks.status_pks_id',7)
+                ->where('sl_pks.status_pks_id','<>',100)
                 ->select('sl_pks.status_pks_id','sl_quotation.leads_id','sl_pks.id','sl_pks.nomor','sl_pks.nama_perusahaan','sl_quotation.mulai_kontrak','sl_quotation.kontrak_selesai',
                 DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
                     FROM sl_quotation_site
                     WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site'),
-                    DB::raw("'' as sales"),
-                    DB::raw("'' as ro"),
-                    DB::raw("'' as crm"),
+                    DB::raw("(select full_name from ".$db2.".m_user where id in (select user_id from m_tim_sales_d where id = sl_leads.tim_sales_d_id)) as sales"),
+                    DB::raw('(SELECT GROUP_CONCAT(full_name SEPARATOR "<br /> ")
+                        FROM '.$db2.'.m_user
+                        WHERE '.$db2.'.m_user.id IN (sl_leads.ro_id, sl_leads.ro_id_1, sl_leads.ro_id_2, sl_leads.ro_id_3)) as ro'),
+                    DB::raw('(SELECT GROUP_CONCAT(full_name SEPARATOR "<br /> ")
+                        FROM '.$db2.'.m_user
+                        WHERE '.$db2.'.m_user.id IN (sl_leads.crm_id, sl_leads.crm_id_1, sl_leads.crm_id_2)) as crm'),
                     DB::raw('(SELECT COUNT(*) FROM sl_customer_activity WHERE sl_customer_activity.pks_id = sl_pks.id AND sl_customer_activity.deleted_at IS NULL AND sl_customer_activity.is_activity = 1) as aktifitas'),
                 )
                 ->get();
@@ -81,6 +120,7 @@ class MonitoringKontrakController extends Controller
             // }
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
             $aksi = "";
+            $aksi .= '&nbsp;<a href="'.route('monitoring-kontrak.view', $data->id).'" class="btn btn-sm btn-secondary">View</a>';
             $aksi .= '&nbsp;<a href="'.route('customer-activity.add-activity-kontrak',$data->id).'" class="btn btn-sm btn-info">Buat Activity</a>';
 
             if($selisih<=90 && $selisih !=0){
@@ -89,6 +129,20 @@ class MonitoringKontrakController extends Controller
             }
             if($selisih == 0){
                 $aksi .= '&nbsp;<a href="javscript:void(0)" class="btn btn-sm btn-danger btn-terminate-kontrak" data-id="'.$data->id.'">Terminate Kontrak</a>';
+            }
+
+            if (empty($data->ro) && in_array(Auth::user()->role_id,[2,8,6,98])) {
+                $aksi .= '&nbsp;<a href="'.route('customer-activity.add-ro-kontrak',$data->id).'" class="btn btn-sm btn-warning">Pilih RO</a>';
+            }
+            if (empty($data->crm) && in_array(Auth::user()->role_id,[2,55,56,96])) {
+                $aksi .= '&nbsp;<a href="'.route('customer-activity.add-crm-kontrak',$data->id).'" class="btn btn-sm btn-warning">Pilih CRM</a>';
+            }
+            if(in_array(Auth::user()->role_id,[2,56])&&$data->status_pks_id != 7 ){
+                if ($data->ro != "" && $data->crm != "") {
+                    $aksi .= '&nbsp;<a href="javascript:void(0)" class="btn btn-sm btn-success">Aktifkan Site</a>';
+                } else {
+                    $aksi .= '&nbsp;<button class="btn btn-sm btn-success" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Belum memilih RO atau CRM\', icon: \'warning\'})">Aktifkan Site</button>';
+                }
             }
 
             return '<div class="justify-content-center d-flex">
@@ -122,13 +176,13 @@ class MonitoringKontrakController extends Controller
                 return '#636578';
             }
         })
-        ->editColumn('nomor', function ($data) {
-            return '<a href="'.route('pks.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
-        })
+        // ->editColumn('nomor', function ($data) {
+        //     return '<a href="'.route('pks.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+        // })
         ->editColumn('aktifitas', function ($data) {
             return '<button class="btn btn-sm btn-info" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-activity-kontrak',['pks_id' => $data->id]).'`,`DATA AKTIFITAS PADA KONTRAK '.$data->nomor.'`)">'.$data->aktifitas.'</button>';
         })
-        ->rawColumns(['aksi','nomor','nama_site','aktifitas'])
+        ->rawColumns(['aksi','nomor','nama_site','aktifitas','crm','ro','sales'])
         ->make(true);
     }
 

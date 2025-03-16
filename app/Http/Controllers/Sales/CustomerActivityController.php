@@ -997,4 +997,91 @@ class CustomerActivityController extends Controller
         }
     }
 
+    public function addRoKontrak ($id){
+        try {
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            if($pks == null){
+                abort(404);
+            }
+            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
+
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $nowd = Carbon::now()->toDateString();
+
+            $quotation->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
+            $quotation->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+
+            $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+
+            $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
+
+            $roList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 4,5 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
+            $spvRoList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 6 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
+
+            return view('sales.customer-activity.add-ro-pks',compact('roList','spvRoList','now','nowd','pks','jenisVisit','quotation'));
+        } catch (\Exception $e) {
+            abort(500);
+        }
+    }
+
+    public function saveActivityRoKontrak (Request $request){
+        try {
+            DB::beginTransaction();
+            $pks = DB::table('sl_pks')->where('id',$request->id)->first();
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $nomor = $this->generateNomor($pks->leads_id);
+
+            $roId = null;
+            $roName = null;
+
+            $roId = $request->spv_ro;
+            $roName = DB::connection('mysqlhris')->table('m_user')->where('id',$roId)->first();
+            $roName = $roName->full_name;
+
+            $id = DB::table('sl_customer_activity')->insertGetId([
+                'tgl_activity' => $current_date_time,
+                'branch_id' => $leads->branch_id,
+                'nomor' => $nomor,
+                'leads_id' => $leads->id,
+                'notes' => $request->notes,
+                'tipe' => $request->tipe,
+                'ro_id' => $roId,
+                'ro' => $roName,
+                'is_activity' => 1,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            $roId1 = null;
+            $roId2 = null;
+            $roId3 = null;
+            foreach ($request->selected_ro as $key => $value) {
+                if ($key==0) {
+                    $roId1 = $value;
+                } else if ($key==1) {
+                    $roId2 = $value;
+                } else if ($key==2) {
+                    $roId3 = $value;
+                }
+            }
+
+            DB::table('sl_leads')->where('id',$pks->leads_id)->update([
+                'ro_id' => $roId,
+                'ro' => $roName,
+                'ro_id_1' => $roId1,
+                'ro_id_2' => $roId2,
+                'ro_id_3' => $roId3,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->name
+            ]);
+            $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
+        }
+    }
+
 }

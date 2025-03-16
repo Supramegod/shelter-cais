@@ -160,10 +160,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/customer-activity', 'index')->name('customer-activity');
         Route::get('/sales/customer-activity/add', 'add')->name('customer-activity.add');
         Route::get('/sales/customer-activity/add-activity-kontrak/{id}', 'addActivityKontrak')->name('customer-activity.add-activity-kontrak');
+        Route::get('/sales/customer-activity/add-ro-kontrak/{id}', 'addRoKontrak')->name('customer-activity.add-ro-kontrak');
+        Route::get('/sales/customer-activity/add-crm-kontrak/{id}', 'addCrmKontrak')->name('customer-activity.add-crm-kontrak');
         Route::get('/sales/customer-activity/view/{id}', 'view')->name('customer-activity.view');
 
         Route::post('/sales/customer-activity/save', 'save')->name('customer-activity.save');
         Route::post('/sales/customer-activity/save-activity-kontrak', 'saveActivityKontrak')->name('customer-activity.save-activity-kontrak');
+        Route::post('/sales/customer-activity/save-activity-ro-kontrak', 'saveActivityRoKontrak')->name('customer-activity.save-activity-ro-kontrak');
         Route::post('/sales/customer-activity/delete', 'delete')->name('customer-activity.delete');
 
         Route::get('/sales/customer-activity/track/{leadsId}', 'trackActivity')->name('customer-activity.track');
@@ -622,6 +625,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(MonitoringKontrakController::class)->group(function() {
         Route::get('/sales/monitoring-kontrak', 'index')->name('monitoring-kontrak');
         Route::get('/sales/monitoring-kontrak/list', 'list')->name('monitoring-kontrak.list');
+        Route::get('/sales/monitoring-kontrak/view/{id}', 'view')->name('monitoring-kontrak.view');
         Route::post('/sales/monitoring-kontrak/terminate', 'terminate')->name('monitoring-kontrak.terminate');
         Route::get('/sales/monitoring-kontrak/index-terminate', 'indexTerminate')->name('monitoring-kontrak.index-terminate');
         Route::get('/sales/monitoring-kontrak/list-terminate', 'listTerminate')->name('monitoring-kontrak.list-terminate');
