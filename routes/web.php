@@ -167,6 +167,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/customer-activity/save', 'save')->name('customer-activity.save');
         Route::post('/sales/customer-activity/save-activity-kontrak', 'saveActivityKontrak')->name('customer-activity.save-activity-kontrak');
         Route::post('/sales/customer-activity/save-activity-ro-kontrak', 'saveActivityRoKontrak')->name('customer-activity.save-activity-ro-kontrak');
+        Route::post('/sales/customer-activity/save-activity-crm-kontrak', 'saveActivityCrmKontrak')->name('customer-activity.save-activity-crm-kontrak');
         Route::post('/sales/customer-activity/delete', 'delete')->name('customer-activity.delete');
 
         Route::get('/sales/customer-activity/track/{leadsId}', 'trackActivity')->name('customer-activity.track');

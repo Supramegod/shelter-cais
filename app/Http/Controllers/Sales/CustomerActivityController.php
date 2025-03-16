@@ -1013,12 +1013,10 @@ class CustomerActivityController extends Controller
 
             $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
 
-            $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
-
             $roList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 4,5 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
             $spvRoList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 6 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
 
-            return view('sales.customer-activity.add-ro-pks',compact('roList','spvRoList','now','nowd','pks','jenisVisit','quotation'));
+            return view('sales.customer-activity.add-ro-pks',compact('roList','spvRoList','now','nowd','pks','quotation'));
         } catch (\Exception $e) {
             abort(500);
         }
@@ -1040,6 +1038,7 @@ class CustomerActivityController extends Controller
             $roName = $roName->full_name;
 
             $id = DB::table('sl_customer_activity')->insertGetId([
+                'pks_id' => $request->id,
                 'tgl_activity' => $current_date_time,
                 'branch_id' => $leads->branch_id,
                 'nomor' => $nomor,
@@ -1076,6 +1075,96 @@ class CustomerActivityController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->name
             ]);
+            $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
+        }
+    }
+
+    public function addCrmKontrak ($id){
+        try {
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            if($pks == null){
+                abort(404);
+            }
+            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
+
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $nowd = Carbon::now()->toDateString();
+
+            $quotation->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
+            $quotation->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+
+            $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+
+            $crmList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 54 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
+
+            return view('sales.customer-activity.add-crm-pks',compact('crmList','now','nowd','pks','quotation'));
+        } catch (\Exception $e) {
+            abort(500);
+        }
+    }
+
+    public function saveActivityCrmKontrak (Request $request){
+        try {
+            DB::beginTransaction();
+            $pks = DB::table('sl_pks')->where('id',$request->id)->first();
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $nomor = $this->generateNomor($pks->leads_id);
+
+            $crmId = null;
+            $crmName = null;
+
+            foreach ($request->selected_crm as $key => $value) {
+                if ($key==0) {
+                    $crmId = $value;
+                    $crmName = DB::connection('mysqlhris')->table('m_user')->where('id',$crmId)->first();
+                    $crmName = $crmName->full_name;
+                }else{
+                    break;
+                }
+            }
+
+            $id = DB::table('sl_customer_activity')->insertGetId([
+                'pks_id' => $request->id,
+                'tgl_activity' => $current_date_time,
+                'branch_id' => $leads->branch_id,
+                'nomor' => $nomor,
+                'leads_id' => $leads->id,
+                'notes' => $request->notes,
+                'tipe' => $request->tipe,
+                'crm_id' => $crmId,
+                'crm' => $crmName,
+                'is_activity' => 1,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            $crmId1 = null;
+            $crmId2 = null;
+            foreach ($request->selected_crm as $key => $value) {
+                if ($key==0) {
+                    continue;
+                } else if ($key==1) {
+                    $crmId1 = $value;
+                } else if ($key==2) {
+                    $crmId2 = $value;
+                }
+            }
+
+            DB::table('sl_leads')->where('id',$pks->leads_id)->update([
+                'crm_id' => $crmId,
+                'crm' => $crmName,
+                'crm_id_1' => $crmId1,
+                'crm_id_2' => $crmId2,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->name
+            ]);
+
             $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';
             DB::commit();
             return response()->json(['status' => 'success', 'message' => 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !']);
