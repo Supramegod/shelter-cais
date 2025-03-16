@@ -61,16 +61,27 @@
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="row mb-3">
                 <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
                 <div class="col-sm-4">
                   <div class="position-relative">
                     <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
                       @foreach($listBu as $value)
-                      <option value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
+                      <option disabled value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                
+              <label class="col-sm-2 col-form-label text-sm-end">Area</label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                      @foreach($listArea as $value)
+                      <option disabled value="{{$value->id}}" @if($data->id_area == $value->id) selected @endif>{{$value->area}}</option>
                       @endforeach
                     </select>
                   </div>

@@ -529,6 +529,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/training-materi/list', 'list')->name('training-materi.list'); // ajax
         Route::post('/master/training-materi/delete', 'delete')->name('training-materi.delete');
+
+        Route::get('/master/training-materi/history', 'historyTrainingByMateri')->name('training-materi.history'); 
         // Route::get('/master/training-materi/list-training-materi', 'listUmk')->name('training-materi.list-umk'); // ajax
     });
 
@@ -597,6 +599,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sdt/sdt-training/client-peserta', 'clientpeserta')->name('sdt-training.client-peserta');
         Route::get('/sdt/sdt-training/data-trainer', 'dataTrainer')->name('sdt-training.data-trainer');
         Route::get('/sdt/sdt-training/list', 'list')->name('sdt-training.list');
+
+        Route::get('/sdt/sdt-training/list-area', 'listArea')->name('sdt-training.list-area');
+        Route::get('/sdt/sdt-training/list-client', 'listClient')->name('sdt-training.list-client');
 
     });
 

@@ -55,12 +55,16 @@ class SdtTrainingInviteController extends Controller
             ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
             ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
             ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
+            ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
+            ->leftJoin('m_training_laman as mtl','mtl.id', '=', 'tr.id_laman')
             ->where('tr.is_aktif', 1)
             ->where('tr.id_training', $request->training_id)
             ->select("tr.id_training as id", "mtm.materi", "tr.keterangan", "tr.waktu_mulai", "tr.waktu_selesai", DB::raw("group_concat(distinct mtc.client separator ' , ') AS client"), 
             DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"),
             DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
-            DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"))
+            DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
+            "mta.area",
+            "mtl.laman")
             ->groupBy('tr.id_training')
             ->first();
 

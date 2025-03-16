@@ -92,16 +92,17 @@
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Materi</th>
-                                    <th class="text-center">Waktu Mulai</th>
-                                    <th class="text-center">Tipe</th>
-                                    <th class="text-center">Tempat</th>
-                                    <th class="text-center">Client</th>
-                                    <th class="text-center">Total Client</th>
-                                    <th class="text-center">Total Peserta</th>
-                                    <th class="text-center">Trainer</th>
-                                    <th class="text-center">Total Trainer</th>
-                                    <th class="text-center">Aksi</th>
+                                    <th class="text-left">Area</th>    
+                                    <th class="text-left">Materi</th>
+                                    <th class="text-left">Waktu Mulai</th>
+                                    <th class="text-left">Tipe</th>
+                                    <th class="text-left">Tempat</th>
+                                    <th class="text-left">Client</th>
+                                    <th class="text-left">Total Client</th>
+                                    <th class="text-left">Total Peserta</th>
+                                    <th class="text-left">Trainer</th>
+                                    <th class="text-left">Total Trainer</th>
+                                    <th class="text-left">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -153,22 +154,27 @@
             "order":[
                 [0,'desc']
             ],
-            columns:[{
+            columns:[
+                {
+                data : 'area',
+                name : 'area',
+                className:'text-left'
+            },{
                 data : 'materi',
                 name : 'materi',
                 className:'text-left'
             },{
                 data : 'waktu_mulai',
                 name : 'waktu_mulai',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'tipe',
                 name : 'tipe',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'tempat',
                 name : 'tempat',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'client',
                 name : 'client',
@@ -176,11 +182,11 @@
             },{
                 data : 'total_client',
                 name : 'total_client',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'total_peserta',
                 name : 'total_peserta',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'trainer',
                 name : 'trainer',
@@ -188,7 +194,7 @@
             },{
                 data : 'total_trainer',
                 name : 'total_trainer',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'aksi',
                 name : 'aksi',

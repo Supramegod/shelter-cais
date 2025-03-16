@@ -26,14 +26,15 @@
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                             <thead>
                                 <tr>
-                                    <th class="text-center">ID</th>
-                                    <th class="text-center">Client</th>
-                                    <th class="text-center">Area</th>
-                                    <th class="text-center">Kab/Kota</th>
-                                    <th class="text-center">Tanggal Gabung</th>
-                                    <th class="text-center">Target/Thn</th>
-                                    <th class="text-center">Jumlah Training</th>
-                                    <th class="text-center">Aksi</th>
+                                    <th class="text-left">ID</th>
+                                    <th class="text-left">Client</th>
+                                    <th class="text-left">B. Unit</th>
+                                    <th class="text-left">Area</th>
+                                    <th class="text-left">Kab/Kota</th>
+                                    <th class="text-left">Tanggal Gabung</th>
+                                    <th class="text-left">Target/Thn</th>
+                                    <th class="text-left">Jumlah Training</th>
+                                    <th class="text-left">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -105,29 +106,33 @@
                     name : 'client',
                     className:'text-left'
                 },{
+                    data : 'laman',
+                    name : 'laman',
+                    className:'text-left'
+                },{
                     data : 'area',
                     name : 'area',
-                    className:'text-center'
+                    className:'text-left'
                 },{
                     data : 'kab_kota',
                     name : 'kab_kota',
-                    className:'text-center'
+                    className:'text-left'
                 },{
                     data : 'tgl_gabung',
                     name : 'tgl_gabung',
-                    className:'text-center'
+                    className:'text-left'
                 },{
                     data : 'target_per_tahun',
                     name : 'target_per_tahun',
-                    className:'text-center'
+                    className:'text-left'
                 },{
                     data : 'jml_training',
                     name : 'jml_training',
-                    className:'text-center'
+                    className:'text-left'
                 },{
                     data : 'aksi',
                     name : 'aksi',
-                    className:'text-center'
+                    className:'text-left'
                 }],
                 "language": datatableLang
             });

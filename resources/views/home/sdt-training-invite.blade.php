@@ -224,7 +224,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                                 <input hidden type="text" class="form-control" readonly id="employee_id" name="employee_id" placeholder="Employee id" />  
                                 <input hidden type="text" class="form-control" readonly id="site_id" name="site_id" placeholder="Site ID" />  
                                 <input hidden type="text" class="form-control" readonly id="jabatan_id" name="jabatan_id" placeholder="Jabatan ID" />  
-                                <input type="text" class="form-control" readonly id="jabatan" name="jabatan" placeholder="Posisi" />
+                                <input type="text" class="form-control" id="jabatan" name="jabatan" placeholder="Posisi" />
                                 </div>
                               </div>
                             </div>

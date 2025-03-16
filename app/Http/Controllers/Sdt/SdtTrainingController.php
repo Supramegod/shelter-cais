@@ -61,11 +61,55 @@ class SdtTrainingController extends Controller
         try {
             // $now = Carbon::now()->isoFormat('DD MMMM Y');
             $listBu = DB::table('m_training_laman')->orderBy('laman', 'ASC')->get();
-            $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
+            // $listArea = DB::table('m_training_area')->where('is_aktif', 1)->orderBy('area', 'ASC')->get();
+            // $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
             $listMateri = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
             $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
 
-            return view('sdt.training.add',compact('listBu','listClient','listMateri', 'listTrainer'));
+            return view('sdt.training.add',compact('listBu','listMateri', 'listTrainer'));
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function listArea(Request $request){
+        try {
+            // $now = Carbon::now()->isoFormat('DD MMMM Y');
+            
+            $listArea = DB::table('m_training_area')
+            ->where('is_aktif', 1)
+            ->where('laman_id', $request->id)
+            ->orderBy('area', 'ASC')->get();
+            
+            return response()->json([
+                'success'   => false,
+                'data'      => $listArea,
+                'message'   => "Berhasil get data area"
+            ], 200);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function listClient(Request $request){
+        try {
+            // $now = Carbon::now()->isoFormat('DD MMMM Y');
+            
+            $listClient = DB::table('m_training_client')
+            ->where('is_aktif', 1)
+            ->where('laman_id', $request->laman_id)
+            ->where('area_id', $request->area_id)
+            ->orderBy('client', 'ASC')->get();
+            
+            return response()->json([
+                'success'   => false,
+                'data'      => $listClient,
+                'message'   => "Berhasil get data client"
+            ], 200);
+
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -83,6 +127,7 @@ class SdtTrainingController extends Controller
             // $message = str_replace("{tanggal}", "", $data->waktu_mulai);
 
             $listBu = DB::table('m_training_laman')->orderBy('laman', 'ASC')->get();
+            $listArea = DB::table('m_training_area')->where('is_aktif', 1)->orderBy('area', 'ASC')->get();
             $listMateri = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
 
             $listImage = DB::table('sdt_training_file')->where('is_active', 1)->where('type', 'image')->where('training_id', $id)->orderBy('id', 'ASC')->get();
@@ -107,7 +152,7 @@ class SdtTrainingController extends Controller
             
                 // dd($peserta);
 
-            return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta', 'listBu', 'listMateri', 'listImage', 'message'));
+            return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta', 'listBu', 'listMateri', 'listImage', 'message', 'listArea'));
             // return view('sdt.training.view',compact('activity','data','branch','jabatanPic','namaPerusahaan','kebutuhan','platform'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(), $request);
@@ -115,24 +160,6 @@ class SdtTrainingController extends Controller
         }
         
     }
-
-    // public function list(Request $request){
-    //     try {
-    //         $data = DB::table('m_training_area')->whereNull('deleted_at')->get();
-    //         return DataTables::of($data)
-    //             ->addColumn('aksi', function ($data) {
-    //                 return '<div class="justify-content-center d-flex">
-    //                     <a href="'.route('training-area.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-    //                     <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
-    //                 </div>';
-    //             })
-    //             ->rawColumns(['aksi'])
-    //         ->make(true);
-    //     } catch (\Exception $e) {
-    //         SystemController::saveError($e,Auth::user(),$request);
-    //         abort(500);
-    //     }
-    // }
 
     public function list (Request $request){
         try {
@@ -142,13 +169,15 @@ class SdtTrainingController extends Controller
                         ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
                         ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
                         ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
+                        ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
                         ->leftJoin('sdt_training_client_detail as stcd', 'stcd.training_id', '=', DB::raw('tr.id_training AND stcd.is_active = 1'))
                         
                         ->select(
                             "tr.id_training as id",
                             "mtm.materi", 
-                            "tr.waktu_mulai", 
-                            "tr.waktu_selesai", 
+                            DB::raw("DATE_FORMAT(tr.waktu_mulai,'%d-%m-%Y %H:%i') as waktu_mulai"),
+                            DB::raw("DATE_FORMAT(tr.waktu_selesai,'%d-%m-%Y %H:%i') as waktu_selesai"),
+                            "mta.area", 
                             DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
                             DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
                             DB::raw("group_concat(distinct mtc.client separator ', ') AS client"),
@@ -158,6 +187,7 @@ class SdtTrainingController extends Controller
                             DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
                             DB::raw("count(distinct mtt.id) AS total_trainer"))
                         ->where('tr.is_aktif', 1)
+                        ->orderBy('tr.id_training', 'DESC')
                         ->groupBy('tr.id_training');
             
             $data = $data->get();          
@@ -335,10 +365,11 @@ class SdtTrainingController extends Controller
                     'id_pel_tipe' => $request->tipe_id,
                     'id_pel_tempat' => $request->tempat_id,
                     'id_materi' => $request->materi_id,
-                    'id_laman' => $request->laman_id,
+                    // 'id_laman' => $request->laman_id,
                     'alamat' => $request->alamat,
                     'link_zoom' => $request->link_zoom,
                     'updated_at' => $current_date_time,
+                    // 'id_area' => $request->area_id,
                     'enable' => ($request->enable == 'on' ? 1 : 0)
                 ]);
                 $msgSave = 'Training berhasil diubah.';
@@ -368,7 +399,8 @@ class SdtTrainingController extends Controller
                     'link_zoom' => $request->link_zoom,
                     'id_user' => Auth::user()->id,
                     'created_at' => $current_date_time,
-                    'whatsapp_message' => $message
+                    'whatsapp_message' => $message,
+                    'id_area' => $request->area_id,
                 ]);
                 
                 foreach ($request->client_id as $x) {

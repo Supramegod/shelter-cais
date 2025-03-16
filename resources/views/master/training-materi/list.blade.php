@@ -49,10 +49,96 @@
     <!--/ Responsive Datatable -->
 </div>
 <!--/ Content -->
+
+<div class="modal fade" id="modal-training" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-simple modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <div class="modal-body">
+                <div class="table-responsive overflow-hidden">
+                    <table id="table-training" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Materi</th>
+                                <th class="text-center">Waktu Mulai</th>
+                                <th class="text-center">Tipe</th>
+                                <th class="text-center">Tempat</th>
+                                <th class="text-center">Total Peserta</th>
+                                <th class="text-center">Trainer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{-- data table ajax --}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('pageScript')
     <script>
+        $('body').on('click', '.btn-detail', function() {
+            $('#modal-training').modal('show');  
+            let id = $(this).data('id');
+            
+            // let dt_filter_table = $('.dt-column-search');
+            $("#table-training").dataTable().fnDestroy();
+            var table = $('#table-training').DataTable({
+                scrollX: true,
+                "iDisplayLength": 25,
+                'processing': true,
+                'language': {
+                'loadingRecords': '&nbsp;',
+                'processing': 'Loading...',
+                "bDestroy": true
+            },
+                ajax: {
+                    url: "{{ route('training-materi.history') }}",
+                    data: function (d) {
+                        d.materi_id = id;
+                    },
+                },   
+                "order":[
+                    [0,'desc']
+                ],
+                columns:[{
+                    data : 'materi',
+                    name : 'materi',
+                    className:'text-left'
+                },{
+                    data : 'waktu_mulai',
+                    name : 'waktu_mulai',
+                    className:'text-center'
+                },{
+                    data : 'tipe',
+                    name : 'tipe',
+                    className:'text-center'
+                },{
+                    data : 'tempat',
+                    name : 'tempat',
+                    className:'text-center'
+                },{
+                    data : 'total_peserta',
+                    name : 'total_peserta',
+                    className:'text-center'
+                },{
+                    data : 'trainer',
+                    name : 'trainer',
+                    className:'text-left'
+                }],
+                "language": datatableLang
+            });
+
+            // let table2 ='#table-training';
+            // $(table2).DataTable().ajax.reload();
+        });
+
         @if(session()->has('success'))  
             Swal.fire({
                 title: 'Pemberitahuan',
