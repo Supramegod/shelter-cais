@@ -83,10 +83,10 @@
                 scrollX: true,
                 "iDisplayLength": 25,
                 'processing': true,
-            'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...'
-        },
+                'language': {
+                'loadingRecords': '&nbsp;',
+                'processing': 'Loading...'
+            },
                 ajax: {
                     url: "{{ route('training-site.list') }}",
                     data: function (d) {
@@ -134,7 +134,41 @@
                     name : 'aksi',
                     className:'text-left'
                 }],
-                "language": datatableLang
+                "language": datatableLang,
+                dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+                buttons: [
+                    {
+                    extend: 'collection',
+                    className: 'btn btn-label-success dropdown-toggle me-2 waves-effect waves-light',
+                    text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
+                    buttons: [
+                        {
+                        extend: 'csv',
+                        text: '<i class="mdi mdi-file-document-outline me-1" ></i>Excel',
+                        className: 'dropdown-item',
+                        exportOptions: {
+                            columns: [1,2,3,4,5,6,7]
+                        }
+                        },
+                        {
+                        extend: 'pdf',
+                        text: '<i class="mdi mdi-file-pdf-box me-1"></i>Pdf',
+                        className: 'dropdown-item',
+                        orientation: 'landscape',
+                        customize: function(doc) {
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            },
+                        exportOptions: {
+                            columns: [1,2,3,4,5,6,7],
+                            orientation: 'landscape',
+                            customize: function(doc) {
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            }
+                        }
+                        }
+                    ]
+                    }
+                ],
             });
         
         $('body').on('click', '.btn-detail', function() {
@@ -185,6 +219,10 @@
                     data : 'trainer',
                     name : 'trainer',
                     className:'text-left'
+                },{
+                    data : 'report',
+                    name : 'report',
+                    className:'text-left'
                 }],
                 "language": datatableLang
             });
@@ -192,6 +230,87 @@
             // let table2 ='#table-training';
             // $(table2).DataTable().ajax.reload();
         });
+
+
+    function downloadFile(response) {
+    //   alert(response);
+      var blob = new Blob([response], {type: 'application/pdf'})
+      var url = URL.createObjectURL(blob);
+      location.assign(url);
+    } 
+
+    $('body').on('click', '.btn-report', function() {
+    // $('btn-report').on('click',function(){
+        let id = $(this).data('id');
+
+        // alert(id);
+        let formData = {
+            "training_id":id,
+            "_token": "{{ csrf_token() }}"
+        };
+
+        let table ='#table-data';
+        $.ajax({
+            type: "POST",
+            url: "{{route('invite-pdf')}}",
+            data:formData,
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (response, status, xhr) {
+
+                var filename = "";                   
+                var disposition = xhr.getResponseHeader('Content-Disposition');
+
+                if (disposition) {
+                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    var matches = filenameRegex.exec(disposition);
+                    if (matches !== null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                } 
+                var linkelem = document.createElement('a');
+                try {
+                    var blob = new Blob([response], { type: 'application/octet-stream' });                        
+
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        //   IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
+
+                        if (filename) { 
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+
+                            // safari doesn't support this yet
+                            if (typeof a.download === 'undefined') {
+                                window.location = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.target = "_blank";
+                                a.click();
+                            }
+                        } else {
+                            window.location = downloadUrl;
+                        }
+                    }   
+
+                } catch (ex) {
+                    console.log(ex);
+                } 
+                },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+    });
+
     </script>
 
     <div class="modal fade" id="modal-training" tabindex="-1" aria-hidden="true">
@@ -208,6 +327,7 @@
                                     <th class="text-center">Tempat</th>
                                     <th class="text-center">Total Peserta</th>
                                     <th class="text-center">Trainer</th>
+                                    <th class="text-center">Report</th>
                                 </tr>
                             </thead>
                             <tbody>

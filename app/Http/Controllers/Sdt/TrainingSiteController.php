@@ -56,6 +56,7 @@ class TrainingSiteController extends Controller
                         ->leftJoin('m_training_trainer as mtt', 'mtt.id', '=', DB::raw('stt.id_trainer and mtt.is_aktif = 1'))
                         
                         ->select(
+                            "st.id_training",
                             "mtm.materi", 
                             "st.waktu_mulai", 
                             DB::raw("IF(st.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') AS tipe"), 
@@ -66,11 +67,17 @@ class TrainingSiteController extends Controller
                         ->where('st.id_training', '!=', ' null')
                         ->where('mtc.id', '=', $request->client_id)
                         
-                        ->groupBy('mtm.materi', 'st.waktu_mulai', 'tipe', 'tempat');
+                        ->groupBy('st.id_training', 'mtm.materi', 'st.waktu_mulai', 'tipe', 'tempat');
             
             $data = $data->get();          
 
             return DataTables::of($data)
+            ->addColumn('report', function ($data) {
+                return '<div class="justify-content-center d-flex">
+                    <div id="btn-report" class="btn-report btn btn-warning waves-effect btn-xs" data-id="'.$data->id_training.'"><i class="mdi mdi-file-pdf-box"></i>&nbsp;Report</div>
+                </div>';
+            })
+            ->rawColumns(['report'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);

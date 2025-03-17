@@ -29,6 +29,18 @@
                 </select>
               </div>
             </div>
+
+            <label class="col-sm-1 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
+            <div class="col-sm-3">
+              <div class="position-relative">
+                <select multiple id="client_id" name="client_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih Area dulu -</option>
+                </select>
+                @if($errors->has('client_id'))
+                  <div class="invalid-feedback">{{$errors->first('client_id')}}</div>
+                @endif
+              </div>
+            </div>
           </div>
 
           <div class="row mb-3">
@@ -41,14 +53,18 @@
               </div>
             </div>
 
-            <label class="col-sm-1 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
+            <label class="col-sm-1 col-form-label text-sm-end">Trainer <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select multiple id="client_id" name="client_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih Area dulu -</option>
+                <select id="trainer_id" multiple name="trainer_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('trainer_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                  @foreach($listTrainer as $value)
+                  @if($value->id==99) @continue @endif
+                  <option value="{{$value->id}}" @if(old('trainer_id') == $value->id) selected @endif>{{$value->trainer}}</option>
+                  @endforeach
                 </select>
-                @if($errors->has('client_id'))
-                  <div class="invalid-feedback">{{$errors->first('client_id')}}</div>
+                @if($errors->has('trainer_id'))
+                  <div class="invalid-feedback">{{$errors->first('trainer_id')}}</div>
                 @endif
               </div>
             </div>
@@ -76,38 +92,6 @@
               </div>
             </div>
 
-            <label class="col-sm-1 col-form-label text-sm-end">Trainer <span class="text-danger">*</span></label>
-            <div class="col-sm-3">
-              <div class="position-relative">
-                <select id="trainer_id" multiple name="trainer_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('trainer_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listTrainer as $value)
-                  @if($value->id==99) @continue @endif
-                  <option value="{{$value->id}}" @if(old('trainer_id') == $value->id) selected @endif>{{$value->trainer}}</option>
-                  @endforeach
-                </select>
-                @if($errors->has('trainer_id'))
-                  <div class="invalid-feedback">{{$errors->first('trainer_id')}}</div>
-                @endif
-              </div>
-            </div>
-          </div>  
-          
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Tipe <span class="text-danger">*</span></label>
-            <div class="col-sm-3">
-              <div class="position-relative">
-                <select id="tipe_id" name="tipe_id" class="select2 form-select @if ($errors->any()) @if($errors->has('tipe_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                    <option value="">- Pilih Tipe -</option>
-                    <option value="1" @if(old('tipe_id') == '1') selected @endif>ON SITE</option>
-                    <option value="2" @if(old('tipe_id') == '2') selected @endif>OFF SITE</option>
-                </select>
-                @if($errors->has('tipe_id'))
-                  <div class="invalid-feedback">{{$errors->first('tipe_id')}}</div>
-                @endif
-              </div>
-            </div>
-
             <label class="col-sm-1 col-form-label text-sm-end">Tempat <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
@@ -121,7 +105,8 @@
                 @endif
               </div>
             </div>
-          </div>  
+            
+          </div>   
 
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Waktu Mulai <span class="text-danger">*</span></label>

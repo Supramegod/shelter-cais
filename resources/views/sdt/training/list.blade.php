@@ -95,7 +95,7 @@
                                     <th class="text-left">Area</th>    
                                     <th class="text-left">Materi</th>
                                     <th class="text-left">Waktu Mulai</th>
-                                    <th class="text-left">Tipe</th>
+                                    <!-- <th class="text-left">Tipe</th> -->
                                     <th class="text-left">Tempat</th>
                                     <th class="text-left">Client</th>
                                     <th class="text-left">Total Client</th>
@@ -167,11 +167,13 @@
                 data : 'waktu_mulai',
                 name : 'waktu_mulai',
                 className:'text-left'
-            },{
-                data : 'tipe',
-                name : 'tipe',
-                className:'text-left'
-            },{
+            },
+            // {
+            //     data : 'tipe',
+            //     name : 'tipe',
+            //     className:'text-left'
+            // },
+            {
                 data : 'tempat',
                 name : 'tempat',
                 className:'text-left'

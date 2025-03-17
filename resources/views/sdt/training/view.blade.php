@@ -62,6 +62,20 @@
                   </div>
                 </div>
 
+              </div>
+
+              <div class="row mb-3">                
+              <label class="col-sm-2 col-form-label text-sm-end">Area</label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                      @foreach($listArea as $value)
+                      <option disabled value="{{$value->id}}" @if($data->id_area == $value->id) selected @endif>{{$value->area}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
                 <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
                 <div class="col-sm-4">
                   <div class="position-relative">
@@ -75,13 +89,13 @@
               </div>
 
               <div class="row mb-3">
-                
-              <label class="col-sm-2 col-form-label text-sm-end">Area</label>
+                <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
                 <div class="col-sm-4">
                   <div class="position-relative">
-                    <select id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                      @foreach($listArea as $value)
-                      <option disabled value="{{$value->id}}" @if($data->id_area == $value->id) selected @endif>{{$value->area}}</option>
+                    <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($listMateri as $value)
+                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->materi}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -100,33 +114,7 @@
                     @endif
                   </div>
                 </div>
-              </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
-                      @foreach($listMateri as $value)
-                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->materi}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-
-                <label class="col-sm-2 col-form-label text-sm-end">Tipe <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select id="tipe_id" name="tipe_id" class="select2 form-select @if ($errors->any()) @if($errors->has('tipe_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih Tipe -</option>
-                        <option value="1" @if($data->id_pel_tipe == '1') selected @endif>ON SITE</option>
-                        <option value="2" @if($data->id_pel_tipe == '2') selected @endif>OFF SITE</option>
-                    </select>
-                    @if($errors->has('tipe_id'))
-                      <div class="invalid-feedback">{{$errors->first('tipe_id')}}</div>
-                    @endif
-                  </div>
-                </div>
+                
               </div>  
 
               <div class="row mb-3">
