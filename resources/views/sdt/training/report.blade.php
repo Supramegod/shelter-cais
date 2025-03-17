@@ -52,6 +52,12 @@
                                         <table class="table table-borderless table-sm" >
                                             <tbody>
                                                 <tr>
+                                                    <th scope="row" style="width: 40%"><strong>B. Unit :</strong></th>
+                                                    <td>
+                                                        {{$data->laman}}
+                                                    </td>
+                                                </tr>    
+                                                <tr>
                                                     <th scope="row" style="width: 40%"><strong>Tipe :</strong></th>
                                                     <td>
                                                         {{$data->tipe}}
@@ -83,6 +89,12 @@
                                     <div class="table-responsive" >
                                         <table class="table table-borderless table-sm">
                                             <tbody>
+                                                <tr>
+                                                    <th scope="row" style="width: 30%"><strong>Area:</strong></th>
+                                                    <td>
+                                                        {{$data->area}}
+                                                    </td>
+                                                </tr>    
                                                 <tr>
                                                     <th scope="row" style="width: 30%"><strong>Materi:</strong></th>
                                                     <td>

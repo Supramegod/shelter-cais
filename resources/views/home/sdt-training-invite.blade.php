@@ -108,7 +108,8 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
       <!-- Contact Us: Start -->
       <section id="landingContact" class="section-py bg-body landing-contact" style="padding-top:2rem !important">
         <div class="container bg-icon-left position-relative">
-            <form class="card-body overflow-hidden" action="{{route('invite-pdf')}}" method="POST">
+        <!-- pesertaSave -->
+            <form class="card-body overflow-hidden" action="{{route('invite-save')}}" method="POST">
                 @csrf
                 <img
                     src="{{ asset('public/assets/img/front-pages/icons/bg-left-icon-light.png') }}"
@@ -223,7 +224,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                                 <input hidden type="text" class="form-control" readonly id="employee_id" name="employee_id" placeholder="Employee id" />  
                                 <input hidden type="text" class="form-control" readonly id="site_id" name="site_id" placeholder="Site ID" />  
                                 <input hidden type="text" class="form-control" readonly id="jabatan_id" name="jabatan_id" placeholder="Jabatan ID" />  
-                                <input type="text" class="form-control" readonly id="jabatan" name="jabatan" placeholder="Posisi" />
+                                <input type="text" class="form-control" id="jabatan" name="jabatan" placeholder="Posisi" />
                                 </div>
                               </div>
                             </div>
@@ -234,9 +235,11 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                                 <!-- <button type="submit" class="btn btn-primary mt-3">Kirim</button> -->
                                 <div class="pt-4">
                                   <div class="row justify-content-end">
+                                  @if($data->enable == '1')
                                     <div class="col-sm-12 d-flex justify-content-center">
                                       <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Submit</button>
                                     </div>
+                                  @endif
                                   </div>
                                 </div>
                             

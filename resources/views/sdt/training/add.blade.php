@@ -21,7 +21,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1" onchange="setValueArea(this)";>
                   <option value="">- Pilih data -</option>
                   @foreach($listBu as $value)
                   <option value="{{$value->id}}" @if(old('laman_id') == $value->id) selected @endif>{{$value->laman}}</option>
@@ -34,36 +34,22 @@
             <div class="col-sm-3">
               <div class="position-relative">
                 <select multiple id="client_id" name="client_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listClient as $value)
-                  <option value="{{$value->id}}" @if(old('client_id') == $value->id) selected @endif>{{$value->client}}</option>
-                  @endforeach
+                  <option value="">- Pilih Area dulu -</option>
                 </select>
                 @if($errors->has('client_id'))
                   <div class="invalid-feedback">{{$errors->first('client_id')}}</div>
                 @endif
               </div>
             </div>
-
-            <label class="col-sm-1 col-form-label text-sm-end">Peserta</label>
-            <div class="col-sm-2">
-              <input type="number" id="peserta" name="peserta" value="{{old('peserta')}}" class="form-control @if ($errors->any())   @endif">
-            </div>
-            
           </div>
+
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Area</label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listMateri as $value)
-                  <option value="{{$value->id}}" @if(old('materi_id') == $value->id) selected @endif>{{$value->materi}}</option>
-                  @endforeach
+                <select id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1" onchange="setValueClient(this)">
+                  <option value="">- Pilih Business Unit dulu -</option>
                 </select>
-                @if($errors->has('materi_id'))
-                  <div class="invalid-feedback">{{$errors->first('materi_id')}}</div>
-                @endif
               </div>
             </div>
 
@@ -82,19 +68,26 @@
                 @endif
               </div>
             </div>
-          </div>  
+
+            <!-- <label class="col-sm-1 col-form-label text-sm-end">Peserta</label>
+            <div class="col-sm-2">
+              <input type="number" id="peserta" name="peserta" value="{{old('peserta')}}" class="form-control @if ($errors->any())   @endif">
+            </div> -->
+            
+          </div>
           
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Tipe <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select id="tipe_id" name="tipe_id" class="select2 form-select @if ($errors->any()) @if($errors->has('tipe_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                    <option value="">- Pilih Tipe -</option>
-                    <option value="1" @if(old('tipe_id') == '1') selected @endif>ON SITE</option>
-                    <option value="2" @if(old('tipe_id') == '2') selected @endif>OFF SITE</option>
+                <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                  @foreach($listMateri as $value)
+                  <option value="{{$value->id}}" @if(old('materi_id') == $value->id) selected @endif>{{$value->materi}}</option>
+                  @endforeach
                 </select>
-                @if($errors->has('tipe_id'))
-                  <div class="invalid-feedback">{{$errors->first('tipe_id')}}</div>
+                @if($errors->has('materi_id'))
+                  <div class="invalid-feedback">{{$errors->first('materi_id')}}</div>
                 @endif
               </div>
             </div>
@@ -112,13 +105,14 @@
                 @endif
               </div>
             </div>
-          </div>  
+            
+          </div>   
 
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Waktu Mulai <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-              <input type="date" id="start_date" name="start_date" value="{{old('start_date')}}" class="form-control @if ($errors->any())   @endif">
+              <input type="datetime-local" id="start_date" name="start_date" value="{{old('start_date')}}" class="form-control @if ($errors->any())   @endif">
                 @if($errors->has('start_date'))
                   <div class="invalid-feedback">{{$errors->first('start_date')}}</div>
                 @endif
@@ -128,13 +122,29 @@
             <label class="col-sm-1 col-form-label text-sm-end">Waktu Selesai <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-              <input type="date" id="end_date" name="end_date" value="{{old('end_date')}}" class="form-control @if ($errors->any())   @endif">
+              <input type="datetime-local" id="end_date" name="end_date" value="{{old('end_date')}}" class="form-control @if ($errors->any())   @endif">
                 @if($errors->has('end_date'))
                   <div class="invalid-feedback">{{$errors->first('end_date')}}</div>
                 @endif
               </div>
             </div>
           </div>  
+
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Alamat</label>
+            <div class="col-sm-3">
+              <div class="form-floating form-floating-outline mb-4">
+                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="alamat" id="alamat" placeholder="">{{old('alamat')}}</textarea>
+              </div>
+            </div>
+
+            <label class="col-sm-1 col-form-label text-sm-end">Link Zoom</label>
+            <div class="col-sm-3">
+              <div class="form-floating form-floating-outline mb-4">
+                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="link_zoom" id="link_zoom" placeholder="">{{old('link_zoom')}}</textarea>
+              </div>
+            </div>
+          </div>
 
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
@@ -145,77 +155,7 @@
             </div>
           </div>
 
-          <!-- <hr class="my-4 mx-4">
-          <h6>2. Kebutuhan SDT Training</h6>
-          <div class="row mb-2">
-            <label class="col-sm-2 col-form-label text-sm-end">Materi</label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="materi_id" name="materi_id" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listMateri as $value)
-                  <option value="{{$value->id}}" @if(old('materi_id') == $value->id) selected @endif>{{$value->materi}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Trainer <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="trainer_id" name="trainer_id" class="form-select @if ($errors->any()) @if($errors->has('trainer_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listTrainer as $value)
-                  @if($value->id==99) @continue @endif
-                  <option value="{{$value->id}}" @if(old('trainer_id') == $value->id) selected @endif>{{$value->trainer}}</option>
-                  @endforeach
-                </select>
-                @if($errors->has('trainer_id'))
-                  <div class="invalid-feedback">{{$errors->first('trainer_id')}}</div>
-                @endif
-              </div>
-            </div>
-          </div>
-          <hr class="my-4 mx-4">
-          <h6>3. Informasi PIC</h6>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
-              <input type="text" id="pic" name="pic" value="{{old('pic')}}" class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
-              @if($errors->has('pic'))
-                  <div class="invalid-feedback">{{$errors->first('pic')}}</div>
-              @endif
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
-            <div class="col-sm-4">
-              <div class="position-relative">
-                <select id="jabatan_pic" name="jabatan_pic" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listTrainer as $value)
-                  <option value="{{$value->id}}" @if(old('jabatan_pic') == $value->id) selected @endif>{{$value->trainer}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nomor Telepon</label>
-            <div class="col-sm-4">
-              <input type="number" id="no_telp" name="no_telp" value="{{old('no_telp')}}" class="form-control @if ($errors->any())   @endif">
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Email</label>
-            <div class="col-sm-4">
-              <input type="text" id="email" name="email" value="{{old('email')}}" class="form-control @if ($errors->any())   @endif">
-            </div>
-          </div>
-          <hr class="my-4 mx-4">
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Detail SDT Training</label>
-            <div class="col-sm-10">
-              <div class="form-floating form-floating-outline mb-4">
-                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="detail_sdt training" id="detail_sdt training" placeholder="">{{old('detail_sdt training')}}</textarea>
-              </div>
-            </div>
-          </div> -->
+        
           <hr class="my-4 mx-4">
           <div class="row mb-3">
             <label class="col-sm-12 col-form-label">Note : <span class="text-danger">*)</span> Wajib Diisi</label>
@@ -242,6 +182,64 @@
   $(document).ready(function() {
     $('.select2').select2();
   });
+
+  function setValueArea(sel)
+  {
+    var id = sel.value;
+    let formData = {
+        "id":id,
+        "_token": "{{ csrf_token() }}"
+    };
+
+    $.ajax({
+        type: 'GET',
+        url: "{{route('sdt-training.list-area')}}",
+        data: {
+            'id': id
+        },
+        success: function (response) {
+            // the next thing you want to do 
+            var $area = $('#area_id');
+            $area.empty();
+            
+            $area.append('<option id=0 value=0> - Pilih Area - </option>');
+            for (var i = 0; i < response.data.length; i++) {
+                $area.append('<option id=' + response.data[i].id + ' value=' + response.data[i].id + '>' + response.data[i].area + '</option>');
+            }
+        }
+    });
+  }
+
+  function setValueClient(sel)
+  {
+    var area_id = sel.value;
+    var laman_id = $('#laman_id').val();
+    
+    let formData = {
+        "area_id":area_id,
+        "laman_id":laman_id,
+        "_token": "{{ csrf_token() }}"
+    };
+
+    $.ajax({
+        type: 'GET',
+        url: "{{route('sdt-training.list-client')}}",
+        data: {
+            'area_id':area_id,
+            'laman_id':laman_id,
+        },
+        success: function (response) {
+            // the next thing you want to do 
+            var $client = $('#client_id');
+            $client.empty();
+            
+            $client.append('<option id=0 value=0> - Pilih Client - </option>');
+            for (var i = 0; i < response.data.length; i++) {
+                $client.append('<option value=' + response.data[i].id + '>' + response.data[i].client + '</option>');
+            }
+        }
+    });
+  }
 </script>
 <script>
   @if(session()->has('success'))  
@@ -253,6 +251,8 @@
         confirmButton: 'btn btn-primary waves-effect waves-light'
       },
       buttonsStyling: false
+    }).then(function() {
+        window.location.href = '{{route("sdt-training")}}';
     });
   @endif
 </script>

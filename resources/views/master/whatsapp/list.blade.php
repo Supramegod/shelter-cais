@@ -53,12 +53,12 @@
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Nomor Whatsapp</th>
-                                    <th class="text-center">Pesan</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Created Date</th>
-                                    <th class="text-center">Send Date</th>
-                                    <th class="text-center">Aksi</th>
+                                    <th class="text-left">Nomor Whatsapp</th>
+                                    <th class="text-left">Pesan</th>
+                                    <th class="text-left">Status</th>
+                                    <th class="text-left">Created Date</th>
+                                    <th class="text-left">Send Date</th>
+                                    <!-- <th class="text-left">Aksi</th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -108,37 +108,30 @@
                 $('td', row).css('color', data.warna_font);
             },      
             "order":[
-                [0,'desc']
             ],
             columns:[{
                 data : 'nomor_wa',
                 name : 'nomor_whatsapp',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'message',
                 name : 'message',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'status',
                 name : 'status',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'created_date',
                 name : 'created_date',
-                className:'text-center'
+                className:'text-left'
             },{
                 data : 'send_date',
                 name : 'send_date',
-                className:'text-center'
-            },{
-                data : 'aksi',
-                name : 'aksi',
-                width: "10%",
-                orderable: false,
-                searchable: false,
+                className:'text-left'
             }],
             "language": datatableLang,
-            dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+            dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-left"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
             buttons: [{
                 text: '<i class="mdi mdi-lan-disconnect me-sm-1"></i> <span class="d-none d-sm-inline-block">Status Sender {{$status}} </span>',
                 className: 'create-new btn @if($status == "Close") btn-label-danger @else btn-label-success @endif waves-effect waves-light btn-qr',

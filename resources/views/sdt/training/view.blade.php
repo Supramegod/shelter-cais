@@ -53,13 +53,49 @@
               <!-- <h6>1. Informasi Perusahaan</h6> -->
               <input type="hidden" name="id" value="{{$data->id_training}}">
               <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Absensi Active</label>
+                <div class="col-sm-4">
+                  <div class="position-relative">  
+                    <div class="form-check form-switch" >
+                      <input style="width: 60px; height: 30px;" class="form-check-input form-control" type="checkbox" role="switch" id="enable" name="enable" @if($data->enable == '1') checked @endif>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row mb-3">                
+              <label class="col-sm-2 col-form-label text-sm-end">Area</label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                      @foreach($listArea as $value)
+                      <option disabled value="{{$value->id}}" @if($data->id_area == $value->id) selected @endif>{{$value->area}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
                 <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
                 <div class="col-sm-4">
                   <div class="position-relative">
                     <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
                       @foreach($listBu as $value)
-                      <option value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
+                      <option disabled value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="position-relative">
+                    <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                      <option value="">- Pilih data -</option>
+                      @foreach($listMateri as $value)
+                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->materi}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -78,33 +114,7 @@
                     @endif
                   </div>
                 </div>
-              </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
-                      @foreach($listMateri as $value)
-                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->materi}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-
-                <label class="col-sm-2 col-form-label text-sm-end">Tipe <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select id="tipe_id" name="tipe_id" class="select2 form-select @if ($errors->any()) @if($errors->has('tipe_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih Tipe -</option>
-                        <option value="1" @if($data->id_pel_tipe == '1') selected @endif>ON SITE</option>
-                        <option value="2" @if($data->id_pel_tipe == '2') selected @endif>OFF SITE</option>
-                    </select>
-                    @if($errors->has('tipe_id'))
-                      <div class="invalid-feedback">{{$errors->first('tipe_id')}}</div>
-                    @endif
-                  </div>
-                </div>
+                
               </div>  
 
               <div class="row mb-3">
@@ -129,7 +139,23 @@
                 </div>
               </div>  
 
-              <div class="row mb-3">
+              <div class="row">
+                <label class="col-sm-2 col-form-label text-sm-end">Alamat <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="form-floating form-floating-outline mb-4">
+                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="alamat" id="alamat" placeholder="">{{$data->alamat}}</textarea>
+                  </div>
+                </div>
+
+                <label class="col-sm-2 col-form-label text-sm-end">Link Zoom <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <div class="form-floating form-floating-outline mb-4">
+                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="link_zoom" id="link_zoom" placeholder="">{{$data->link_zoom}}</textarea>
+                  </div>
+                </div>
+              </div>  
+
+              <div class="row">
                 <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
                 <div class="col-sm-10">
                   <div class="form-floating form-floating-outline mb-4">
@@ -182,24 +208,30 @@
                   <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
               </button>
             </div>
-            <!-- <div class="col-12 text-center mt-2">
-              <button id="btn-add-peserta" class="btn btn-success w-100 waves-effect waves-light">
-                <span class="me-1">Tambah Peserta</span>
+            <div class="col-12 text-center mt-2">
+              <button id="btn-pesan-undangan" class="btn btn-success w-100 waves-effect waves-light">
+                <span class="me-1">Pesan Undangan</span>
                   <i class="mdi mdi-account-multiple-plus scaleX-n1-rtl"></i>
               </button>
-            </div> -->
-            <!-- <div class="col-12 text-center mt-2">
-              <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light">
-                <span class="me-1">Tambah Trainer</span>
-                  <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
-              </button>
-            </div> -->
+            </div>
+            <div class="col-12 text-center mt-2">
+              <form action="{{route('invite-pdf')}}" method="POST">
+              @csrf
+                <input hidden type="text" class="form-control" id="training_id" name="training_id" placeholder="Training id" value="{{$data->id_training}}"/>  
+                <button type="submit"  class="btn btn-warning w-100 waves-effect waves-light">
+                  <span class="me-1">Generate PDF</span>
+                    <i class="mdi mdi-file-pdf-box scaleX-n1-rtl"></i>
+                </button>
+              </form>
+            </div>
+
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
                 <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
               </button>
             </div>
+
             <hr class="my-4 mx-4">
             <!-- <div class="col-12 text-center mt-2">
               <button id="btn-delete" class="btn btn-danger w-100 waves-effect waves-light">
@@ -726,12 +758,16 @@
 
 
   $('#btn-kembali').on('click',function () {
-    window.history.go(-1); return false;
-    // window.location.replace("{{route('leads')}}");
+    // alert('jljljjj');
+    window.location.href = '{{route("sdt-training")}}';
   });
 
   $('#btn-add-client').on('click',function(){
     $('#modal-client').modal('show');  
+  });
+
+  $('#btn-pesan-undangan').on('click',function(){
+    $('#modal-pesan-undangan').modal('show');  
   });
 
   // $('#btn-add-gallery').on('click',function(){
@@ -868,6 +904,43 @@
         });
       }
     });
+
+    function downloadFile(response) {
+      alert(response);
+      var blob = new Blob([response], {type: 'application/pdf'})
+      var url = URL.createObjectURL(blob);
+      location.assign(url);
+    } 
+
+    $('#btn-generate-pdf').on('click',function(){
+      let id = $('#training_id').val();
+      let formData = {
+            "training_id": id,
+            "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+            type: "GET",
+            url: "{{route('invite-pdf')}}",
+            data:formData,
+            success: function(response){
+              downloadFile(response);
+              // Create a link element to download the file
+                // var blob = new Blob([response], { type: 'application/pdf' });
+                // var link = document.createElement('a');
+                // link.href = URL.createObjectURL(blob);
+                // link.download = 'your-pdf-file.pdf';
+                // link.click();
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+    });
     
     $('#btn-add-peserta-save').on('click',function(){
       $('#modal-peserta').modal('hide');
@@ -974,12 +1047,63 @@
           }
       });
     });
+
+    $('#btn-add-pesan-undangan-save').on('click',function(){
+      $('#modal-pesan-undangan').modal('hide');
+      
+      let id = $('#training_id').val();
+      let pesan = $('#pesan-undangan').val();
+      // alert(id + ' ' + pesan);
+      let formData = {
+          "id":id,
+          "pesan_undangan": pesan,
+          "_token": "{{ csrf_token() }}"
+      };
+
+      $.ajax({
+            type: "POST",
+            url: "{{route('sdt-training.save-message')}}",
+            data:formData,
+            success: function(response){
+                // console.log(response);
+                // alert(response)
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                          location.reload();
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+    });
+
     // $('#select2insidemodal').select2();
     // $("#trainer_id").select2({
     //   dropdownParent: $("#modal-trainer")
     // });
   });
 
+
+  
   
   
   // $("#select2Input").select2({ dropdownParent: "#modal-container" });
@@ -1048,6 +1172,34 @@
       <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
         <button id="btn-add-client-save" class="btn btn-primary">Add Peserta</button>
+        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-pesan-undangan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Isi Pesan Undangan : <p id="nama"></p></h4>
+        </div>
+        
+        <div class="row">    
+            <!-- <label class="col-sm-3 col-form-label text-sm-end">Client <span class="text-danger">*</span></label> -->
+            <div class="col-sm-12">
+              <div class="position-relative">
+                <textarea style="height: 100% !important;" rows="12" cols="50" class="form-control h-px-100 @if ($errors->any())   @endif" name="pesan-undangan" id="pesan-undangan" placeholder="">{{$message}}</textarea>
+              </div>
+            </div>
+        </div>  
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-add-pesan-undangan-save" class="btn btn-primary">Save</button>
         <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
       </div>
     </div>

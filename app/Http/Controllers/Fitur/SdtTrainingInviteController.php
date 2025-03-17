@@ -17,6 +17,7 @@ class SdtTrainingInviteController extends Controller
 {
     public function testPdf(Request $request)
     {
+        
         // $pdf = PDF::loadHTML('<h1>Test</h1>');
         // $pdf = PDF::make('dompdf.wrapper');
         // $pdf = PDF::loadHTML('<h1>Test</h1>');
@@ -54,12 +55,16 @@ class SdtTrainingInviteController extends Controller
             ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
             ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
             ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
+            ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
+            ->leftJoin('m_training_laman as mtl','mtl.id', '=', 'tr.id_laman')
             ->where('tr.is_aktif', 1)
             ->where('tr.id_training', $request->training_id)
             ->select("tr.id_training as id", "mtm.materi", "tr.keterangan", "tr.waktu_mulai", "tr.waktu_selesai", DB::raw("group_concat(distinct mtc.client separator ' , ') AS client"), 
             DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"),
             DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
-            DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"))
+            DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
+            "mta.area",
+            "mtl.laman")
             ->groupBy('tr.id_training')
             ->first();
 
@@ -67,6 +72,8 @@ class SdtTrainingInviteController extends Controller
         $pdf = PDF::loadView('sdt.training.report', ['trainer' => $trainer, 'client' => $client, 'peserta' => $peserta, 'data' => $data, 'listImage' => $listImage]);
         $pdf->set_option('isRemoteEnabled', true);
         return $pdf->stream();
+        
+        // return $pdf->download("SDT-Training.pdf");
     }
 
     public function testPdfWeb(Request $request)
@@ -115,7 +122,7 @@ class SdtTrainingInviteController extends Controller
                 ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
                 ->where('tr.is_aktif', 1)
                 ->where('tr.id_training', $request->id)
-                ->select("tr.id_training as id", "mtm.materi", "tr.keterangan", "tr.waktu_mulai", "tr.waktu_selesai", DB::raw("group_concat(distinct mtc.client separator ' , ') AS client"), 
+                ->select("tr.enable", "tr.id_training as id", "mtm.materi", "tr.keterangan", "tr.waktu_mulai", "tr.waktu_selesai", DB::raw("group_concat(distinct mtc.client separator ' , ') AS client"), 
                 DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"),
                 DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
                 DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"))
@@ -205,198 +212,5 @@ class SdtTrainingInviteController extends Controller
         }
         return null;
     }
-
-    // public function apiContactSave(Request $request){
-    //     try {
-    //         DB::beginTransaction();
-    //         $current_date_time = Carbon::now()->toDateTimeString();
-    //         $nomor = $this->generateNomor();
-
-    //         $qplatform = DB::table('m_platform')->where('nama',$request->platform)->whereNull('deleted_at')->first();
-    //         $platform = null;
-    //         if($qplatform!=null){
-    //             $platform = $qplatform->id;
-    //         }
-
-    //         $newId = DB::table('sl_leads')->insertGetId([
-    //             'nomor' =>  $nomor,
-    //             'tgl_leads' => $current_date_time,
-    //             'nama_perusahaan' => $request->nama_perusahaan,
-    //             'branch_id' => $request->branch,
-    //             'platform_id' => $platform,
-    //             'kebutuhan_id' =>  $request->kebutuhan,
-    //             'pic' =>  $request->nama,
-    //             'jabatan' =>  $request->jabatan,
-    //             'no_telp' => $request->no_telepon,
-    //             'email' => $request->email,
-    //             'status_leads_id' => 1,
-    //             'notes' => $request->pesan,
-    //             'created_at' => $current_date_time,
-    //             'created_by' => 'api'
-    //         ]);
-
-    //         $customerActivityController = new CustomerActivityController();
-    //         $nomorActivity = $customerActivityController->generateNomor($newId);
-
-    //         $activityId = DB::table('sl_customer_activity')->insertGetId([
-    //             'leads_id' => $newId,
-    //             'branch_id' => $request->branch,
-    //             'tgl_activity' => $current_date_time,
-    //             'nomor' => $nomorActivity,
-    //             'notes' => 'Leads Terbentuk',
-    //             'tipe' => 'Leads',
-    //             'status_leads_id' => 1,
-    //             'is_activity' => 0,
-    //             'user_id' => Auth::user()->id,
-    //             'created_at' => $current_date_time,
-    //             'created_by' => Auth::user()->full_name
-    //         ]);
-            
-    //         DB::commit();
-    //         return response()->json([
-    //             'success' => true,
-    //             'msg' => 'Berhasil mengirim data',
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'msg' => 'Gagal mengirim data , silahkan cek kembali inputan anda',
-    //         ]);
-    //         abort(500);
-    //     }
-    // }
-
-    // public function generateNomor (){
-    //     //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
-
-    //     //dapatkan dulu last leads 
-    //     $nomor = "AAAAA";
-
-    //     $lastLeads = DB::table('sl_leads')->orderBy('id', 'DESC')->first();
-    //     if($lastLeads!=null){
-    //         $nomor = $lastLeads->nomor;
-    //         $chars = str_split($nomor);
-    //         for ($i=count($chars)-1; $i >= 0; $i--) { 
-    //             //dapatkan ascii dari character
-    //             $ascii = ord($chars[$i]);
-
-    //             if(($ascii >= 48 && $ascii < 57) || ($ascii >= 65 && $ascii < 90)){
-    //                 $ascii += 1;
-    //             }else if ($ascii == 90 ) {
-    //                 $ascii = 48;
-    //             }else{
-    //                 continue;
-    //             }
-
-    //             $ascchar = chr($ascii);
-    //             $nomor = substr_replace($nomor,$ascchar,$i);
-    //             break;
-    //         }
-    //         if(strlen($nomor)<5){
-    //             $jumlah = 5-strlen($nomor);
-    //             for ($i=0; $i < $jumlah; $i++) { 
-    //                 $nomor = $nomor."A";
-    //             }
-    //         }
-    //     }
-
-    //     return $nomor;
-    // }
-
-    // public function handleWebhook(Request $request,$key){
-    //     // Process webhook payload
-    //     // Perform actions based on the webhook data
-    //     try {
-    //         if($key =="zRdjjhBKq8g4Xn1Xojp2oOggh8Ar4jpr"){
-    //             // Ambil 'fields' dari data JSON
-    //             $name = $request->input('name');
-    //             $message = $request->input('message');
-    //             $email = $request->input('email');
-    //             $kebutuhan = $request->input('field_755c2e6');
-    //             $kota = $request->input('field_41ddce4');
-    //             $jabatan = $request->input('field_c71451e');
-    //             $namaPerusahaan = $request->input('field_1f9a4aa');
-    //             $pesan = $request->input('field_d6eada5');
-    //             $recaptcha = $request->input('field_33bab84');
-    //             $wilayah = $request->input('field_41ddce4');
-
-    //             DB::table('wh_shelterapp')->insert([
-    //                 'name' => $name,
-    //                 'no_telepon' => $message,
-    //                 'email' => $email,
-    //                 'kebutuhan' => $kebutuhan,
-    //                 'kota' => $kota,
-    //                 'jabatan' => $jabatan,
-    //                 'nama_perusahaan' => $namaPerusahaan,
-    //                 'pesan' => $pesan,
-    //                 'message' => $message,
-    //                 'wilayah' => $wilayah,
-    //                 'recaptcha' => $recaptcha
-    //             ]);
-                
-    //             $current_date_time = Carbon::now()->toDateTimeString();
-    //             $nomor = $this->generateNomor();
-    //             $kebutuhanId = null;
-    //             if($kebutuhan=='securityservice'){
-    //                 $kebutuhanId = 1;
-    //             }else if($kebutuhan=='cleaning_service'){
-    //                 $kebutuhanId = 3;
-    //             }else if($kebutuhan=='labour_supply'){
-    //                 $kebutuhanId = 2;
-    //             }else if($kebutuhan=='Logistic'){
-    //                 $kebutuhanId = 4;
-    //             }else{
-    //                 $kebutuhanId = 99;
-    //             };
-
-    //             $branch = null;
-    //             $province = DB::connection('mysqlhris')->table('m_province')->where('name','like',$wilayah)->first();
-    //             if($province !=null){
-    //                 $branch = $province->branch_id;
-    //             };
-                
-    //             $newId = DB::table('sl_leads')->insertGetId([
-    //                 'nomor' =>  $nomor,
-    //                 'tgl_leads' => $current_date_time,
-    //                 'nama_perusahaan' => $namaPerusahaan,
-    //                 'branch_id' => $branch,
-    //                 'platform_id' => 4,
-    //                 'kebutuhan_id' =>  $kebutuhanId,
-    //                 'pic' =>  $name,
-    //                 'jabatan' =>  $jabatan,
-    //                 'no_telp' => $message,
-    //                 'email' => $email,
-    //                 'status_leads_id' => 1,
-    //                 'notes' => $pesan,
-    //                 'created_at' => $current_date_time,
-    //                 'created_by' => 'webhook'
-    //             ]);    
-                
-    //             //insert ke activity sebagai activity pertama
-    //             $customerActivityController = new CustomerActivityController();
-    //             $nomorActivity = $customerActivityController->generateNomor($newId);
-
-    //             $activityId = DB::table('sl_customer_activity')->insertGetId([
-    //                 'leads_id' => $newId,
-    //                 'branch_id' => $branch,
-    //                 'tgl_activity' => $current_date_time,
-    //                 'nomor' => $nomorActivity,
-    //                 'notes' => 'Leads baru dari web',
-    //                 'tipe' => 'Leads',
-    //                 'status_leads_id' => 1,
-    //                 'is_activity' => 0,
-    //                 'user_id' => Auth::user()->id,
-    //                 'created_at' => $current_date_time,
-    //                 'created_by' => Auth::user()->full_name
-    //             ]);
-
-    //             return response()->json(['success' => true]);
-    //         }else{
-    //             return response()->json(['success' => false]);
-    //         }
-    //     } catch (\Throwable $th) {
-    //         return response()->json(['success' => false]);
-    //     }
-    // }
 
 }
