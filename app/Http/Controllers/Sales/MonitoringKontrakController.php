@@ -118,6 +118,7 @@ class MonitoringKontrakController extends Controller
             // if (!in_array(Auth::user()->role_id,[2,54,55])) {
             //     return "";
             // }
+            // return '<div class="d-inline-flex" data-bs-toggle="tooltip" data-bs-html="true" aria-label="<span>Sent<br> <span class=&quot;fw-medium&quot;>Balance:</span> 0<br> <span class=&quot;fw-medium&quot;>Due Date:</span> 05/09/2020</span>" data-bs-original-title="<span>Sent<br> <span class=&quot;fw-medium&quot;>Balance:</span> 0<br> <span class=&quot;fw-medium&quot;>Due Date:</span> 05/09/2020</span>"><span class="avatar avatar-sm"> <span class="avatar-initial rounded-circle bg-label-secondary"><i class="mdi mdi-email-outline"></i></span></span></div>';
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
             $aksi = "";
             $aksi .= '&nbsp;<a href="'.route('monitoring-kontrak.view', $data->id).'" class="btn btn-sm btn-secondary">View</a>';
