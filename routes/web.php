@@ -538,7 +538,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/training-materi/list', 'list')->name('training-materi.list'); // ajax
         Route::post('/master/training-materi/delete', 'delete')->name('training-materi.delete');
 
-        Route::get('/master/training-materi/history', 'historyTrainingByMateri')->name('training-materi.history'); 
+        Route::get('/master/training-materi/history', 'historyTrainingByMateri')->name('training-materi.history');
         // Route::get('/master/training-materi/list-training-materi', 'listUmk')->name('training-materi.list-umk'); // ajax
     });
 
@@ -630,6 +630,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/monitoring-kontrak/terminate', 'terminate')->name('monitoring-kontrak.terminate');
         Route::get('/sales/monitoring-kontrak/index-terminate', 'indexTerminate')->name('monitoring-kontrak.index-terminate');
         Route::get('/sales/monitoring-kontrak/list-terminate', 'listTerminate')->name('monitoring-kontrak.list-terminate');
+
+        Route::get('/sales/monitoring-kontrak/import', 'import')->name('monitoring-kontrak.import');
+        Route::get('/sales/monitoring-kontrak/template-import', 'templateImport')->name('monitoring-kontrak.template-import');
+
+        Route::post('/sales/monitoring-kontrak/inquiry-import', 'inquiryImport')->name('monitoring-kontrak.inquiry-import');
+        Route::post('/sales/monitoring-kontrak/save-import', 'saveImport')->name('monitoring-kontrak.save-import');
     });
 
     Route::controller(EntitasController::class)->group(function() {

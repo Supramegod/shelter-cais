@@ -151,9 +151,34 @@
         dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
         buttons: [
             {
+                extend: 'collection',
+                className: 'btn btn-label-warning dropdown-toggle mx-3 waves-effect waves-light',
+                text: '<i class="mdi mdi-file-import-outline me-sm-1"></i> <span class="d-none d-sm-inline-block">Import</span>',
+                buttons: [
+                    {
+                        text: '<i class="mdi mdi-file-import-outline"></i> Import',
+                        className: 'dropdown-item',
+                        action: function (e, dt, node, config)
+                            {
+                                //This will send the page to the location specified
+                                window.location.href = '{{route("monitoring-kontrak.import")}}';
+                            }
+                    },
+                    {
+                        text: '<i class="mdi mdi-file-excel"></i> Download Template',
+                        className: 'dropdown-item',
+                        action: function (e, dt, node, config)
+                            {
+                                //This will send the page to the location specified
+                                window.location.href = '{{route("monitoring-kontrak.template-import")}}';
+                            }
+                    },
+                ]
+            },
+            {
             extend: 'collection',
             className: 'btn btn-label-success dropdown-toggle me-2 waves-effect waves-light',
-            text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
+            text: '<i class="mdi mdi-export me-sm-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
             buttons: [
                 {
                 extend: 'csv',
@@ -217,93 +242,9 @@
                     }
                     }
                 }
-                },
-            ]
-            },{
-                text: '<i class="mdi mdi-delete me-sm-1"></i> <span class="d-none d-sm-inline-block">List Kontrak Terminated</span>',
-                className: 'btn btn-label-danger waves-effect waves-light',
-                action: function (e, dt, node, config)
-                    {
-                        //This will send the page to the location specified
-                        window.location.href = '{{route("monitoring-kontrak.index-terminate")}}';
-                    }
-                },
+            }]},
+
         ],
-    });
-
-    // Add event listener for opening and closing details
-    // table.on('click', 'td.dt-control', function (e) {
-    //     let tr = e.target.closest('tr');
-    //     let row = table.row(tr);
-
-    //     if (row.child.isShown()) {
-    //         // This row is already open - close it
-    //         row.child.hide();
-    //     }
-    //     else {
-    //         // Open this row
-    //         // row.child(format(row.data())).show();
-    //     }
-    // });
-
-    // ajax terminate kontrak dengan swal konfirmasi terminate kontrak
-    function terminateKontrak(id){
-        Swal.fire({
-            title: 'Loading',
-            text: 'Melakukan Terminate kontrak...',
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            willOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        $.ajax({
-            url: "{{ route('monitoring-kontrak.terminate') }}",
-            type: "POST",
-            data: {
-                id: id,
-                _token: "{{ csrf_token() }}"
-            },
-            success: function(response){
-                if(response.status == 'success'){
-                    Swal.fire({
-                        title: 'Berhasil',
-                        text: response.message,
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            table.ajax.reload();
-                        }
-                    });
-                }else{
-                    Swal.fire({
-                        title: 'Gagal',
-                        text: response.message,
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            }
-        });
-    }
-
-    $(document).on('click', '.btn-terminate-kontrak', function(){
-        let id = $(this).data('id');
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: "Apakah anda yakin ingin terminate kontrak ini?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, terminate'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                terminateKontrak(id);
-            }
-        });
     });
 </script>
 @endsection

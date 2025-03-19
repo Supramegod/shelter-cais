@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MonitoringKontrakTemplateExport;
 
 class MonitoringKontrakController extends Controller
 {
@@ -351,6 +352,18 @@ class MonitoringKontrakController extends Controller
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
+    }
+
+    public function templateImport(Request $request) {
+        $dt = Carbon::now()->toDateTimeString();
+
+        return Excel::download(new MonitoringKontrakTemplateExport(), 'Template Monitoring Kontrak-'.$dt.'.xlsx');
+    }
+
+    public function import (Request $request){
+        $now = Carbon::now()->isoFormat('DD MMMM Y');
+
+        return view('sales.monitoring-kontrak.import',compact('now'));
     }
 
 }

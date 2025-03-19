@@ -112,7 +112,7 @@
         "createdRow": function( row, data, dataIndex){
             $('td', row).css('background-color', data.warna_row);
             $('td', row).css('color', data.warna_font);
-        },     
+        },
         "order":[
             [0,'desc']
         ],
@@ -182,7 +182,7 @@
     table.on('click', 'td.dt-control', function (e) {
         let tr = e.target.closest('tr');
         let row = table.row(tr);
-    
+
         if (row.child.isShown()) {
             // This row is already open - close it
             row.child.hide();
