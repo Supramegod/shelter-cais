@@ -107,6 +107,7 @@ class MonitoringKontrakTemplateExport implements FromCollection, WithCustomStart
                 $sheet->setCellValue('BM1', "Email 3");
                 $sheet->setCellValue('BN1', "No. Telepon 3");
                 $sheet->setCellValue('BO1', "Kategori Sesuai HC");
+                $sheet->setCellValue('BP1', "Sales");
                 $styleArray = [
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
@@ -122,11 +123,11 @@ class MonitoringKontrakTemplateExport implements FromCollection, WithCustomStart
                     ]
                 ];
 
-                $cellRange = 'A1:BO1'; // All headers
+                $cellRange = 'A1:BP1'; // All headers
                 $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray($styleArray);
                 $event->sheet->autoSize(true);
 
-                $event->sheet->getStyle('A2:BO1000')->applyFromArray([
+                $event->sheet->getStyle('A2:BP1000')->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -153,6 +154,9 @@ class MonitoringKontrakTemplateExport implements FromCollection, WithCustomStart
             'Ref Loyalty' => new RefLoyaltySheet(),
             'Ref Tipe Hari TOP' => new RefTipeHariTopSheet(),
             'Ref Kategori Sesuai HC' => new RefKategoriSesuaiHcSheet(),
+            'Ref RO' => new RefROSheet(),
+            'Ref CRM' => new RefCRMSheet(),
+            'Ref Sales' => new RefSalesSheet(),
         ];
     }
 
@@ -295,7 +299,7 @@ class RefLoyaltySheet implements FromCollection, WithTitle
 {
     public function collection()
     {
-        $data = DB::table("m_loyalty")->pluck('nama')->whereNull('deleted_at');
+        $data = DB::table("m_loyalty")->select('nama')->whereNull('deleted_at')->get();
 
         return collect($data);
     }
@@ -327,7 +331,7 @@ class RefKategoriSesuaiHcSheet implements FromCollection, WithTitle
 {
     public function collection()
     {
-        $data = DB::table("m_kategori_sesuai_hc")->pluck('nama')->whereNull('deleted_at');
+        $data = DB::table("m_kategori_sesuai_hc")->select('nama')->whereNull('deleted_at')->get();
 
         return collect($data);
     }
@@ -335,5 +339,52 @@ class RefKategoriSesuaiHcSheet implements FromCollection, WithTitle
     public function title(): string
     {
         return 'Ref Kategori Sesuai HC';
+    }
+}
+
+class RefROSheet implements FromCollection, WithTitle
+{
+    public function collection()
+    {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $data = DB::table("$db2.m_user")->whereIn('role_id',[4,5,6,8])->select('full_name')->get();
+
+        return collect($data);
+    }
+
+    public function title(): string
+    {
+        return 'Ref RO';
+    }
+}
+
+class RefCRMSheet implements FromCollection, WithTitle
+{
+    public function collection()
+    {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $data = DB::table("$db2.m_user")->whereIn('role_id',[54,55,56])->select('full_name')->get();
+
+        return collect($data);
+    }
+
+    public function title(): string
+    {
+        return 'Ref CRM';
+    }
+}
+class RefSalesSheet implements FromCollection, WithTitle
+{
+    public function collection()
+    {
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $data = DB::table("$db2.m_user")->whereIn('role_id',[29,30,31,32,33,34,35])->select('full_name')->get();
+
+        return collect($data);
+    }
+
+    public function title(): string
+    {
+        return 'Ref Sales';
     }
 }

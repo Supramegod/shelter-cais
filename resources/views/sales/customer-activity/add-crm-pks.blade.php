@@ -27,18 +27,18 @@
             <div class="row mb-3">
                 <label class="col-sm-2 col-form-label text-sm-end">Awal Kontrak</label>
                 <div class="col-sm-4">
-                    <input type="text" id="awal_kontrak" name="awal_kontrak" value="{{$quotation->s_mulai_kontrak}}" class="form-control readonly">
+                    <input type="text" id="awal_kontrak" name="awal_kontrak" value="{{$pks->s_mulai_kontrak}}" class="form-control readonly">
                 </div>
                 <label class="col-sm-2 col-form-label text-sm-end">Akhir Kontrak</label>
                 <div class="col-sm-4">
-                    <input type="text" id="akhir_kontrak" name="akhir_kontrak" value="{{$quotation->s_kontrak_selesai}}" class="form-control readonly">
+                    <input type="text" id="akhir_kontrak" name="akhir_kontrak" value="{{$pks->s_kontrak_selesai}}" class="form-control readonly">
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-2 col-form-label text-sm-end">Leads / customer</label>
                 <div class="col-sm-4">
                     <div class="input-group">
-                        <input type="text" id="leads" name="leads" value="{{$pks->nama_perusahaan}}" class="form-control readonly">
+                        <input type="text" id="leads" name="leads" value="{{$pks->nama_site}}" class="form-control readonly">
                     </div>
                 </div>
                 <label class="col-sm-2 col-form-label text-sm-end">Status Kontrak</label>

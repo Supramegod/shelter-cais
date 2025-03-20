@@ -134,19 +134,21 @@ class CustomerActivityController extends Controller
             if($pks == null){
                 abort(404);
             }
-            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
-
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $nowd = Carbon::now()->toDateString();
 
-            $quotation->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
-            $quotation->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+            $pks->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$pks->kontrak_awal)->isoFormat('D MMMM Y');
+            $pks->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$pks->kontrak_awal)->isoFormat('D MMMM Y');
 
-            $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+            $pks->status_kontrak = "";
+            $statusKontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->first();
+            if($statusKontrak !=null){
+                $pks->status_kontrak = $statusKontrak->nama;
+            }
 
             $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
 
-            return view('sales.customer-activity.add-activity-pks',compact('now','nowd','pks','jenisVisit','quotation'));
+            return view('sales.customer-activity.add-activity-pks',compact('now','nowd','pks','jenisVisit'));
         } catch (\Exception $e) {
             dd($e);
             abort(500);
@@ -1003,21 +1005,22 @@ class CustomerActivityController extends Controller
             if($pks == null){
                 abort(404);
             }
-            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
-
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $nowd = Carbon::now()->toDateString();
 
-            $quotation->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
-            $quotation->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+            $pks->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$pks->kontrak_awal)->isoFormat('D MMMM Y');
+            $pks->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$pks->kontrak_akhir)->isoFormat('D MMMM Y');
 
-            $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
-
+            $pks->status_kontrak = "";
+            if($pks->status_pks_id != null){
+                $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+            }
             $roList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 4,5 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
             $spvRoList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 6 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
 
-            return view('sales.customer-activity.add-ro-pks',compact('roList','spvRoList','now','nowd','pks','quotation'));
+            return view('sales.customer-activity.add-ro-pks',compact('roList','spvRoList','now','nowd','pks'));
         } catch (\Exception $e) {
+            dd($e);
             abort(500);
         }
     }

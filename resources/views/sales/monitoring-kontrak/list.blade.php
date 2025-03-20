@@ -29,7 +29,6 @@
                                     <th class="text-center">ID</th>
                                     <th class="text-center">Aksi</th>
                                     <th class="text-center">No PKS</th>
-                                    <th class="text-center">Customer</th>
                                     <th class="text-center">Site</th>
                                     <th class="text-center">Awal Kontrak</th>
                                     <th class="text-center">Akhir Kontrak</th>
@@ -105,10 +104,6 @@
         },{
             data : 'nomor',
             name : 'nomor',
-            className:'text-center'
-        },{
-            data : 'nama_perusahaan',
-            name : 'nama_perusahaan',
             className:'text-center'
         },{
             data : 'nama_site',
