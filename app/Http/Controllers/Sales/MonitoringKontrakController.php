@@ -201,7 +201,7 @@ class MonitoringKontrakController extends Controller
             return '<button class="btn btn-sm btn-info" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-activity-kontrak',['pks_id' => $data->id]).'`,`DATA AKTIFITAS PADA KONTRAK '.$data->nomor.'`)">'.$data->aktifitas.'</button>';
         })
         ->editColumn('issue', function ($data) {
-            return '<button class="btn btn-sm btn-secondary" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-activity-kontrak',['pks_id' => $data->id]).'`,`DATA ISSUE PADA KONTRAK '.$data->nomor.'`)">'.$data->aktifitas.'</button>';
+            return '<button class="btn btn-sm btn-secondary" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-issue',['pks_id' => $data->id]).'`,`DATA ISSUE PADA KONTRAK '.$data->nomor.'`)">'.$data->issue.'</button>';
         })
         ->addColumn('progress',function ($data) {
             $progress = 0;
