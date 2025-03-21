@@ -66,6 +66,15 @@
         }
     };
     $('#btn-import').on('click',function(){
+        $(this).prop('disabled', true);
+        Swal.fire({
+            title: 'Loading',
+            text: 'Sedang mengimport data , mohon tunggu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         $('form').submit();
     });
 </script>

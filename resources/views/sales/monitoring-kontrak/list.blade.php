@@ -24,10 +24,12 @@
                 <div class="card-body pt-4">
                     <div class="table-responsive overflow-hidden table-data">
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                            <thead>
+                            <thead class="table-light">
                                 <tr>
                                     <th class="text-center">ID</th>
                                     <th class="text-center">Aksi</th>
+                                    <th class="text-center">Progress</th>
+                                    <th class="text-center">Status Berlaku</th>
                                     <th class="text-center">No PKS</th>
                                     <th class="text-center">Site</th>
                                     <th class="text-center">Awal Kontrak</th>
@@ -37,6 +39,7 @@
                                     <th class="text-center">CRM</th>
                                     <th class="text-center">RO</th>
                                     <th class="text-center">Aktifitas</th>
+                                    <th class="text-center">Issue</th>
                                     <th class="text-center">Status</th>
                                 </tr>
                             </thead>
@@ -84,8 +87,8 @@
             },
         },
         "createdRow": function( row, data, dataIndex){
-            $('td', row).css('background-color', data.warna_row);
-            $('td', row).css('color', data.warna_font);
+            // $('td', row).css('background-color', data.warna_row);
+            // $('td', row).css('color', data.warna_font);
         },
         "order":[
             [0,'desc']
@@ -101,7 +104,18 @@
             name : 'aksi',
             orderable: false,
             searchable: false,
-        },{
+        },
+        {
+            data : 'progress',
+            name : 'progress',
+            className:'text-center'
+        },
+        {
+            data : 'status_berlaku',
+            name : 'status_berlaku',
+            className:'text-center'
+        },
+        {
             data : 'nomor',
             name : 'nomor',
             className:'text-center'
@@ -136,6 +150,10 @@
         },{
             data : 'aktifitas',
             name : 'aktifitas',
+            className:'text-center'
+        },{
+            data : 'issue',
+            name : 'issue',
             className:'text-center'
         },{
             data : 'status',

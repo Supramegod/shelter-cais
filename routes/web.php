@@ -177,6 +177,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/customer-activity/send-email', 'sendEmail')->name('customer-activity.send-email');
 
         Route::get('/sales/customer-activity/modal/list-activity-kontrak', 'listActivityKontrak')->name('customer-activity.modal.list-activity-kontrak'); // ajax
+        Route::get('/sales/customer-activity/modal/list-issue', 'listIssue')->name('customer-activity.modal.list-issue'); // ajax
     });
 
 

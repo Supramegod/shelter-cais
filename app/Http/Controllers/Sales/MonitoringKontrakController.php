@@ -86,7 +86,7 @@ class MonitoringKontrakController extends Controller
 
         $data = DB::table('sl_pks')
                 ->whereNull('sl_pks.deleted_at')
-                ->select('id','status_pks_id','nomor','kode_site','nama_site','nama_proyek','crm_id_1','crm_id_2','crm_id_3','spv_ro_id','ro_id_1','ro_id_2','ro_id_3','loyalty','kontrak_awal as mulai_kontrak','kontrak_akhir as kontrak_selesai','jumlah_hc',
+                ->select('site_id','leads_id','id','status_pks_id','nomor','kode_site','nama_site','nama_proyek','crm_id_1','crm_id_2','crm_id_3','spv_ro_id','ro_id_1','ro_id_2','ro_id_3','loyalty','kontrak_awal as mulai_kontrak','kontrak_akhir as kontrak_selesai','jumlah_hc',
                     DB::raw("(select full_name from ".$db2.".m_user where id = sl_pks.sales_id) as sales"),
 
                 DB::raw('(SELECT GROUP_CONCAT(full_name SEPARATOR "<br /> ")
@@ -96,12 +96,13 @@ class MonitoringKontrakController extends Controller
                         FROM '.$db2.'.m_user
                         WHERE '.$db2.'.m_user.id IN (crm_id_1, crm_id_2, crm_id_3)) as crm'),
                     DB::raw('(SELECT COUNT(*) FROM sl_customer_activity WHERE sl_customer_activity.pks_id = sl_pks.id AND sl_customer_activity.deleted_at IS NULL) as aktifitas'),
+                    DB::raw('(SELECT COUNT(*) FROM sl_issue WHERE sl_issue.pks_id = sl_pks.id AND sl_issue.deleted_at IS NULL) as issue'),
                 )
                 ->get();
 
         foreach ($data as $key => $value) {
-            $value->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$value->mulai_kontrak)->isoFormat('D MMMM Y');
-            $value->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$value->kontrak_selesai)->isoFormat('D MMMM Y');
+            $value->s_mulai_kontrak = $value->mulai_kontrak ? Carbon::createFromFormat('Y-m-d', $value->mulai_kontrak)->isoFormat('D MMMM Y') : null;
+            $value->s_kontrak_selesai = $value->kontrak_selesai ? Carbon::createFromFormat('Y-m-d', $value->kontrak_selesai)->isoFormat('D MMMM Y') : null;
             $status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first();
             if($status){
                 $value->status = $status->nama;
@@ -112,40 +113,59 @@ class MonitoringKontrakController extends Controller
 
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
-            // if (!in_array(Auth::user()->role_id,[2,54,55])) {
-            //     return "";
-            // }
-            // return '<div class="d-inline-flex" data-bs-toggle="tooltip" data-bs-html="true" aria-label="<span>Sent<br> <span class=&quot;fw-medium&quot;>Balance:</span> 0<br> <span class=&quot;fw-medium&quot;>Due Date:</span> 05/09/2020</span>" data-bs-original-title="<span>Sent<br> <span class=&quot;fw-medium&quot;>Balance:</span> 0<br> <span class=&quot;fw-medium&quot;>Due Date:</span> 05/09/2020</span>"><span class="avatar avatar-sm"> <span class="avatar-initial rounded-circle bg-label-secondary"><i class="mdi mdi-email-outline"></i></span></span></div>';
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
-            $aksi = "";
-            $aksi .= '&nbsp;<a href="'.route('monitoring-kontrak.view', $data->id).'" class="btn btn-sm btn-secondary">View</a>';
-            $aksi .= '&nbsp;<a href="'.route('customer-activity.add-activity-kontrak',$data->id).'" class="btn btn-sm btn-info">Buat Activity</a>';
+            $aksiIcon = '<a href="'.route('monitoring-kontrak.view', $data->id).'" class="text-body">
+                    <i class="mdi mdi-magnify mdi-20px mx-1"></i>
+                </a>';
 
+            if (is_null($data->leads_id) || is_null($data->site_id)) {
+                $aksiIcon .= '<a href="javascript:void(0)" class="text-body" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Leads atau Site tidak ditemukan, silahkan kontak administrator atau Import ulang\', icon: \'warning\'})">
+                    <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
+                </a>';
+            } else {
+                $aksiIcon .= '<a href="'.route('customer-activity.add-activity-kontrak', $data->id).'" class="text-body">
+                    <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
+                </a>';
+            }
+
+            $aksiDropdown = "";
             if($selisih<=90 && $selisih !=0){
-                $aksi .= '&nbsp;<a href="#" class="btn btn-sm btn-success">Send Email</a>';
-                // $aksi .= '&nbsp;<a href="'.route('quotation.add', ['leads_id' => $data->leads_id, 'tipe' => 'Quotation Lanjutan']).'" class="btn btn-sm btn-primary">Buat Quotation</a>';
+                $aksiDropdown .= '<a href="javascript:;" class="dropdown-item">Send Email</a>';
             }
             if($selisih == 0){
-                $aksi .= '&nbsp;<a href="javscript:void(0)" class="btn btn-sm btn-danger btn-terminate-kontrak" data-id="'.$data->id.'">Terminate Kontrak</a>';
+                $aksiDropdown .= '<a href="javascript:;" class="dropdown-item btn-terminate-kontrak" data-id="'.$data->id.'">Terminate</a>';
             }
 
             if (empty($data->ro) && in_array(Auth::user()->role_id,[2,8,6,98])) {
-                $aksi .= '&nbsp;<a href="'.route('customer-activity.add-ro-kontrak',$data->id).'" class="btn btn-sm btn-warning">Pilih RO</a>';
+                $aksiDropdown .= '<a href="'.route('customer-activity.add-ro-kontrak',$data->id).'" class="dropdown-item">Pilih RO</a>';
             }
             if (empty($data->crm) && in_array(Auth::user()->role_id,[2,55,56,96])) {
-                $aksi .= '&nbsp;<a href="'.route('customer-activity.add-crm-kontrak',$data->id).'" class="btn btn-sm btn-warning">Pilih CRM</a>';
+                $aksiDropdown .= '<a href="'.route('customer-activity.add-crm-kontrak',$data->id).'" class="dropdown-item">Pilih CRM</a>';
             }
-            if(in_array(Auth::user()->role_id,[2,56])&&$data->status_pks_id != 7 ){
+            if(in_array(Auth::user()->role_id,[2,56])&&$data->status_pks_id > 9 ){
                 if ($data->ro != "" && $data->crm != "") {
-                    $aksi .= '&nbsp;<a href="javascript:void(0)" class="btn btn-sm btn-success">Aktifkan Site</a>';
+                    $aksiDropdown .= '<a href="javascript:void(0)" class="dropdown-item">Aktifkan Site</a>';
                 } else {
-                    $aksi .= '&nbsp;<button class="btn btn-sm btn-success" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Belum memilih RO atau CRM\', icon: \'warning\'})">Aktifkan Site</button>';
+                    $aksiDropdown .= '<a href="javascript:;" class="dropdown-item" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Belum memilih RO atau CRM\', icon: \'warning\'})">Aktifkan Site</a>';
                 }
             }
 
-            return '<div class="justify-content-center d-flex">
-                                '.$aksi.'
-                    </div>';
+            $dropdown = "";
+            if($aksiDropdown != ""){
+                $dropdown = '<div class="dropdown">
+                    <a href="javascript:;" class="btn dropdown-toggle hide-arrow text-body p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical mdi-20px"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end" style="">
+                        '.$aksiDropdown.'
+                    </div>
+                </div>';
+            }
+            $aksi = '<div class="d-flex align-items-center">
+            '.$aksiIcon.'
+            '.$dropdown.'
+            </div>';
+            return $aksi;
         })
         ->addColumn('berakhir_dalam', function ($data) {
             return $this->hitungBerakhirKontrak($data->kontrak_selesai);
@@ -180,7 +200,49 @@ class MonitoringKontrakController extends Controller
         ->editColumn('aktifitas', function ($data) {
             return '<button class="btn btn-sm btn-info" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-activity-kontrak',['pks_id' => $data->id]).'`,`DATA AKTIFITAS PADA KONTRAK '.$data->nomor.'`)">'.$data->aktifitas.'</button>';
         })
-        ->rawColumns(['aksi','nomor','nama_site','aktifitas','crm','ro','sales'])
+        ->editColumn('issue', function ($data) {
+            return '<button class="btn btn-sm btn-secondary" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-activity-kontrak',['pks_id' => $data->id]).'`,`DATA ISSUE PADA KONTRAK '.$data->nomor.'`)">'.$data->aktifitas.'</button>';
+        })
+        ->addColumn('progress',function ($data) {
+            $progress = 0;
+            $param = 11.11;
+            if($data->status_pks_id==1){
+                $progress = $param*1;
+            }else if($data->status_pks_id==2){
+                $progress = $param*2;
+            }else if($data->status_pks_id==3){
+                $progress = $param*3;
+            }else if($data->status_pks_id==4){
+                $progress = $param*4;
+            }else if($data->status_pks_id==5){
+                $progress = $param*5;
+            }else if($data->status_pks_id==6){
+                $progress = $param*6;
+            }else if($data->status_pks_id==7){
+                $progress = $param*7;
+            }else if($data->status_pks_id==8){
+                $progress = $param*8;
+            }else if($data->status_pks_id==9){
+                $progress = 100;
+            }
+
+            return '<div class="progress" style="height: 5px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: '.$progress.'%" aria-valuenow="'.$progress.'" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>';
+        })
+        ->addColumn('status_berlaku', function ($data) {
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
+            if($selisih<=0){
+                return '<span class="badge rounded-pill bg-label-danger text-capitalized">Kontrak Habis</span>';
+            }else if($selisih<=60){
+                return '<span class="badge rounded-pill bg-label-danger text-capitalized">Berakhir dalam 2 bulan</span>';
+            }else if($selisih<=90){
+                return '<span class="badge rounded-pill bg-label-warning text-capitalized">Berakhir dalam 3 bulan</span>';
+            }else{
+                return '<span class="badge rounded-pill bg-label-success text-capitalized">Lebih dari 3 Bulan</span>';
+            }
+        })
+        ->rawColumns(['aksi','nomor','nama_site','aktifitas','crm','ro','sales','progress','status_berlaku','issue'])
         ->make(true);
     }
 
@@ -225,6 +287,9 @@ class MonitoringKontrakController extends Controller
     }
 
     function hitungBerakhirKontrak($tanggalBerakhir) {
+        if (is_null($tanggalBerakhir)) {
+            return "-";
+        }
         // Tanggal saat ini
         $tanggalSekarang = Carbon::now()->format('Y-m-d');
         $tanggalSekarang = Carbon::createFromFormat('Y-m-d', $tanggalSekarang);
@@ -256,6 +321,9 @@ class MonitoringKontrakController extends Controller
         return implode(', ', $hasil);
     }
     function selisihKontrakBerakhir($tanggalBerakhir) {
+        if (is_null($tanggalBerakhir)) {
+            return 0;
+        }
          // Tanggal sekarang
         $tanggalSekarang = Carbon::now();
 
@@ -396,54 +464,64 @@ class MonitoringKontrakController extends Controller
                     if($v[0]==null){
                         continue;
                     }
-                    $layanan = DB::table('m_kebutuhan')->where('nama', 'LIKE',$v[17])->first();
+                    $layanan = $v[17] ? DB::table('m_kebutuhan')->where('nama', 'LIKE', $v[17])->first() : null;
                     $layananId = $layanan ? $layanan->id : null;
-                    $bidangUsaha = DB::table('m_bidang_perusahaan')->where('nama','LIKE',$v[19])->first();
+                    $bidangUsaha = $v[19] ? DB::table('m_bidang_perusahaan')->where('nama','LIKE',$v[19])->first() : null;
                     $bidangUsahaId = $bidangUsaha ? $bidangUsaha->id : null;
-                    $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('nama','LIKE',$v[20])->first();
+                    $jenisPerusahaan = $v[20] ? DB::table('m_jenis_perusahaan')->where('nama','LIKE',$v[20])->first() : null;
                     $jenisPerusahaanId = $jenisPerusahaan ? $jenisPerusahaan->id : null;
-                    $statusPks = DB::table('m_status_pks')->where('nama','LIKE',$v[18])->first();
+                    $statusPks = $v[16] ? DB::table('m_status_pks')->where('nama','LIKE',$v[16])->first() : null;
                     $statusPksId = $statusPks ? $statusPks->id : null;
-                    $provinsi = DB::table($db2.'.m_province')->where('name','LIKE',$v[21])->first();
+                    $provinsi = $v[21] ? DB::table($db2.'.m_province')->where('name','LIKE',$v[21])->first() : null;
                     $provinsiId = $provinsi ? $provinsi->id : null;
-                    $kota = DB::table($db2.'.m_city')->where('name','LIKE',$v[22])->first();
+                    $kota = $v[22] ? DB::table($db2.'.m_city')->where('name','LIKE',$v[22])->first() : null;
                     $kotaId = $kota ? $kota->id : null;
-                    $crm = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[54])->first();
+                    $crm = $v[1] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[1])->first() : null;
                     $crmId1 = $crm ? $crm->id : null;
-                    $crm = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[58])->first();
+                    $crm = $v[2] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[2])->first() : null;
                     $crmId2 = $crm ? $crm->id : null;
-                    $crm = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[62])->first();
+                    $crm = $v[3] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[3])->first() : null;
                     $crmId3 = $crm ? $crm->id : null;
-                    $spvRo = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[55])->first();
+                    $spvRo = $v[4] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[4])->first() : null;
                     $spvRoId = $spvRo ? $spvRo->id : null;
-                    $ro = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[56])->first();
+                    $ro = $v[5] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[5])->first() : null;
                     $roId1 = $ro ? $ro->id : null;
-                    $ro = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[59])->first();
+                    $ro = $v[6] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[6])->first() : null;
                     $roId2 = $ro ? $ro->id : null;
-                    $ro = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[63])->first();
+                    $ro = $v[7] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[7])->first() : null;
                     $roId3 = $ro ? $ro->id : null;
-                    $loyalty = DB::table('m_loyalty')->where('nama','LIKE',$v[24])->first();
+                    $loyalty = $v[24] ? DB::table('m_loyalty')->where('nama','LIKE',$v[24])->first() : null;
                     $loyaltyId = $loyalty ? $loyalty->id : null;
-                    $company = DB::table($db2.'.m_company')->where('name','LIKE',$v[14])->first();
+                    $company = $v[14] ? DB::table($db2.'.m_company')->where('name','LIKE',$v[14])->first() : null;
                     $companyId = $company ? $company->id : null;
-                    $kategoriSesuaiHc = DB::table('m_kategori_sesuai_hc')->where('nama','LIKE',$v[66])->first();
+                    $kategoriSesuaiHc = $v[66] ? DB::table('m_kategori_sesuai_hc')->where('nama','LIKE',$v[66])->first() : null;
                     $kategoriSesuaiHcId = $kategoriSesuaiHc ? $kategoriSesuaiHc->id : null;
-                    $sales = DB::table($db2.'.m_user')->where('full_name','LIKE',$v[67])->first();
+                    $sales = $v[67] ? DB::table($db2.'.m_user')->where('full_name','LIKE',$v[67])->first() : null;
                     $salesId = $sales ? $sales->id : null;
+                    $leads = $v[11] ? DB::table('sl_leads')->where('nama_perusahaan','LIKE',$v[11])->first() : null;
+                    $leadsId = $leads ? $leads->id : null;
+                    $site = $v[9] ? DB::table('sl_site')->where('nama_site','LIKE',$v[9])->first() : null;
+                    $siteId = $site ? $site->id : null;
+                    $branch = $v[13] ? DB::table($db2.'.m_branch')->where('name','LIKE',$v[18])->first() : null;
+                    $branchId = $branch ? $branch->id : null;
 
                     DB::table('sl_pks_import')->insert([
                         'import_id' => $importId,
                         'quotation_id' => null,
                         'spk_id' => null,
-                        'leads_id' => null,
-                        'site_id' => null,
+                        'leads_id' => $leadsId,
+                        'site_id' => $siteId,
+                        'branch_id' => $branchId,
                         'company_id' => $companyId,
                         'kode_site' => $v[8],
                         'nomor' => $v[0],
-                        'tgl_pks' => Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($v[25])->toDateString(),
+                        'tgl_pks' => $v[25] ? Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($v[25])->toDateString() : null,
                         'nama_site' => $v[9],
                         'alamat_site' => $v[10],
                         'nama_proyek' => $v[15],
+                        'kode_perusahaan' => $v[11],
+                        'nama_perusahaan' => $v[12],
+                        'alamat_perusahaan' => $v[13],
                         'layanan_id' => $layananId,
                         'layanan' => $layananId ? $v[17] : null,
                         'bidang_usaha_id' => $bidangUsahaId,
@@ -467,8 +545,8 @@ class MonitoringKontrakController extends Controller
                         'ro_id_3' => $roId3,
                         'loyalty_id' => $loyaltyId,
                         'loyalty' => $loyaltyId ? $v[24] : null,
-                        'kontrak_awal' => Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($v[25])->toDateString(),
-                        'kontrak_akhir' => Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($v[26])->toDateString(),
+                        'kontrak_awal' => $v[25] ? Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($v[25])->toDateString() : null,
+                        'kontrak_akhir' => $v[26] ? Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($v[26])->toDateString() : null,
                         'jumlah_hc' => $v[27],
                         'total_sebelum_pajak' => $v[28],
                         'dasar_pengenaan_pajak' => $v[29],
@@ -539,11 +617,60 @@ class MonitoringKontrakController extends Controller
             $importId = $request->importId;
             $datas = DB::table('sl_pks_import')->where('import_id',$importId)->get();
             foreach ($datas as $data) {
-                DB::table('sl_pks')->insert([
+                // cek dulu apakah leads_id ada di tabel leads jika tidak ada maka membuat leads baru
+                $leadsId = $data->leads_id;
+                if($data->nama_perusahaan != null){
+                    $leadsData = [
+                        'nomor' => $data->kode_perusahaan,
+                        'tgl_leads' => Carbon::now()->toDateString(),
+                        'jenis_perusahaan_id' => $data->jenis_perusahaan_id,
+                        'nama_perusahaan' => $data->nama_perusahaan,
+                        'alamat' => $data->alamat_perusahaan,
+                        'platform_id' => 99,
+                        'branch_id' => $data->branch_id,
+                        'kebutuhan_id' => $data->layanan_id,
+                        'status_leads_id' => 1,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name,
+                    ];
+
+                    if($leadsId == null){
+                        $leadsId = DB::table('sl_leads')->insertGetId($leadsData);
+                    }else{
+                        DB::table('sl_leads')->where('id',$data->leads_id)->update($leadsData);
+                    };
+                }
+
+                // cek dulu apakah site ada di tabel kalau belum ada maka insert jika ada maka update
+                $siteId = $data->site_id;
+                if($data->nama_site != null){
+                    $siteData = [
+                        'leads_id' => $leadsId,
+                        'nomor' => $data->kode_site,
+                        'nama_site' => $data->nama_site,
+                        'provinsi_id' => $data->provinsi_id,
+                        'kota_id' => $data->kota_id,
+                        'provinsi' => $data->provinsi,
+                        'kota' => $data->kota,
+                        'penempatan' => $data->alamat_site,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name,
+                    ];
+                    if($siteId == null){
+                        $siteId = DB::table('sl_site')->insertGetId($siteData);
+                    }else{
+                        DB::table('sl_site')->where('id',$data->site_id)->update($siteData);
+                    }
+                }
+
+                //cari dulu data di pks kalau tidak ada insert kalau ada maka update
+                $pks = DB::table('sl_pks')->where('nomor',$data->nomor)->first();
+                $dataUpdate = [
                     'quotation_id' => $data->quotation_id,
                     'spk_id' => $data->spk_id,
-                    'leads_id' => $data->leads_id,
-                    'site_id' => $data->site_id,
+                    'leads_id' => $leadsId,
+                    'site_id' => $siteId,
+                    'branch_id' => $data->branch_id,
                     'company_id' => $data->company_id,
                     'kode_site' => $data->kode_site,
                     'nomor' => $data->nomor,
@@ -617,10 +744,17 @@ class MonitoringKontrakController extends Controller
                     'telp_pic_3' => $data->telp_pic_3,
                     'kategori_sesuai_hc_id' => $data->kategori_sesuai_hc_id,
                     'kategori_sesuai_hc' => $data->kategori_sesuai_hc,
-                    'is_aktif' => $data->is_aktif,
-                    'created_at' => $data->created_at,
-                    'created_by' => $data->created_by,
-                ]);
+                    'is_aktif' => $data->is_aktif
+                ];
+                if($pks){
+                    $dataUpdate['updated_at'] = $current_date_time;
+                    $dataUpdate['updated_by'] = Auth::user()->full_name;
+                    DB::table('sl_pks')->where('id',$pks->id)->update($dataUpdate);
+                }else{
+                    $dataUpdate['created_at'] = $current_date_time;
+                    $dataUpdate['created_by'] = Auth::user()->full_name;
+                    DB::table('sl_pks')->insert($dataUpdate);
+                }
             }
 
             $msgSave = 'Import Monitoring Kontrak berhasil Dilakukan !';
@@ -628,6 +762,7 @@ class MonitoringKontrakController extends Controller
             DB::commit();
             return redirect()->route('monitoring-kontrak')->with('success', $msgSave);
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

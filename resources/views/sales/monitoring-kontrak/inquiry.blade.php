@@ -100,6 +100,7 @@
                         <th>Kota ID</th>
                         <th>Kota</th>
                         <th>PMA</th>
+                        <th>Sales ID</th>
                         <th>CRM ID 1</th>
                         <th>CRM ID 2</th>
                         <th>CRM ID 3</th>
@@ -180,6 +181,7 @@
                         <td>{{ $data->kota_id }}</td>
                         <td>{{ $data->kota }}</td>
                         <td>{{ $data->pma }}</td>
+                        <td>{{ $data->sales_id }}</td>
                         <td>{{ $data->crm_id_1 }}</td>
                         <td>{{ $data->crm_id_2 }}</td>
                         <td>{{ $data->crm_id_3 }}</td>

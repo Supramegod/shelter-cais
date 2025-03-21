@@ -137,8 +137,8 @@ class CustomerActivityController extends Controller
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $nowd = Carbon::now()->toDateString();
 
-            $pks->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$pks->kontrak_awal)->isoFormat('D MMMM Y');
-            $pks->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$pks->kontrak_awal)->isoFormat('D MMMM Y');
+            $pks->s_mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->s_kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
 
             $pks->status_kontrak = "";
             $statusKontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->first();
@@ -999,6 +999,36 @@ class CustomerActivityController extends Controller
         }
     }
 
+    public function listIssue (Request $request){
+        try {
+            $data = [];
+            if (!empty($request->pks_id)) {
+                $data = DB::table('sl_issue')
+                    ->select(
+                        'sl_issue.id',
+                        'sl_issue.judul',
+                        'sl_issue.jenis_keluhan',
+                        'sl_issue.kolaborator',
+                        'sl_issue.deskripsi',
+                        'sl_issue.url_lampiran',
+                        'sl_issue.status',
+                        'sl_issue.created_at',
+                        'sl_issue.created_by',
+                        'sl_issue.updated_at',
+                        'sl_issue.updated_by'
+                    )
+                    ->whereNull('sl_issue.deleted_at')
+                    ->where('pks_id',$request->pks_id)->get();
+            }
+            return DataTables::of($data)
+            ->make(true);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function addRoKontrak ($id){
         try {
             $pks = DB::table('sl_pks')->where('id',$id)->first();
@@ -1008,8 +1038,8 @@ class CustomerActivityController extends Controller
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $nowd = Carbon::now()->toDateString();
 
-            $pks->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$pks->kontrak_awal)->isoFormat('D MMMM Y');
-            $pks->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$pks->kontrak_akhir)->isoFormat('D MMMM Y');
+            $pks->s_mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->s_kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
 
             $pks->status_kontrak = "";
             if($pks->status_pks_id != null){
@@ -1097,8 +1127,8 @@ class CustomerActivityController extends Controller
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $nowd = Carbon::now()->toDateString();
 
-            $quotation->s_mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
-            $quotation->s_kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+            $pks->s_mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->s_kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
 
             $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
 
