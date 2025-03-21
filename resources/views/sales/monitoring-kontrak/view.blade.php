@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','Track Customer Activity')
+@section('title','View Monitoring Kontrak')
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="row gy-4 mb-5">
@@ -28,49 +28,47 @@
                                         </tr>
                                         <tr>
                                             <td>Perusahaan</td>
-                                            <td>{{$quotation->nama_perusahaan}}</td>
+                                            <td>{{$leads->nama_perusahaan}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Kebutuhan</td>
-                                            <td>{{$quotation->kebutuhan}}</td>
+                                            <td>Layanan</td>
+                                            <td>{{$pks->layanan}}</td>
                                         </tr>
                                         <tr>
                                             <td>Tanggal Kontrak</td>
-                                            <td>{{$quotation->mulai_kontrak}} s/d {{$quotation->kontrak_selesai}}</td>
+                                            <td>{{$pks->mulai_kontrak}} s/d {{$pks->kontrak_selesai}}</td>
                                         </tr>
                                         <tr>
                                             <td>Berakhir dalam</td>
                                             <td>{{$pks->berakhir_dalam}}</td>
                                         </tr>
-                                        @foreach($quotation->site as $site)
-                                            <tr>
-                                                <td>{{$site->nama_site}}</td>
-                                                <td>
-                                                    @foreach($quotation->detail as $detail)
-                                                        - {{$detail->jabatan_kebutuhan}}<br>
-                                                    @endforeach
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                        <tr>
+                                            <td>Site</td>
+                                            <td>{{$pks->nama_site}}</td>
+                                        </tr>
                                         <tr>
                                             <td>Sales</td>
-                                            <td></td>
+                                            <td>{{$pks->sales}}</td>
                                         </tr>
                                         <tr>
                                             <td>CRM</td>
-                                            <td></td>
+                                            <td>{!! $pks->crm1 ?? '' !!}{!! $pks->crm2 ?? '' !!}{!! $pks->crm3 ?? '' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SPV RO</td>
+                                            <td>{!! $pks->spv_ro ?? '' !!}</td>
                                         </tr>
                                         <tr>
                                             <td>RO</td>
-                                            <td></td>
+                                            <td>{!! $pks->ro1 ?? '' !!}{!! $pks->ro2 ?? '' !!}{!! $pks->ro3 ?? '' !!}</td>
                                         </tr>
                                         <tr>
                                             <td>Quotation</td>
-                                            <td><b>{{$quotation->nomor}}</b></td>
+                                            <td><b>{{ $quotation ? $quotation->nomor : '' }}</b></td>
                                         </tr>
                                         <tr>
                                             <td>SPK</td>
-                                            <td><b>{{$spk->nomor}}</b></td>
+                                            <td><b>{{ $spk ? $spk->nomor : '' }}</b></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -101,43 +99,60 @@
                                         </tr>
                                         <tr>
                                             <td>Jenis Perusahaan</td>
-                                            <td>{{$leads->jenis_perusahaan}}</td>
+                                            <td>{{$pks->jenis_perusahaan}}</td>
                                         </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="row mb-5">
-                                <table class="table table-bordered table-striped">
-                                    <thead class="thead-light" style="background-color: #dc3545;">
-                                        <tr>
-                                            <th colspan="2" style="color:white !important">Issue</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <!-- Aktifitas Leads -->
                         <div class="offset-md-1 col-md-7 mb-3">
-                            <h5>Aktifitas Kontrak {{$pks->nomor}}</h5>
-                            <ul class="timeline">
-                                @foreach($data as $activity)
-                                    <li class="timeline-item">
-                                        <span class="timeline-point timeline-point-primary"></span>
-                                        <div class="timeline-event card card-border-shadow-primary mb-3 ">
-                                            <div class="card-header" style="padding-bottom:0px !important">
-                                                <h6 class="timeline-title">{{$activity->tipe}}</h6>
-                                            </div>
-                                            <div class="card-body" style="padding-top:0px !important">
-                                                <p class="card-text">{{$activity->notes}}</p>
-                                                <p class="card-text">Aktifitas pada : {{$activity->screated_at}}</p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                @endforeach
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="activities-tab" data-bs-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="true">Aktifitas</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="issues-tab" data-bs-toggle="tab" href="#issues" role="tab" aria-controls="issues" aria-selected="false">Issue</a>
+                                </li>
                             </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                                    <ul class="timeline">
+                                        @foreach($data as $activity)
+                                            <li class="timeline-item">
+                                                <span class="timeline-point timeline-point-primary"></span>
+                                                <div class="timeline-event card card-border-shadow-primary mb-3 ">
+                                                    <div class="card-header" style="padding-bottom:0px !important">
+                                                        <h6 class="timeline-title">{{$activity->tipe}}</h6>
+                                                    </div>
+                                                    <div class="card-body" style="padding-top:0px !important">
+                                                        <p class="card-text">{{$activity->notes}}</p>
+                                                        <p class="card-text">Aktifitas pada : {{$activity->screated_at}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">
+                                    <ul class="timeline">
+                                        @foreach($issues as $issue)
+                                            <li class="timeline-item">
+                                                <span class="timeline-point timeline-point-danger"></span>
+                                                <div class="timeline-event card card-border-shadow-danger mb-3 ">
+                                                    <div class="card-header" style="padding-bottom:0px !important">
+                                                        <h6 class="timeline-title">{{$issue->jenis_keluhan}}</h6>
+                                                    </div>
+                                                    <div class="card-body" style="padding-top:0px !important">
+                                                        <p class="card-text">{{$issue->deskripsi}}</p>
+                                                        <p class="card-text">Issue pada : {{$issue->screated_at}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

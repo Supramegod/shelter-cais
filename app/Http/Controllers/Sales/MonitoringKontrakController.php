@@ -60,20 +60,65 @@ class MonitoringKontrakController extends Controller
             }
 
             $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
-            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('id',$leads->jenis_perusahaan_id)->first();
-            if($jenisPerusahaan !=null){ $leads->jenis_perusahaan = $jenisPerusahaan->nama; }else{ $leads->jenis_perusahaan = ""; }
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('id',$pks->jenis_perusahaan_id)->first();
+            if($jenisPerusahaan !=null){
+                $pks->jenis_perusahaan = $jenisPerusahaan->nama;
+            }else{
+                $pks->jenis_perusahaan = "";
+            }
 
             $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
-            $quotation->detail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->get();
-            $quotation->site = DB::table('sl_site')->where('quotation_id',$quotation->id)->get();
+            if($quotation != null){
+                $quotation->detail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->get();
+                $quotation->site = DB::table('sl_site')->where('quotation_id',$quotation->id)->get();
+            }
 
-            $pks->berakhir_dalam = $this->hitungBerakhirKontrak($quotation->kontrak_selesai);
-            $quotation->mulai_kontrak = Carbon::createFromFormat('Y-m-d',$quotation->mulai_kontrak)->isoFormat('D MMMM Y');
-            $quotation->kontrak_selesai = Carbon::createFromFormat('Y-m-d',$quotation->kontrak_selesai)->isoFormat('D MMMM Y');
+            $pks->berakhir_dalam = $this->hitungBerakhirKontrak($pks->kontrak_akhir);
+
+            $pks->mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
 
             $spk =  DB::table('sl_spk')->where('id',$pks->spk_id)->first();
 
-            return view('sales.monitoring-kontrak.view',compact('data','leads','quotation','spk','pks'));
+            $issues = DB::table('sl_issue')->where('pks_id',$pksId)->get();
+            foreach ($issues as $key => $value) {
+                $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
+            }
+
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
+            $sales = DB::table($db2.'.m_user')->where('id',$pks->sales_id)->first();
+            if($sales !=null){
+                $pks->sales = $sales->full_name;
+            }
+            $crm1 = DB::table($db2.'.m_user')->where('id',$pks->crm_id_1)->first();
+            if($crm1 !=null){
+                $pks->crm1 = $crm1->full_name."</br>";
+            }
+            $crm2 = DB::table($db2.'.m_user')->where('id',$pks->crm_id_2)->first();
+            if($crm2 !=null){
+                $pks->crm2 = $crm2->full_name."</br>";
+            }
+            $crm3 = DB::table($db2.'.m_user')->where('id',$pks->crm_id_3)->first();
+            if($crm3 !=null){
+                $pks->crm3 = $crm3->full_name."</br>";
+            }
+            $spvRo = DB::table($db2.'.m_user')->where('id',$pks->spv_ro_id)->first();
+            if($spvRo !=null){
+                $pks->spv_ro = $spvRo->full_name."</br>";
+            }
+            $ro1 = DB::table($db2.'.m_user')->where('id',$pks->ro_id_1)->first();
+            if($ro1 !=null){
+                $pks->ro1 = $ro1->full_name."</br>";
+            }
+            $ro2 = DB::table($db2.'.m_user')->where('id',$pks->ro_id_2)->first();
+            if($ro2 !=null){
+                $pks->ro2 = $ro2->full_name."</br>";
+            }
+            $ro3 = DB::table($db2.'.m_user')->where('id',$pks->ro_id_3)->first();
+            if($ro3 !=null){
+                $pks->ro3 = $ro3->full_name."</br>";
+            }
+            return view('sales.monitoring-kontrak.view',compact('issues','data','leads','quotation','spk','pks'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -114,15 +159,20 @@ class MonitoringKontrakController extends Controller
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
-            $aksiIcon = '<a href="'.route('monitoring-kontrak.view', $data->id).'" class="text-body">
-                    <i class="mdi mdi-magnify mdi-20px mx-1"></i>
-                </a>';
+
+            $aksiIcon = "";
 
             if (is_null($data->leads_id) || is_null($data->site_id)) {
-                $aksiIcon .= '<a href="javascript:void(0)" class="text-body" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Leads atau Site tidak ditemukan, silahkan kontak administrator atau Import ulang\', icon: \'warning\'})">
+                $aksiIcon = '<a href="javascript:void(0)" class="text-body" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Leads atau Site tidak ditemukan, silahkan kontak administrator\', icon: \'warning\'})">
+                    <i class="mdi mdi-magnify mdi-20px mx-1"></i>
+                </a>';
+                $aksiIcon .= '<a href="javascript:void(0)" class="text-body" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Leads atau Site tidak ditemukan, silahkan kontak administrator\', icon: \'warning\'})">
                     <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
                 </a>';
             } else {
+                $aksiIcon = '<a href="'.route('monitoring-kontrak.view', $data->id).'" class="text-body">
+                    <i class="mdi mdi-magnify mdi-20px mx-1"></i>
+                </a>';
                 $aksiIcon .= '<a href="'.route('customer-activity.add-activity-kontrak', $data->id).'" class="text-body">
                     <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
                 </a>';
@@ -678,6 +728,9 @@ class MonitoringKontrakController extends Controller
                     'nama_site' => $data->nama_site,
                     'alamat_site' => $data->alamat_site,
                     'nama_proyek' => $data->nama_proyek,
+                    'kode_perusahaan' => $data->kode_perusahaan,
+                    'nama_perusahaan' => $data->nama_perusahaan,
+                    'alamat_perusahaan' => $data->alamat_perusahaan,
                     'layanan_id' => $data->layanan_id,
                     'layanan' => $data->layanan,
                     'bidang_usaha_id' => $data->bidang_usaha_id,
