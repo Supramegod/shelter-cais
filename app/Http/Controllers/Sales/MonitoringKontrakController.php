@@ -199,6 +199,7 @@ class MonitoringKontrakController extends Controller
                     $aksiDropdown .= '<a href="javascript:;" class="dropdown-item" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Belum memilih RO atau CRM\', icon: \'warning\'})">Aktifkan Site</a>';
                 }
             }
+            $aksiDropdown .= '<a href="'.route('customer-activity.add-status-kontrak',$data->id).'" class="dropdown-item">Update Status</a>';
 
             $dropdown = "";
             if($aksiDropdown != ""){

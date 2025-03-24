@@ -1139,6 +1139,31 @@ class CustomerActivityController extends Controller
         }
     }
 
+    public function addStatusKontrak  ($id){
+        try {
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            if($pks == null){
+                abort(404);
+            }
+            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
+
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $nowd = Carbon::now()->toDateString();
+
+            $pks->s_mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->s_kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
+
+            $pks->status_kontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+
+            $listStatus = DB::table('m_status_pks')->whereNull('deleted_at')->get();
+
+            return view('sales.customer-activity.add-status-pks',compact('listStatus','now','nowd','pks','quotation'));
+        } catch (\Exception $e) {
+            abort(500);
+        }
+    }
+
+
     public function saveActivityCrmKontrak (Request $request){
         try {
             DB::beginTransaction();
@@ -1193,6 +1218,42 @@ class CustomerActivityController extends Controller
                 'crm' => $crmName,
                 'crm_id_1' => $crmId1,
                 'crm_id_2' => $crmId2,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->name
+            ]);
+
+            $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
+        }
+    }
+
+    public function saveActivityStatusKontrak (Request $request){
+        try {
+            DB::beginTransaction();
+            $pks = DB::table('sl_pks')->where('id',$request->id)->first();
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $nomor = $this->generateNomor($pks->leads_id);
+
+            $id = DB::table('sl_customer_activity')->insertGetId([
+                'pks_id' => $request->id,
+                'tgl_activity' => $current_date_time,
+                'branch_id' => $leads->branch_id,
+                'nomor' => $nomor,
+                'leads_id' => $leads->id,
+                'notes' => $request->notes,
+                'tipe' => $request->tipe,
+                'is_activity' => 1,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            DB::table('sl_pks')->where('id',$pks->id)->update([
+                'status_pks_id' => $request->status_pks,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->name
             ]);
