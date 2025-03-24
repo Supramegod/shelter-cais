@@ -33,7 +33,7 @@ class PksController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
@@ -82,7 +82,10 @@ class PksController extends Controller
         foreach ($data as $key => $value) {
             $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
             $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
-            $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
+            $value->status = "";
+            if($value->status_pks_id!=null){
+                $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
+            }
         }
 
         return DataTables::of($data)
@@ -108,7 +111,7 @@ class PksController extends Controller
                 ->where('sl_spk.status_spk_id',2)
                 ->select("sl_spk.id","sl_spk.nomor","sl_spk.nama_perusahaan","sl_spk.tgl_spk","sl_spk.kebutuhan")
                 ->get();
-            
+
             return DataTables::of($data)
             ->make(true);
         } catch (\Exception $e) {
@@ -127,17 +130,94 @@ class PksController extends Controller
             $leads = DB::table('sl_leads')->where('id',$dataSpk->leads_id)->first();
             $quotation = DB::table('sl_quotation')->where('id',$dataSpk->quotation_id)->first();
             $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation->company_id)->first();
+            $site = DB::table('sl_quotation_site')->where('quotation_id',$quotation->id)->first();
+            $timsalesD = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
+            $jumlahHcQuotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->sum('jumlah_hc');
 
             $pksNomor = $this->generateNomor($quotation->leads_id,$quotation->company_id);
             $newId = DB::table('sl_pks')->insertGetId([
-                'quotation_id' => $dataSpk->quotation_id,
+                'quotation_id' => $quotation->id,
                 'spk_id' => $dataSpk->id,
-                'leads_id' => $dataSpk->leads_id,
+                'leads_id' => $quotation->leads_id,
+                'site_id' => $site->id,
+                'branch_id' => $leads->branch_id,
+                'company_id' => $quotation->company_id,
+                'kode_site' => $leads->nomor,
                 'nomor' => $pksNomor,
-                'tgl_pks' => $current_date_time,
-                'nama_perusahaan' => $dataSpk->nama_perusahaan,
+                'tgl_pks' => Carbon::now()->toDateString(),
+                'nama_site' => $site->nama_site,
+                'alamat_site' => $site->penempatan,
+                'nama_proyek' => $pksNomor,
+                'kode_perusahaan' => $leads->nomor,
+                'nama_perusahaan' => $leads->nama_perusahaan,
+                'alamat_perusahaan' => $leads->alamat,
+                'layanan_id' => $quotation->kebutuhan_id,
+                'layanan' => $quotation->kebutuhan,
+                'bidang_usaha_id' => null,
+                'bidang_usaha' => null,
+                'jenis_perusahaan_id' => $quotation->jenis_perusahaan_id,
+                'jenis_perusahaan' => $quotation->jenis_perusahaan,
                 'link_pks_disetujui' => null,
-                'status_pks_id' => 5,
+                'status_pks_id' => 1,
+                'provinsi_id' => $site->provinsi_id,
+                'provinsi' => $site->provinsi,
+                'kota_id' => $site->kota_id,
+                'kota' => $site->kota,
+                'pma' => '',
+                'sales_id' => $timsalesD->user_id,
+                'crm_id_1' => $leads->crm_id,
+                'crm_id_2' => $leads->crm_id_1,
+                'crm_id_3' => $leads->crm_id_2,
+                'spv_ro_id' => $leads->ro_id,
+                'ro_id_1' => $leads->ro_id_1,
+                'ro_id_2' => $leads->ro_id_2,
+                'ro_id_3' => $leads->ro_id_3,
+                'loyalty_id' => 1,
+                'loyalty' => 'SILVER',
+                'kontrak_awal' => $quotation->mulai_kontrak,
+                'kontrak_akhir' => $quotation->kontrak_selesai,
+                'jumlah_hc' => $jumlahHcQuotationDetail,
+                'total_sebelum_pajak' => null,
+                'dasar_pengenaan_pajak' => null,
+                'ppn' => null,
+                'pph' => null,
+                'total_invoice' => null,
+                'persen_mf' => null,
+                'nominal_mf' => null,
+                'persen_bpjs_tk' => null,
+                'nominal_bpjs_tk' => null,
+                'persen_bpjs_ks' => null,
+                'nominal_bpjs_ks' => null,
+                'as_tk' => null,
+                'as_ks' => null,
+                'ohc' => null,
+                'thr_provisi' => null,
+                'thr_ditagihkan' => null,
+                'penagihan_selisih_thr' =>null,
+                'kaporlap' => null,
+                'device' => null,
+                'chemical' => null,
+                'training' => null,
+                'biaya_training' => null,
+                'tgl_kirim_invoice' => null,
+                'jumlah_hari_top' => $quotation->jumlah_hari_invoice,
+                'tipe_hari_top' => $quotation->tipe_hari_invoice,
+                'tgl_gaji' => null,
+                'pic_1' => null,
+                'jabatan_pic_1' => null,
+                'email_pic_1' => null,
+                'telp_pic_1' => null,
+                'pic_2' => null,
+                'jabatan_pic_2' =>null,
+                'email_pic_2' => null,
+                'telp_pic_2' => null,
+                'pic_3' => null,
+                'jabatan_pic_3' => null,
+                'email_pic_3' => null,
+                'telp_pic_3' => null,
+                'kategori_sesuai_hc_id' => null,
+                'kategori_sesuai_hc' => null,
+                'is_aktif' => 0,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -147,7 +227,7 @@ class PksController extends Controller
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            
+
             DB::table('sl_spk')->where('id',$dataSpk->id)->update([
                 'status_spk_id' => 3,
                 'updated_at' => $current_date_time,
@@ -992,7 +1072,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             abort(500);
         }
     }
-    
+
     public function generateNomor ($leadsId,$companyId){
         // generate nomor QUOT/SIG/AAABB-092024-00001
         $now = Carbon::now();
@@ -1048,7 +1128,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $originalName = $originalFileName.date("YmdHis").rand(10000,99999).".".$fileExtension;
 
             Storage::disk('pks')->put($originalName, file_get_contents($request->file('file')));
-            
+
             DB::table('sl_pks')->where('id',$request->id)->update([
                 'status_pks_id' => 6,
                 'link_pks_disetujui' =>env('APP_URL')."/public/pks/".$originalName,
@@ -1096,7 +1176,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         try {
             DB::beginTransaction();
             DB::connection('mysqlhris')->beginTransaction();
-            
+
             $current_date_time = Carbon::now()->toDateTimeString();
             $pks = DB::table('sl_pks')->where('id',$request->id)->first();
             DB::table('sl_pks')->where('id',$request->id)->update([
@@ -1144,7 +1224,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
 
             if($leads->customer_id!=null){
                 $custId = $leads->customer_id;
-            }else{ 
+            }else{
                 $custId = DB::table('sl_customer')->insertGetId([
                     'leads_id' => $leads->id,
                     'nomor' =>  $leads->nomor,
@@ -1168,13 +1248,13 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $clientId = null;
             if($leads->customer_id!=null){
                 $clientId = DB::connection('mysqlhris')->table('m_client')->where('customer_id',$custId)->first()->id;
-            }else{ 
+            }else{
                 $clientId = DB::connection('mysqlhris')->table('m_client')->insertGetId([
                     'customer_id' => $custId,
                     'name' => $leads->nama_perusahaan,
                     'address' => $leads->alamat,
                     'is_active' => 1,
-                    'created_at' => $current_date_time, 
+                    'created_at' => $current_date_time,
                     'created_by' => Auth::user()->id,
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->id
@@ -1200,7 +1280,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name,
                 ]);
-    
+
                 // SINGKRON KE SITE HRIS
                 $siteHrisId = DB::connection('mysqlhris')->table('m_site')->insertGetId([
                     'site_id' => $siteId,
@@ -1236,7 +1316,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     'updated_by' => Auth::user()->id
                 ]);
             }
-            
+
             // BUAT VACANCY
             $detailQuotation = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
 
@@ -1280,7 +1360,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 ]);
             }
 
-            // masukkan COSS ke tabel 
+            // masukkan COSS ke tabel
             $totalNominal = 0;
             $totalNominalCoss = 0;
             $ppn = 0;
@@ -1427,7 +1507,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
-            
+
             DB::commit();
             DB::connection('mysqlhris')->commit();
 
@@ -1495,14 +1575,14 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $current_date_time = Carbon::now()->toDateTimeString();
 
             $dataQuotation = DB::table('sl_quotation')->where('id',$request->id)->first();
-            
+
             if($request->ada_serikat=="Tidak Ada"){
                 $request->status_serikat ="Tidak Ada";
             }
 
             // $ro = DB::connection('mysqlhris')->table('m_user')->where('id',$request->ro)->first();
             // $crm = DB::connection('mysqlhris')->table('m_user')->where('id',$request->crm)->first();
-        
+
             // DB::table('sl_pks')->where('id',$request->pks_id)->update([
             //     'ro_id' => $ro->id,
             //     'ro' => $ro->full_name,
@@ -1552,7 +1632,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         try {
             $data = DB::table('sl_pks_perjanjian')->where('id',$id)->first();
             $pks = DB::table('sl_pks')->where('id',$data->pks_id)->first();
-            
+
             return view('sales.pks.edit-perjanjian',compact('data','pks'));
         } catch (\Exception $e) {
             dd($e);
@@ -1571,7 +1651,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'judul' => $request->judul,
                 'raw_text' => $request->raw_text,
                 'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name 
+                'updated_by' => Auth::user()->full_name
             ]);
             return redirect()->route('pks.view',$data->pks_id);
         } catch (\Exception $e) {
@@ -1601,7 +1681,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $nomorQuotationBaru = $this->generateNomorQuotation($qtujuan->leads_id,$qtujuan->company_id);
             $dataToInsertQuotation['nomor'] = $nomorQuotationBaru;
             $dataToInsertQuotation['revisi'] = $qtujuan->revisi+1;
-            $dataToInsertQuotation['alasan_revisi'] = $request->alasan;            
+            $dataToInsertQuotation['alasan_revisi'] = $request->alasan;
             $dataToInsertQuotation['quotation_asal_id'] = $qtujuan->id;
             $dataToInsertQuotation['step'] = 1;
             $dataToInsertQuotation['created_at'] = $current_date_time;
@@ -1621,7 +1701,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsert['quotation_id'] = $qtujuanId;
                 $dataToInsert['created_at'] = $current_date_time;
                 $dataToInsert['created_by'] = Auth::user()->full_name;
-                
+
                 $newSiteId = DB::table("sl_quotation_site")->insertGetId($dataToInsert);
 
                 $detail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where('quotation_site_id',$site->id)->where('quotation_id',$qasalId)->get();
@@ -1637,7 +1717,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     $dataToInsert['quotation_site_id'] = $newSiteId;
                     $dataToInsert['created_at'] = $current_date_time;
                     $dataToInsert['created_by'] = Auth::user()->full_name;
-                    
+
                     $newId = DB::table("sl_quotation_detail")->insertGetId($dataToInsert);
 
                     // Quotation Chemical
@@ -1653,7 +1733,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_chemical")->insert($dataToInsertD);
                     }
 
@@ -1670,10 +1750,10 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_detail_requirement")->insert($dataToInsertD);
                     }
-                    
+
                     // Quotation Detail Tunjangan
                     $tunjangan = DB::table("sl_quotation_detail_tunjangan")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
                     DB::table("sl_quotation_detail_tunjangan")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
@@ -1687,7 +1767,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_detail_tunjangan")->insert($dataToInsertD);
                     }
 
@@ -1704,7 +1784,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_kaporlap")->insert($dataToInsertD);
                     }
                 }
@@ -1722,7 +1802,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_devices")->insert($dataToInsertD);
             }
 
@@ -1738,7 +1818,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_ohc")->insert($dataToInsertD);
             }
 
@@ -1754,7 +1834,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_aplikasi")->insert($dataToInsertD);
             }
 
@@ -1770,7 +1850,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_kerjasama")->insert($dataToInsertD);
             }
 
@@ -1786,7 +1866,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_pic")->insert($dataToInsertD);
             }
 
@@ -1802,7 +1882,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_training")->insert($dataToInsertD);
             }
 

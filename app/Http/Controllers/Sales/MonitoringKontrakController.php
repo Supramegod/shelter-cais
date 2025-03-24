@@ -255,29 +255,39 @@ class MonitoringKontrakController extends Controller
         })
         ->addColumn('progress',function ($data) {
             $progress = 0;
+            $bgColor = "";
             $param = 11.11;
             if($data->status_pks_id==1){
                 $progress = $param*1;
+                $bgColor = "bg-secondary";
             }else if($data->status_pks_id==2){
                 $progress = $param*2;
+                $bgColor = "bg-secondary";
             }else if($data->status_pks_id==3){
                 $progress = $param*3;
+                $bgColor = "bg-secondary";
             }else if($data->status_pks_id==4){
                 $progress = $param*4;
+                $bgColor = "bg-info";
             }else if($data->status_pks_id==5){
                 $progress = $param*5;
+                $bgColor = "bg-info";
             }else if($data->status_pks_id==6){
                 $progress = $param*6;
+                $bgColor = "bg-info";
             }else if($data->status_pks_id==7){
                 $progress = $param*7;
+                $bgColor = "bg-primary";
             }else if($data->status_pks_id==8){
                 $progress = $param*8;
+                $bgColor = "bg-primary";
             }else if($data->status_pks_id==9){
                 $progress = 100;
+                $bgColor = "bg-success";
             }
 
             return '<div class="progress" style="height: 5px;">
-                <div class="progress-bar bg-success" role="progressbar" style="width: '.$progress.'%" aria-valuenow="'.$progress.'" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar '.$bgColor.'" role="progressbar" style="width: '.$progress.'%" aria-valuenow="'.$progress.'" aria-valuemin="0" aria-valuemax="100"></div>
             </div>';
         })
         ->addColumn('status_berlaku', function ($data) {

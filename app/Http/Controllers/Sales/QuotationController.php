@@ -1325,14 +1325,18 @@ class QuotationController extends Controller
                 $request->nominal_lembur = null;
                 $request->jenis_bayar_lembur = null;
             }else{
-                $request->nominal_lembur = str_replace(".","",$request->nominal_lembur);
+                if ($request->nominal_lembur != null && $request->nominal_lembur != "") {
+                    $request->nominal_lembur = str_replace(".", "", $request->nominal_lembur);
+                }
             }
 
             if($request->tunjangan_holiday!="Flat"){
                 $request->nominal_tunjangan_holiday = null;
                 $request->jenis_bayar_tunjangan_holiday = null;
             }else{
-                $request->nominal_tunjangan_holiday = str_replace(".","",$request->nominal_tunjangan_holiday);
+                if ($request->nominal_tunjangan_holiday != null && $request->nominal_tunjangan_holiday != "") {
+                    $request->nominal_tunjangan_holiday = str_replace(".", "", $request->nominal_tunjangan_holiday);
+                }
             }
 
             if($request->ada_lembur=="Tidak Ada"){

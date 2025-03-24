@@ -55,11 +55,133 @@
     <!-- End Row -->
     <!--/ Responsive Datatable -->
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="progressModalLabel">Progress Tracking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 1</strong>
+                                <p class="mb-0">Pembuat: John Doe</p>
+                                <p class="mb-0">Waktu: 2023-01-01 10:00</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">Completed</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 2</strong>
+                                <p class="mb-0">Pembuat: Jane Smith</p>
+                                <p class="mb-0">Waktu: 2023-01-02 11:00</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">Completed</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 3</strong>
+                                <p class="mb-0">Pembuat: John Doe</p>
+                                <p class="mb-0">Waktu: 2023-01-03 12:00</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">Completed</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 4</strong>
+                                <p class="mb-0">Pembuat: Jane Smith</p>
+                                <p class="mb-0">Waktu: 2023-01-04 13:00</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">Completed</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 5</strong>
+                                <p class="mb-0">Pembuat: John Doe</p>
+                                <p class="mb-0">Waktu: 2023-01-05 14:00</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">Completed</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 6</strong>
+                                <p class="mb-0">Pembuat: Jane Smith</p>
+                                <p class="mb-0">Waktu: 2023-01-06 15:00</p>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">In Progress</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 7</strong>
+                                <p class="mb-0">Pembuat: John Doe</p>
+                                <p class="mb-0">Waktu: 2023-01-07 16:00</p>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 8</strong>
+                                <p class="mb-0">Pembuat: Jane Smith</p>
+                                <p class="mb-0">Waktu: 2023-01-08 17:00</p>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 9</strong>
+                                <p class="mb-0">Pembuat: John Doe</p>
+                                <p class="mb-0">Waktu: 2023-01-09 18:00</p>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Proses 10</strong>
+                                <p class="mb-0">Pembuat: Jane Smith</p>
+                                <p class="mb-0">Waktu: 2023-01-10 19:00</p>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--/ Content -->
 @endsection
 
 @section('pageScript')
 <script>
+    // $(document).ready(function () {
+    //     $('#progressModal').modal('show');
+    // });
     // let dt_filter_table = $('.dt-column-search');
     // Formatting function for row details - modify as you need
     // function format(d) {

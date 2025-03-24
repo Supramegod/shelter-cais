@@ -18,7 +18,9 @@ class QuotationService
         $jumlahHc = $quotation->quotation_detail->sum('jumlah_hc');
         $quotation->jumlah_hc = $jumlahHc;
         $provisi = 12;
-        if (!strpos($quotation->durasi_kerjasama, 'tahun')) {
+        if($quotation->durasi_kerjasama == null){
+            $provisi = 12;
+        }else if (!strpos($quotation->durasi_kerjasama, 'tahun')) {
             $provisi = (int)str_replace(" bulan", "", $quotation->durasi_kerjasama);
         }
         $quotation->provisi = $provisi;

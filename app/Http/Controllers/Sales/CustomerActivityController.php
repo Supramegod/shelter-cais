@@ -979,7 +979,6 @@ class CustomerActivityController extends Controller
                 $data = DB::table('sl_customer_activity')
                             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_customer_activity.notulen','sl_customer_activity.notes','sl_customer_activity.created_at','sl_customer_activity.created_by as created_by')
                             ->whereNull('sl_customer_activity.deleted_at')
-                            ->where('is_activity',1)
                             ->where('pks_id',$request->pks_id)->get();
 
             }
