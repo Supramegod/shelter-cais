@@ -115,8 +115,10 @@ class CustomerActivityController extends Controller
 
             if(Auth::user()->role_id == 29){
                 $dataSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->whereNull('deleted_at')->first();
-                $tim_sales_id = $dataSalesD->tim_sales_id;
-                $tim_sales_d_id = $dataSalesD->id;
+                if($dataSalesD !=null){
+                    $tim_sales_id = $dataSalesD->tim_sales_id;
+                    $tim_sales_d_id = $dataSalesD->id;
+                }
             }
             $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
 
@@ -236,98 +238,6 @@ class CustomerActivityController extends Controller
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
             }else{
-                // dd($request);
-                // validator tipe
-                // if($request->tipe=="Telepon" || $request->tipe=="Online Meeting"){
-                //     $validator = Validator::make($request->all(), [
-                //         'tgl_realisasi_telepon' => 'required',
-                //         'start' => 'required',
-                //         'end' => 'required'
-                //     ], [
-                //         'min' => 'Masukkan :attribute minimal :min',
-                //         'max' => 'Masukkan :attribute maksimal :max',
-                //         'required' => ':attribute harus di isi',
-                //     ]);
-                // }else if($request->tipe=="Visit"){
-                //     $validator = Validator::make($request->all(), [
-                //         'tgl_realisasi' => 'required',
-                //         'jam_realisasi' => 'required',
-                //         'jenis_visit' => 'required',
-                //         'notulen' => 'required'
-                //     ], [
-                //         'min' => 'Masukkan :attribute minimal :min',
-                //         'max' => 'Masukkan :attribute maksimal :max',
-                //         'required' => ':attribute harus di isi',
-                //     ]);
-                // }else if($request->tipe=="Kirim Berkas"){
-                //     if($request->id == null){
-                //         $validator = Validator::make($request->all(), [
-                //             'tgl_realisasi' => 'required',
-                //             'jam_realisasi' => 'required',
-                //             'penerima' => 'required',
-                //             'files' => 'required'
-                //         ], [
-                //             'min' => 'Masukkan :attribute minimal :min',
-                //             'max' => 'Masukkan :attribute maksimal :max',
-                //             'required' => ':attribute harus di isi',
-                //             'mimes' =>'Extensi tidak valid'
-                //         ]);
-                //     }else{
-                //         $validator = Validator::make($request->all(), [
-                //             'tgl_realisasi' => 'required',
-                //             'jam_realisasi' => 'required',
-                //             'penerima' => 'required'
-                //         ], [
-                //             'min' => 'Masukkan :attribute minimal :min',
-                //             'max' => 'Masukkan :attribute maksimal :max',
-                //             'required' => ':attribute harus di isi',
-                //             'mimes' =>'Extensi tidak valid'
-                //         ]);
-                //     }
-                // }else if($request->tipe=="Email"){
-                //     $validator = Validator::make($request->all(), [
-                //         'tgl_realisasi' => 'required',
-                //         'email' => 'required',
-                //     ], [
-                //         'min' => 'Masukkan :attribute minimal :min',
-                //         'max' => 'Masukkan :attribute maksimal :max',
-                //         'required' => ':attribute harus di isi',
-                //     ]);
-                // }
-                // else if($request->tipe=="Ubah Status"){
-                //     $validator = Validator::make($request->all(), [
-                //         'status_leads_id' => 'required',
-                //     ], [
-                //         'min' => 'Masukkan :attribute minimal :min',
-                //         'max' => 'Masukkan :attribute maksimal :max',
-                //         'required' => ':attribute harus di isi',
-                //     ]);
-                // }
-                // else if($request->tipe=="Pilih Sales"){
-                //     $validator = Validator::make($request->all(), [
-                //         'tim_sales_id' => 'required',
-                //         'tim_sales_d_id' => 'required',
-                //     ], [
-                //         'min' => 'Masukkan :attribute minimal :min',
-                //         'max' => 'Masukkan :attribute maksimal :max',
-                //         'required' => ':attribute harus di isi',
-                //     ]);
-                // }
-
-                //validator role
-                // if(!in_array(Auth::user()->role_id,[4,5,6,8,55,56])){
-                //     $validator = Validator::make($request->all(), [
-                //         'status_leads_id' => 'required',
-                //     ], [
-                //         'min' => 'Masukkan :attribute minimal :min',
-                //         'max' => 'Masukkan :attribute maksimal :max',
-                //         'required' => ':attribute harus di isi',
-                //     ]);
-                // }
-
-                // if ($validator->fails()) {
-                //     return back()->withErrors($validator->errors())->withInput();
-                // }
 
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $nomor = $this->generateNomor($request->leads_id);

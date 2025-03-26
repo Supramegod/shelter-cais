@@ -118,7 +118,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,4,5,6,8,52,53,10,96,97,40,99]))
+        @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,56,4,5,6,8,52,53,10,96,97,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
             <a href="{{route('monitoring-kontrak')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>

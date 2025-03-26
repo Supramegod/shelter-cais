@@ -24,5 +24,20 @@
 @endsection
 
 @section('pageScript')
+<script>
+    $(document).ready(function() {
+        @if(in_array($userData->role_id, [29,31]))
+            @if($userData->tim_sales_d_id == null)
+                Swal.fire({
+                    title: 'Perhatian!',
+                    text: 'Anda belum terdaftar dalam tim sales. Silahkan hubungi IT untuk informasi lebih lanjut.',
+                    icon: 'warning',
+                    showCancelButton: false,
+                    confirmButtonText: 'OK',
+                });
+            @endif
+        @endif
+    });
+</script>
 <script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
 @endsection

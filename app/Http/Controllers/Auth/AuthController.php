@@ -95,18 +95,18 @@ class AuthController extends Controller
                 'user_agent'    => $request->header('user_agent'),
                 'header_data'   => json_encode($request->header())
             ]);
-            
+
             return back()->withErrors([
                 'username' => 'Username atau password tidak ditemukan.',
             ])->withInput();
-            
+
         } catch (\Exception $e) {
             return back()->withErrors([
                 'username' => "Terdapat kesalahan dengan error code ".$e->getMessage(),
             ])->withInput();
         }
-    } 
-    
+    }
+
     /**
      * Display a dashboard to authenticated users.
      *
@@ -116,17 +116,26 @@ class AuthController extends Controller
     {
         if(Auth::check())
         {
+            $userData = $this->SystemController->userLoginData();
+            if(in_array($userData->role_id,[29,31])){
+                $userData->tim_sales_id =null;
+                $userData->tim_sales_d_id =null;
 
-            $userData = $this->SystemController->userLoginData();            
-            return view('home.dashboard');
+                $dataSalesD = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->whereNull('deleted_at')->first();
+                if($dataSalesD !=null){
+                    $userData->tim_sales_id = $dataSalesD->tim_sales_id;
+                    $userData->tim_sales_d_id = $dataSalesD->id;
+                }
+            }
+            return view('home.dashboard',compact('userData'));
         }
-        
+
         return redirect()->route('login')
             ->withErrors([
             'username' => 'Silahkan login untuk masuk ke dashboard.',
         ])->withInput();
-    } 
-    
+    }
+
     /**
      * Log out the user from application.
      *
