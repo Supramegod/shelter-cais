@@ -63,8 +63,12 @@ class LeadsController extends Controller
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
             $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+            $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
+            $kota = DB::connection('mysqlhris')->table('m_city')->get();
+            $kecamatan = DB::connection('mysqlhris')->table('m_district')->get();
+            $kelurahan = DB::connection('mysqlhris')->table('m_village')->get();
 
-            return view('sales.leads.add',compact('branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now'));
+            return view('sales.leads.add',compact('provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -90,7 +94,12 @@ class LeadsController extends Controller
                 $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
             }
 
-            return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform'));
+            $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
+            $kota = DB::connection('mysqlhris')->table('m_city')->get();
+            $kecamatan = DB::connection('mysqlhris')->table('m_district')->get();
+            $kelurahan = DB::connection('mysqlhris')->table('m_village')->get();
+
+            return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -274,7 +283,9 @@ class LeadsController extends Controller
                 'nama_perusahaan' => 'required|max:100|min:3',
                 'pic' => 'required',
                 'branch' => 'required',
-                'kebutuhan' => 'required'
+                'kebutuhan' => 'required',
+                'provinsi' => 'required',
+                'kota' => 'required'
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
                 'max' => 'Masukkan :attribute maksimal :max',
@@ -285,6 +296,11 @@ class LeadsController extends Controller
                 return back()->withErrors($validator->errors())->withInput();
             }else{
                 $current_date_time = Carbon::now()->toDateTimeString();
+                $db2 = DB::connection('mysqlhris')->getDatabaseName();
+                $provinsi = DB::table($db2.'.m_province')->where('id',$request->provinsi)->first();
+                $kota = DB::table($db2.'.m_city')->where('id',$request->kota)->first();
+                $kecamatan = DB::table($db2.'.m_district')->where('id',$request->kecamatan)->first();
+                $kelurahan = DB::table($db2.'.m_village')->where('id',$request->kelurahan)->first();
 
                 $msgSave = '';
                 if(!empty($request->id)){
@@ -301,6 +317,14 @@ class LeadsController extends Controller
                         'no_telp' => $request->no_telp,
                         'email' => $request->email,
                         'notes' => $request->detail_leads,
+                        'provinsi_id' => $request->provinsi,
+                        'provinsi' => $provinsi ? $provinsi->name : null,
+                        'kota_id' => $request->kota,
+                        'kota' => $kota ? $kota->name : null,
+                        'kecamatan_id' => $request->kecamatan,
+                        'kecamatan' => $kecamatan ? $kecamatan->name : null,
+                        'kelurahan_id' => $request->kelurahan,
+                        'kelurahan' => $kelurahan ? $kelurahan->name : null,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->name
                     ]);
@@ -350,6 +374,14 @@ class LeadsController extends Controller
                         'email' => $request->email,
                         'status_leads_id' => 1,
                         'notes' => $request->detail_leads,
+                        'provinsi_id' => $request->provinsi,
+                        'provinsi' => $provinsi ? $provinsi->name : null,
+                        'kota_id' => $request->kota,
+                        'kota' => $kota ? $kota->name : null,
+                        'kecamatan_id' => $request->kecamatan,
+                        'kecamatan' => $kecamatan ? $kecamatan->name : null,
+                        'kelurahan_id' => $request->kelurahan,
+                        'kelurahan' => $kelurahan ? $kelurahan->name : null,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -1007,4 +1039,17 @@ class LeadsController extends Controller
         }
     }
 
+    public function getKota($provinsiId){
+        $kota = DB::connection('mysqlhris')->table('m_city')->where('province_id', $provinsiId)->get();
+        return response()->json($kota);
+    }
+    public function getKecamatan($kotaId) {
+        $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('city_id', $kotaId)->get();
+        return response()->json($kecamatan);
+    }
+
+    public function getKelurahan($kecamatanId) {
+        $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('district_id', $kecamatanId)->get();
+        return response()->json($kelurahan);
+    }
 }

@@ -39,6 +39,112 @@
             </div>
           </div>
           <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Provinsi <span class="text-danger">*</span></label>
+            <div class="col-sm-4">
+                <div class="position-relative">
+                    <select id="provinsi" name="provinsi" class="form-select @if ($errors->any()) @if($errors->has('provinsi')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($provinsi as $value)
+                        <option value="{{$value->id}}" @if(old('provinsi') == $value->id) selected @endif>{{$value->name}}</option>
+                        @endforeach
+                    </select>
+                    @if($errors->has('provinsi'))
+                        <div class="invalid-feedback">{{$errors->first('provinsi')}}</div>
+                    @endif
+                </div>
+            </div>
+            <label class="col-sm-2 col-form-label text-sm-end">Kota <span class="text-danger">*</span></label>
+            <div class="col-sm-4">
+                <div class="position-relative">
+                    <select id="kota" name="kota" class="form-select @if ($errors->any()) @if($errors->has('kota')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                    </select>
+                    @if($errors->has('kota'))
+                        <div class="invalid-feedback">{{$errors->first('kota')}}</div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Kecamatan</label>
+            <div class="col-sm-4">
+                <div class="position-relative">
+                    <select id="kecamatan" name="kecamatan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                    </select>
+                </div>
+            </div>
+            <label class="col-sm-2 col-form-label text-sm-end">Kelurahan</label>
+            <div class="col-sm-4">
+                <div class="position-relative">
+                    <select id="kelurahan" name="kelurahan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                    </select>
+                </div>
+            </div>
+            <script>
+                $(document).ready(function() {
+                    $('#provinsi').on('change', function() {
+                        let provinsiId = $(this).val();
+                        $('#kota').empty().append('<option value="">- Pilih data -</option>');
+                        $('#kecamatan').empty().append('<option value="">- Pilih data -</option>');
+                        $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
+                        if (provinsiId) {
+                            let getKotaUrl = "{{ route('leads.get-kota', ':provinsiId') }}";
+                            getKotaUrl = getKotaUrl.replace(':provinsiId', provinsiId);
+                            $.ajax({
+                                url: getKotaUrl,
+                                type: 'GET',
+                                success: function(data) {
+                                    $.each(data, function(key, value) {
+                                        $('#kota').append('<option value="' + value.id + '">' + value.name + '</option>');
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    $('#kota').on('change', function() {
+                        let kotaId = $(this).val();
+                        $('#kecamatan').empty().append('<option value="">- Pilih data -</option>');
+                        $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
+                        if (kotaId) {
+                            let getKecamatanUrl = "{{ route('leads.get-kecamatan', ':kotaId') }}";
+                            getKecamatanUrl = getKecamatanUrl.replace(':kotaId', kotaId);
+                            $.ajax({
+                                url: getKecamatanUrl,
+                                type: 'GET',
+                                success: function(data) {
+                                    $.each(data, function(key, value) {
+                                        $('#kecamatan').append('<option value="' + value.id + '">' + value.name + '</option>');
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    $('#kecamatan').on('change', function() {
+                        let kecamatanId = $(this).val();
+                        $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
+
+                        if (kecamatanId) {
+                            let getKelurahanUrl = "{{ route('leads.get-kelurahan', ':kecamatanId') }}";
+                            getKelurahanUrl = getKelurahanUrl.replace(':kecamatanId', kecamatanId);
+                            $.ajax({
+                                url: getKelurahanUrl,
+                                type: 'GET',
+                                success: function(data) {
+                                    $.each(data, function(key, value) {
+                                        $('#kelurahan').append('<option value="' + value.id + '">' + value.name + '</option>');
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+            </script>
+          </div>
+          <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Wilayah <span class="text-danger">*</span></label>
             <div class="col-sm-4">
               <div class="position-relative">
@@ -63,7 +169,7 @@
                 <textarea class="form-control mt-3 h-px-100 @if ($errors->any())   @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{old('alamat_perusahaan')}}</textarea>
               </div>
             </div>
-          </div>          
+          </div>
           <hr class="my-4 mx-4">
           <h6>2. Kebutuhan Leads</h6>
           <div class="row mb-2">
@@ -163,7 +269,7 @@
   });
 </script>
 <script>
-  @if(session()->has('success'))  
+  @if(session()->has('success'))
     Swal.fire({
       title: 'Pemberitahuan',
       html: '{{session()->get('success')}}',

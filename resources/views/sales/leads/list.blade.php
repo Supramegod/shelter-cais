@@ -99,6 +99,8 @@
                                     <th class="text-center">Sales</th>
                                     <th class="text-center">Perusahaan</th>
                                     <th class="text-center">Telp. Perusahaan</th>
+                                    <th class="text-center">Provinsi</th>
+                                    <th class="text-center">Kota</th>
                                     <th class="text-center">Nama PIC</th>
                                     <th class="text-center">Telp. PIC</th>
                                     <th class="text-center">Email PIC</th>
@@ -126,7 +128,7 @@
 
 @section('pageScript')
 <script>
-    @if(isset($success) || session()->has('success'))  
+    @if(isset($success) || session()->has('success'))
         // Swal.fire({
         //     title: 'Pemberitahuan',
         //     html: '{{$success}} {{session()->get('success')}}',
@@ -137,7 +139,7 @@
         //     buttonsStyling: false
         // });
     @endif
-    @if(isset($error) || session()->has('error'))  
+    @if(isset($error) || session()->has('error'))
         // Swal.fire({
         //     title: 'Pemberitahuan',
         //     html: '{{$error}} {{session()->has('error')}}',
@@ -171,7 +173,7 @@
             "createdRow": function( row, data, dataIndex){
                 $('td', row).css('background-color', data.warna_background);
                 $('td', row).css('color', data.warna_font);
-            },      
+            },
             "order":[
                 [0,'desc']
             ],
@@ -203,6 +205,15 @@
             },{
                 data : 'telp_perusahaan',
                 name : 'telp_perusahaan',
+                className:'text-center'
+            },
+            {
+                data : 'provinsi',
+                name : 'provinsi',
+                className:'text-center'
+            },{
+                data : 'kota',
+                name : 'kota',
                 className:'text-center'
             },{
                 data : 'pic',
@@ -284,13 +295,13 @@
                     className: 'dropdown-item',
                     orientation: 'landscape',
                     customize: function(doc) {
-                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                         },
                     exportOptions: {
                         columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                         orientation: 'landscape',
                         customize: function(doc) {
-                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                         },
                         // prevent avatar to be display
                         format: {
@@ -320,7 +331,7 @@
                                 //This will send the page to the location specified
                                 let route = '{{route("leads.export-excel")}}'+parameter;
                                 console.log(route);
-                                
+
                                 // window.location.href = '{{route("leads.export-excel")}}';
                             }
                     }
