@@ -341,6 +341,11 @@ class QuotationService
         } else {
             $quotation->lembur_per_jam = ($umk / 173 * 1.5) * 1;
         }
+
+        if($quotation->lembur_ditagihkan == "Ditagihkan Terpisah"){
+            $kbd->lembur = 0;
+        }
+
         $quotation->nominal_lembur = $kbd->lembur;
     }
 

@@ -11,7 +11,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-4')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-4')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -75,9 +75,9 @@
                       <select id="hitungan_upah" name="hitungan_upah" class="form-select" data-allow-clear="true" tabindex="-1">
                           @if($quotation->jenis_kontrak == "PKHL" || $quotation->jenis_kontrak == "Borongan")
                           <option value="Per Jam" @if($quotation->hitungan_upah == "Per Jam") selected @endif>Per Jam</option>
-                          <option value="Per Hari" @if($quotation->hitungan_upah == "Per Hari") selected @endif>Per Hari</option>  
+                          <option value="Per Hari" @if($quotation->hitungan_upah == "Per Hari") selected @endif>Per Hari</option>
                           @endif
-                          <option value="Per Bulan" @if($quotation->hitungan_upah == "Per Bulan") selected @elseif($quotation->jenis_kontrak == "PKWT") selected @elseif($quotation->hitungan_upah == null) selected @endif>Per Bulan</option>  
+                          <option value="Per Bulan" @if($quotation->hitungan_upah == "Per Bulan") selected @elseif($quotation->jenis_kontrak == "PKWT") selected @elseif($quotation->hitungan_upah == null) selected @endif>Per Bulan</option>
                       </select>
                     </div>
                   </div>
@@ -90,7 +90,7 @@
                       <select id="manajemen_fee" name="manajemen_fee" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
                         @foreach($manfee as $data)
-                          <option value="{{$data->id}}" @if($quotation->management_fee_id == $data->id) selected @endif>{{$data->nama}}</option>  
+                          <option value="{{$data->id}}" @if($quotation->management_fee_id == $data->id) selected @endif>{{$data->nama}}</option>
                         @endforeach
                       </select>
                     </div>
@@ -113,8 +113,8 @@
                     <label class="form-label" for="ppn_pph_dipotong">Hitungan PPN & PPh</label>
                     <div class="input-group">
                       <select id="ppn_pph_dipotong" name="ppn_pph_dipotong" class="form-select" data-allow-clear="true" tabindex="-1">
-                      <option value="Management Fee" @if($quotation->ppn_pph_dipotong==null || $quotation->ppn_pph_dipotong=="" ||$quotation->ppn_pph_dipotong=="Management Fee") selected @endif>Management Fee</option>  
-                      <option value="Total Invoice" @if($quotation->ppn_pph_dipotong=="Total Invoice") selected @endif>Total Invoice</option>  
+                      <option value="Management Fee" @if($quotation->ppn_pph_dipotong==null || $quotation->ppn_pph_dipotong=="" ||$quotation->ppn_pph_dipotong=="Management Fee") selected @endif>Management Fee</option>
+                      <option value="Total Invoice" @if($quotation->ppn_pph_dipotong=="Total Invoice") selected @endif>Total Invoice</option>
                       </select>
                     </div>
                   </div>
@@ -123,16 +123,16 @@
                   <div class="col-sm-6">
                     <label class="form-label" for="ada_thr">Tunjangan Hari Raya</label>
                       <select id="ada_thr" name="ada_thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                      <option value="" @if($quotation->thr=="") selected @endif>- Pilih Data -</option>  
-                      <option value="Ada" @if($quotation->thr!="" && $quotation->thr!="Tidak Ada") selected @endif>Ada</option>  
-                      <option value="Tidak Ada" @if($quotation->thr=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                      <option value="" @if($quotation->thr=="") selected @endif>- Pilih Data -</option>
+                      <option value="Ada" @if($quotation->thr!="" && $quotation->thr!="Tidak Ada") selected @endif>Ada</option>
+                      <option value="Tidak Ada" @if($quotation->thr=="Tidak Ada") selected @endif>Tidak Ada</option>
                       </select>
                   </div>
                   <div class="col-sm-6 ada_thr">
                     <label class="form-label" for="thr">Provisi / Ditagihkan</label>
                       <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan Setiap Bulan</option>  
-                        <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan Terpisah</option>  
+                        <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan Setiap Bulan</option>
+                        <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan Terpisah</option>
                       </select>
                   </div>
                 </div>
@@ -140,16 +140,16 @@
                   <div class="col-sm-6">
                     <label class="form-label" for="ada_kompensasi">Kompensasi</label>
                       <select id="ada_kompensasi" name="ada_kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="" @if($quotation->kompensasi=="" || $quotation->kompensasi==null) selected @endif>- Pilih Data -</option>  
-                        <option value="Ada" @if($quotation->kompensasi!=null && $quotation->kompensasi!="" && $quotation->kompensasi!="Tidak Ada") selected @endif>Ada</option>  
-                        <option value="Tidak Ada" @if($quotation->kompensasi=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                        <option value="" @if($quotation->kompensasi=="" || $quotation->kompensasi==null) selected @endif>- Pilih Data -</option>
+                        <option value="Ada" @if($quotation->kompensasi!=null && $quotation->kompensasi!="" && $quotation->kompensasi!="Tidak Ada") selected @endif>Ada</option>
+                        <option value="Tidak Ada" @if($quotation->kompensasi=="Tidak Ada") selected @endif>Tidak Ada</option>
                       </select>
                   </div>
                   <div class="col-sm-6 ada_kompensasi">
                     <label class="form-label" for="kompensasi">Provisi / Ditagihkan</label>
                       <select id="kompensasi" name="kompensasi" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="Diprovisikan" @if($quotation->kompensasi=="Diprovisikan") selected @endif>Diprovisikan Setiap Bulan</option>  
-                        <option value="Ditagihkan" @if($quotation->kompensasi=="Ditagihkan") selected @endif>Ditagihkan Terpisah</option>  
+                        <option value="Diprovisikan" @if($quotation->kompensasi=="Diprovisikan") selected @endif>Diprovisikan Setiap Bulan</option>
+                        <option value="Ditagihkan" @if($quotation->kompensasi=="Ditagihkan") selected @endif>Ditagihkan Terpisah</option>
                       </select>
                   </div>
                 </div>
@@ -157,16 +157,16 @@
                   <div class="col-sm-3">
                     <label class="form-label" for="ada_tunjangan_holiday">Tunjangan Hari Libur Nasional</label>
                       <select id="ada_tunjangan_holiday" name="ada_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>  
-                        <option value="Ada" @if($quotation->tunjangan_holiday!=null && $quotation->tunjangan_holiday!="" && $quotation->tunjangan_holiday!="Tidak Ada") selected @endif>Ada</option>  
-                        <option value="Tidak Ada" @if($quotation->tunjangan_holiday=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                        <option value="" @if($quotation->tunjangan_holiday=="" || $quotation->tunjangan_holiday==null) selected @endif>- Pilih Data -</option>
+                        <option value="Ada" @if($quotation->tunjangan_holiday!=null && $quotation->tunjangan_holiday!="" && $quotation->tunjangan_holiday!="Tidak Ada") selected @endif>Ada</option>
+                        <option value="Tidak Ada" @if($quotation->tunjangan_holiday=="Tidak Ada") selected @endif>Tidak Ada</option>
                       </select>
                   </div>
                   <div class="col-sm-3 ada_tunjangan_holiday">
                     <label class="form-label" for="tunjangan_holiday">Normatif / Flat</label>
                       <select id="tunjangan_holiday" name="tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="Normatif" @if($quotation->tunjangan_holiday=="Normatif") selected @endif>Normatif</option>  
-                        <option value="Flat" @if($quotation->tunjangan_holiday=="Flat") selected @endif>Flat</option>  
+                        <option value="Normatif" @if($quotation->tunjangan_holiday=="Normatif") selected @endif>Normatif</option>
+                        <option value="Flat" @if($quotation->tunjangan_holiday=="Flat") selected @endif>Flat</option>
                       </select>
                   </div>
                   <div class="col-sm-3 d-nominal-tunjangan-holiday">
@@ -176,30 +176,30 @@
                   <div class="col-sm-3 ada_tunjangan_holiday d-nominal-tunjangan-holiday">
                     <label class="form-label" for="jenis_bayar_tunjangan_holiday">Jenis Bayar</label>
                       <select id="jenis_bayar_tunjangan_holiday" name="jenis_bayar_tunjangan_holiday" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih Jenis -</option>  
-                        <option value="Per Jam" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Jam") selected @endif>Per Jam</option>  
-                        <option value="Per Hari" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Hari") selected @endif>Per Hari</option>  
-                        <option value="Per Bulan" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Bulan") selected @endif>Per Bulan</option>  
+                        <option value="">- Pilih Jenis -</option>
+                        <option value="Per Jam" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Jam") selected @endif>Per Jam</option>
+                        <option value="Per Hari" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Hari") selected @endif>Per Hari</option>
+                        <option value="Per Bulan" @if($quotation->jenis_bayar_tunjangan_holiday=="Per Bulan") selected @endif>Per Bulan</option>
                       </select>
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-3">
+                  <div class="col-sm-2">
                     <label class="form-label" for="ada_lembur">Lembur</label>
                       <select id="ada_lembur" name="ada_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="" @if($quotation->lembur=="" || $quotation->lembur==null) selected @endif>- Pilih Data -</option>  
-                        <option value="Ada" @if($quotation->lembur!=null && $quotation->lembur!="" && $quotation->lembur!="Tidak Ada") selected @endif>Ada</option>  
-                        <option value="Tidak Ada" @if($quotation->lembur=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                        <option value="" @if($quotation->lembur=="" || $quotation->lembur==null) selected @endif>- Pilih Data -</option>
+                        <option value="Ada" @if($quotation->lembur!=null && $quotation->lembur!="" && $quotation->lembur!="Tidak Ada") selected @endif>Ada</option>
+                        <option value="Tidak Ada" @if($quotation->lembur=="Tidak Ada") selected @endif>Tidak Ada</option>
                       </select>
                   </div>
-                  <div class="col-sm-3 ada_lembur">
+                  <div class="col-sm-2 ada_lembur">
                     <label class="form-label" for="lembur">Normatif / Flat</label>
                       <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>
                         @if($quotation->jam_kerja !="12 Jam Kerja")
-                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option> 
-                        @endif 
-                        <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>  
+                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>
+                        @endif
+                        <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>
                       </select>
                   </div>
                   <div class="col-sm-3 ada_lembur d-nominal-lembur">
@@ -209,10 +209,18 @@
                   <div class="col-sm-3 ada_lembur d-nominal-lembur">
                     <label class="form-label" for="jenis_bayar_lembur">Jenis Bayar</label>
                       <select id="jenis_bayar_lembur" name="jenis_bayar_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih Jenis -</option>  
-                        <option value="Per Jam" @if($quotation->jenis_bayar_lembur=="Per Jam") selected @endif>Per Jam</option>  
-                        <option value="Per Hari" @if($quotation->jenis_bayar_lembur=="Per Hari") selected @endif>Per Hari</option>  
-                        <option value="Per Bulan" @if($quotation->jenis_bayar_lembur=="Per Bulan") selected @endif>Per Bulan</option>  
+                        <option value="">- Pilih Jenis -</option>
+                        <option value="Per Jam" @if($quotation->jenis_bayar_lembur=="Per Jam") selected @endif>Per Jam</option>
+                        <option value="Per Hari" @if($quotation->jenis_bayar_lembur=="Per Hari") selected @endif>Per Hari</option>
+                        <option value="Per Bulan" @if($quotation->jenis_bayar_lembur=="Per Bulan") selected @endif>Per Bulan</option>
+                      </select>
+                  </div>
+                  <div class="col-sm-2 ada_lembur">
+                    <label class="form-label" for="lembur_ditagihkan">Provisi/Ditagihkan</label>
+                      <select id="lembur_ditagihkan" name="lembur_ditagihkan" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih Jenis -</option>
+                        <option value="Ditagihkan" @if($quotation->lembur_ditagihkan=="Ditagihkan") selected @endif>Ditagihkan</option>
+                        <option value="Ditagihkan Terpisah" @if($quotation->lembur_ditagihkan=="Ditagihkan Terpisah") selected @endif>Ditagihkan Terpisah</option>
                       </select>
                   </div>
                 </div>
@@ -316,7 +324,7 @@ $('.show-custom').on('click',function(){
       }
     }
   }
-  
+
   if(obj.ada_lembur==null || obj.ada_lembur==""){
     msg += "<b>Lembur</b> belum dipilih </br>";
   }else{
@@ -331,6 +339,9 @@ $('.show-custom').on('click',function(){
           if(obj.jenis_bayar_lembur==null || obj.jenis_bayar_lembur==""){
           msg += "<b>Jenis Bayar Lembur</b> belum diisi </br>";
         }
+        }
+        if(obj.lembur_ditagihkan==null || obj.lembur_ditagihkan==""){
+          msg += "<b>Provisi/Ditagihkan Lembur</b> belum diisi </br>";
         }
       }
     }
@@ -351,14 +362,14 @@ $('.show-custom').on('click',function(){
  // validasi input
 
   $('form').bind("keypress", function(e) {
-    if (e.keyCode == 13) {               
+    if (e.keyCode == 13) {
       e.preventDefault();
       return false;
     }
   });
-  
+
   let extra = 0;
-  $('.mask-nominal').on("keyup", function(event) {    
+  $('.mask-nominal').on("keyup", function(event) {
     // When user select text in the document, also abort.
     var selection = window.getSelection().toString();
     if (selection !== '') {
@@ -394,7 +405,7 @@ $('.show-custom').on('click',function(){
 showThr(1);
 function showThr(first) {
   let selected = $("#ada_thr option:selected").val();
-  
+
   if (selected!="Ada") {
     $('.ada_thr').addClass('d-none');
   }else{
@@ -412,7 +423,7 @@ $('#ada_thr').on('change', function() {
 showKompensasi(1);
 function showKompensasi(first) {
   let selected = $("#ada_kompensasi option:selected").val();
-  
+
   if (selected!="Ada") {
     $('.ada_kompensasi').addClass('d-none');
   }else{
@@ -430,7 +441,7 @@ $('#ada_kompensasi').on('change', function() {
 showLembur(1);
 function showLembur(first) {
   let selected = $("#ada_lembur option:selected").val();
-  
+
   if (selected!="Ada") {
     $('.ada_lembur').addClass('d-none');
   }else{
@@ -448,7 +459,7 @@ $('#ada_lembur').on('change', function() {
 lemburFlat(1);
 function lemburFlat(first) {
   let selected = $("#lembur option:selected").val();
-    
+
   if (selected!="Flat") {
     $('.d-nominal-lembur').addClass('d-none');
   }else{
@@ -463,7 +474,7 @@ $('#lembur').on('change', function() {
 showTunjanganHoliday(1);
 function showTunjanganHoliday(first) {
   let selected = $("#ada_tunjangan_holiday option:selected").val();
-  
+
   if (selected!="Ada") {
     $('.ada_tunjangan_holiday').addClass('d-none');
   }else{
@@ -481,7 +492,7 @@ $('#ada_tunjangan_holiday').on('change', function() {
 tunjanganHolidayFlat(1);
 function tunjanganHolidayFlat(first) {
   let selected = $("#tunjangan_holiday option:selected").val();
-    
+
   if (selected!="Flat") {
     $('.d-nominal-tunjangan-holiday').addClass('d-none');
   }else{

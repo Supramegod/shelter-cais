@@ -11,7 +11,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-11')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-11')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -96,7 +96,7 @@
                         <th >{{$detailJabatan->jumlah_hc}}</th>
                         @endforeach
                       </tr>
-                    </thead>              
+                    </thead>
                     <tbody>
                       @php $nomorUrut = 1; @endphp
                       <tr class="">
@@ -155,10 +155,10 @@
                       @if($quotation->lembur=="Normatif" || $quotation->lembur=="Flat")
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Lembur <b>( {{$quotation->lembur}} @if($quotation->lembur=="Normatif") : {{"Rp. ".number_format($quotation->lembur_per_jam,2,",",".")}} Per Jam @endif )</b></td>
+                        <td style="text-align:left" class="">Lembur <b>( {{$quotation->lembur}} )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">@if($quotation->lembur=="Normatif") Ditagihkan terpisah @elseif ($quotation->lembur=="Flat") {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->lembur}}" data-tipe="Lembur"></i></a> @endif </td>
+                        <td style="text-align:right" class="">@if($quotation->lembur=="Normatif" || $quotation->lembur_ditagihkan=="Ditagihkan Terpisah") Ditagihkan terpisah @elseif ($quotation->lembur=="Flat") {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->lembur}}" data-tipe="Lembur"></i></a> @endif </td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
@@ -178,14 +178,14 @@
                         @foreach($quotation->quotation_detail as $detailJabatan)
                         <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_ketenagakerjaan,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-magnify text-primary view-bpjs" data-persen-bpjs-jkk="{{$detailJabatan->persen_bpjs_jkk}}" data-persen-bpjs-jkm="{{$detailJabatan->persen_bpjs_jkm}}" data-persen-bpjs-jht="{{$detailJabatan->persen_bpjs_jht}}" data-persen-bpjs-jp="{{$detailJabatan->persen_bpjs_jp}}" data-bpjs-jkk="{{$detailJabatan->bpjs_jkk}}" data-bpjs-jkm="{{$detailJabatan->bpjs_jkm}}" data-bpjs-jht="{{$detailJabatan->bpjs_jht}}" data-bpjs-jp="{{$detailJabatan->bpjs_jp}}"></i></a></td>
                         @endforeach
-                      </tr>                      
+                      </tr>
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
                         <td style="text-align:left" class="">Provisi Seragam </td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_kaporlap,2,",",".")}} 
+                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->personil_kaporlap,2,",",".")}}
                           <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_kaporlap}}" data-tipe="Kaporlap"></i></a> -->
                         </td>
                         @endforeach
@@ -193,7 +193,7 @@
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Provisi Peralatan 
+                        <td style="text-align:left" class="">Provisi Peralatan
                           <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_devices}}" data-tipe="Peralatan"></i></a> -->
                         </td>
                         <td style="text-align:center"></td>
@@ -205,7 +205,7 @@
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Chemical 
+                        <td style="text-align:left" class="">Chemical
                           <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_chemical}}" data-tipe="Chemical"></i></a> -->
                         </td>
                         <td style="text-align:center"></td>
@@ -217,7 +217,7 @@
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Overhead Cost 
+                        <td style="text-align:left" class="">Overhead Cost
                           <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->personil_ohc}}" data-tipe="OHC"></i></a> -->
                         </td>
                         <td style="text-align:center"></td>
@@ -228,7 +228,8 @@
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Bunga Bank ( {{$quotation->top}} ) &nbsp; 
+                        <td style="text-align:left" class="">Bunga Bank ( {{$quotation->top}} ) &nbsp;
+                            <input type="hidden" id="persen_bunga_bank" name="persen_bunga_bank" value="{{$quotation->persen_bunga_bank}}">
                           <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->bunga_bank}}" data-tipe="Bunga Bank"></i></a> -->
                         </td>
                         <td style="text-align:center">{{$quotation->persen_bunga_bank}} %   &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-persen-bunga-bank"></i></a></td>
@@ -239,7 +240,8 @@
                       @php $nomorUrut++; @endphp
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
-                        <td style="text-align:left" class="">Insentif 
+                        <td style="text-align:left" class="">Insentif
+                        <input type="hidden" id="persen_insentif" name="persen_insentif" value="{{$quotation->persen_insentif}}">
                           <!-- <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->insentif}}" data-tipe="Insentif"></i></a> -->
                         </td>
                         <td style="text-align:center">{{$quotation->persen_insentif}} %  &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-persen-insentif"></i></a></td>
@@ -300,7 +302,7 @@
                         <td colspan="2" style="text-align:right" class="fw-bold">PEMBULATAN</td>
                         <td style="text-align:center"></td>
                         <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pembulatan,2,",",".")}}</td>
-                      </tr>             
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -327,7 +329,7 @@
                         <th colspan="{{$site->jumlah_detail}}" style="vertical-align: middle;">{{$site->nama_site}}</th>
                         @endforeach
                       </tr>+
-                    </thead>              
+                    </thead>
                     <tbody>
                       <tr>
                         <td class="fw-bold">Structure</td>
@@ -412,7 +414,13 @@
                         <td>Lembur</td>
                         <td class="text-center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">@if($quotation->lembur=="Normatif") <b>Ditagihkan Terpisah</b> @else {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @endif</td>
+                        <td class="text-end">
+                            @if($quotation->lembur=="Normatif" || $quotation->lembur_ditagihkan=="Ditagihkan Terpisah")
+                            <b>Ditagihkan Terpisah</b>
+                            @else
+                            {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}}
+                            @endif
+                        </td>
                         @endforeach
                       </tr>
                       @endif
@@ -597,9 +605,9 @@
                       </tr>
                     </tbody>
                     @else
-                    
+
                     @endif
-                    
+
                   </table>
                 </div>
               </div>
@@ -638,9 +646,9 @@
                   <option value="">- Pilih Posisi -</option>
                   @foreach($quotation->quotation_detail as $detail)
                   @if($quotation->jumlah_site=="Multi Site")
-                  <option value="{{$detail->id}}">{{$detail->nama_site}} - {{$detail->jabatan_kebutuhan}}</option> 
+                  <option value="{{$detail->id}}">{{$detail->nama_site}} - {{$detail->jabatan_kebutuhan}}</option>
                   @else
-                  <option value="{{$detail->id}}">{{$detail->jabatan_kebutuhan}}</option> 
+                  <option value="{{$detail->id}}">{{$detail->jabatan_kebutuhan}}</option>
                   @endif
                   @endforeach
                 </select>
@@ -745,7 +753,7 @@
 <!--/ Content -->
 @endsection
 
-@section('pageScript')  
+@section('pageScript')
 <script src="{{ asset('js/forms-selects.js') }}"></script>
 <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
 
@@ -753,14 +761,14 @@
 
       $("#select2Multiple").select2({ width: '100%' });
       $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
     });
 
     let extra = 0;
-    $('.mask-nominal').on("keyup", function(event) {    
+    $('.mask-nominal').on("keyup", function(event) {
     // When user select text in the document, also abort.
     var selection = window.getSelection().toString();
     if (selection !== '') {
@@ -796,11 +804,20 @@
     var form = $(this).parents('form');
     let msg = "";
     let obj = $("form").serializeObject();
-      
+
+    console.log(obj);
+
     if(obj.penagihan == null || obj.penagihan == "" ){
       msg += "<b>Penagihan</b> belum dipilih </br>";
     };
-    
+    if (obj.persen_bunga_bank == null || obj.persen_bunga_bank == "" || obj.persen_bunga_bank == "0") {
+        msg += "<b>Persen Bunga Bank</b> belum diisi </br>";
+    }
+
+    if (obj.persen_insentif == null || obj.persen_insentif == "" || obj.persen_insentif == "0") {
+        msg += "<b>Persen Insentif</b> belum diisi </br>";
+    }
+
     if(msg == ""){
       form.submit();
     }else{
@@ -834,7 +851,7 @@
             "id":detailId,
             "_token": "{{ csrf_token() }}"
           };
-          
+
           $.ajax({
             type: "POST",
             url: "{{route('quotation.add-biaya-monitoring')}}",
@@ -947,7 +964,7 @@
 
   // <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->nominal_upah,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-nominal="{{$detailJabatan->nominal_upah}}" data-tipe="Gaji Pokok"></i></a></td>
 
-  $('body').on('click', '.edit-nominal', function() {    
+  $('body').on('click', '.edit-nominal', function() {
     Swal.fire({
     title: 'Masukkan Nominal ' + $(this).data('tipe') + ' Baru',
     html: '<input type="text" id="currency-input" class="swal2-input" placeholder="Contoh: 10,000">',
@@ -974,7 +991,7 @@
       console.log(inputValue);
       inputValue = inputValue.replaceAll(",","."); // Remove thousand separators
       console.log(inputValue);
-      
+
       if (!inputValue) {
         Swal.showValidationMessage('Nominal tidak boleh kosong');
       }
@@ -1017,7 +1034,7 @@
     });
   });
 
-  $('body').on('click', '.edit-tunjangan', function() {    
+  $('body').on('click', '.edit-tunjangan', function() {
     Swal.fire({
       title: 'Masukkan Nominal '+$(this).data('nama')+' Baru',
       input: 'number',
@@ -1070,7 +1087,7 @@
     });
   });
 
-  $('body').on('click', '.edit-persen-insentif', function() {    
+  $('body').on('click', '.edit-persen-insentif', function() {
     Swal.fire({
       title: 'Masukkan Persen Insentif',
       input: 'text',
@@ -1091,7 +1108,7 @@
         if (isNaN(persen) || persen <= 0) {
           Swal.showValidationMessage('Masukkan persen yang valid (contoh: 2,5 atau 2.5)');
         }
-        
+
         return persen;
       }
     }).then((result) => {
@@ -1128,7 +1145,7 @@
     });
   });
 
-  $('body').on('click', '.edit-persen-bunga-bank', function() {    
+  $('body').on('click', '.edit-persen-bunga-bank', function() {
     Swal.fire({
       title: 'Masukkan Persen Bunga Bank',
       input: 'text',
@@ -1149,7 +1166,7 @@
         if (isNaN(persen) || persen <= 0) {
           Swal.showValidationMessage('Masukkan persen yang valid (contoh: 2,5 atau 2.5)');
         }
-        
+
         return persen;
       }
     }).then((result) => {

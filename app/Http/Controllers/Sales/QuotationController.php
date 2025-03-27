@@ -1398,6 +1398,7 @@ class QuotationController extends Controller
                 'nominal_tunjangan_holiday' => $request->nominal_tunjangan_holiday,
                 'jenis_bayar_tunjangan_holiday' => $request->jenis_bayar_tunjangan_holiday,
                 'jenis_bayar_lembur' => $request->jenis_bayar_lembur,
+                'lembur_ditagihkan' => $request->lembur_ditagihkan,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
