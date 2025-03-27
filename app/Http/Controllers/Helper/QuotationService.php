@@ -130,7 +130,7 @@ class QuotationService
         $this->calculateOhc($kbd, $quotation, $jumlahHc,$provisi,$hpp,$coss);
 
         // Perhitungan Chemical
-        $this->calculateChemical($kbd, $quotation, $provisi,$hpp,$coss);
+        $this->calculateChemical($kbd, $quotation, $provisi,$hpp,$coss,$jumlahHc);
 
         // hpp
         $kbd->total_personil = $this->calculateTotalPersonnel($kbd, $quotation, $totalTunjangan);
@@ -427,7 +427,7 @@ class QuotationService
             ->get();
 
             foreach ($ohcItems as $item) {
-                $personilOhc += ($item->harga * $item->jumlah) / $provisi / $jumlahHc;
+                $personilOhc += (($item->harga * $item->jumlah) / $provisi) / $jumlahHc;
             }
         }
         $kbd->personil_ohc = $personilOhc;
@@ -438,7 +438,7 @@ class QuotationService
         $kbd->personil_ohc_coss = $personilOhcCoss;
     }
 
-    private function calculateChemical($kbd, $value, $provisi,$hpp,$coss)
+    private function calculateChemical($kbd, $value, $provisi,$hpp,$coss,$jumlahHc)
     {
         $personilChemical = $hpp->provisi_chemical;
         $personilChemicalCoss = $coss->provisi_chemical;
@@ -451,7 +451,7 @@ class QuotationService
 
             foreach ($chemicalItems as $item) {
                 // $personilChemical += ($item->harga * $item->jumlah) / $provisi;+
-                $personilChemical += ($item->jumlah * $item->harga) / $item->masa_pakai / $provisi;
+                $personilChemical += ((($item->jumlah * $item->harga) / $item->masa_pakai) / $provisi) / $jumlahHc;;
             }
         }
         $kbd->personil_chemical = $personilChemical;
@@ -469,15 +469,24 @@ class QuotationService
         foreach ($quotation->quotation_detail as $key => $kbd) {
             $quotation->total_sebelum_management_fee_coss += $kbd->sub_total_personil_coss;
         }
+        $quotation->total_base_manpower_coss = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->total_base_manpower_coss += ($kbd->total_base_manpower*$kbd->jumlah_hc);
+        }
+
+        $quotation->upah_pokok_coss = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->upah_pokok_coss += ($kbd->nominal_upah*$kbd->jumlah_hc);
+        }
+
 
         $quotation->nominal_management_fee_coss = 0;
         if($quotation->management_fee_id==1){
-            $quotation->nominal_management_fee_coss = $quotation->total_sebelum_management_fee_coss * $quotation->persentase / 100;
+            $quotation->nominal_management_fee_coss = $quotation->total_base_manpower_coss * $quotation->persentase / 100;
         }else if($quotation->management_fee_id==4){
             $quotation->nominal_management_fee_coss = $quotation->total_sebelum_management_fee_coss * $quotation->persentase / 100;
         }else if($quotation->management_fee_id==5){
-            $quotation->management_fee_coss = 0;
-            // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
+            $quotation->nominal_management_fee_coss = $quotation->upah_pokok_coss * $quotation->persentase / 100;            // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
         }
 
         $quotation->grand_total_sebelum_pajak_coss = $quotation->total_sebelum_management_fee_coss + $quotation->nominal_management_fee_coss;
@@ -501,16 +510,25 @@ class QuotationService
     private function calculateHpp(&$quotation, $jumlahHc, $provisi){
         $quotation->total_sebelum_management_fee = 0;
         foreach ($quotation->quotation_detail as $key => $kbd) {
-            $quotation->total_sebelum_management_fee += $kbd->sub_total_personil;
+            $quotation->total_sebelum_management_fee += ($kbd->sub_total_personil);
+        }
+        $quotation->total_base_manpower = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->total_base_manpower += ($kbd->total_base_manpower*$kbd->jumlah_hc);
+        }
+
+        $quotation->upah_pokok = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->upah_pokok += ($kbd->nominal_upah*$kbd->jumlah_hc);
         }
 
         $quotation->nominal_management_fee = 0;
         if($quotation->management_fee_id==1){
-            $quotation->nominal_management_fee = $quotation->total_sebelum_management_fee * $quotation->persentase / 100;
+            $quotation->nominal_management_fee = $quotation->total_base_manpower * $quotation->persentase / 100;
         }else if($quotation->management_fee_id==4){
             $quotation->nominal_management_fee = $quotation->total_sebelum_management_fee * $quotation->persentase / 100;
         }else if($quotation->management_fee_id==5){
-            $kbd->management_fee = 0;
+            $quotation->upah_pokok = $quotation->upah_pokok * $quotation->persentase / 100;
             // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
         }
 
