@@ -83,7 +83,7 @@
                 <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih data -</option>
                   @foreach($listMateri as $value)
-                  <option value="{{$value->id}}" @if(old('materi_id') == $value->id) selected @endif>{{$value->materi}}</option>
+                  <option value="{{$value->id}}" @if(old('materi_id') == $value->id) selected @endif>{{$value->nama}}</option>
                   @endforeach
                 </select>
                 @if($errors->has('materi_id'))
@@ -233,7 +233,7 @@
             var $client = $('#client_id');
             $client.empty();
             
-            $client.append('<option id=0 value=0> - Pilih Client - </option>');
+            // $client.append('<option id=0 value=0> - Pilih Client - </option>');
             for (var i = 0; i < response.data.length; i++) {
                 $client.append('<option value=' + response.data[i].id + '>' + response.data[i].client + '</option>');
             }

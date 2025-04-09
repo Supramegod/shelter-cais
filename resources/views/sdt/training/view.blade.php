@@ -95,7 +95,7 @@
                     <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($listMateri as $value)
-                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->materi}}</option>
+                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->nama}}</option>
                       @endforeach
                     </select>
                   </div>
