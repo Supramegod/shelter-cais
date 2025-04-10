@@ -151,7 +151,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                             </div>
                             <div class="row">    
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Lokasi</span></h2>
-                              <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">. . .</span></h2>
+                              <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->alamat}}</span></h2>
                             </div>
                           </div>
                       </div>

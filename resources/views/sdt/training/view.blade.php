@@ -883,7 +883,7 @@
                         timer: 1000,
                         timerProgressBar: true,
                         willClose: () => {
-                            
+                          location.reload();
                         }
                     })
                 } else {
@@ -1158,7 +1158,7 @@
                 <select id="client_id" name="client_id" class="select2 form-select">
                   <option value="">- Pilih data -</option>
                   @foreach($listClient as $value)
-                  <option value="{{$value->id}}"> {{$value->client . ' - ' .$value->kab_kota}}</option>
+                  <option value="{{$value->id}}"> {{$value->client}}</option>
                   @endforeach
                 </select>
                 @if($errors->has('client_id'))

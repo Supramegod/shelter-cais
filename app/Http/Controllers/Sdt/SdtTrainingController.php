@@ -152,7 +152,15 @@ class SdtTrainingController extends Controller
             $listMateri = DB::table('m_training')->whereNull('deleted_at')->orderBy('nama', 'ASC')->get();
 
             $listImage = DB::table('sdt_training_file')->where('is_active', 1)->where('type', 'image')->where('training_id', $id)->orderBy('id', 'ASC')->get();
-            $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
+            // $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
+            $listClient = DB::table('sl_site as site')
+            ->leftJoin('sl_leads as lead', 'lead.id' ,'=', 'site.leads_id')
+            ->whereNull('site.deleted_at')
+            ->where('lead.branch_id', $data->id_area)
+            ->select("site.id", "site.nama_site as client")
+            ->orderBy('site.nama_site', 'ASC')->get();
+            // dd($listClient);
+            
             $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
             $namaPerusahaan = DB::table('sdt_training_client as tr')
                         // ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'tr.id_client')
@@ -185,6 +193,7 @@ class SdtTrainingController extends Controller
 
     public function list (Request $request){
         try {
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
             $data = DB::table('sdt_training as tr')
                         // ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
                         ->leftjoin('m_training as mtm','mtm.id', '=', 'tr.id_materi')
@@ -193,7 +202,8 @@ class SdtTrainingController extends Controller
                         ->leftJoin('sl_site as mtc', 'mtc.id' ,'=', 'stc.id_client')
                         ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
                         ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
-                        ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
+                        // ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
+                        ->leftJoin($db2.'.m_branch as mta','tr.id_area','=', 'mta.id')
                         ->leftJoin('sdt_training_client_detail as stcd', 'stcd.training_id', '=', DB::raw('tr.id_training AND stcd.is_active = 1'))
                         
                         ->select(
@@ -201,7 +211,7 @@ class SdtTrainingController extends Controller
                             "mtm.nama as materi", 
                             DB::raw("DATE_FORMAT(tr.waktu_mulai,'%d-%m-%Y %H:%i') as waktu_mulai"),
                             DB::raw("DATE_FORMAT(tr.waktu_selesai,'%d-%m-%Y %H:%i') as waktu_selesai"),
-                            "mta.area", 
+                            "mta.name as area", 
                             DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
                             DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
                             DB::raw("group_concat(distinct mtc.nama_site separator ', ') AS client"),
