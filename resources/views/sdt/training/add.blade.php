@@ -30,26 +30,26 @@
               </div>
             </div>
 
-            <label class="col-sm-1 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
+            <label class="col-sm-1 col-form-label text-sm-end">Area</label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select multiple id="client_id" name="client_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                  <option value="">- Pilih Area dulu -</option>
+                <select disabled id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1" onchange="setValueClient(this)">
+                  <option value="">- Pilih Business Unit dulu -</option>
                 </select>
-                @if($errors->has('client_id'))
-                  <div class="invalid-feedback">{{$errors->first('client_id')}}</div>
-                @endif
               </div>
             </div>
           </div>
 
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Area</label>
+            <label class="col-sm-2 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1" onchange="setValueClient(this)">
-                  <option value="">- Pilih Business Unit dulu -</option>
+                <select disabled multiple id="client_id" name="client_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih Area dulu -</option>
                 </select>
+                @if($errors->has('client_id'))
+                  <div class="invalid-feedback">{{$errors->first('client_id')}}</div>
+                @endif
               </div>
             </div>
 
@@ -201,11 +201,13 @@
             // the next thing you want to do 
             var $area = $('#area_id');
             $area.empty();
-            
+            $("#area_id").removeAttr("disabled");
+
             $area.append('<option id=0 value=0> - Pilih Area - </option>');
             for (var i = 0; i < response.data.length; i++) {
                 $area.append('<option id=' + response.data[i].id + ' value=' + response.data[i].id + '>' + response.data[i].area + '</option>');
             }
+
         }
     });
   }
@@ -232,6 +234,7 @@
             // the next thing you want to do 
             var $client = $('#client_id');
             $client.empty();
+            $("#client_id").removeAttr("disabled");
             
             // $client.append('<option id=0 value=0> - Pilih Client - </option>');
             for (var i = 0; i < response.data.length; i++) {

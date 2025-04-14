@@ -68,7 +68,7 @@
               <label class="col-sm-2 col-form-label text-sm-end">Area</label>
                 <div class="col-sm-4">
                   <div class="position-relative">
-                    <select id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                    <select disabled id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                       @foreach($listArea as $value)
                       <option disabled value="{{$value->id}}" @if($data->id_area == $value->id) selected @endif>{{$value->area}}</option>
                       @endforeach
@@ -79,7 +79,7 @@
                 <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
                 <div class="col-sm-4">
                   <div class="position-relative">
-                    <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                    <select disabled id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
                       @foreach($listBu as $value)
                       <option disabled value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
                       @endforeach
@@ -156,6 +156,24 @@
               </div>  
 
               <div class="row">
+                <label class="col-sm-2 col-form-label text-sm-end">Link Undangan</label>
+                <div class="col-sm-7">
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input readonly type="text" id="link" name="link" value="{{$linkInvite}}" class="link form-control"></input>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <!-- <button id="cp_btn">Copy</button> -->
+                  <div class="form-floating form-floating-outline mb-4">
+                    <button type="button" class="btn btn-warning" onclick="copyToClipboard('#link')" >
+                      <span class="me-1">Salin Link</span>
+                      <i class="mdi mdi-content-copy"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
                 <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
                 <div class="col-sm-10">
                   <div class="form-floating form-floating-outline mb-4">
@@ -215,7 +233,7 @@
               </button>
             </div>
             <div class="col-12 text-center mt-2">
-              <form action="{{route('invite-pdf')}}" method="POST">
+              <form target="_blank" action="{{route('invite-pdf')}}" method="POST">
               @csrf
                 <input hidden type="text" class="form-control" id="training_id" name="training_id" placeholder="Training id" value="{{$data->id_training}}"/>  
                 <button type="submit"  class="btn btn-warning w-100 waves-effect waves-light">
@@ -366,6 +384,20 @@
 
 @section('pageScript')
 <script>
+  function copyToClipboard(element) {
+      // Copy the text inside the text field
+      navigator.clipboard.writeText($(element).val());
+      Swal.fire({
+        title: 'Pemberitahuan',
+        text: 'Berhasil Copy Link',
+        icon: 'success',
+        customClass: {
+          confirmButton: 'btn btn-primary waves-effect waves-light'
+        },
+        buttonsStyling: false
+      });
+    }
+
   @if(session()->has('success'))  
     Swal.fire({
       title: 'Pemberitahuan',
@@ -788,6 +820,7 @@
 
   $(document).ready(function() {
 
+  
     $('#btn-kirim-wa').on('click',function(){
         let id = $('#training_id').val();
         let noWa = $('#link-wa').val();

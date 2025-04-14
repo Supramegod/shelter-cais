@@ -169,6 +169,8 @@ class SdtTrainingController extends Controller
                         ->where('tr.id_training', $id)
                         ->get();
 
+            $linkInvite = url('sdt-training?id=').$id;
+
             //LIST PSERTA TRAININH, HRIS
             $listPeserta = DB::connection('mysqlhris')
                 ->table('m_employee as empl')
@@ -180,9 +182,9 @@ class SdtTrainingController extends Controller
                 ->orderBy('empl.full_name','asc')
                 ->get();
             
-                // dd($peserta);
+                // dd($linkInvite);
 
-            return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta', 'listBu', 'listMateri', 'listImage', 'message', 'listArea'));
+            return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta', 'listBu', 'listMateri', 'listImage', 'message', 'listArea', 'linkInvite'));
             // return view('sdt.training.view',compact('activity','data','branch','jabatanPic','namaPerusahaan','kebutuhan','platform'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(), $request);
