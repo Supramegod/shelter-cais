@@ -115,14 +115,21 @@ class SdtTrainingInviteController extends Controller
     public function invite(Request $request)
     {
         $data = DB::table('sdt_training as tr')
-                ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
+                // ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
+                ->leftjoin('m_training as mtm','mtm.id', '=', 'tr.id_materi')
                 ->leftJoin('sdt_training_client as stc','stc.id_training', '=', DB::raw('tr.id_training AND stc.is_active = 1'))
-                ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
+                // ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
+                ->leftJoin('sl_site as mtc', 'mtc.id' ,'=', 'stc.id_client')
                 ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
                 ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
                 ->where('tr.is_aktif', 1)
                 ->where('tr.id_training', $request->id)
-                ->select("tr.enable", "tr.id_training as id", "mtm.materi", "tr.keterangan", "tr.waktu_mulai", "tr.waktu_selesai", DB::raw("group_concat(distinct mtc.client separator ' , ') AS client"), 
+                ->select("tr.enable", "tr.id_training as id", 
+                "mtm.nama as materi", 
+                "tr.keterangan", "tr.waktu_mulai", "tr.waktu_selesai",
+                "tr.alamat",  
+                // DB::raw("group_concat(distinct mtc.client separator ' , ') AS client"), 
+                DB::raw("group_concat(distinct mtc.nama_site separator ', ') AS client"),
                 DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"),
                 DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
                 DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"))
@@ -130,10 +137,17 @@ class SdtTrainingInviteController extends Controller
                 ->first();
         
         $client = DB::table('sdt_training_client as tr')
-                        ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'tr.id_client')
-                        ->select("mtc.id", "mtc.client")
+                        ->leftJoin('sl_site as mtc', 'mtc.id' ,'=', 'tr.id_client')
+                        ->select("mtc.id", "mtc.nama_site as client")
                         ->where('tr.id_training', $request->id)
                         ->get();
+
+        // $listClient = DB::table('sl_site as site')
+        //     ->leftJoin('sl_leads as lead', 'lead.id' ,'=', 'site.leads_id')
+        //     ->whereNull('site.deleted_at')
+        //     ->where('lead.branch_id', $request->area_id)
+        //     ->select("site.id", "site.nama_site as client")
+        //     ->orderBy('site.nama_site', 'ASC')->get();
 
         return view('home.sdt-training-invite',compact('data', 'client'));
     }

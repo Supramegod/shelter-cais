@@ -95,7 +95,7 @@
                     <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($listMateri as $value)
-                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->materi}}</option>
+                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->nama}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -883,7 +883,7 @@
                         timer: 1000,
                         timerProgressBar: true,
                         willClose: () => {
-                            
+                          location.reload();
                         }
                     })
                 } else {
@@ -1158,7 +1158,7 @@
                 <select id="client_id" name="client_id" class="select2 form-select">
                   <option value="">- Pilih data -</option>
                   @foreach($listClient as $value)
-                  <option value="{{$value->id}}"> {{$value->client . ' - ' .$value->kab_kota}}</option>
+                  <option value="{{$value->id}}"> {{$value->client}}</option>
                   @endforeach
                 </select>
                 @if($errors->has('client_id'))

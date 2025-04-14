@@ -63,7 +63,8 @@ class SdtTrainingController extends Controller
             $listBu = DB::table('m_training_laman')->orderBy('laman', 'ASC')->get();
             // $listArea = DB::table('m_training_area')->where('is_aktif', 1)->orderBy('area', 'ASC')->get();
             // $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
-            $listMateri = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
+            // $listMateriOld = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
+            $listMateri = DB::table('m_training')->whereNull('deleted_at')->orderBy('nama', 'ASC')->get();
             $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
 
             return view('sdt.training.add',compact('listBu','listMateri', 'listTrainer'));
@@ -77,10 +78,16 @@ class SdtTrainingController extends Controller
         try {
             // $now = Carbon::now()->isoFormat('DD MMMM Y');
             
-            $listArea = DB::table('m_training_area')
-            ->where('is_aktif', 1)
-            ->where('laman_id', $request->id)
-            ->orderBy('area', 'ASC')->get();
+            // $listArea = DB::table('m_training_area')
+            // ->where('is_aktif', 1)
+            // ->where('laman_id', $request->id)
+            // ->orderBy('area', 'ASC')->get();
+
+            $listArea = DB::connection('mysqlhris')->table('m_branch')
+            ->where('is_active', 1)
+            ->where('id','!=',1)
+            ->select('id', 'name as area')
+            ->orderBy('name', 'ASC')->get();
             
             return response()->json([
                 'success'   => false,
@@ -98,11 +105,18 @@ class SdtTrainingController extends Controller
         try {
             // $now = Carbon::now()->isoFormat('DD MMMM Y');
             
-            $listClient = DB::table('m_training_client')
-            ->where('is_aktif', 1)
-            ->where('laman_id', $request->laman_id)
-            ->where('area_id', $request->area_id)
-            ->orderBy('client', 'ASC')->get();
+            // $listClient = DB::table('m_training_client')
+            // ->where('is_aktif', 1)
+            // ->where('laman_id', $request->laman_id)
+            // ->where('area_id', $request->area_id)
+            // ->orderBy('client', 'ASC')->get();
+
+            $listClient = DB::table('sl_site as site')
+            ->leftJoin('sl_leads as lead', 'lead.id' ,'=', 'site.leads_id')
+            ->whereNull('site.deleted_at')
+            ->where('lead.branch_id', $request->area_id)
+            ->select("site.id", "site.nama_site as client")
+            ->orderBy('site.nama_site', 'ASC')->get();
             
             return response()->json([
                 'success'   => false,
@@ -127,15 +141,31 @@ class SdtTrainingController extends Controller
             // $message = str_replace("{tanggal}", "", $data->waktu_mulai);
 
             $listBu = DB::table('m_training_laman')->orderBy('laman', 'ASC')->get();
-            $listArea = DB::table('m_training_area')->where('is_aktif', 1)->orderBy('area', 'ASC')->get();
-            $listMateri = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
+            $listArea = DB::connection('mysqlhris')->table('m_branch')
+            ->where('is_active', 1)
+            ->where('id','!=',1)
+            ->select('id', 'name as area')
+            ->orderBy('name', 'ASC')->get();
+
+            // $listArea = DB::table('m_training_area')->where('is_aktif', 1)->orderBy('area', 'ASC')->get();
+            // $listMateriOld = DB::table('m_training_materi')->where('is_aktif', 1)->orderBy('materi', 'ASC')->get();
+            $listMateri = DB::table('m_training')->whereNull('deleted_at')->orderBy('nama', 'ASC')->get();
 
             $listImage = DB::table('sdt_training_file')->where('is_active', 1)->where('type', 'image')->where('training_id', $id)->orderBy('id', 'ASC')->get();
-            $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
+            // $listClient = DB::table('m_training_client')->where('is_aktif', 1)->orderBy('client', 'ASC')->get();
+            $listClient = DB::table('sl_site as site')
+            ->leftJoin('sl_leads as lead', 'lead.id' ,'=', 'site.leads_id')
+            ->whereNull('site.deleted_at')
+            ->where('lead.branch_id', $data->id_area)
+            ->select("site.id", "site.nama_site as client")
+            ->orderBy('site.nama_site', 'ASC')->get();
+            // dd($listClient);
+            
             $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
             $namaPerusahaan = DB::table('sdt_training_client as tr')
-                        ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'tr.id_client')
-                        ->select("mtc.id", "mtc.client")
+                        // ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'tr.id_client')
+                        ->leftJoin('sl_site as mtc', 'mtc.id' ,'=', 'tr.id_client')
+                        ->select("mtc.id", "mtc.nama_site as client")
                         ->where('tr.id_training', $id)
                         ->get();
 
@@ -163,25 +193,29 @@ class SdtTrainingController extends Controller
 
     public function list (Request $request){
         try {
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
             $data = DB::table('sdt_training as tr')
-                        ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
+                        // ->leftjoin('m_training_materi as mtm','mtm.id', '=', 'tr.id_materi')
+                        ->leftjoin('m_training as mtm','mtm.id', '=', 'tr.id_materi')
                         ->leftJoin('sdt_training_client as stc','stc.id_training', '=', DB::raw('tr.id_training AND stc.is_active = 1'))
-                        ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
+                        // ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'stc.id_client')
+                        ->leftJoin('sl_site as mtc', 'mtc.id' ,'=', 'stc.id_client')
                         ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
                         ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
-                        ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
+                        // ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
+                        ->leftJoin($db2.'.m_branch as mta','tr.id_area','=', 'mta.id')
                         ->leftJoin('sdt_training_client_detail as stcd', 'stcd.training_id', '=', DB::raw('tr.id_training AND stcd.is_active = 1'))
                         
                         ->select(
                             "tr.id_training as id",
-                            "mtm.materi", 
+                            "mtm.nama as materi", 
                             DB::raw("DATE_FORMAT(tr.waktu_mulai,'%d-%m-%Y %H:%i') as waktu_mulai"),
                             DB::raw("DATE_FORMAT(tr.waktu_selesai,'%d-%m-%Y %H:%i') as waktu_selesai"),
-                            "mta.area", 
+                            "mta.name as area", 
                             DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
                             DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
-                            DB::raw("group_concat(distinct mtc.client separator ', ') AS client"),
-                            DB::raw("count(mtc.client) AS total_client"),
+                            DB::raw("group_concat(distinct mtc.nama_site separator ', ') AS client"),
+                            DB::raw("count(mtc.nama_site) AS total_client"),
                             // DB::raw("sum(stc.peserta_hadir) AS total_peserta"),
                             DB::raw("count(distinct stcd.id) AS total_peserta"),
                             DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
