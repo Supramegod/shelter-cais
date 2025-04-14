@@ -2972,23 +2972,25 @@ if($quotation->note_harga_jual == null){
 
             // kirim ke notifikasi
             $timSalesD = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
-            $penerima = $timSalesD->user_id;
             if ($approve=="false") {
                 $msg = "Quotation dengan nomor :".$master->nomor." di reject oleh ".Auth::user()->full_name." dengan alasan : ".$request->alasan;
             }else{
                 $msg = "Quotation dengan nomor :".$master->nomor." di approve oleh ".Auth::user()->full_name;
             }
+            if($timSalesD != null){
+                $penerima = $timSalesD->user_id;
+                DB::table('log_notification')->insert([
+                    'user_id' => $penerima,
+                    'tabel' => 'sl_quotation',
+                    'doc_id' => $request->id,
+                    'transaksi' => 'Quotation',
+                    'pesan' => $msg,
+                    'is_read' => 0,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
 
-            DB::table('log_notification')->insert([
-                'user_id' => $penerima,
-                'tabel' => 'sl_quotation',
-                'doc_id' => $request->id,
-                'transaksi' => 'Quotation',
-                'pesan' => $msg,
-                'is_read' => 0,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
 
             //insert ke activity sebagai activity
             $customerActivityController = new CustomerActivityController();

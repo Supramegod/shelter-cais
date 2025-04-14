@@ -112,6 +112,15 @@
                                     <a class="nav-link active" id="activities-tab" data-bs-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="true">Aktifitas</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="hpp-tab" data-bs-toggle="tab" href="#hpp" role="tab" aria-controls="hpp" aria-selected="false">HPP</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="coss-tab" data-bs-toggle="tab" href="#coss" role="tab" aria-controls="coss" aria-selected="false">Cost Structure</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="gpm-tab" data-bs-toggle="tab" href="#gpm" role="tab" aria-controls="gpm" aria-selected="false">GPM</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
                                     <a class="nav-link" id="issues-tab" data-bs-toggle="tab" href="#issues" role="tab" aria-controls="issues" aria-selected="false">Issue</a>
                                 </li>
                             </ul>
@@ -133,6 +142,15 @@
                                             </li>
                                         @endforeach
                                     </ul>
+                                </div>
+                                <div class="tab-pane fade" id="hpp" role="tabpanel" aria-labelledby="hpp-tab">
+
+                                </div>
+                                <div class="tab-pane fade" id="coss" role="tabpanel" aria-labelledby="coss-tab">
+
+                                </div>
+                                <div class="tab-pane fade" id="gpm" role="tabpanel" aria-labelledby="gpm-tab">
+
                                 </div>
                                 <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">
                                     <ul class="timeline">

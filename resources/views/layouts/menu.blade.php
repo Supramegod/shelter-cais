@@ -44,6 +44,14 @@
                     </a>
                 </li>
                 @endif
+                @if(in_array(Auth::user()->role_id,[48,49]))
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads-marcomm'))) active @endif">
+                    <a href="{{route('dashboard-leads-marcomm')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Leads Marcomm</div>
+                    </a>
+                </li>
+                @endif
                 @if(in_array(Auth::user()->role_id,[2,52,53,56,96,97,40,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
                     <a href="{{route('dashboard-leads')}}" class="menu-link">
@@ -241,16 +249,51 @@
                     </a>
                 </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('barang'))) active @endif">
-                    <a href="{{route('barang')}}" class="menu-link">
+                    <a href="javascript:void(0)" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Barang">Barang</div>
+                        <div data-i18n="Training Materi">Barang</div>
                     </a>
-                </li>
-                <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
-                    <a href="{{route('jenis-barang')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Jenis Barang">Jenis Barang</div>
-                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item @if(str_contains(Request::url(), route('barang'))) active @endif">
+                        <a href="{{route('barang')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Materi">Semua Barang</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
+                        <a href="{{route('jenis-barang')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Divisi">Jenis Barang</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-trainer'))) active @endif">
+                        <a href="{{route('training-trainer')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Trainer">Kaporlap</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-area'))) active @endif">
+                        <a href="{{route('training-area')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Area">Devices</div>
+                        </a>
+                    </li>
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                        <a href="{{route('training-client')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Client">OHC</div>
+                        </a>
+                    </li>
+                    <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                        <a href="{{route('training-client')}}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Training Client">Chemical</div>
+                        </a>
+                    </li>
+                    </ul>
                 </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('jabatan'))) active @endif">
                     <a href="{{route('jabatan')}}" class="menu-link">

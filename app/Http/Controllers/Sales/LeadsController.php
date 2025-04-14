@@ -62,7 +62,7 @@ class LeadsController extends Controller
             $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
-            $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+            $platform = DB::table('m_platform')->whereNull('deleted_at')->where('id','<>',11)->get();
             $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
             $kota = DB::connection('mysqlhris')->table('m_city')->get();
             $kecamatan = DB::connection('mysqlhris')->table('m_district')->get();
@@ -70,6 +70,7 @@ class LeadsController extends Controller
 
             return view('sales.leads.add',compact('provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

@@ -75,64 +75,44 @@
                     <th>Harga Jual</th>
                 </tr>
                 </thead>
-                @if($quotation->ppn_pph_dipotong=="Management Fee")
                 <tbody>
-                <tr>
-                    <td style="text-align:left">Nominal</td>
-                    <td style="text-align:right">
-                    {{"Rp. ".number_format($quotation->total_invoice,2,",",".")}}
-                    </td>
-                    <td style="text-align:right">
-                    {{"Rp. ".number_format($quotation->total_invoice_coss,2,",",".")}}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:left">PPN</td>
-                    <td style="text-align:right">
-                    @if($quotation->ppn==0)
-                    <b>PPN Ditanggung Customer</b>
-                    @else
-                    {{"Rp. ".number_format($quotation->ppn,2,",",".")}}
-                    @endif
-                    </td>
-                    <td style="text-align:right">
-                    @if($quotation->ppn_coss==0)
-                    <b>PPN Ditanggung Customer</b>
-                    @else
-                    {{"Rp. ".number_format($quotation->ppn_coss,2,",",".")}}
-                    @endif
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:left">Total Biaya</td>
-                    <td style="text-align:right">
-                    {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
-                    </td>
-                    <td style="text-align:right">
-                    {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:left">Margin</td>
-                    <td style="text-align:right">
-                    {{"Rp. ".number_format($quotation->total_invoice-$quotation->ppn-$quotation->total_sebelum_management_fee,2,",",".")}}
-                    </td>
-                    <td style="text-align:right">
-                    {{"Rp. ".number_format($quotation->total_invoice_coss-$quotation->ppn_coss-$quotation->total_sebelum_management_fee,2,",",".")}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="fw-bold" style="text-align:left">GPM</td>
-                    <td class="fw-bold" style="text-align:right">
-                    {{number_format((($quotation->total_invoice-$quotation->ppn-$quotation->total_sebelum_management_fee)/$quotation->total_sebelum_management_fee)*100,2,",",".")}} %
-                    </td>
-                    <td class="fw-bold" style="text-align:right">
-                    {{number_format((($quotation->total_invoice_coss-$quotation->ppn_coss-$quotation->total_sebelum_management_fee)/$quotation->total_sebelum_management_fee)*100,2,",",".")}} %
-                    </td>
-                </tr>
+                    <tr>
+                        <td style="text-align:left">Nominal</td>
+                        <td style="text-align:right">
+                        {{"Rp. ".number_format($quotation->grand_total_sebelum_pajak,2,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        {{"Rp. ".number_format($quotation->grand_total_sebelum_pajak_coss,2,",",".")}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left">Total Biaya</td>
+                        <td style="text-align:right">
+                        {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        {{"Rp. ".number_format($quotation->total_sebelum_management_fee_coss,2,",",".")}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left">Margin</td>
+                        <td style="text-align:right">
+                        {{"Rp. ".number_format($quotation->margin,2,",",".")}}
+                        </td>
+                        <td style="text-align:right">
+                        {{"Rp. ".number_format($quotation->margin_coss,2,",",".")}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold" style="text-align:left">GPM</td>
+                        <td class="fw-bold" style="text-align:right">
+                        {{number_format($quotation->gpm,2,",",".")}} %
+                        </td>
+                        <td class="fw-bold" style="text-align:right">
+                        {{number_format($quotation->gpm_coss,2,",",".")}} %
+                        </td>
+                    </tr>
                 </tbody>
-                @else
-                @endif
             </table>
             </div>
         </div>
