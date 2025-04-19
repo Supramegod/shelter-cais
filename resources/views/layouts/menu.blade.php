@@ -44,14 +44,6 @@
                     </a>
                 </li>
                 @endif
-                @if(in_array(Auth::user()->role_id,[48,49]))
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads-marcomm'))) active @endif">
-                    <a href="{{route('dashboard-leads-marcomm')}}" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div>Leads Marcomm</div>
-                    </a>
-                </li>
-                @endif
                 @if(in_array(Auth::user()->role_id,[2,52,53,56,96,97,40,98,99,100]))
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
                     <a href="{{route('dashboard-leads')}}" class="menu-link">
@@ -60,7 +52,7 @@
                     </a>
                 </li>
                 @endif
-                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-leads'))) active @endif">
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-sdt-training'))) active @endif">
                     <a href="{{route('dashboard-sdt-training')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div>Dashboard SDT Training</div>

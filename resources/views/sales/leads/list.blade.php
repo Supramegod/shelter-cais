@@ -22,6 +22,23 @@
                     </div>
                 </div>
                 <div class="card-body pt-4">
+                <!-- <div class="row mb-3">
+                    <div class="col-sm-6 col-lg-3 mb-4">
+                        <div class="card card-border-shadow-primary h-100" id="leadsBelumAktif" onclick="openNormalDataTableModal('{{ route('sales.leads.leads-belum-aktif') }}','LEADS BELUM AKTIF')">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2 pb-1">
+                            <div class="avatar me-2">
+                                <span class="avatar-initial rounded bg-label-primary"
+                                ><i class="mdi mdi-finance mdi-20px"></i
+                                ></span>
+                            </div>
+                            <h4 class="ms-1 mb-0 display-6">{{$jumlahBelumAktif}}</h4>
+                            </div>
+                            <p class="mb-0 text-heading ">Leads Belum Aktif</p>
+                        </div>
+                        </div>
+                    </div>
+                </div> -->
                     <form action="{{route('leads')}}" method="GET">
                         <div class="col-md-12">
                             <div class="row">
@@ -420,5 +437,27 @@
     //         }
     //     });
     // });
+
+    // function aktifkanLeads(id) {
+    //     $.ajax({
+    //         url: "{{ route('leads.aktifkan') }}",
+    //         type: "POST",
+    //         data: {
+    //             id: id,
+    //             _token: "{{ csrf_token() }}"
+    //         },
+    //         beforeSend: function() {
+    //             // Change the row to a loading state
+    //             let td = $(event.target).closest('td');
+    //             td.html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+    //         },
+    //         success: function(response) {
+    //             $('#normal-modal-datatable').DataTable().ajax.reload();
+    //         },
+    //         error: function(xhr) {
+    //             $('#normal-modal-datatable').DataTable().ajax.reload();
+    //         }
+    //     });
+    // }
 </script>
 @endsection

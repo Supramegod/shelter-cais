@@ -1592,6 +1592,16 @@ if($quotation->note_harga_jual == null){
                     ]);
                 }
 
+            }else{
+                DB::table('sl_quotation_aplikasi')->where('quotation_id',$request->id)->update([
+                    'deleted_at' => $current_date_time,
+                    'deleted_by' => Auth::user()->full_name
+                ]);
+
+                DB::table('sl_quotation_devices')->where('quotation_id',$request->id)->update([
+                    'deleted_at' => $current_date_time,
+                    'deleted_by' => Auth::user()->full_name
+                ]);
             }
 
             $newStep = 7;

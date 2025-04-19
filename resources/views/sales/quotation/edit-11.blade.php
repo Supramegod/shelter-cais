@@ -788,13 +788,13 @@
     if(obj.penagihan == null || obj.penagihan == "" ){
       msg += "<b>Penagihan</b> belum dipilih </br>";
     };
-    if (obj.persen_bunga_bank == null || obj.persen_bunga_bank == "" || obj.persen_bunga_bank == "0") {
-        msg += "<b>Persen Bunga Bank</b> belum diisi </br>";
-    }
+    // if (obj.persen_bunga_bank == null || obj.persen_bunga_bank == "" || obj.persen_bunga_bank == "0") {
+    //    msg += "<b>Persen Bunga Bank</b> belum diisi </br>";
+    // }
 
-    if (obj.persen_insentif == null || obj.persen_insentif == "" || obj.persen_insentif == "0") {
-        msg += "<b>Persen Insentif</b> belum diisi </br>";
-    }
+    // if (obj.persen_insentif == null || obj.persen_insentif == "" || obj.persen_insentif == "0") {
+    //    msg += "<b>Persen Insentif</b> belum diisi </br>";
+    // }
 
     if(msg == ""){
       form.submit();

@@ -82,8 +82,9 @@ class PksController extends Controller
         foreach ($data as $key => $value) {
             $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
             $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
-            $value->status = "";
-            if($value->status_pks_id!=null){
+            if($value->status_pks_id == null){
+                $value->status = "";
+            } else{
                 $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
             }
         }

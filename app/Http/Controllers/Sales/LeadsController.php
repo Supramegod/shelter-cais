@@ -49,7 +49,18 @@ class LeadsController extends Controller
             $tglSampai = carbon::now()->toDateString();
             $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
         }
-        return view('sales.leads.list',compact('branch','platform','status','tglDari','tglSampai','request','error','success'));
+
+        //untuk tampilan
+        $jumlahBelumAktif = DB::table('sl_leads')
+            ->whereNull('sl_leads.deleted_at')
+            ->whereNull('sl_leads.is_aktif')
+            ->count();
+        $jumlahDitolak = DB::table('sl_leads')
+            ->whereNull('sl_leads.deleted_at')
+            ->where('sl_leads.is_aktif',0)
+            ->count();
+
+        return view('sales.leads.list',compact('jumlahBelumAktif','jumlahDitolak','branch','platform','status','tglDari','tglSampai','request','error','success'));
     }
     public function indexTerhapus (Request $request){
         return view('sales.leads.list-terhapus');
@@ -96,9 +107,9 @@ class LeadsController extends Controller
             }
 
             $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
-            $kota = DB::connection('mysqlhris')->table('m_city')->get();
-            $kecamatan = DB::connection('mysqlhris')->table('m_district')->get();
-            $kelurahan = DB::connection('mysqlhris')->table('m_village')->get();
+            $kota = DB::connection('mysqlhris')->table('m_city')->where('id',$leads->kota_id)->get();
+            $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('id',$leads->kecamatan_id)->get();
+            $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('id',$leads->kelurahan_id)->get();
 
             return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
@@ -1053,4 +1064,30 @@ class LeadsController extends Controller
         $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('district_id', $kecamatanId)->get();
         return response()->json($kelurahan);
     }
+
+    public function leadsBelumAktif(Request $request) {
+        $arrData = [];
+
+       $data = DB::table('sl_leads')
+            ->join('m_status_leads','sl_leads.status_leads_id','=','m_status_leads.id')
+            ->leftJoin('m_kebutuhan','sl_leads.kebutuhan_id','=','m_kebutuhan.id')
+            ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
+            ->select('sl_leads.id as aksi','sl_leads.created_by as dibuat_oleh','sl_leads.tgl_leads','sl_leads.nama_perusahaan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', 'm_kebutuhan.nama as kebutuhan', 'm_platform.nama as platform','sl_leads.id')
+            ->whereNull('sl_leads.deleted_at')
+            ->whereNull('sl_leads.is_aktif')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_leads = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->editColumn('aksi', function ($data) {
+                return '<span class="mdi mdi-text-box-check text-primary" style="cursor: pointer; font-size: 24px; display: flex; justify-content: center; align-items: center;" onclick="aktifkanLeads('.$data->id.')"></span>';
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
 }

@@ -87,6 +87,7 @@ class MonitoringKontrakController extends Controller
 
             $db2 = DB::connection('mysqlhris')->getDatabaseName();
             $sales = DB::table($db2.'.m_user')->where('id',$pks->sales_id)->first();
+            $pks->sales = "";
             if($sales !=null){
                 $pks->sales = $sales->full_name;
             }

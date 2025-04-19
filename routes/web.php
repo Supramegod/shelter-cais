@@ -143,6 +143,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/leads/get-kecamatan/{kotaId}', 'getKecamatan')->name('leads.get-kecamatan'); // ajax
         Route::get('/sales/leads/get-kelurahan/{kecamatanId}', 'getKelurahan')->name('leads.get-kelurahan'); // ajax
 
+        Route::get('/sales/leads/aktifkan', 'aktifkanLeads')->name('leads.aktifkan'); // ajax
+        Route::get('/sales/leads/leads-belum-aktif', 'leadsBelumAktif')->name('sales.leads.leads-belum-aktif');
     });
 
     Route::controller(CustomerController::class)->group(function() {
