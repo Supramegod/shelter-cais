@@ -29,7 +29,7 @@
             <div class="col-sm-4">
               <div class="position-relative">
                 <select id="jenis_barang_id" name="jenis_barang_id" class="form-select @if ($errors->any()) @if($errors->has('jenis_barang_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                <option value="">- Pilih Jenis Barang -</option>  
+                <option value="">- Pilih Jenis Barang -</option>
                   @foreach($listJenisBarang as $value)
                   <option value="{{$value->id}}" @if(old('jenis_barang_id') == $value->id) selected @endif>{{$value->nama}}</option>
                   @endforeach
@@ -80,6 +80,13 @@
                   <div class="invalid-feedback">{{$errors->first('jumlah_default')}}</div>
               @endif
             </div>
+            <label class="col-sm-2 col-form-label text-sm-end">Urutan</label>
+            <div class="col-sm-4">
+              <input type="urutan" id="urutan" name="urutan" value="{{old('urutan')}}" class="form-control @if ($errors->any()) @if($errors->has('urutan')) is-invalid @else   @endif @endif">
+              @if($errors->has('urutan'))
+                  <div class="invalid-feedback">{{$errors->first('urutan')}}</div>
+              @endif
+            </div>
           </div>
           <div class="pt-4">
             <div class="row justify-content-end">
@@ -100,7 +107,7 @@
 
 @section('pageScript')
 <script>
-  @if(session()->has('success'))  
+  @if(session()->has('success'))
     Swal.fire({
       title: 'Pemberitahuan',
       html: '{{session()->get('success')}}',

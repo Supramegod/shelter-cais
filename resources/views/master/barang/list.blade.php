@@ -29,6 +29,7 @@
                                     <th class="text-center">ID</th>
                                     <th class="text-center">Nama</th>
                                     <th class="text-center">Jenis Barang</th>
+                                    <th class="text-center">Urutan</th>
                                     <th class="text-center">Harga</th>
                                     <th class="text-center">Satuan</th>
                                     <th class="text-center">Masa Pakai</th>
@@ -56,7 +57,7 @@
 
 @section('pageScript')
     <script>
-        @if(session()->has('success'))  
+        @if(session()->has('success'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{session()->get('success')}}',
@@ -67,7 +68,7 @@
                 buttonsStyling: false
             });
         @endif
-        @if(session()->has('error'))  
+        @if(session()->has('error'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{session()->has('error')}}',
@@ -92,9 +93,9 @@
                 ajax: {
                     url: "{{ route('barang.list') }}",
                     data: function (d) {
-                        
+
                     },
-                },   
+                },
                 "order":[
                     [0,'desc']
                 ],
@@ -110,6 +111,10 @@
                 },{
                     data : 'nama_jenis_barang',
                     name : 'nama_jenis_barang',
+                    className:'text-center'
+                },{
+                    data : 'urutan',
+                    name : 'urutan',
                     className:'text-center'
                 },{
                     data : 'harga',
@@ -150,6 +155,31 @@
                 dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
                 buttons: [
                     {
+                        extend: 'collection',
+                        className: 'btn btn-label-warning dropdown-toggle mx-3 waves-effect waves-light',
+                        text: '<i class="mdi mdi-file-import-outline me-sm-1"></i> <span class="d-none d-sm-inline-block">Import</span>',
+                        buttons: [
+                            {
+                                text: '<i class="mdi mdi-file-import-outline"></i> Import',
+                                className: 'dropdown-item',
+                                action: function (e, dt, node, config)
+                                    {
+                                        //This will send the page to the location specified
+                                        window.location.href = '{{route("barang.import")}}';
+                                    }
+                            },
+                            {
+                                text: '<i class="mdi mdi-file-excel"></i> Download Template',
+                                className: 'dropdown-item',
+                                action: function (e, dt, node, config)
+                                    {
+                                        //This will send the page to the location specified
+                                        window.location.href = '{{route("barang.template-import")}}';
+                                    }
+                            },
+                        ]
+                    },
+                    {
                     text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Barang</span>',
                     className: 'create-new btn btn-label-primary waves-effect waves-light',
                     action: function (e, dt, node, config)
@@ -161,7 +191,7 @@
                 ],
             });
 
-        $('body').on('click', '.btn-delete', function() {   
+        $('body').on('click', '.btn-delete', function() {
             let id = $(this).data('id');
             Swal.fire({
                 title: 'Konfirmasi',

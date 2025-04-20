@@ -378,7 +378,6 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/jenis-barang/list', 'list')->name('jenis-barang.list'); // ajax
         Route::get('/master/jenis-barang/detail-barang', 'detailBarang')->name('jenis-barang.detail-barang'); // ajax
-
     });
 
     Route::controller(JabatanController::class)->group(function() {
@@ -482,6 +481,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/barang/delete', 'delete')->name('barang.delete');
 
         Route::get('/master/barang/list', 'list')->name('barang.list'); // ajax
+        Route::get('/master/barang/template-import', 'templateImport')->name('barang.template-import');
+        Route::get('/master/barang/import', 'import')->name('barang.import');
+        Route::post('/master/barang/inquiry-import', 'inquiryImport')->name('barang.inquiry-import');
+        Route::post('/master/barang/save-import', 'saveImport')->name('barang.save-import');
+
     });
 
     Route::controller(KebutuhanController::class)->group(function() {

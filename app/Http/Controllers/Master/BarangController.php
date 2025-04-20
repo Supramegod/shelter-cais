@@ -10,6 +10,9 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\SystemController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Exports\BarangTemplateExport;
+use Maatwebsite\Excel\Facades\Excel;
+use \stdClass;
 
 class BarangController extends Controller
 {
@@ -72,7 +75,7 @@ class BarangController extends Controller
                 'max' => 'Masukkan :attribute maksimal :max',
                 'required' => ':attribute harus di isi',
             ]);
-    
+
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
             }else{
@@ -91,6 +94,7 @@ class BarangController extends Controller
                         'masa_pakai' => $request->masa_pakai,
                         'merk' => $request->merk,
                         'jumlah_default' => $request->jumlah_default,
+                        'urutan' => $request->urutan,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
                     ]);
@@ -104,6 +108,7 @@ class BarangController extends Controller
                         'masa_pakai' => $request->masa_pakai,
                         'merk' => $request->merk,
                         'jumlah_default' => $request->jumlah_default,
+                        'urutan' => $request->urutan,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -132,6 +137,140 @@ class BarangController extends Controller
                 'message'   => "Berhasil menghapus data"
             ], 200);
         } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function templateImport(Request $request) {
+        $dt = Carbon::now()->toDateTimeString();
+
+        return Excel::download(new BarangTemplateExport(), 'Template Barang-'.$dt.'.xlsx');
+    }
+
+    public function import (Request $request){
+        $now = Carbon::now()->isoFormat('DD MMMM Y');
+
+        return view('master.barang.import',compact('now'));
+    }
+    public function inquiryImport(Request $request){
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'file' => 'required|mimes:csv,xls,xlsx',
+            ], [
+                'min' => 'Masukkan :attribute minimal :min',
+                'max' => 'Masukkan :attribute maksimal :max',
+                'required' => ':attribute harus di isi',
+                'mimes' => 'tipe file harus csv,xls atau xlsx',
+            ]);
+
+            $array = null;
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
+            }else{
+                $file = $request->file('file');
+                $current_date_time = Carbon::now()->toDateTimeString();
+                $importId = uniqid();
+
+                // Get the csv rows as an array
+                $array = Excel::toArray(new stdClass(), $file);
+                $jumlahError = 0;
+                $jumlahWarning = 0;
+                $jumlahSuccess = 0;
+                foreach ($array[0] as $key => $v) {
+                    if($key==0){
+                        continue;
+                    };
+                    if ($v[1] == null) {
+                        continue;
+                    }
+
+                    $barangId = $v[0];
+                    $namaBarang = $v[1];
+                    $jenisBarangId = $v[2];
+                    $jenisBarang = $v[3];
+                    $harga = $v[4];
+                    $satuan = $v[5];
+                    $masaPakai = $v[6];
+                    $merk = $v[7];
+                    $jumlahDefault = $v[8];
+                    $urutan = $v[9];
+
+                    $jenisBarang = DB::table('m_jenis_barang')->where('id',$jenisBarangId)->first();
+                    $arrayBarang = [
+                        'import_id' => $importId,
+                        'barang_id' => $barangId,
+                        'nama' => $namaBarang,
+                        'jenis_barang_id' => $jenisBarangId,
+                        'jenis_barang' => $jenisBarang != null ? $jenisBarang->nama : null,
+                        'harga' => $harga,
+                        'satuan' => $satuan,
+                        'masa_pakai' => $masaPakai,
+                        'merk' => $merk,
+                        'jumlah_default' => $jumlahDefault,
+                        'urutan' => $urutan,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->full_name
+                    ];
+
+                    DB::table('m_barang_import')->insert($arrayBarang);
+
+                    $jumlahSuccess++;
+                }
+            }
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            DB::commit();
+            $datas = DB::table('m_barang_import')->where('import_id',$importId)->get();
+            return view('master.barang.inquiry',compact('importId','datas','now','jumlahError','jumlahSuccess','jumlahWarning'));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveImport(Request $request){
+        DB::beginTransaction();
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $importId = $request->importId;
+            $datas = DB::table('m_barang_import')->where('import_id',$importId)->get();
+            foreach ($datas as $data) {
+                $arrBarang = [
+                    'nama' => $data->nama,
+                    'jenis_barang_id' => $data->jenis_barang_id,
+                    'jenis_barang' => $data->jenis_barang,
+                    'harga' => $data->harga,
+                    'satuan' => $data->satuan,
+                    'masa_pakai' => $data->masa_pakai,
+                    'merk' => $data->merk,
+                    'jumlah_default' => $data->jumlah_default,
+                    'urutan' => $data->urutan
+                ];
+
+
+
+                if($data->barang_id != null){
+                    $arrBarang['updated_at'] = $current_date_time;
+                    $arrBarang['updated_by'] = Auth::user()->full_name;
+
+                    DB::table('m_barang')->where('id',$data->barang_id)->update($arrBarang);
+                }else{
+                    $arrBarang['created_at'] = $current_date_time;
+                    $arrBarang['created_by'] = Auth::user()->full_name;
+
+                    DB::table('m_barang')->insert($arrBarang);
+                }
+            }
+
+            $msgSave = 'Import Barang berhasil Dilakukan !';
+
+            DB::commit();
+            return redirect()->route('barang')->with('success', $msgSave);
+        } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

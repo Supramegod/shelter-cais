@@ -12,7 +12,7 @@
                 <a href="javascript:;" class="btn btn-sm btn-primary">Mulai Eksplorasi</a>
             </div>
             <img
-                src="{{ asset('public/assets/img/illustrations/trophy.png') }}"
+                src="public/assets/img/illustrations/trophy.png"
                 class="position-absolute bottom-0 end-0 me-3"
                 height="140"
                 alt="view sales" />
