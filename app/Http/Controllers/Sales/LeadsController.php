@@ -269,19 +269,21 @@ class LeadsController extends Controller
                         ->leftJoin($db2.'.m_branch','sl_leads.branch_id','=',$db2.'.m_branch.id')
                         ->leftJoin('m_platform','sl_leads.platform_id','=','m_platform.id')
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                        ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
+                        ->select('sl_leads.deleted_by','sl_leads.deleted_at','m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNotNull('sl_leads.deleted_at')
                         ->whereNull('sl_leads.customer_id');
 
             $data = $data->get();
 
             foreach ($data as $key => $value) {
+                // $value->deleted_at = Carbon::createFromFormat('Y-m-d H:i',$value->deleted_at)->isoFormat('D MMMM Y H:i');
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
             }
 
             return DataTables::of($data)
             ->make(true);
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }

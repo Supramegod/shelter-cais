@@ -1004,7 +1004,7 @@ class DashboardController extends Controller
         ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
         ->join($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
         ->leftJoin('sl_quotation', 'sl_quotation.id', '=', 'sl_customer_activity.quotation_id')
-        ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+        ->leftJoin($db2.'.m_branch', $db2.'.m_user.branch_id', '=', $db2.'.m_branch.id')
         ->leftJoin('m_status_leads', 'sl_leads.status_leads_id', '=', 'm_status_leads.id')
         ->whereNull('sl_customer_activity.deleted_at')
         ->where('is_activity',1)
@@ -1030,7 +1030,7 @@ class DashboardController extends Controller
         ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
         ->join($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
         ->leftJoin('sl_quotation', 'sl_quotation.id', '=', 'sl_customer_activity.quotation_id')
-        ->leftJoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+        ->leftJoin($db2.'.m_branch', $db2.'.m_user.branch_id', '=', $db2.'.m_branch.id')
         ->leftJoin('m_status_leads', 'sl_leads.status_leads_id', '=', 'm_status_leads.id')
         ->whereNull('sl_customer_activity.deleted_at')
         ->where('is_activity',1)
@@ -1058,7 +1058,7 @@ class DashboardController extends Controller
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
-            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->leftjoin($db2.'.m_branch', $db2.'.m_user.branch_id', '=', $db2.'.m_branch.id')
             ->select(
                 $db2.'.m_user.id as user_id',
                 $db2.'.m_user.full_name as nama_sales',
@@ -1116,7 +1116,7 @@ class DashboardController extends Controller
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
-            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->leftjoin($db2.'.m_branch', $db2.'.m_user.branch_id', '=', $db2.'.m_branch.id')
             ->select(
                 $db2.'.m_user.id as user_id',
                 $db2.'.m_branch.id as branch_id',
@@ -1143,7 +1143,7 @@ class DashboardController extends Controller
         $dataLalu = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
-            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->leftjoin($db2.'.m_branch', $db2.'.m_user.branch_id', '=', $db2.'.m_branch.id')
             ->select(
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
@@ -1210,7 +1210,7 @@ class DashboardController extends Controller
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
-            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->leftjoin($db2.'.m_branch', $db2.'.m_user.branch_id', '=', $db2.'.m_branch.id')
             ->select(
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
@@ -1248,7 +1248,7 @@ class DashboardController extends Controller
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
-            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->leftjoin($db2.'.m_branch', $db2.'.m_user.branch_id', '=', $db2.'.m_branch.id')
             ->select(
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',

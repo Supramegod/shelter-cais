@@ -355,15 +355,6 @@
                 ]
                 },
                 {
-                text: '<i class="mdi mdi-delete me-sm-1"></i> <span class="d-none d-sm-inline-block">Arsip</span>',
-                className: 'btn btn-label-danger waves-effect waves-light',
-                action: function (e, dt, node, config)
-                    {
-                        //This will send the page to the location specified
-                        window.location.href = '{{route("leads.index-terhapus")}}';
-                    }
-                },
-                {
                 extend: 'collection',
                 className: 'btn btn-label-warning dropdown-toggle me-2 waves-effect waves-light',
                 text: '<i class="mdi mdi-file-import-outline me-sm-1"></i> <span class="d-none d-sm-inline-block">Import</span>',

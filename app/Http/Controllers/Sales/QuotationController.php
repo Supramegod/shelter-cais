@@ -59,6 +59,10 @@ class QuotationController extends Controller
         return view('sales.quotation.list',compact('listStatus','quotationAsal','tglDari','tglSampai','request','error','success','company','kebutuhan'));
     }
 
+    public function indexTerhapus (Request $request){
+        return view('sales.quotation.list-terhapus');
+    }
+
     public function add (Request $request){
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
@@ -4050,5 +4054,30 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         }
     }
 
+    public function listTerhapus (Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $data = DB::table('sl_quotation')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
+                    ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
+                    ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                    ->select('sl_quotation.jumlah_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation','sl_quotation.deleted_at','sl_quotation.deleted_by','sl_quotation.alasan_revisi',
+                    DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
+                    FROM sl_quotation_site
+                    WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site'))
+                    ->whereNotNull('sl_quotation.deleted_at');
+
+            $data = $data->get();
+
+            foreach ($data as $key => $value) {
+                $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
+            }
+
+            return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+                return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
 
 }

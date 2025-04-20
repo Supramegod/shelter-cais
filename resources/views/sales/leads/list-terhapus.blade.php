@@ -38,7 +38,8 @@
                                     <th class="text-center">Email PIC</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Sumber Leads</th>
-                                    <th class="text-center">Created By</th>
+                                    <th class="text-center">Deleted By</th>
+                                    <th class="text-center">Deleted At</th>
                                     <th class="text-center">Keterangan</th>
                                 </tr>
                             </thead>
@@ -76,7 +77,7 @@
             "createdRow": function( row, data, dataIndex){
                 $('td', row).css('background-color', data.warna_background);
                 $('td', row).css('color', data.warna_font);
-            },      
+            },
             "order":[
                 [0,'desc']
             ],
@@ -130,8 +131,12 @@
                 name : 'platform',
                 className:'text-center'
             },{
-                data : 'created_by',
-                name : 'created_by',
+                data : 'deleted_by',
+                name : 'deleted_by',
+                className:'text-center'
+            },{
+                data : 'deleted_at',
+                name : 'deleted_at',
                 className:'text-center'
             },{
                 data : 'notes',

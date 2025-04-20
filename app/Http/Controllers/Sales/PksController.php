@@ -51,6 +51,9 @@ class PksController extends Controller
         }
         return view('sales.pks.list',compact('branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
     }
+    public function indexTerhapus (Request $request){
+        return view('sales.pks.list-terhapus');
+    }
 
     public function add (Request $request){
         try {
@@ -99,6 +102,31 @@ class PksController extends Controller
             return '<a href="'.route('pks.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
         })
         ->rawColumns(['aksi','nomor'])
+        ->make(true);
+    }
+
+    public function listTerhapus (Request $request){
+        $data = DB::table('sl_pks')
+                ->leftJoin('sl_spk','sl_spk.id','sl_pks.spk_id')
+                ->leftJoin('sl_quotation','sl_pks.quotation_id','sl_quotation.id')
+                ->whereNotNull('sl_pks.deleted_at')
+                ->select('sl_pks.deleted_at','sl_pks.deleted_by','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation.kebutuhan','sl_pks.status_pks_id')
+                ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
+            if($value->status_pks_id == null){
+                $value->status = "";
+            } else{
+                $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
+            }
+        }
+
+        return DataTables::of($data)
+        ->addColumn('aksi', function ($data) {
+            return '';
+        })
+        ->rawColumns(['aksi'])
         ->make(true);
     }
 

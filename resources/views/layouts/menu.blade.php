@@ -349,6 +349,32 @@
                         <div>Notifikasi</div>
                     </a>
                 </li>
+                @if(in_array(Auth::user()->role_id,[2]))
+                <li class="menu-item @if(str_contains(Request::url(), route('leads.terhapus'))) active @endif">
+                    <a href="{{route('leads.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>Leads Dihapus</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('quotation.terhapus'))) active @endif">
+                    <a href="{{route('quotation.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>Quotation Dihapus</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('spk.terhapus'))) active @endif">
+                    <a href="{{route('spk.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>SPK Dihapus</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('pks.terhapus'))) active @endif">
+                    <a href="{{route('pks.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>PKS Dihapus</div>
+                    </a>
+                </li>
+                @endif
             </ul>
         </li>
         @endif

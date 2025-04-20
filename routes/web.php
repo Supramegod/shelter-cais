@@ -121,7 +121,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::controller(LeadsController::class)->group(function() {
         Route::get('/sales/leads', 'index')->name('leads');
-        Route::get('/sales/leads/index-terhapus', 'indexTerhapus')->name('leads.index-terhapus');
+        Route::get('/sales/leads/terhapus', 'indexTerhapus')->name('leads.terhapus');
         Route::get('/sales/leads/add', 'add')->name('leads.add');
         Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
         Route::get('/sales/leads/import', 'import')->name('leads.import');
@@ -195,9 +195,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::controller(SpkController::class)->group(function() {
         Route::get('/sales/spk', 'index')->name('spk');
+        Route::get('/sales/spk/terhapus', 'indexTerhapus')->name('spk.terhapus');
         Route::get('/sales/spk/add', 'add')->name('spk.add');
 
         Route::get('/sales/spk/list', 'list')->name('spk.list'); // ajax
+        Route::get('/sales/spk/list-terhapus', 'listTerhapus')->name('spk.list-terhapus'); // ajax
         Route::get('/sales/spk/available-quotation', 'availableQuotation')->name('spk.available-quotation'); // ajax
         Route::post('/sales/spk/save', 'save')->name('spk.save');
         Route::get('/sales/spk/view/{id}', 'view')->name('spk.view');
@@ -211,9 +213,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::controller(PksController::class)->group(function() {
         Route::get('/sales/pks', 'index')->name('pks');
+        Route::get('/sales/pks/terhapus', 'indexTerhapus')->name('pks.terhapus');
         Route::get('/sales/pks/add', 'add')->name('pks.add');
 
         Route::get('/sales/pks/list', 'list')->name('pks.list'); // ajax
+        Route::get('/sales/pks/list-terhapus', 'listTerhapus')->name('pks.list-terhapus'); // ajax
         Route::get('/sales/pks/available-spk', 'availableSpk')->name('pks.available-spk'); // ajax
         Route::post('/sales/pks/save', 'save')->name('pks.save');
         Route::get('/sales/pks/view/{id}', 'view')->name('pks.view');
@@ -234,6 +238,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::controller(QuotationController::class)->group(function() {
         Route::get('/sales/quotation', 'index')->name('quotation');
+        Route::get('/sales/quotation/terhapus', 'indexTerhapus')->name('quotation.terhapus');
         Route::get('/sales/quotation/add', 'add')->name('quotation.add');
         Route::get('/sales/quotation/step/{id}', 'step')->name('quotation.step');
         Route::post('/sales/quotation/save-step', 'saveStep')->name('quotation.save-step');
@@ -259,6 +264,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/delete', 'delete')->name('quotation.delete');
 
         Route::get('/sales/quotation/list', 'list')->name('quotation.list'); // ajax
+        Route::get('/sales/quotation/list-terhapus', 'listTerhapus')->name('quotation.list-terhapus'); // ajax
         Route::post('/sales/quotation/add-detail-hc', 'addDetailHC')->name('quotation.add-detail-hc');
         Route::get('/sales/quotation/list-detail-hc', 'listDetailHC')->name('quotation.list-detail-hc'); // ajax
         Route::post('/sales/quotation/delete-detail-hc', 'deleteDetailHC')->name('quotation.delete-detail-hc');

@@ -51,6 +51,11 @@ class SpkController extends Controller
         return view('sales.spk.list',compact('branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
     }
 
+    public function indexTerhapus (Request $request){
+
+        return view('sales.spk.list-terhapus');
+    }
+
     public function add (Request $request){
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
@@ -90,6 +95,25 @@ class SpkController extends Controller
             return '<a href="'.route('spk.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
         })
         ->rawColumns(['aksi','nomor'])
+        ->make(true);
+    }
+    public function listTerhapus (Request $request){
+        $data = DB::table('sl_spk')
+                ->leftJoin('sl_quotation','sl_quotation.id','sl_spk.quotation_id')
+                ->whereNotNull('sl_spk.deleted_at')
+                ->select('sl_spk.deleted_at','sl_spk.deleted_by','sl_spk.id','sl_spk.nomor','sl_quotation.nomor as nomor_quotation','sl_spk.tgl_spk','sl_quotation.nama_perusahaan','sl_quotation.nama_site','sl_quotation.kebutuhan','sl_spk.status_spk_id')
+                ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_spk = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_spk)->isoFormat('D MMMM Y');
+            $value->status = DB::table('m_status_spk')->where('id',$value->status_spk_id)->first()->nama;
+        }
+
+        return DataTables::of($data)
+        ->addColumn('aksi', function ($data) {
+            return '';
+        })
+        ->rawColumns(['aksi'])
         ->make(true);
     }
 
