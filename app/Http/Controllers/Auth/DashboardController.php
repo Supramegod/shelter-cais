@@ -107,7 +107,7 @@ class DashboardController extends Controller
             ->where('is_aktif', 1)
             ->count();
 
-      
+
         return view('home.dashboard-sdt-training',compact('jumlahTraining','jumlahClient','jumlahTrainer','jumlahMateri'));
     }
 
@@ -1060,6 +1060,7 @@ class DashboardController extends Controller
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
             ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
             ->select(
+                $db2.'.m_user.id as user_id',
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w1_appt'),
@@ -1082,7 +1083,7 @@ class DashboardController extends Controller
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
             ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
-            ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
+            ->groupBy($db2.'.m_user.id',$db2.'.m_user.full_name', $db2.'.m_branch.name')
             ->orderBy($db2.'.m_branch.name', 'asc')
             ->orderBy($db2.'.m_user.full_name', 'asc');
 
@@ -1105,7 +1106,41 @@ class DashboardController extends Controller
         $tahun = $request->tahun;
         $branch_id = $request->branch_id;
 
+        $tahunLalu = $tahun;
+        $bulanLalu = $bulan - 1;
+        if($bulanLalu == 0){
+            $bulanLalu = 12;
+            $tahunLalu = $tahunLalu - 1;
+        }
+
         $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
+            ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
+            ->select(
+                $db2.'.m_user.id as user_id',
+                $db2.'.m_branch.id as branch_id',
+                $db2.'.m_user.full_name as nama_sales',
+                $db2.'.m_branch.name as cabang',
+                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as jumlah_appt'),
+                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as jumlah_visit'),
+                DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as jumlah_quot'),
+                DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as jumlah_spk'),
+            )
+
+            ->whereMonth('sl_customer_activity.created_at', $bulan)
+            ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
+            ->groupBy($db2.'.m_user.full_name',$db2.'.m_user.id', $db2.'.m_branch.name', $db2.'.m_branch.id')
+            ->orderBy($db2.'.m_branch.name', 'asc')
+            ->orderBy($db2.'.m_user.full_name', 'asc');
+
+        if($branch_id != ""){
+            $data = $data->where($db2.'.m_branch.id', $branch_id);
+        }
+        $data = $data->get();
+
+        $dataLalu = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
             ->leftjoin($db2.'.m_branch', 'sl_leads.branch_id', '=', $db2.'.m_branch.id')
@@ -1117,17 +1152,17 @@ class DashboardController extends Controller
                 DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as jumlah_quot'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as jumlah_spk'),
             )
-            ->whereMonth('sl_customer_activity.created_at', $bulan)
-            ->whereYear('sl_customer_activity.created_at', $tahun)
+
+            ->whereMonth('sl_customer_activity.created_at', $bulanLalu)
+            ->whereYear('sl_customer_activity.created_at', $tahunLalu)
             ->whereIn($db2.'.m_user.role_id', [29, 31, 32, 33, 50])
             ->groupBy($db2.'.m_user.full_name', $db2.'.m_branch.name')
             ->orderBy($db2.'.m_branch.name', 'asc')
             ->orderBy($db2.'.m_user.full_name', 'asc');
-
         if($branch_id != ""){
-            $data = $data->where($db2.'.m_branch.id', $branch_id);
+            $dataLalu = $dataLalu->where($db2.'.m_branch.id', $branch_id);
         }
-        $data = $data->get();
+        $dataLalu = $dataLalu->get();
 
         foreach ($data as $key => $value) {
             $value->nomor = $key+1;
@@ -1135,6 +1170,31 @@ class DashboardController extends Controller
             $value->persen_visit_to_quot = ($value->jumlah_visit == 0 ? 0 : round(($value->jumlah_quot / $value->jumlah_visit) * 100, 2))."%";
             $value->persen_quot_to_spk = ($value->jumlah_quot == 0 ? 0 : round(($value->jumlah_spk / $value->jumlah_quot) * 100, 2))."%";
             $value->jumlah_aktual_spk = 0;
+
+            // cari data bulan lalu
+            //inisial data dulu
+            $value->jumlah_appt_lalu = 0;
+            $value->jumlah_visit_lalu = 0;
+            $value->jumlah_quot_lalu = 0;
+            $value->jumlah_spk_lalu = 0;
+            $value->persen_appt_to_visit_lalu = 0;
+            $value->persen_visit_to_quot_lalu = 0;
+            $value->persen_quot_to_spk_lalu = 0;
+            $value->jumlah_aktual_spk_lalu = 0;
+
+            foreach ($dataLalu as $key2 => $value2) {
+                if($value->nama_sales == $value2->nama_sales && $value->cabang == $value2->cabang){
+                    $value->jumlah_appt_lalu = $value2->jumlah_appt;
+                    $value->jumlah_visit_lalu = $value2->jumlah_visit;
+                    $value->jumlah_quot_lalu = $value2->jumlah_quot;
+                    $value->jumlah_spk_lalu = $value2->jumlah_spk;
+                    $value->persen_appt_to_visit_lalu = ($value2->jumlah_visit == 0 ? 0 : round(($value2->jumlah_appt / $value2->jumlah_visit) * 100, 2))."%";
+                    $value->persen_visit_to_quot_lalu = ($value2->jumlah_visit == 0 ? 0 : round(($value2->jumlah_quot / $value2->jumlah_visit) * 100, 2))."%";
+                    $value->persen_quot_to_spk_lalu = ($value2->jumlah_quot == 0 ? 0 : round(($value2->jumlah_spk / $value2->jumlah_quot) * 100, 2))."%";
+                    $value->jumlah_aktual_spk_lalu = 0;
+                    break;
+                }
+            }
         }
         return DataTables::of($data)
             ->make(true);
@@ -1213,4 +1273,32 @@ class DashboardController extends Controller
             ->make(true);
     }
 
+    public function listAktifitasSalesBulananDetail(Request $request){
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
+        $arrData = [];
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+
+        $data = DB::table('sl_customer_activity')
+            ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
+            ->join($db2.'.m_user',$db2.'.m_user.id','sl_customer_activity.user_id')
+            ->whereNull('sl_customer_activity.deleted_at')
+            ->where('sl_customer_activity.is_activity',1)
+            ->whereMonth('sl_customer_activity.created_at', $bulan)
+            ->whereYear('sl_customer_activity.created_at', $tahun)
+            ->where($db2.'.m_user.id', $request->user_id)
+            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $value->tgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+               return "";
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
 }

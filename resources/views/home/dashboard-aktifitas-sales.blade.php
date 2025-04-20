@@ -6,6 +6,14 @@
 <link rel="stylesheet" type="text/css" href="https://pivottable.js.org/dist/pivot.css">
 <script src="https://pivottable.js.org/dist/pivot.js"></script>
 <script src="https://pivottable.js.org/dist/plotly_renderers.js"></script>
+<style>
+    #table-data tbody tr {
+        cursor: pointer;
+    }
+    #table-data-bulanan tbody tr {
+        cursor: pointer;
+    }
+</style>
 @endsection
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
@@ -119,20 +127,26 @@
                         <table id="table-data-bulanan" class="dt-column-search table w-100 table-hover" style="white-space: nowrap;">
                             <thead>
                                 <tr>
-                                    <th class="text-center" rowspan="2">No.</th>
-                                    <th class="text-center" rowspan="2">Nama Sales</th>
-                                    <th class="text-center" rowspan="2">Cabang</th>
-                                    <th class="text-center" colspan="8" id="label-laporan-bulanan"></th>
+                                    <th class="text-center" rowspan="3">No.</th>
+                                    <th class="text-center" rowspan="3">Nama Sales</th>
+                                    <th class="text-center" rowspan="3">Cabang</th>
+                                    <th class="text-center" colspan="16" id="label-laporan-bulanan"></th>
                                 </tr>
                                 <tr>
-                                    <th class="text-center">Jumlah Appt</th>
-                                    <th class="text-center">Jumlah visit</th>
-                                    <th class="text-center">Jumlah Penawaran</th>
-                                    <th class="text-center">Jumlah SPK ( Closed )</th>
-                                    <th class="text-center">% Conversation Appt to Visit</th>
-                                    <th class="text-center">% Conversation Visit to Quot</th>
-                                    <th class="text-center">% Conversation Quot to Closed</th>
-                                    <th class="text-center">Jumlah Aktual Penempatan</th>
+                                    <th class="text-center" colspan="2">Jumlah Appt</th>
+                                    <th class="text-center" colspan="2">Jumlah visit</th>
+                                    <th class="text-center" colspan="2">Jumlah Penawaran</th>
+                                    <th class="text-center" colspan="2">Jumlah SPK ( Closed )</th>
+                                    <th class="text-center" colspan="2">% Conversion Appt to Visit</th>
+                                    <th class="text-center" colspan="2">% Conversion Visit to Quot</th>
+                                    <th class="text-center" colspan="2">% Conversion Quot to Closed</th>
+                                    <th class="text-center" colspan="2">Jumlah Aktual Penempatan</th>
+                                </tr>
+                                <tr>
+                                    @for($i = 1; $i <= 8; $i++)
+                                        <th class="text-center label-bulan-lalu bg-warning"></th>
+                                        <th class="text-center label-bulan-sekarang"></th>
+                                    @endfor
                                 </tr>
                             </thead>
                             <tbody>
@@ -349,7 +363,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
         <div class="card w-100">
         <div class="card-header header-elements">
             <h5 class="card-title mb-0">Pivot Summary Data Aktifitas Sales</h5>
@@ -399,7 +413,7 @@
             </div>
         </div>
       </div>
-    </div>
+    </div> -->
 </div>
 @endsection
 
@@ -808,7 +822,7 @@
   });
     </script>
 
-<script>
+<!-- <script>
     function fetchPivotData(tanggalDari, tanggalSampai) {
         $('#output').html('<div class="d-flex justify-content-center align-items-center" style="height: 200px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
         $.ajax({
@@ -918,7 +932,7 @@
             location.reload();
             });
         });
-</script>
+</script> -->
 <script>
     let month = new Date().getMonth() + 1;
     $('#bulan').val(month < 10 ? '0' + month : month);
@@ -1021,6 +1035,24 @@
                 }],
                 "language": datatableLang
             });
+
+            $('#table-data tbody').on('click', 'tr', function (e) {
+                if ($(e.target).is('button, a, i')) return; // biar tombol tetap jalan
+                let data = table.row(this).data();
+                if (data === undefined) {
+                    return;
+                }
+
+                console.log(data);
+
+                let bulan = $('#bulan').val();
+                let tahun = $('#tahun').val();
+                let user = data.user_id;
+                let url = '{{ route('dashboard.aktifitas-sales.modal.aktifitas-sales-bulanan-detail') }}';
+                let urlParam = '?bulan=' + bulan + '&tahun=' + tahun+'&user_id=' + user;
+                url += urlParam;
+                openNormalDataTableModal(url,'AKTIFITAS '+data.nama_sales.toUpperCase()+' PADA CABANG : '+data.cabang.toUpperCase()+' BULAN : '+$('#bulan option:selected').text().toUpperCase()+' TAHUN : '+tahun);
+            });
         }
 
         loadDataTable();
@@ -1037,6 +1069,15 @@
     $(document).ready(function() {
         function loadDataTableBulanan() {
             $('#label-laporan-bulanan').text($('#bulanBulanan option:selected').text() + ' - ' + $('#tahunBulanan').val());
+
+            $('.label-bulan-sekarang').text($('#bulanBulanan option:selected').val() + ' - ' + $('#tahunBulanan').val());
+            let bulanLalu = $('#bulanBulanan').val() - 1;
+            let tahunLalu = $('#tahunBulanan').val();
+            if (bulanLalu === 0) {
+            bulanLalu = 12;
+            tahunLalu--;
+            }
+            $('.label-bulan-lalu').text((bulanLalu < 10 ? '0' + bulanLalu : bulanLalu) + ' - ' + tahunLalu);
 
             var table = $('#table-data-bulanan').DataTable({
                 scrollX: true,
@@ -1067,39 +1108,89 @@
                     data : 'cabang',
                     name : 'cabang',
                 },{
+                    data : 'jumlah_appt_lalu',
+                    name : 'jumlah_appt_lalu',
+                    className:'text-center bg-warning text-white'
+                },{
                     data : 'jumlah_appt',
                     name : 'jumlah_appt',
                     className:'text-center'
+                },{
+                    data : 'jumlah_visit_lalu',
+                    name : 'jumlah_visit_lalu',
+                    className:'text-center bg-warning text-white'
                 },{
                     data : 'jumlah_visit',
                     name : 'jumlah_visit',
                     className:'text-center'
                 },{
+                    data : 'jumlah_quot_lalu',
+                    name : 'jumlah_quot_lalu',
+                    className:'text-center bg-warning text-white'
+                },{
                     data : 'jumlah_quot',
                     name : 'jumlah_quot',
                     className:'text-center'
+                },{
+                    data : 'jumlah_spk_lalu',
+                    name : 'jumlah_spk_lalu',
+                    className:'text-center bg-warning text-white'
                 },{
                     data : 'jumlah_spk',
                     name : 'jumlah_spk',
                     className:'text-center'
                 },{
+                    data : 'persen_appt_to_visit_lalu',
+                    name : 'persen_appt_to_visit_lalu',
+                    className:'text-center bg-warning text-white'
+                },{
                     data : 'persen_appt_to_visit',
                     name : 'persen_appt_to_visit',
                     className:'text-center'
+                },{
+                    data : 'persen_visit_to_quot_lalu',
+                    name : 'persen_visit_to_quot_lalu',
+                    className:'text-center bg-warning text-white'
                 },{
                     data : 'persen_visit_to_quot',
                     name : 'persen_visit_to_quot',
                     className:'text-center'
                 },{
+                    data : 'persen_quot_to_spk_lalu',
+                    name : 'persen_quot_to_spk_lalu',
+                    className:'text-center bg-warning text-white'
+                },{
                     data : 'persen_quot_to_spk',
                     name : 'persen_quot_to_spk',
                     className:'text-center'
+                },{
+                    data : 'jumlah_aktual_spk_lalu',
+                    name : 'jumlah_aktual_spk_lalu',
+                    className:'text-center bg-warning text-white'
                 },{
                     data : 'jumlah_aktual_spk',
                     name : 'jumlah_aktual_spk',
                     className:'text-center'
                 }],
                 "language": datatableLang
+            });
+
+            $('#table-data-bulanan tbody').on('click', 'tr', function (e) {
+                if ($(e.target).is('button, a, i')) return; // biar tombol tetap jalan
+                let data = table.row(this).data();
+                if (data === undefined) {
+                    return;
+                }
+
+                console.log(data);
+
+                let bulan = $('#bulanBulanan').val();
+                let tahun = $('#tahunBulanan').val();
+                let user = data.user_id;
+                let url = '{{ route('dashboard.aktifitas-sales.modal.aktifitas-sales-bulanan-detail') }}';
+                let urlParam = '?bulan=' + bulan + '&tahun=' + tahun+'&user_id=' + user;
+                url += urlParam;
+                openNormalDataTableModal(url,'AKTIFITAS '+data.nama_sales.toUpperCase()+' PADA CABANG : '+data.cabang.toUpperCase()+' BULAN : '+$('#bulanBulanan option:selected').text().toUpperCase()+' TAHUN : '+tahun);
             });
         }
 
@@ -1110,6 +1201,7 @@
             loadDataTableBulanan();
         });
     });
+
 </script>
 @endsection
 

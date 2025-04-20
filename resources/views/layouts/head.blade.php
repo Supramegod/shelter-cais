@@ -59,6 +59,10 @@
 
     <script src="{{ asset('public/assets/js/config.js') }}"></script>
 
+    <!-- DataTables ColReorder & Buttons -->
+<link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.6.2/css/colReorder.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-resizable-columns@0.2.3/css/jquery.resizableColumns.css" />
+
     <style>
         .select2-selection__rendered {
                 line-height: 31px !important;

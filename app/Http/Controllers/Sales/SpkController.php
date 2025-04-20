@@ -32,7 +32,7 @@ class SpkController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
@@ -110,7 +110,7 @@ class SpkController extends Controller
                 $value->quotation = $value->nomor;
                 $value->tgl_quotation = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
             }
-            
+
             return DataTables::of($data)
             ->make(true);
         } catch (\Exception $e) {
@@ -152,24 +152,25 @@ class SpkController extends Controller
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            //insert ke activity sebagai activity pertama
-            $customerActivityController = new CustomerActivityController();
-            $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+            // //insert ke activity sebagai activity pertama
+            // $customerActivityController = new CustomerActivityController();
+            // $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
 
-            $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $quotation->leads_id,
-                'quotation_id' => $quotation->id,
-                'spk_id' => $newId,
-                'branch_id' => $leads->branch_id,
-                'tgl_activity' => $current_date_time,
-                'nomor' => $nomorActivity,
-                'tipe' => 'SPK',
-                'notes' => 'SPK dengan nomor :'.$spkNomor.' terbentuk dari Quotation dengan nomor :'.$quotation->nomor,
-                'is_activity' => 0,
-                'user_id' => Auth::user()->id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // $activityId = DB::table('sl_customer_activity')->insertGetId([
+            //     'leads_id' => $quotation->leads_id,
+            //     'quotation_id' => $quotation->id,
+            //     'spk_id' => $newId,
+            //     'branch_id' => $leads->branch_id,
+            //     'tgl_activity' => $current_date_time,
+            //     'nomor' => $nomorActivity,
+            //     'tipe' => 'SPK',
+            //     'notes' => 'SPK dengan nomor :'.$spkNomor.' terbentuk dari Quotation dengan nomor :'.$quotation->nomor,
+            //     'is_activity' => 0,
+            //     'user_id' => Auth::user()->id,
+            //     'created_at' => $current_date_time,
+            //     'created_by' => Auth::user()->full_name
+            // ]);
+
             DB::commit();
             return redirect()->route('spk.view',$newId);
         } catch (\Exception $e) {
@@ -178,7 +179,7 @@ class SpkController extends Controller
             abort(500);
         }
     }
-    
+
     public function generateNomor ($leadsId,$companyId){
         // generate nomor QUOT/SIG/AAABB-092024-00001
         $now = Carbon::now();
@@ -222,7 +223,7 @@ class SpkController extends Controller
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
-        
+
     }
 
     public function cetakSpk (Request $request,$id){
@@ -266,7 +267,7 @@ class SpkController extends Controller
             $originalName = $originalFileName.date("YmdHis").rand(10000,99999).".".$fileExtension;
 
             Storage::disk('spk')->put($originalName, file_get_contents($request->file('file')));
-            
+
             DB::table('sl_spk')->where('id',$request->id)->update([
                 'status_spk_id' => 2,
                 'link_spk_disetujui' =>env('APP_URL')."/public/spk/".$originalName,
@@ -298,7 +299,7 @@ class SpkController extends Controller
             $nomorQuotationBaru = $this->generateNomorQuotation($qtujuan->leads_id,$qtujuan->company_id);
             $dataToInsertQuotation['nomor'] = $nomorQuotationBaru;
             $dataToInsertQuotation['revisi'] = $qtujuan->revisi+1;
-            $dataToInsertQuotation['alasan_revisi'] = $request->alasan;            
+            $dataToInsertQuotation['alasan_revisi'] = $request->alasan;
             $dataToInsertQuotation['quotation_asal_id'] = $qtujuan->id;
             $dataToInsertQuotation['step'] = 1;
             $dataToInsertQuotation['created_at'] = $current_date_time;
@@ -318,7 +319,7 @@ class SpkController extends Controller
                 $dataToInsert['quotation_id'] = $qtujuanId;
                 $dataToInsert['created_at'] = $current_date_time;
                 $dataToInsert['created_by'] = Auth::user()->full_name;
-                
+
                 $newSiteId = DB::table("sl_quotation_site")->insertGetId($dataToInsert);
 
                 $detail = DB::table("sl_quotation_detail")->whereNull('deleted_at')->where('quotation_site_id',$site->id)->where('quotation_id',$qasalId)->get();
@@ -334,7 +335,7 @@ class SpkController extends Controller
                     $dataToInsert['quotation_site_id'] = $newSiteId;
                     $dataToInsert['created_at'] = $current_date_time;
                     $dataToInsert['created_by'] = Auth::user()->full_name;
-                    
+
                     $newId = DB::table("sl_quotation_detail")->insertGetId($dataToInsert);
 
                     // Quotation Chemical
@@ -350,7 +351,7 @@ class SpkController extends Controller
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_chemical")->insert($dataToInsertD);
                     }
 
@@ -367,10 +368,10 @@ class SpkController extends Controller
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_detail_requirement")->insert($dataToInsertD);
                     }
-                    
+
                     // Quotation Detail Tunjangan
                     $tunjangan = DB::table("sl_quotation_detail_tunjangan")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
                     DB::table("sl_quotation_detail_tunjangan")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
@@ -384,7 +385,7 @@ class SpkController extends Controller
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_detail_tunjangan")->insert($dataToInsertD);
                     }
 
@@ -401,7 +402,7 @@ class SpkController extends Controller
                         $dataToInsertD['quotation_detail_id'] = $newId;
                         $dataToInsertD['created_at'] = $current_date_time;
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
-                        
+
                         DB::table("sl_quotation_kaporlap")->insert($dataToInsertD);
                     }
                 }
@@ -419,7 +420,7 @@ class SpkController extends Controller
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_devices")->insert($dataToInsertD);
             }
 
@@ -435,7 +436,7 @@ class SpkController extends Controller
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_ohc")->insert($dataToInsertD);
             }
 
@@ -451,7 +452,7 @@ class SpkController extends Controller
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_aplikasi")->insert($dataToInsertD);
             }
 
@@ -467,7 +468,7 @@ class SpkController extends Controller
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_kerjasama")->insert($dataToInsertD);
             }
 
@@ -483,7 +484,7 @@ class SpkController extends Controller
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_pic")->insert($dataToInsertD);
             }
 
@@ -499,7 +500,7 @@ class SpkController extends Controller
                 $dataToInsertD['quotation_id'] = $qtujuanId;
                 $dataToInsertD['created_at'] = $current_date_time;
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
-                
+
                 DB::table("sl_quotation_training")->insert($dataToInsertD);
             }
 
@@ -515,41 +516,41 @@ class SpkController extends Controller
                 'deleted_by' => Auth::user()->full_name
             ]);
 
-            //insert ke activity sebagai activity pertama
-            $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
-            $customerActivityController = new CustomerActivityController();
+            // //insert ke activity sebagai activity pertama
+            // $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
+            // $customerActivityController = new CustomerActivityController();
 
-            // buat activity baru dari quotation yang diajukan ulang
-            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
-            $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $qtujuan->leads_id,
-                'quotation_id' => $qasalId,
-                'branch_id' => $leads->branch_id,
-                'tgl_activity' => $current_date_time,
-                'nomor' => $nomorActivity,
-                'tipe' => 'Quotation',
-                'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
-                'is_activity' => 0,
-                'user_id' => Auth::user()->id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // // buat activity baru dari quotation yang diajukan ulang
+            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            // $activityId = DB::table('sl_customer_activity')->insertGetId([
+            //     'leads_id' => $qtujuan->leads_id,
+            //     'quotation_id' => $qasalId,
+            //     'branch_id' => $leads->branch_id,
+            //     'tgl_activity' => $current_date_time,
+            //     'nomor' => $nomorActivity,
+            //     'tipe' => 'Quotation',
+            //     'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
+            //     'is_activity' => 0,
+            //     'user_id' => Auth::user()->id,
+            //     'created_at' => $current_date_time,
+            //     'created_by' => Auth::user()->full_name
+            // ]);
 
-            // buat activity baru dari quotation baru
-            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
-            $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $qtujuan->leads_id,
-                'quotation_id' => $qtujuanId,
-                'branch_id' => $leads->branch_id,
-                'tgl_activity' => $current_date_time,
-                'nomor' => $nomorActivity,
-                'tipe' => 'Quotation',
-                'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
-                'is_activity' => 0,
-                'user_id' => Auth::user()->id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // // buat activity baru dari quotation baru
+            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            // $activityId = DB::table('sl_customer_activity')->insertGetId([
+            //     'leads_id' => $qtujuan->leads_id,
+            //     'quotation_id' => $qtujuanId,
+            //     'branch_id' => $leads->branch_id,
+            //     'tgl_activity' => $current_date_time,
+            //     'nomor' => $nomorActivity,
+            //     'tipe' => 'Quotation',
+            //     'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
+            //     'is_activity' => 0,
+            //     'user_id' => Auth::user()->id,
+            //     'created_at' => $current_date_time,
+            //     'created_by' => Auth::user()->full_name
+            // ]);
 
             return redirect()->route('quotation');
 

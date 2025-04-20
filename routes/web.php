@@ -114,6 +114,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-telesales/pivot/aktifitas-telesales', 'pivotAktifitasTelesales')->name('dashboard.aktifitas-telesales.pivot.aktifitas-telesales');
         Route::get('/dashboard/aktifitas-telesales/tabel/laporan-mingguan-telesales', 'laporanMingguanTelesales')->name('dashboard.aktifitas-telesales.tabel.laporan-mingguan-telesales');
         Route::get('/dashboard/aktifitas-telesales/tabel/laporan-bulanan-telesales', 'laporanBulananTelesales')->name('dashboard.aktifitas-telesales.tabel.laporan-bulanan-telesales');
+
+        Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-bulanan-detail', 'listAktifitasSalesBulananDetail')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-bulanan-detail');
+
     });
 
     Route::controller(LeadsController::class)->group(function() {

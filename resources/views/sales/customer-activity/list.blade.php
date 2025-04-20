@@ -124,7 +124,7 @@
 
 @section('pageScript')
     <script>
-        @if(isset($success) || session()->has('success'))  
+        @if(isset($success) || session()->has('success'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$success}} {{session()->get('success')}}',
@@ -135,7 +135,7 @@
                 buttonsStyling: false
             });
         @endif
-        @if(isset($error) || session()->has('error'))  
+        @if(isset($error) || session()->has('error'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$error}} {{session()->has('error')}}',
@@ -209,7 +209,7 @@
                     '</dd>' ;
                 }
                 if(d.notes_tipe !=null){
-                    tipeNotes = d.notes_tipe; 
+                    tipeNotes = d.notes_tipe;
                 }
 
                 if(d.tgl_r !=null){
@@ -258,7 +258,7 @@
                         d.kebutuhan = $('#kebutuhan').find(":selected").val();
                         d.user = $('#user').find(":selected").val();
                     },
-                },   
+                },
                 "order":[
                     [0,'desc']
                 ],
@@ -364,13 +364,13 @@
                         className: 'dropdown-item',
                         orientation: 'landscape',
                         customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                         exportOptions: {
                             columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                             orientation: 'landscape',
                             customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                             // prevent avatar to be display
                             format: {
@@ -408,7 +408,7 @@
             table.on('click', 'td.dt-control', function (e) {
                 let tr = e.target.closest('tr');
                 let row = table.row(tr);
-            
+
                 if (row.child.isShown()) {
                     // This row is already open - close it
                     row.child.hide();

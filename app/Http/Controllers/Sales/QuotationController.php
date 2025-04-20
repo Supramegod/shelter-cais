@@ -573,43 +573,43 @@ class QuotationController extends Controller
             ]);
 
             //insert ke activity sebagai activity pertama
-            $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
+            // $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
 
-            $customerActivityController = new CustomerActivityController();
+            // $customerActivityController = new CustomerActivityController();
 
-            // buat activity baru dari quotation yang diajukan ulang
-            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            // // buat activity baru dari quotation yang diajukan ulang
+            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
 
-            $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $qtujuan->leads_id,
-                'quotation_id' => $qasalId,
-                'branch_id' => $leads->branch_id,
-                'tgl_activity' => $current_date_time,
-                'nomor' => $nomorActivity,
-                'tipe' => 'Quotation',
-                'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
-                'is_activity' => 0,
-                'user_id' => Auth::user()->id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // $activityId = DB::table('sl_customer_activity')->insertGetId([
+            //     'leads_id' => $qtujuan->leads_id,
+            //     'quotation_id' => $qasalId,
+            //     'branch_id' => $leads->branch_id,
+            //     'tgl_activity' => $current_date_time,
+            //     'nomor' => $nomorActivity,
+            //     'tipe' => 'Quotation',
+            //     'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
+            //     'is_activity' => 0,
+            //     'user_id' => Auth::user()->id,
+            //     'created_at' => $current_date_time,
+            //     'created_by' => Auth::user()->full_name
+            // ]);
 
-            // buat activity baru dari quotation baru
-            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            // // buat activity baru dari quotation baru
+            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
 
-            $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $qtujuan->leads_id,
-                'quotation_id' => $qtujuanId,
-                'branch_id' => $leads->branch_id,
-                'tgl_activity' => $current_date_time,
-                'nomor' => $nomorActivity,
-                'tipe' => 'Quotation',
-                'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
-                'is_activity' => 0,
-                'user_id' => Auth::user()->id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // $activityId = DB::table('sl_customer_activity')->insertGetId([
+            //     'leads_id' => $qtujuan->leads_id,
+            //     'quotation_id' => $qtujuanId,
+            //     'branch_id' => $leads->branch_id,
+            //     'tgl_activity' => $current_date_time,
+            //     'nomor' => $nomorActivity,
+            //     'tipe' => 'Quotation',
+            //     'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
+            //     'is_activity' => 0,
+            //     'user_id' => Auth::user()->id,
+            //     'created_at' => $current_date_time,
+            //     'created_by' => Auth::user()->full_name
+            // ]);
 
 
             DB::commit();
@@ -1086,22 +1086,22 @@ class QuotationController extends Controller
             }
 
             //insert ke activity sebagai activity pertama
-            $customerActivityController = new CustomerActivityController();
-            $nomorActivity = $customerActivityController->generateNomor($request->perusahaan_id);
+            // $customerActivityController = new CustomerActivityController();
+            // $nomorActivity = $customerActivityController->generateNomor($request->perusahaan_id);
 
-            $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $request->perusahaan_id,
-                'quotation_id' => $newId,
-                'branch_id' => $leads->branch_id,
-                'tgl_activity' => $current_date_time,
-                'nomor' => $nomorActivity,
-                'tipe' => 'Quotation',
-                'notes' => 'Quotation dengan nomor :'.$quotationNomor.' terbentuk',
-                'is_activity' => 0,
-                'user_id' => Auth::user()->id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // $activityId = DB::table('sl_customer_activity')->insertGetId([
+            //     'leads_id' => $request->perusahaan_id,
+            //     'quotation_id' => $newId,
+            //     'branch_id' => $leads->branch_id,
+            //     'tgl_activity' => $current_date_time,
+            //     'nomor' => $nomorActivity,
+            //     'tipe' => 'Quotation',
+            //     'notes' => 'Quotation dengan nomor :'.$quotationNomor.' terbentuk',
+            //     'is_activity' => 0,
+            //     'user_id' => Auth::user()->id,
+            //     'created_at' => $current_date_time,
+            //     'created_by' => Auth::user()->full_name
+            // ]);
 
             DB::commit();
 
@@ -3001,23 +3001,22 @@ if($quotation->note_harga_jual == null){
                 ]);
             }
 
-
             //insert ke activity sebagai activity
-            $customerActivityController = new CustomerActivityController();
-            $nomorActivity = $customerActivityController->generateNomor($master->leads_id);
-            $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $master->leads_id,
-                'quotation_id' => $request->id,
-                'branch_id' => $leads->branch_id,
-                'tgl_activity' => $current_date_time,
-                'nomor' => $nomorActivity,
-                'tipe' => 'Quotation',
-                'notes' => $msg,
-                'is_activity' => 0,
-                'user_id' => Auth::user()->id,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
+            // $customerActivityController = new CustomerActivityController();
+            // $nomorActivity = $customerActivityController->generateNomor($master->leads_id);
+            // $activityId = DB::table('sl_customer_activity')->insertGetId([
+            //     'leads_id' => $master->leads_id,
+            //     'quotation_id' => $request->id,
+            //     'branch_id' => $leads->branch_id,
+            //     'tgl_activity' => $current_date_time,
+            //     'nomor' => $nomorActivity,
+            //     'tipe' => 'Quotation',
+            //     'notes' => $msg,
+            //     'is_activity' => 0,
+            //     'user_id' => Auth::user()->id,
+            //     'created_at' => $current_date_time,
+            //     'created_by' => Auth::user()->full_name
+            // ]);
 
             DB::commit();
         } catch (\Exception $e) {
