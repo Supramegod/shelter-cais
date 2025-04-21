@@ -1,6 +1,5 @@
 shelter3
 stntstntb412ra
-
 120.188.78.242
 development
 shelter3_dev_cais
@@ -26,13 +25,13 @@ MEETING IT SHELTER 01-07-2024
 	 	- apabila >= maka warnanya hijau atau biru muda untuk melihat itu site baru atau lama
 	 	- apabila kontraknya <= 90 hari akan berakhir maka berwarna kuning ( action : send email / nonaktif apabila sudah send email ke PIC , tambah sales/activity call / visit , tombol masuk ke quotation agar bisa masuk ke quotation lanjutan  )
 	 	- apabila kontraknya <= 60 hari akan berakhir maka berwarna merah ( action : send email / nonaktif apabila sudah send email ke PIC , tambah activity call / visit , tombol quotation lanjutan )
-	 	- apabila kontraknya sudah lewat dari akhir maka warna mati ( action : terminate ( untuk memutus kontrak <sudah tidak bisa penagihan , payroll , pkwt nonaktif> 6 bulan setelah terminate balik lagi jadi leads ) ,  
-	
+	 	- apabila kontraknya sudah lewat dari akhir maka warna mati ( action : terminate ( untuk memutus kontrak <sudah tidak bisa penagihan , payroll , pkwt nonaktif> 6 bulan setelah terminate balik lagi jadi leads ) ,
+
 	- untuk custom saat HPP bisa checklist untuk perhitungan MF
 	* API SPK CAIS
-	* history global ( activity , kegiatan dari quotation ) dari leads 
+	* history global ( activity , kegiatan dari quotation ) dari leads
 	* form complain dan rekapan komplain
-	* Re Kontrak bisa ganti entitas 
+	* Re Kontrak bisa ganti entitas
 	* Perbandingan Quotation Sebelumnya dan Setelah dirubah
 
 ======================================================================================================================================
@@ -53,7 +52,7 @@ XXX 1. Untuk Harga dibulatkan ke 35
 	- tambahkan create quotation
 	- bisa update status dari leads tersebut
 	- dapatkan geolocation ( lat long ) dari leads tersebut
-	
+
 5. QUOTATION
 	- tidak bisa ada edit data perusahaan
 	- ada master salary role
@@ -66,7 +65,7 @@ XXX 1. Untuk Harga dibulatkan ke 35
 	- klik generate berdasarkan harga saat itu
 	- kategori resiko masuk nanti ke HPP BPJS kecelakaan kerja
 	- jika 2 program bpjs maka : JKK , JKM , kalau 3 maka : JKK , JKM , JHT , kalau 4 maka : JKK JKM JHT JP
-	- di HPP bisa menambahkan baris baru 
+	- di HPP bisa menambahkan baris baru
 	- persentase bpjs di HPP bisa diedit kecuali JKK
 	- managemnt fee : total biaya , total gaji , custom ( checklist komponent , MF )
 	- ketika quotation pertama diisi bisa di save , kalau sudah manajemen approve tidak bisa dirubah bisa nya bikin baru
@@ -92,8 +91,8 @@ XXX 1. Untuk Harga dibulatkan ke 35
 11. Report
 	- customer closing leads
 	- leads in by source
-	
-	
+
+
 
 ALUR ==> MARCOM - CREATE LEADS -> SALES ACTIVITY -> CREATE QUOTATION -> WON / TIDAK -> PKS
 
@@ -107,11 +106,11 @@ MEETING CAIS 16-07-2024
 	- PKHL kontrak tidak boleh > 3 bulan
 	- PR : BORONGAN DAN GARDA
 		** Quotation multisite multi lokasi
-2. Leads 	
+2. Leads
 	- Otomasi Leads dari semua platform ( instagram (chatbot), whatsapp (chatbot), facebook (chatbot), website ( shelterindonesia.id ) )
 XXX	- untuk yang sama sekali belum ada activity maka diwarnai hijau
 	- untuk master informasi bisa generate QRIS
-	- 
+	-
 
 
 - Wilayah - belum ada, perlu mockup?
@@ -120,7 +119,7 @@ XXX	- untuk yang sama sekali belum ada activity maka diwarnai hijau
 - Kebutuhan / service - belum ada, perlu mockup?
 - Jabatan -sudah ada, m_position
 - Tim Sales - belum ada, perlu mockup?
-- Karyawan Sales - sudah ada, m_employee -> site_id = 2 AND status_approval = 3 AND position_id = id sales 
+- Karyawan Sales - sudah ada, m_employee -> site_id = 2 AND status_approval = 3 AND position_id = id sales
 - Status Sales Call  - belum ada, perlu mockup?
 - Provinsi - sudah ada, m_province
 - Kabupaten / Kota - sudah ada, m_city
@@ -211,7 +210,7 @@ function send_custom_webhook( $record, $handler ) {
 	foreach ( $raw_fields as $id => $field ) {
 		$fields[ $id ] = $field['value'];
 	};
-	
+
 	wp_remote_post(
 		'https://cais.shelterapp2.co.id/webhook-endpoint/zRdjjhBKq8g4Xn1Xojp2oOggh8Ar4jpr',
 		[
@@ -221,7 +220,7 @@ function send_custom_webhook( $record, $handler ) {
 			],
 		]
 	);
-	
+
 	wp_remote_post(
 		'https://dev-cais.shelterapp2.co.id/webhook-endpoint/zRdjjhBKq8g4Xn1Xojp2oOggh8Ar4jpr',
 		[

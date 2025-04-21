@@ -40,11 +40,11 @@ class ContactController extends Controller
                 'response' => $recaptcha_response,
                 'remoteip' => IpUtils::anonymize($request->ip()) //anonymize the ip to be GDPR compliant. Otherwise just pass the default ip address
             ];
-    
+
             $response = Http::asForm()->post($url, $body);
-    
+
             $result = json_decode($response);
-    
+
             if ($response->successful() && $result->success == true) {
                 DB::beginTransaction();
                 $current_date_time = Carbon::now()->toDateTimeString();
@@ -56,7 +56,7 @@ class ContactController extends Controller
                     $platform = $qplatform->id;
                 }
 
-                $newId = DB::table('sl_leads')->insertGetId([
+                $newId = DB::table('sl_submission')->insertGetId([
                     'nomor' =>  $nomor,
                     'tgl_leads' => $current_date_time,
                     'nama_perusahaan' => $request->nama_perusahaan,
@@ -113,7 +113,7 @@ class ContactController extends Controller
                 $platform = $qplatform->id;
             }
 
-            $newId = DB::table('sl_leads')->insertGetId([
+            $newId = DB::table('sl_submission')->insertGetId([
                 'nomor' =>  $nomor,
                 'tgl_leads' => $current_date_time,
                 'nama_perusahaan' => $request->nama_perusahaan,
@@ -146,7 +146,7 @@ class ContactController extends Controller
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
-            
+
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -164,14 +164,14 @@ class ContactController extends Controller
     public function generateNomor (){
         //generate nomor 065 = A , 090 = Z , 048 = 1 , 057 = 9;
 
-        //dapatkan dulu last leads 
+        //dapatkan dulu last leads
         $nomor = "AAAAA";
 
-        $lastLeads = DB::table('sl_leads')->orderBy('id', 'DESC')->first();
+        $lastLeads = DB::table('sl_submission')->orderBy('id', 'DESC')->first();
         if($lastLeads!=null){
             $nomor = $lastLeads->nomor;
             $chars = str_split($nomor);
-            for ($i=count($chars)-1; $i >= 0; $i--) { 
+            for ($i=count($chars)-1; $i >= 0; $i--) {
                 //dapatkan ascii dari character
                 $ascii = ord($chars[$i]);
 
@@ -189,7 +189,7 @@ class ContactController extends Controller
             }
             if(strlen($nomor)<5){
                 $jumlah = 5-strlen($nomor);
-                for ($i=0; $i < $jumlah; $i++) { 
+                for ($i=0; $i < $jumlah; $i++) {
                     $nomor = $nomor."A";
                 }
             }
@@ -228,7 +228,7 @@ class ContactController extends Controller
                     'wilayah' => $wilayah,
                     'recaptcha' => $recaptcha
                 ]);
-                
+
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $nomor = $this->generateNomor();
                 $kebutuhanId = null;
@@ -249,8 +249,8 @@ class ContactController extends Controller
                 if($province !=null){
                     $branch = $province->branch_id;
                 };
-                
-                $newId = DB::table('sl_leads')->insertGetId([
+
+                $newId = DB::table('sl_submission')->insertGetId([
                     'nomor' =>  $nomor,
                     'tgl_leads' => $current_date_time,
                     'nama_perusahaan' => $namaPerusahaan,
@@ -265,8 +265,8 @@ class ContactController extends Controller
                     'notes' => $pesan,
                     'created_at' => $current_date_time,
                     'created_by' => 'webhook'
-                ]);    
-                
+                ]);
+
                 //insert ke activity sebagai activity pertama
                 $customerActivityController = new CustomerActivityController();
                 $nomorActivity = $customerActivityController->generateNomor($newId);

@@ -374,7 +374,7 @@ class CustomerActivityController extends Controller
                         'crm' => $crmName,
                         'status_leads_id' => $statusLeads,
                         'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->name
+                        'updated_by' => Auth::user()->full_name
                     ]);
                     $msgSave = 'Customer Activity berhasil disimpan.';
 
@@ -445,7 +445,7 @@ class CustomerActivityController extends Controller
                         DB::table('sl_leads')->where('id',$request->leads_id)->update([
                             'status_leads_id' => $request->status_leads_id,
                             'updated_at' => $current_date_time,
-                            'updated_by' => Auth::user()->name
+                            'updated_by' => Auth::user()->full_name
                         ]);
                     };
                 }
@@ -456,7 +456,7 @@ class CustomerActivityController extends Controller
                         'tim_sales_id' => $timSalesId,
                         'tim_sales_d_id' => $timSalesDId,
                         'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->name
+                        'updated_by' => Auth::user()->full_name
                     ]);
                 }else if($request->tipe=="Pilih RO"){
                     $roId1 = null;
@@ -479,7 +479,7 @@ class CustomerActivityController extends Controller
                         'ro_id_2' => $roId2,
                         'ro_id_3' => $roId3,
                         'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->name
+                        'updated_by' => Auth::user()->full_name
                     ]);
                 }else if($request->tipe=="Pilih CRM"){
                     $crmId1 = null;
@@ -500,7 +500,7 @@ class CustomerActivityController extends Controller
                         'crm_id_1' => $crmId1,
                         'crm_id_2' => $crmId2,
                         'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->name
+                        'updated_by' => Auth::user()->full_name
                     ]);
                 }
             }
@@ -520,7 +520,7 @@ class CustomerActivityController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('sl_customer_activity')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
-                'deleted_by' => Auth::user()->name
+                'deleted_by' => Auth::user()->full_name
             ]);
 
             $msgSave = 'Customer activity berhasil dihapus.';
@@ -1015,7 +1015,7 @@ class CustomerActivityController extends Controller
                 'ro_id_2' => $roId2,
                 'ro_id_3' => $roId3,
                 'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->name
+                'updated_by' => Auth::user()->full_name
             ]);
             $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';
             DB::commit();
@@ -1129,7 +1129,7 @@ class CustomerActivityController extends Controller
                 'crm_id_1' => $crmId1,
                 'crm_id_2' => $crmId2,
                 'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->name
+                'updated_by' => Auth::user()->full_name
             ]);
 
             $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';
@@ -1165,7 +1165,7 @@ class CustomerActivityController extends Controller
             DB::table('sl_pks')->where('id',$pks->id)->update([
                 'status_pks_id' => $request->status_pks,
                 'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->name
+                'updated_by' => Auth::user()->full_name
             ]);
 
             $msgSave = 'Customer Activity berhasil disimpan dengan nomor : '.$nomor.' !';

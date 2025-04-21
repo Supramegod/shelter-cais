@@ -78,6 +78,14 @@
             </a>
         </li>
         @endif
+        @if(in_array(Auth::user()->role_id,[2,48,49]))
+        <li class="menu-item @if(str_contains(Request::url(), route('submission'))) active @endif">
+            <a href="{{route('submission')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-format-list-group"></i>
+            <div data-i18n="Leads">Submission</div>
+            </a>
+        </li>
+        @endif
         @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('site'))) active @endif">
             <a href="{{route('site')}}" class="menu-link">

@@ -9,6 +9,7 @@ use App\Http\Controllers\Fitur\ContactController;
 use App\Http\Controllers\Fitur\SdtTrainingInviteController;
 
 use App\Http\Controllers\Sales\LeadsController;
+use App\Http\Controllers\Sales\SubmissionController;
 use App\Http\Controllers\Sales\CustomerController;
 use App\Http\Controllers\Sales\SiteController;
 use App\Http\Controllers\Sales\CustomerActivityController;
@@ -148,6 +149,15 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/leads/aktifkan', 'aktifkanLeads')->name('leads.aktifkan'); // ajax
         Route::get('/sales/leads/leads-belum-aktif', 'leadsBelumAktif')->name('sales.leads.leads-belum-aktif');
+    });
+
+    Route::controller(SubmissionController::class)->group(function() {
+        Route::get('/sales/submission', 'index')->name('submission');
+
+        Route::post('/sales/submission/save', 'save')->name('submission.save');
+        Route::post('/sales/submission/delete', 'delete')->name('submission.delete');
+
+        Route::get('/sales/submission/list', 'list')->name('submission.list'); // ajax
     });
 
     Route::controller(CustomerController::class)->group(function() {

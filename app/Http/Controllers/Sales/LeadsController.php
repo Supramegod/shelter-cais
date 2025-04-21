@@ -340,7 +340,7 @@ class LeadsController extends Controller
                         'kelurahan_id' => $request->kelurahan,
                         'kelurahan' => $kelurahan ? $kelurahan->name : null,
                         'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->name
+                        'updated_by' => Auth::user()->full_name
                     ]);
 
                     //insert ke activity sebagai activity pertama
@@ -471,7 +471,7 @@ class LeadsController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('sl_leads')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
-                'deleted_by' => Auth::user()->name
+                'deleted_by' => Auth::user()->full_name
             ]);
 
             $msgSave = 'Leads '.$request->nama_perusahaan.' berhasil dihapus.';
