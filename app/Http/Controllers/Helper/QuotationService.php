@@ -456,7 +456,7 @@ class QuotationService
 
             foreach ($chemicalItems as $item) {
                 // $personilChemical += ($item->harga * $item->jumlah) / $provisi;+
-                $personilChemical += ((($item->jumlah * $item->harga) / $item->masa_pakai) / $provisi) / $jumlahHc;;
+                $personilChemical += ((($item->jumlah * $item->harga) / $item->masa_pakai)) / $jumlahHc;
             }
         }
         $kbd->personil_chemical = $personilChemical;

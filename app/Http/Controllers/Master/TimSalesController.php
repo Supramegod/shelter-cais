@@ -52,7 +52,7 @@ class TimSalesController extends Controller
         try {
             $data = DB::table('m_tim_sales')->where('id',$id)->first();
             $listBranch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
-            $listUser = DB::connection('mysqlhris')->table('m_user')->where('is_active',1)->whereIn('role_id', [29,31])->where('branch_id',$data->branch_id)->get();
+            $listUser = DB::connection('mysqlhris')->table('m_user')->where('is_active',1)->whereIn('role_id', [29,31,32,33])->where('branch_id',$data->branch_id)->get();
 
             return view('master.tim-sales.view',compact('data', 'listBranch', 'listUser'));
         } catch (\Exception $e) {
@@ -72,7 +72,7 @@ class TimSalesController extends Controller
                 'max' => 'Masukkan :attribute maksimal :max',
                 'required' => ':attribute harus di isi',
             ]);
-    
+
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
             }else{
@@ -118,7 +118,7 @@ class TimSalesController extends Controller
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
-            
+
             return response()->json([
                 'success'   => true,
                 'data'      => [],

@@ -744,6 +744,7 @@ class QuotationController extends Controller
                 $listKaporlap = DB::table('m_barang')
                                     ->whereNull('deleted_at')
                                     ->whereIn('jenis_barang_id',$arrKaporlap)
+                                    ->orderBy("urutan","asc")
                                     ->orderBy("nama","asc")
                                     ->get();
 
@@ -764,6 +765,8 @@ class QuotationController extends Controller
                 $listDevices = DB::table('m_barang')
                                     ->whereNull('deleted_at')
                                     ->whereIn('jenis_barang_id',[8,9,10,11,12,17])
+                                    ->orderBy("urutan","asc")
+                                    ->orderBy("nama","asc")
                                     ->get();
 
                 foreach ($listDevices as $key => $devices) {
@@ -782,6 +785,8 @@ class QuotationController extends Controller
                 $listChemical = DB::table('m_barang')
                                     ->whereNull('deleted_at')
                                     ->whereIn('jenis_barang_id',[13,14,15,16,18,19])
+                                    ->orderBy("urutan","asc")
+                                    ->orderBy("nama","asc")
                                     ->get();
                 foreach ($listChemical as $key => $value) {
                     $value->harga = number_format($value->harga,0,",",".");
@@ -796,6 +801,8 @@ class QuotationController extends Controller
                 $listOhc = DB::table('m_barang')
                                     ->whereNull('deleted_at')
                                     ->whereIn('jenis_barang_id',[6,7,8])
+                                    ->orderBy("urutan","asc")
+                                    ->orderBy("nama","asc")
                                     ->get();
                 foreach ($listOhc as $key => $value) {
                     $value->harga = number_format($value->harga,0,",",".");

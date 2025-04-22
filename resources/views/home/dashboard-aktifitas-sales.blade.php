@@ -219,10 +219,10 @@
                                 </tr>
                                 <tr>
                                     @for($i = 1; $i <= 4; $i++)
-                                        <th class="text-center">Appt</th>
-                                        <th class="text-center">Visit</th>
-                                        <th class="text-center">Quot</th>
-                                        <th class="text-center">SPK</th>
+                                        <th class="text-center" style="background-color: #55efc480;">Appt</th>
+                                        <th class="text-center" style="background-color: #74b9ff80;">Visit</th>
+                                        <th class="text-center" style="background-color: #ffeaa780;">Quot</th>
+                                        <th class="text-center" style="background-color: #ff767580;">SPK</th>
                                     @endfor
                                 </tr>
                             </thead>
@@ -971,67 +971,115 @@
                 },{
                     data : 'w1_appt',
                     name : 'w1_appt',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#55efc480';
+                    },
                 },{
                     data : 'w1_visit',
                     name : 'w1_visit',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#74b9ff80';
+                    },
                 },{
                     data : 'w1_quot',
                     name : 'w1_quot',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ffeaa780';
+                    },
                 },{
                     data : 'w1_spk',
                     name : 'w1_spk',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ff767580';
+                    },
                 },{
                     data : 'w2_appt',
                     name : 'w2_appt',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#55efc480';
+                    },
                 },{
                     data : 'w2_visit',
                     name : 'w2_visit',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#74b9ff80';
+                    },
                 },{
                     data : 'w2_quot',
                     name : 'w2_quot',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ffeaa780';
+                    },
                 },{
                     data : 'w2_spk',
                     name : 'w2_spk',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ff767580';
+                    },
                 },{
                     data : 'w3_appt',
                     name : 'w3_appt',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#55efc480';
+                    },
                 },{
                     data : 'w3_visit',
                     name : 'w3_visit',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#74b9ff80';
+                    },
                 },{
                     data : 'w3_quot',
                     name : 'w3_quot',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ffeaa780';
+                    },
                 },{
                     data : 'w3_spk',
                     name : 'w3_spk',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ff767580';
+                    },
                 },{
                     data : 'w4_appt',
                     name : 'w4_appt',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#55efc480';
+                    },
                 },{
                     data : 'w4_visit',
                     name : 'w4_visit',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#74b9ff80';
+                    },
                 },{
                     data : 'w4_quot',
                     name : 'w4_quot',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ffeaa780';
+                    },
                 },{
                     data : 'w4_spk',
                     name : 'w4_spk',
-                    className:'text-center'
+                    className:'text-center',
+                    createdCell: function (cell) {
+                        cell.style.backgroundColor = '#ff767580';
+                    },
                 }],
                 "language": datatableLang
             });

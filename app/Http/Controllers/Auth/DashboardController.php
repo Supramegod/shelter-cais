@@ -1122,7 +1122,18 @@ class DashboardController extends Controller
                 $db2.'.m_branch.id as branch_id',
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
-                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as jumlah_appt'),
+                DB::raw('SUM(
+        CASE
+            WHEN sl_customer_activity.tipe != "Visit" AND (
+                 sl_customer_activity.notes LIKE "%visit%"
+                 OR sl_customer_activity.notes LIKE "%appointment%"
+								 OR sl_customer_activity.notes LIKE "%meeting%"
+								 OR sl_customer_activity.notes LIKE "%zooom%"
+             )
+            THEN 1
+            ELSE 0
+        END
+    ) AS jumlah_appt'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as jumlah_visit'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as jumlah_quot'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as jumlah_spk'),
@@ -1252,7 +1263,19 @@ class DashboardController extends Controller
             ->select(
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
-                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as jumlah_appt'),
+                DB::raw('
+                SUM(
+        CASE
+            WHEN sl_customer_activity.tipe != "Visit" AND (
+                 sl_customer_activity.notes LIKE "%visit%"
+                 OR sl_customer_activity.notes LIKE "%appointment%"
+								 OR sl_customer_activity.notes LIKE "%meeting%"
+								 OR sl_customer_activity.notes LIKE "%zooom%"
+             )
+            THEN 1
+            ELSE 0
+        END
+    ) AS jumlah_appt'),
             )
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
@@ -1287,7 +1310,7 @@ class DashboardController extends Controller
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
             ->where($db2.'.m_user.id', $request->user_id)
-            ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
+            ->select('sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_leads.nama_perusahaan','sl_customer_activity.tipe','sl_customer_activity.notes','sl_customer_activity.created_by','sl_customer_activity.created_at')
             ->get();
 
         foreach ($data as $key => $value) {
