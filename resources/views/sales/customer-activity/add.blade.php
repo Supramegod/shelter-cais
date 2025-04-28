@@ -77,7 +77,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Status Leads <span class="text-danger">*</span></label>
             <div class="col-sm-10">
               <select id="status_leads_id" name="status_leads_id" class="form-select @if ($errors->any()) @if($errors->has('status_leads_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                <option value="">- Pilih data -</option>  
+                <option value="">- Pilih data -</option>
                 @foreach($statusLeads as $value)
                 <option value="{{$value->id}}" @if(old('status_leads_id') == $value->id) selected @endif>{{$value->nama}}</option>
                 @endforeach
@@ -88,13 +88,13 @@
             </div>
           </div>
           @endif
-          
+
           <!-- JIKA SALES HANYA DIA SENDIRI -->
           @if(in_array(Auth::user()->role_id,[29]))
           <input type="hidden" name="tim_sales_id" value="{{$tim_sales_id}}">
-          <input type="hidden" name="tim_sales_d_id" value="{{$tim_sales_d_id}}">          
+          <input type="hidden" name="tim_sales_d_id" value="{{$tim_sales_d_id}}">
           @endif
-          
+
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Notes</label>
             <div class="col-sm-10">
@@ -195,7 +195,7 @@
             <div class="col-sm-8">
               <!-- <div class="d-status-leads">
                 <div class="row">
-                  
+
                 </div>
               </div> -->
               <div class="d-tim-sales">
@@ -204,7 +204,7 @@
                   <div class="col-sm-4 @if(in_array(Auth::user()->role_id,[31])) d-none @endif">
                     <div class="position-relative">
                       <select id="tim_sales_id" name="tim_sales_id" class="form-select @if ($errors->any()) @if($errors->has('tim_sales_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>  
+                      <option value="">- Pilih data -</option>
                         @foreach($timSales as $value)
                         <option value="{{$value->id}}" @if(old('tim_sales_id') == $value->id) selected @endif>{{$value->nama}}</option>
                         @endforeach
@@ -218,7 +218,7 @@
                   <div class="@if(in_array(Auth::user()->role_id,[31])) col-sm-10 @else col-sm-4 @endif">
                     <input type="hidden" name="sales_d" id="sales_d">
                     <select id="tim_sales_d_id" name="tim_sales_d_id" class="form-select @if ($errors->any()) @if($errors->has('tim_sales_d_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>  
+                      <option value="">- Pilih data -</option>
                     </select>
                     @if($errors->has('tim_sales_d_id'))
                         <div class="invalid-feedback">{{$errors->first('tim_sales_d_id')}}</div>
@@ -347,7 +347,7 @@
                   <div class="col-sm-10">
                     <div class="position-relative">
                       <select id="jenis_visit" name="jenis_visit" class="form-select @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih data -</option>  
+                        <option value="">- Pilih data -</option>
                         @foreach($jenisVisit as $data)
                         <option value="{{$data->id}}" @if(old('jenis_visit') == $data->id) selected @endif>{{$data->nama}}</option>
                         @endforeach
@@ -566,13 +566,13 @@
   </div>
 </div>
 <!-- / Payment Methods modal -->
-  
+
 <!--/ Content -->
 @endsection
 
 @section('pageScript')
 <script>
-  @if(session()->has('success'))  
+  @if(session()->has('success'))
     Swal.fire({
       title: 'Pemberitahuan',
       html: '{{session()->get('success')}}',
@@ -639,7 +639,7 @@
     @endif
 
     $('#tim_sales_id').on('change', function() {
-      
+
       $('#tim_sales_d_id').find('option').remove();
       $('#tim_sales_d_id').append('<option value="">- Pilih data -</option>');
 
@@ -676,8 +676,8 @@
     let dt_filter_table = $('.dt-column-search');
 
     var table = $('#table-data').DataTable({
-        "initComplete": function (settings, json) {  
-          $("#table-data").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");            
+        "initComplete": function (settings, json) {
+          $("#table-data").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
         },
         "bDestroy": true,
         "iDisplayLength": 25,
@@ -689,9 +689,9 @@
         ajax: {
             url: "{{ route('leads.available-leads') }}",
             data: function (d) {
-                
+
             },
-        },   
+        },
         "order":[
             [0,'desc']
         ],
@@ -749,13 +749,12 @@
 
       $('#sales_d').val("");
 
-      if({{$leads->tim_sales_id}} !=null){
-          console.log("disini");
+      @if($leads->tim_sales_id != null)
         $('#tim_sales_id').val({{$leads->tim_sales_id}}).change();
-        if({{$leads->tim_sales_d_id}} != null){
-          $('#sales_d').val({{$leads->tim_sales_d_id}});
-        }
-      }
+            if({{$leads->tim_sales_d_id}} != null){
+            $('#sales_d').val({{$leads->tim_sales_d_id}});
+            }
+      @endif
 
       $('#btn-lihat-leads').removeClass('d-none');
     @endif
@@ -764,7 +763,7 @@
       $('#modal-leads').modal('hide');
       var rdata = table.row(this).data();
       console.log(rdata);
-      
+
       $('#branch').val(rdata.branch);
       $('#leads').val(rdata.nama_perusahaan);
       $('#leads_id').val(rdata.id);
@@ -803,7 +802,7 @@
       $('.l-notulen').hide();
       $('.l-email').hide();
       $('.l-keterangan').show();
-      
+
       var tipe = "{{old('tipe')}}";
       if(tipe=="Telepon"){
         $('#telepon').prop("checked", true);
@@ -857,34 +856,34 @@
     $('.d-tim-sales').hide();
     $('.d-ro').hide();
     $('.d-crm').hide();
-    
-    if($('#telepon').is(':checked')) { 
+
+    if($('#telepon').is(':checked')) {
       $('.d-telepon').show();
-    } else if($('#online-meeting').is(':checked')) { 
+    } else if($('#online-meeting').is(':checked')) {
       $('.d-telepon').show();
-    } else if($('#offline-meeting').is(':checked')) { 
+    } else if($('#offline-meeting').is(':checked')) {
       $('.d-visit').show();
-    } else if($('#visit').is(':checked')) { 
+    } else if($('#visit').is(':checked')) {
       $('.d-visit').show();
       $('.l-jenis-visit').show();
       $('.l-notulen').show();
       $('.l-keterangan').hide();
-    } else if($('#email').is(':checked')) { 
+    } else if($('#email').is(':checked')) {
       $('.d-visit').show();
       $('.l-jam-realisasi').hide();
       $('.l-email').show();
-    } else if($('#kirim-berkas').is(':checked')) { 
+    } else if($('#kirim-berkas').is(':checked')) {
       $('.d-visit').show();
       $('.l-penerima').show();
     }
-    // else if($('#ubah-status').is(':checked')) { 
+    // else if($('#ubah-status').is(':checked')) {
     //   $('.d-status-leads').show();
     // }
-    else if($('#pilih-sales').is(':checked')) { 
+    else if($('#pilih-sales').is(':checked')) {
       $('.d-tim-sales').show();
-    }else if($('#pilih-ro').is(':checked')) { 
+    }else if($('#pilih-ro').is(':checked')) {
       $('.d-ro').show();
-    }else if($('#pilih-crm').is(':checked')) { 
+    }else if($('#pilih-crm').is(':checked')) {
       $('.d-crm').show();
     }else{
         $('.l-keterangan').hide();
@@ -902,7 +901,7 @@
 
   // Event untuk menambahkan item ke tabel
   addButton.addEventListener('click', () => {
-    const selectedValue = itemSelect.value;    
+    const selectedValue = itemSelect.value;
     const selectedText = itemSelect.options[itemSelect.selectedIndex].text;
 
     if (selectedValue) {
@@ -918,7 +917,7 @@
         });
         return;
       }
-      
+
       itemCount++;
 
       if(itemCount > 3 ){
@@ -971,7 +970,7 @@
 
   // Event untuk menambahkan item ke tabel
   addButtonCrm.addEventListener('click', () => {
-    const selectedValue = itemSelectCrm.value;    
+    const selectedValue = itemSelectCrm.value;
     const selectedText = itemSelectCrm.options[itemSelectCrm.selectedIndex].text;
 
     if (selectedValue) {
@@ -987,7 +986,7 @@
         });
         return;
       }
-      
+
       itemCountCrm++;
 
       if(itemCountCrm > 3 ){
@@ -1037,8 +1036,8 @@
     var form = $(this).parents('form');
     let msg = "";
     let obj = $("form").serializeObject();
-      
-    if($('#pilih-ro').is(':checked')) { 
+
+    if($('#pilih-ro').is(':checked')) {
       if($('#spv_ro').val()==""||$('#spv_ro').val()==null){
         msg +="Belum memilih SPV </br>";
       }else{
@@ -1048,13 +1047,13 @@
         }
       }
     }
-    if($('#pilih-crm').is(':checked')) { 
+    if($('#pilih-crm').is(':checked')) {
       const rowCountCrm = itemTableCrm.querySelectorAll('tr').length;
         if (rowCountCrm==null || rowCountCrm == 0) {
           msg +="Belum memilih CRM </br>";
         }
     }
-    
+
     if(msg == ""){
       form.submit();
     }else{
@@ -1084,7 +1083,7 @@
     Visit : `+$('#jenis_visit').val()+`
     Tanggal : `+ formatDate($('#tgl_realisasi').val()) +`
     Jam : `+$('#jam_realisasi').val()+`
-    Notulen : `+$('#notulen').val()+` 
+    Notulen : `+$('#notulen').val()+`
     \nAtas Perhatiannya kami ucapkan Terima kasih.`;
     $('#email-body').val(bodyEmail);
 

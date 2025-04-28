@@ -195,8 +195,9 @@
 
     var table = $('#table-data').DataTable({
         scrollX: true,
-        "iDisplayLength": 25,
         'processing': true,
+        serverSide: true,
+        'pageLength': 25,
         'language': {
             'loadingRecords': '&nbsp;',
             'processing': 'Loading...'
@@ -272,11 +273,13 @@
         },{
             data : 'aktifitas',
             name : 'aktifitas',
-            className:'text-center'
+            className:'text-center',
+            searchable: false
         },{
             data : 'issue',
             name : 'issue',
-            className:'text-center'
+            className:'text-center',
+            searchable: false
         },{
             data : 'status',
             name : 'status',

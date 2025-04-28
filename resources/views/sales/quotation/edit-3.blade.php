@@ -11,7 +11,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-3')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-3')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -32,16 +32,16 @@
                     <div class="d-none">
                       <select id="site" name="site" class="form-select select2" data-allow-clear="true" tabindex="-1">
                         @foreach($quotation->quotation_site as $site)
-                          <option value="{{$site->id}}" selected>{{$site->nama_site}}</option>  
-                        @endforeach  
+                          <option value="{{$site->id}}" selected>{{$site->nama_site}}</option>
+                        @endforeach
                       </select>
                     </div>
                     @else
                       <select id="site" name="site" class="form-select select2" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
                         @foreach($quotation->quotation_site as $site)
-                          <option value="{{$site->id}}">{{$site->nama_site}}</option>  
-                        @endforeach  
+                          <option value="{{$site->id}}">{{$site->nama_site}}</option>
+                        @endforeach
                       </select>
                     @endif
                   </div>
@@ -49,13 +49,13 @@
               </div>
               <div class="row mb-3 mt-3">
                 <div class="col-sm-6">
-                  <label class="form-label" for="jabatan_detail">Nama Posisi/Jabatan</label>
+                  <label class="form-label" for="jabatan_detail">Nama Posisi/Jabatan Karyawan</label>
                   <div class="input-group">
                     <select id="jabatan_detail" name="nama_jabatan" class="form-select select2" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($quotation->detail as $detail)
-                        <option value="{{$detail->id}}">{{$detail->name}}</option>  
-                      @endforeach  
+                        <option value="{{$detail->id}}">{{$detail->name}}</option>
+                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -84,7 +84,7 @@
                               <th class="text-center">Site</th>
                               @endif
                               <th class="text-center">Kebutuhan</th>
-                              <th class="text-center">Nama Posisi/Jabatan</th>
+                              <th class="text-center">Nama Posisi/Jabatan Karyawan</th>
                               <th class="text-center">Jumlah Headcount</th>
                               <th class="text-center">Aksi</th>
                           </tr>
@@ -126,7 +126,7 @@ let table = $('#table-data').DataTable({
           data: function (d) {
               d.quotation_id = {{$quotation->id}};
           },
-      },   
+      },
       "order":[
           [1,'asc']
       ],
@@ -173,7 +173,7 @@ let table = $('#table-data').DataTable({
       let jabatanDetailId = $('#jabatan_detail').val();
       let jumlahHc = $('#jumlah_hc').val();
       let site = $('#site').val();
-      
+
       let msg="";
       if(site ==""){
         msg += "Site Belum Dipilih <br />";
@@ -226,7 +226,7 @@ let table = $('#table-data').DataTable({
     });
 
     $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }

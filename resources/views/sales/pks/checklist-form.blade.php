@@ -8,7 +8,7 @@
   <div class="row">
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4 card">
-      <form class="card-body" action="{{route('pks.save-checklist')}}" method="POST" enctype="multipart/form-data">        
+      <form class="card-body" action="{{route('pks.save-checklist')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="id" value="{{$quotation->id}}">
         <input type="hidden" name="pks_id" value="{{$pks->id}}">
@@ -112,9 +112,9 @@
                       <td>Materai <span class="text-danger fw-bold">*</span></td>
                       <td colspan="3">
                       <select id="materai" name="materai" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                        <option value="" @if($quotation->materai=='') selected @endif>- Pilih Data -</option>  
-                        <option value="Personil" @if($quotation->materai=='Personil') selected @endif>Personil</option>  
-                        <option value="Perusahaan" @if($quotation->materai=='Perusahaan') selected @endif>Perusahaan</option>  
+                        <option value="" @if($quotation->materai=='') selected @endif>- Pilih Data -</option>
+                        <option value="Personil" @if($quotation->materai=='Personil') selected @endif>Personil</option>
+                        <option value="Perusahaan" @if($quotation->materai=='Perusahaan') selected @endif>Perusahaan</option>
                       </select>
                       </td>
                     </tr>
@@ -185,7 +185,7 @@
                     @if($quotation->penjamin=="Takaful")
                     <tr>
                       <td>Penjamin</td>
-                      <td colspan="3">{{$quotation->penjamin}}</td>
+                      <td colspan="3">Swasta</td>
                     </tr>
                     @else
                     <tr>
@@ -252,7 +252,7 @@
                       </td>
                     </tr>
                     @endif
-                    
+
                     <tr>
                       <td>Seragam</td>
                       <td colspan="3">detil terlampir</td>
@@ -267,7 +267,7 @@
                       <td>Joker / Reliever <span class="text-danger fw-bold">*</span></td>
                       <td colspan="3">
                         <select id="joker_reliever" name="joker_reliever" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                          <option value="" @if($quotation->joker_reliever=='') selected @endif>- Pilih Data -</option>  
+                          <option value="" @if($quotation->joker_reliever=='') selected @endif>- Pilih Data -</option>
                           <option value="Ada" @if($quotation->joker_reliever=='Ada') selected @endif>Ada</option>
                           <option value="Tidak Ada" @if($quotation->joker_reliever=='Tidak Ada') selected @endif>Tidak Ada</option>
                         </select>
@@ -277,9 +277,9 @@
                       <td>RO <span class="text-danger fw-bold">*</span></td>
                       <td colspan="3">
                         <select id="ro" name="ro" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                          <option value="" @if($pks->ro_id==null) selected @endif>- Pilih Data -</option>  
+                          <option value="" @if($pks->ro_id==null) selected @endif>- Pilih Data -</option>
                           @foreach($listRo as $ro)
-                            <option value="{{$ro->id}}" @if($pks->ro_id==$ro->id) selected @endif>{{$ro->full_name}}</option>  
+                            <option value="{{$ro->id}}" @if($pks->ro_id==$ro->id) selected @endif>{{$ro->full_name}}</option>
                           @endforeach
                         </select>
                       </td>
@@ -288,9 +288,9 @@
                       <td>CRM <span class="text-danger fw-bold">*</span></td>
                       <td colspan="3">
                         <select id="crm" name="crm" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                          <option value="" @if($pks->crm_id==null) selected @endif>- Pilih Data -</option>  
+                          <option value="" @if($pks->crm_id==null) selected @endif>- Pilih Data -</option>
                           @foreach($listCrm as $crm)
-                            <option value="{{$crm->id}}" @if($pks->crm_id==$crm->id) selected @endif>{{$crm->full_name}}</option>  
+                            <option value="{{$crm->id}}" @if($pks->crm_id==$crm->id) selected @endif>{{$crm->full_name}}</option>
                           @endforeach
                         </select>
                       </td>
@@ -380,7 +380,7 @@
                       <td>Status Serikat <span class="text-danger fw-bold">*</span></td>
                       <td>
                         <select id="ada_serikat" name="ada_serikat" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                          <option value="" @if($quotation->status_serikat=='' || $quotation->status_serikat==null) selected @endif>- Pilih Data -</option>  
+                          <option value="" @if($quotation->status_serikat=='' || $quotation->status_serikat==null) selected @endif>- Pilih Data -</option>
                           <option value="Ada" @if($quotation->status_serikat!='Tidak Ada' && $quotation->status_serikat!='' && $quotation->status_serikat!=null ) selected @endif>Ada</option>
                           <option value="Tidak Ada" @if($quotation->status_serikat=='Tidak Ada') selected @endif>Tidak Ada</option>
                         </select>
@@ -441,8 +441,8 @@
                 <select id="jabatan_pic" class="form-select">
                   <option value="">- Pilih Jabatan -</option>
                   @foreach($listJabatanPic as $jabatanPic)
-                    <option value="{{$jabatanPic->id}}">{{$jabatanPic->nama}}</option> 
-                  @endforeach 
+                    <option value="{{$jabatanPic->id}}">{{$jabatanPic->nama}}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
@@ -482,19 +482,19 @@
 <script>
   $(document).ready(function(){
     $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
     });
-    
+
     $('#btn-submit').on('click',function(e){
       e.preventDefault();
       var form = $(this).parents('form');
       let msg = "";
       let obj = $("form").serializeObject();
       console.log(obj);
-      
+
       if(obj.npwp==null || obj.npwp==""){
         msg += "<b>NPWP</b> belum diisi </br>";
       }
@@ -532,7 +532,7 @@
           }
         }
       }
-      
+
       if(msg == ""){
         form.submit();
       }else{
@@ -543,7 +543,7 @@
         });
       }
     });
-  
+
     showSerikat(1);
 
     function showSerikat(first) {
@@ -578,7 +578,7 @@
         data: function (d) {
             d.quotation_id = {{$quotation->id}};
         },
-    },   
+    },
     "order":[
         [1,'asc']
     ],
@@ -614,7 +614,7 @@
     }],
     "language": datatableLang,
   });
-  
+
   $('body').on('click', '.btn-delete', function() {
     let formData = {
       "id":$(this).data('id'),
@@ -739,6 +739,6 @@
         });
       };
   });
-    
+
 </script>
 @endsection

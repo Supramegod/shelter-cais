@@ -130,36 +130,69 @@ class MonitoringKontrakController extends Controller
     public function list (Request $request){
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
 
-        $data = DB::table('sl_pks')
-                ->whereNull('sl_pks.deleted_at')
-                ->select('site_id','leads_id','id','status_pks_id','nomor','kode_site','nama_site','nama_proyek','crm_id_1','crm_id_2','crm_id_3','spv_ro_id','ro_id_1','ro_id_2','ro_id_3','loyalty','kontrak_awal as mulai_kontrak','kontrak_akhir as kontrak_selesai','jumlah_hc',
-                    DB::raw("(select full_name from ".$db2.".m_user where id = sl_pks.sales_id) as sales"),
+        $activitySub = DB::table('sl_customer_activity')
+            ->select('pks_id', DB::raw('COUNT(*) as total_activity'))
+            ->whereNull('deleted_at')
+            ->groupBy('pks_id');
 
-                DB::raw('(SELECT GROUP_CONCAT(full_name SEPARATOR "<br /> ")
-                        FROM '.$db2.'.m_user
-                        WHERE '.$db2.'.m_user.id IN (spv_ro_id,ro_id_1, ro_id_2, ro_id_3)) as ro'),
-                    DB::raw('(SELECT GROUP_CONCAT(full_name SEPARATOR "<br /> ")
-                        FROM '.$db2.'.m_user
-                        WHERE '.$db2.'.m_user.id IN (crm_id_1, crm_id_2, crm_id_3)) as crm'),
-                    DB::raw('(SELECT COUNT(*) FROM sl_customer_activity WHERE sl_customer_activity.pks_id = sl_pks.id AND sl_customer_activity.deleted_at IS NULL) as aktifitas'),
-                    DB::raw('(SELECT COUNT(*) FROM sl_issue WHERE sl_issue.pks_id = sl_pks.id AND sl_issue.deleted_at IS NULL) as issue'),
-                )
-                ->get();
+        $issueSub = DB::table('sl_issue')
+            ->select('pks_id', DB::raw('COUNT(*) as total_issue'))
+            ->whereNull('deleted_at')
+            ->groupBy('pks_id');
 
-        foreach ($data as $key => $value) {
-            $value->s_mulai_kontrak = $value->mulai_kontrak ? Carbon::createFromFormat('Y-m-d', $value->mulai_kontrak)->isoFormat('D MMMM Y') : null;
-            $value->s_kontrak_selesai = $value->kontrak_selesai ? Carbon::createFromFormat('Y-m-d', $value->kontrak_selesai)->isoFormat('D MMMM Y') : null;
-            $status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first();
-            if($status){
-                $value->status = $status->nama;
-            }else{
-                $value->status = "";
-            }
-        }
+        $query = DB::table('sl_pks')
+            ->leftJoin($db2.'.m_user as sales', 'sales.id', '=', 'sl_pks.sales_id')
+            ->leftJoin($db2.'.m_user as crm1', 'crm1.id', '=', 'sl_pks.crm_id_1')
+            ->leftJoin($db2.'.m_user as crm2', 'crm2.id', '=', 'sl_pks.crm_id_2')
+            ->leftJoin($db2.'.m_user as crm3', 'crm3.id', '=', 'sl_pks.crm_id_3')
+            ->leftJoin($db2.'.m_user as ro1', 'ro1.id', '=', 'sl_pks.ro_id_1')
+            ->leftJoin($db2.'.m_user as ro2', 'ro2.id', '=', 'sl_pks.ro_id_2')
+            ->leftJoin($db2.'.m_user as ro3', 'ro3.id', '=', 'sl_pks.ro_id_3')
+            ->leftJoin($db2.'.m_user as rospv', 'rospv.id', '=', 'sl_pks.spv_ro_id')
+            ->leftJoin('m_status_pks', 'sl_pks.status_pks_id', '=', 'm_status_pks.id')
+            ->leftJoinSub($activitySub, 'activity', 'activity.pks_id', '=', 'sl_pks.id')
+            ->leftJoinSub($issueSub, 'issue', 'issue.pks_id', '=', 'sl_pks.id')
+            ->whereNull('sl_pks.deleted_at')
+            ->select(
+                'sl_pks.kontrak_awal','sl_pks.kontrak_akhir','sl_pks.nomor','sl_pks.id','sl_pks.leads_id','sl_pks.site_id','sl_pks.spk_id','sl_pks.quotation_id','sl_pks.tgl_pks','sl_pks.status_pks_id','sl_pks.created_at','sl_pks.created_by','sl_pks.nama_site','sl_pks.kebutuhan',
+                'm_status_pks.nama as status',
+                DB::raw('CONCAT_WS("<br />", crm1.full_name, crm2.full_name, crm3.full_name) as crm'),
+                DB::raw('CONCAT_WS("<br />", rospv.full_name, ro1.full_name, ro2.full_name, ro3.full_name) as ro'),
+                'sales.full_name as sales',
+                DB::raw('IFNULL(activity.total_activity, 0) as aktifitas'),
+                DB::raw('IFNULL(issue.total_issue, 0) as issue')
+            );
 
-        return DataTables::of($data)
+        return DataTables::of($query)
+        ->filterColumn('sales', function($query, $keyword) {
+            $query->where('sales.full_name', 'like', "%{$keyword}%");
+        })
+        ->filterColumn('status', function($query, $keyword) {
+            $query->where('m_status_pks.nama', 'like', "%{$keyword}%");
+        })
+        ->filterColumn('crm', function($query, $keyword) {
+            $query->where(function($q) use ($keyword) {
+                $q->where('crm1.full_name', 'like', "%{$keyword}%")
+                  ->orWhere('crm2.full_name', 'like', "%{$keyword}%")
+                  ->orWhere('crm3.full_name', 'like', "%{$keyword}%");
+            });
+        })
+        ->filterColumn('ro', function($query, $keyword) {
+            $query->where(function($q) use ($keyword) {
+                $q->where('rospv.full_name', 'like', "%{$keyword}%")
+                  ->orWhere('ro1.full_name', 'like', "%{$keyword}%")
+                  ->orWhere('ro2.full_name', 'like', "%{$keyword}%")
+                  ->orWhere('ro3.full_name', 'like', "%{$keyword}%");
+            });
+        })
+        ->addColumn('s_mulai_kontrak', function ($data) {
+            return $data->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $data->kontrak_awal)->isoFormat('D MMMM Y') : null;
+        })
+        ->addColumn('s_kontrak_selesai', function ($data) {
+            return $data->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $data->kontrak_akhir)->isoFormat('D MMMM Y') : null;
+        })
         ->addColumn('aksi', function ($data) {
-            $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
 
             $aksiIcon = "";
 
@@ -220,10 +253,10 @@ class MonitoringKontrakController extends Controller
             return $aksi;
         })
         ->addColumn('berakhir_dalam', function ($data) {
-            return $this->hitungBerakhirKontrak($data->kontrak_selesai);
+            return $this->hitungBerakhirKontrak($data->kontrak_akhir);
         })
         ->addColumn('warna_row', function ($data) {
-            $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
             if($selisih<=0){
                 return '#2c3e5040';
             }else if($selisih<=60){
@@ -235,7 +268,7 @@ class MonitoringKontrakController extends Controller
             }
         })
         ->addColumn('warna_font', function ($data) {
-            $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
             if($selisih<=0){
                 return '#636578';
             }else if($selisih<=60){
@@ -293,7 +326,7 @@ class MonitoringKontrakController extends Controller
             </div>';
         })
         ->addColumn('status_berlaku', function ($data) {
-            $selisih = $this->selisihKontrakBerakhir($data->kontrak_selesai);
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
             if($selisih<=0){
                 return '<span class="badge rounded-pill bg-label-danger text-capitalized">Kontrak Habis</span>';
             }else if($selisih<=60){

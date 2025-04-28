@@ -81,15 +81,14 @@ class CustomerActivityController extends Controller
                     $leads->timSalesName = "";
                 }
 
+                $leads->salesEmail = "";
+                $leads->salesName = "";
                 if($timSalesDId !=null){
                     $leads->salesName = $timSalesDId->nama;
-                    $leads->salesEmail = "";
                     $salesUser = DB::connection('mysqlhris')->table('m_user')->where('id',$timSalesDId->user_id)->first();
                     if($salesUser !=null){
                         $leads->salesEmail = $salesUser->email;
                     }
-                }else{
-                    $leads->salesName = "";
                 }
 
                 // cari branch manager dari m_branch mysqlhris dimana branch_id = branch_id leads dan role = 52

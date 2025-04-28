@@ -119,13 +119,13 @@
                       </tr>
                       @php $nomorUrut++; @endphp
                       @endforeach
-                      @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan")
+                      @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan" || $quotation->thr=="Diberikan Langsung")
                       <tr class="">
                         <td style="text-align:center">{{$nomorUrut}}</td>
                         <td style="text-align:left" class="">Tunjangan Hari Raya <b>( {{$quotation->thr}} )</b></td>
                         <td style="text-align:center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">@if($quotation->thr=="Diprovisikan"){{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->tunjangan_hari_raya}}" data-tipe="THR"></i></a> @elseif($quotation->thr=="Ditagihkan") Ditagihkan terpisah @endif</td>
+                        <td style="text-align:right" class="">@if($quotation->thr=="Diprovisikan"){{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-nominal" data-id="{{$detailJabatan->id}}" data-tabel="hpp" data-nominal="{{$detailJabatan->tunjangan_hari_raya}}" data-tipe="THR"></i></a> @elseif($quotation->thr=="Ditagihkan") Ditagihkan terpisah @elseif($quotation->thr=="Diberikan Langsung") Diberikan Langsung Oleh Client @endif</td>
                         @endforeach
                       </tr>
                       @php $nomorUrut++; @endphp
@@ -168,7 +168,13 @@
                         <td style="text-align:left" class="">BPJS Kesehatan</td>
                         <td style="text-align:center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}} </td>
+                        <td style="text-align:right" class="">
+                        @if($quotation->penjamin == null)
+                        {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
+                        @else
+                        {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
+                        @endif
+                        </td>
                         @endforeach
                       </tr>
                       <tr class="">
@@ -273,6 +279,7 @@
                         <td style="text-align:center">{{$quotation->persentase}} %</td>
                         <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->nominal_management_fee,2,",",".")}}</td>
                       </tr>
+                      @if($quotation->is_ppn == 1)
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
                         <td style="text-align:center"></td>
@@ -293,6 +300,7 @@
                         <td style="text-align:center">-2 %</td>
                         <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pph,2,",",".")}}</td>
                       </tr>
+                      @endif
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
                         <td style="text-align:center"></td>
@@ -382,12 +390,12 @@
                         <td class="text-center fw-bold">Unit/Month</td>
                         @endforeach
                       </tr>
-                      @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan")
+                      @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan" || $quotation->thr=="Diberikan Langsung")
                       <tr>
                         <td>Provisi Tunjangan Hari Raya (THR)</td>
                         <td class="text-center"></td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} @endif</td>
+                        <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @elseif($quotation->thr=="Diberikan Langsung") Diberikan Langsung Oleh Client @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} @endif</td>
                         @endforeach
                       </tr>
                       @endif
@@ -428,7 +436,13 @@
                         <td>BPJS Kesehatan</td>
                         <td class="text-center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                         @foreach($quotation->quotation_detail as $detailJabatan)
-                        <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
+                        <td class="text-end">
+                        @if($quotation->penjamin == null)
+                          {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
+                        @else
+                          {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
+                        @endif
+                        </td>
                         @endforeach
                       </tr>
                       <tr>
@@ -499,6 +513,7 @@
                         <td style="text-align:center">{{$quotation->persentase}} %</td>
                         <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->nominal_management_fee_coss,2,",",".")}}</td>
                       </tr>
+                      @if($quotation->is_ppn == 1)
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
                         <td style="text-align:center"></td>
@@ -519,6 +534,7 @@
                         <td style="text-align:center">-2 %</td>
                         <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pph_coss,2,",",".")}}</td>
                       </tr>
+                      @endif
                       <tr class="table-success">
                         <td colspan="2" style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
                         <td style="text-align:center"></td>
@@ -564,7 +580,7 @@
                             {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
                           </td>
                           <td style="text-align:right">
-                            {{"Rp. ".number_format($quotation->total_sebelum_management_fee_coss,2,",",".")}}
+                            {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
                           </td>
                         </tr>
                         <tr>

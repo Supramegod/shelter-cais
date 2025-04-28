@@ -180,7 +180,7 @@
 
 @section('pageScript')
     <script>
-        @if(isset($success) || session()->has('success'))  
+        @if(isset($success) || session()->has('success'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$success}} {{session()->get('success')}}',
@@ -191,7 +191,7 @@
                 buttonsStyling: false
             });
         @endif
-        @if(isset($error) || session()->has('error'))  
+        @if(isset($error) || session()->has('error'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$error}} {{session()->has('error')}}',
@@ -236,12 +236,15 @@
                     if(data.step!=100){
                         $('td', row).css('background-color', '#f39c1240');
                         // $('td', row).css('color', '#fff');
+                    }else if(data.status=="Tidak Disetujui"){
+                        $('td', row).css('background-color', '#c0392b');
+                        $('td', row).css('color', '#fff');
                     }else if(data.is_aktif==0){
                         $('td', row).css('background-color', '#27ae6040');
                         // $('td', row).css('color', '#fff');
                     }
-                    
-                },     
+
+                },
                 "order":[
                     [0,'desc']
                 ],
@@ -334,13 +337,13 @@
                         className: 'dropdown-item',
                         orientation: 'landscape',
                         customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                         exportOptions: {
                             columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                             orientation: 'landscape',
                             customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                             // prevent avatar to be display
                             format: {
@@ -408,6 +411,26 @@
                 ],
             });
 
+
+            $('#table-data').on('click', 'tbody tr', function() {
+                if (!$(event.target).is('a, a *,button, button *')) {
+                    let rdata = table.row(this).data();
+                    if (rdata.can_view) {
+                        window.location.href = "quotation/view/" + rdata.id;
+                    } else {
+                        Swal.fire({
+                            title: 'Pemberitahuan',
+                            html: 'Anda belum bisa melihat data ini silahkan lanjutkan pengisian',
+                            icon: 'warning',
+                            customClass: {
+                                confirmButton: 'btn btn-warning waves-effect waves-light'
+                            },
+                            buttonsStyling: false
+                        });
+                    }
+                }
+            })
+
             let baseUrl = "{{ route('quotation.copy-quotation', ['qasal' => ':qasal', 'qtujuan' => ':qtujuan']) }}";
 
             function redirectToQuotationCopy(qasal, qtujuan) {
@@ -415,7 +438,7 @@
                 let url = baseUrl.replace(':qasal', qasal).replace(':qtujuan', qtujuan);
                 location.href = url;
             }
-            
+
             $("#simpan-copy-quotation-asal").on('click',function() {
                 let msg = "";
                 let qasal = $("#quotationAsal2").val();
@@ -430,7 +453,7 @@
                 }
 
                 if(msg == ""){
-                    $("#quotationModal2").modal("hide");                           
+                    $("#quotationModal2").modal("hide");
 
                     Swal.fire({
                         title: 'Apakah Anda yakin?',
@@ -448,7 +471,7 @@
                         }
                     });
                 }else{
-                    $("#quotationModal2").modal("hide");                           
+                    $("#quotationModal2").modal("hide");
                     Swal.fire({
                     title: "Pemberitahuan",
                     html: msg,
@@ -460,7 +483,7 @@
             $('body').on('click', '.hapus-quotation', function() {
                 let msg = "";
                 let id = $(this).data('id');
-                let nomor = $(this).data('nomor');      
+                let nomor = $(this).data('nomor');
 
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
@@ -486,7 +509,7 @@
                         $.ajax({
                             url: '{{route("quotation.delete")}}',
                             type: 'POST',
-                            data: { 
+                            data: {
                                 id: id ,
                                 "_token": "{{ csrf_token() }}"
                             },
@@ -532,7 +555,7 @@
             });
 
             $('body').on('click', '.copy-quotation', function() {
-                $("#quotationModal2").modal("show"); 
+                $("#quotationModal2").modal("show");
                 $("#quotationTujuan2").val($(this).data('id'));
                 $("#nomorQuotationTujuan").text($(this).data('nomor'));
                 let quotationTujuan = $(this).data('id');
@@ -558,7 +581,7 @@
                 $('#quotationTujuan').append('<option value="">Pilih Quotation Tujuan</option>');
                 }
             });
-            
+
             $("#simpan-copy-quotation").on('click',function() {
                 let msg = "";
                 let qasal = $("#quotationAsal").val();
@@ -573,7 +596,7 @@
                 }
 
                 if(msg == ""){
-                    $("#quotationModal").modal("hide");                           
+                    $("#quotationModal").modal("hide");
 
                     Swal.fire({
                         title: 'Apakah Anda yakin?',
@@ -591,7 +614,7 @@
                         }
                     });
                 }else{
-                    $("#quotationModal").modal("hide");                           
+                    $("#quotationModal").modal("hide");
                     Swal.fire({
                     title: "Pemberitahuan",
                     html: msg,
@@ -601,7 +624,7 @@
             });
 
             $('#quotationAsal').change(function() {
-                var quotationAsal = $(this).val(); 
+                var quotationAsal = $(this).val();
 
                 if(quotationAsal) {
                 $.ajax({

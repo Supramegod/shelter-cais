@@ -11,7 +11,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-5')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-5')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -32,7 +32,7 @@
                       <select id="jenis-perusahaan" name="jenis-perusahaan" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
                         @foreach($jenisPerusahaan as $data)
-                        <option value="{{$data->id}}" data-resiko="{{$data->resiko}}" @if($quotation->jenis_perusahaan_id == $data->id) selected @endif>{{$data->nama}}</option>  
+                        <option value="{{$data->id}}" data-resiko="{{$data->resiko}}" @if($quotation->jenis_perusahaan_id == $data->id) selected @endif>{{$data->nama}}</option>
                         @endforeach
                       </select>
                     </div>
@@ -55,7 +55,7 @@
                               <th rowspan="2">Posisi</th>
                               <th colspan="4">BPJS</th>
                               <th rowspan="2">Kesehatan</th>
-                              <th rowspan="2">Nominal Takaful</th>
+                              <th rowspan="2">Nominal Swasta</th>
                             </tr>
                             <tr class="text-center fw-bold align-middle">
                               <th>JKK</th>
@@ -77,7 +77,7 @@
                               <select name="penjamin[{{ $detail->id }}]" class="form-select penjamin-select" data-detail="{{ $detail->id }}">
                                 <option value="">- Pilih Penjamin -</option>
                                 <option value="BPJS" @if($detail->penjamin_kesehatan == 'BPJS') selected @elseif($detail->penjamin_kesehatan==null) selected @endif>BPJS</option>
-                                <option value="Takaful" @if($detail->penjamin_kesehatan == 'Takaful') selected @endif>Takaful</option>
+                                <option value="Takaful" @if($detail->penjamin_kesehatan == 'Takaful') selected @endif>Swasta</option>
                               </select>
                             </td>
                             <td><input type="number" value="{{$detail->nominal_takaful}}" name="nominal_takaful[{{ $detail->id }}]" class="form-control text-end nominal-takaful" disabled></td>
@@ -121,7 +121,7 @@
   $(document).ready(function(){
 
     // let extra = 0;
-    // $('.mask-nominal').on("keyup", function(event) {    
+    // $('.mask-nominal').on("keyup", function(event) {
     //   // When user select text in the document, also abort.
     //   var selection = window.getSelection().toString();
     //   if (selection !== '') {
@@ -151,7 +151,7 @@
     //     return (input === 0) ? "" : input.toLocaleString("id-ID");
     //   });
     // });
-    
+
     // IMask(
     //         document.getElementById('mask-nominal'),
     //         {
@@ -172,7 +172,7 @@
 
     $('#jenis-perusahaan').on('change', function() {
       let id = '#resiko';
-      
+
       $(id).val($(this).find(':selected').data('resiko'));
     });
 
@@ -192,7 +192,7 @@
 
 
     $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
@@ -202,7 +202,7 @@
       var form = $(this).parents('form');
       let msg = "";
       let obj = $("form").serializeObject();
-        
+
       if(obj['jenis-perusahaan'] == null || obj['jenis-perusahaan'] == ""){
         msg += "<b>Jenis Perusahaan</b> belum dipilih </br>";
       }
@@ -212,7 +212,7 @@
         let value = $(this).val();
         if (value == 'Takaful') {
           if (obj['nominal_takaful[' + index + ']'] == null || obj['nominal_takaful[' + index + ']'] == "") {
-        msg += "<b>Nominal Takaful</b> belum diisi </br>";
+        msg += "<b>Nominal Swasta</b> belum diisi </br>";
           }
         }
       });
@@ -245,6 +245,6 @@
       }
     });
   });
-  
+
 </script>
 @endsection

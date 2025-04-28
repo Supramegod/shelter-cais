@@ -18,12 +18,16 @@
         class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
           <div class="d-flex flex-column justify-content-center">
             <h5 class="mb-1 mt-3">
-            {{$quotation->nama_perusahaan}} - {{$quotation->nomor}} - Revisi Ke : {{$quotation->revisi}} <span class="badge bg-label-info rounded-pill mt-1">{{$quotation->status}}</span>
+            {{$quotation->nama_perusahaan}} - {{$quotation->nomor}} - Revisi Ke : {{$quotation->revisi}} <span class="badge @if($quotation->status_quotation_id == 8 ) bg-label-danger @else bg-label-info @endif rounded-pill mt-1">{{$quotation->status}}</span>
                @if($quotation->step != 100)
                 <span class="badge bg-label-warning rounded-pill">Data Belum Terisi Lengkap</span>
                @endif
             </h5>
             <p class="mt-0"> Tanggal Quotation : {{$quotation->stgl_quotation}}</p>
+            @if($quotation->status_quotation_id == 8 )
+            <h6 class="mt-0 mb-1 text-danger">Alasan Tidak Approve : {{$pesanNotif}}
+            </h6>
+            @endif
             <p class="text-body">{{$quotation->nama_site}}</p>
             <div class="mt-2 mb-3">
               @if($quotation->is_aktif==1)
@@ -103,7 +107,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title m-0">Quotation Info</h5>
         @if($quotation->step == 100 && $quotation->is_aktif == 0)
-        <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'1','edit'=>1])}}">Edit</a></h6>
+        <!-- <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'1','edit'=>1])}}">Edit</a></h6> -->
           @endif
         </div>
         <div class="card-body">
@@ -211,7 +215,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Service Info</h5>
           @if($quotation->step == 100 && $quotation->is_aktif == 0)
-          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'2','edit'=>1])}}">Edit</a></h6>
+          <!-- <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'2','edit'=>1])}}">Edit</a></h6> -->
           @endif
         </div>
         <div class="card-body">
@@ -221,7 +225,7 @@
                 <td>Kebutuhan</td>
                 <td>: {{$quotation->kebutuhan}}</td>
                 <td>Entitas</td>
-                <td>: {{$quotation->company}}</td>
+                <td>: {{$quotation->company}} @if($quotation->company_id==17)<span class="badge bg-label-warning rounded-pill">Butuh Approval Direksi</span>@endif</td>
               </tr>
               <tr>
                 <td>Provinsi</td>
@@ -249,7 +253,7 @@
               </tr>
               <tr>
                 <td>Penjamin</td>
-                <td>: {{$quotation->penjamin}}</td>
+                <td>@if($quotation->penjamin =="BPJS"): {{$quotation->penjamin}} @else : Swasta @endif</td>
                 @if($quotation->penjamin =="BPJS")
                 <td>Jenis</td>
                 <td>: {{$quotation->program_bpjs}}</td>
@@ -298,7 +302,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">{{$quotation->kebutuhan}} Details ( Total Headcount : {{$quotation->totalHc}} )</h5>
           @if($quotation->step == 100 && $quotation->is_aktif == 0)
-          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'3','edit'=>1])}}">Edit</a></h6>
+          <!-- <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'3','edit'=>1])}}">Edit</a></h6> -->
           @endif
         </div>
         <div class="card-body">
@@ -361,7 +365,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title m-0">Customer details</h5>
           @if($quotation->step == 100 && $quotation->is_aktif == 0)
-          <h6 class="m-0"><a href="{{route('leads.view',$quotation->leads_id)}}">Edit</a></h6>
+          <!-- <h6 class="m-0"><a href="{{route('leads.view',$quotation->leads_id)}}">Edit</a></h6> -->
           @endif
         </div>
         <div class="card-body">
@@ -459,7 +463,7 @@
           <h6 class="card-title m-0">Aplikasi Pendukung</h6>
           <h6 class="m-0">
           @if($quotation->step == 100 && $quotation->is_aktif == 0)
-          <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'6','edit'=>1])}}">Edit</a>
+          <!-- <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'6','edit'=>1])}}">Edit</a> -->
           @endif
           </h6>
         </div>
@@ -565,13 +569,13 @@
                         </tr>
                         @php $nomorUrut++; @endphp
                         @endforeach
-                        @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan")
+                        @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan" || $quotation->thr=="Diberikan Langsung")
                         <tr class="">
                           <td style="text-align:center">{{$nomorUrut}}</td>
                           <td style="text-align:left" class="">Tunjangan Hari Raya <b>( {{$quotation->thr}} )</b></td>
                           <td style="text-align:center"></td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td style="text-align:right" class="">@if($quotation->thr=="Diprovisikan"){{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}}  @elseif($quotation->thr=="Ditagihkan") Ditagihkan terpisah @endif</td>
+                          <td style="text-align:right" class="">@if($quotation->thr=="Diprovisikan"){{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}}  @elseif($quotation->thr=="Ditagihkan") Ditagihkan terpisah @elseif($quotation->thr=="Diberikan Langsung") Diberikan Langsung Oleh Client @endif</td>
                           @endforeach
                         </tr>
                         @php $nomorUrut++; @endphp
@@ -614,7 +618,13 @@
                           <td style="text-align:left" class="">BPJS Kesehatan</td>
                           <td style="text-align:center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}} </td>
+                          <td style="text-align:right" class="">
+                          @if($quotation->penjamin == null)
+                          {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
+                          @else
+                          {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
+                          @endif
+                        </td>
                           @endforeach
                         </tr>
                         <tr class="">
@@ -708,6 +718,7 @@
                           <td style="text-align:center">{{$quotation->persentase}} %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->nominal_management_fee,2,",",".")}}</td>
                         </tr>
+                        @if($quotation->is_ppn == 1)
                         <tr class="table-success">
                           <td colspan="2" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
                           <td style="text-align:center"></td>
@@ -728,6 +739,7 @@
                           <td style="text-align:center">-2 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pph,2,",",".")}}</td>
                         </tr>
+                        @endif
                         <tr class="table-success">
                           <td colspan="2" style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
                           <td style="text-align:center"></td>
@@ -817,13 +829,13 @@
                           <td class="text-center fw-bold">Unit/Month</td>
                           @endforeach
                         </tr>
-                        @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan")
+                        @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan" || $quotation->thr=="Diberikan Langsung")
                         <tr>
-                          <td>Provisi Tunjangan Hari Raya (THR)</td>
-                          <td class="text-center"></td>
-                          @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} @endif</td>
-                          @endforeach
+                            <td>Provisi Tunjangan Hari Raya (THR)</td>
+                            <td class="text-center"></td>
+                            @foreach($quotation->quotation_detail as $detailJabatan)
+                            <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @elseif($quotation->thr=="Diberikan Langsung") Diberikan Langsung Oleh Client @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} @endif</td>
+                            @endforeach
                         </tr>
                         @endif
                         @if($quotation->kompensasi=="Ditagihkan" || $quotation->kompensasi=="Diprovisikan")
@@ -857,7 +869,12 @@
                           <td>BPJS Kesehatan</td>
                           <td class="text-center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
-                          <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
+                          <td class="text-end">
+                          @if($quotation->penjamin == null)
+                          {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
+                          @else
+                          {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
+                          @endif
                           @endforeach
                         </tr>
                         <tr>
@@ -928,6 +945,7 @@
                           <td style="text-align:center">{{$quotation->persentase}} %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->nominal_management_fee_coss,2,",",".")}}</td>
                         </tr>
+                        @if($quotation->is_ppn == 1)
                         <tr class="table-success">
                           <td colspan="2" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
                           <td style="text-align:center"></td>
@@ -948,6 +966,7 @@
                           <td style="text-align:center">-2 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pph_coss,2,",",".")}}</td>
                         </tr>
+                        @endif
                         <tr class="table-success">
                           <td colspan="2" style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
                           <td style="text-align:center"></td>
@@ -1008,7 +1027,7 @@
                             {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
                           </td>
                           <td style="text-align:right">
-                            {{"Rp. ".number_format($quotation->total_sebelum_management_fee_coss,2,",",".")}}
+                            {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
                           </td>
                         </tr>
                         <tr>
@@ -1079,9 +1098,9 @@
                 @if($quotation->step == 100 && $quotation->is_aktif == 0)
                 <div class="col-12 d-flex justify-content-between">
                   <div></div>
-                  <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'7','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                  <!-- <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'7','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                       <span class="align-middle me-sm-1">Edit</span>
-                  </a>
+                  </a> -->
                 </div>
                 @endif
                 </div>
@@ -1131,9 +1150,9 @@
                 @if($quotation->step == 100 && $quotation->is_aktif == 0)
                   <div class="col-12 d-flex justify-content-between">
                     <div></div>
-                    <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'8','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                    <!-- <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'8','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                         <span class="align-middle me-sm-1">Edit</span>
-                    </a>
+                    </a> -->
                   </div>
                   @endif
                 </div>
@@ -1182,9 +1201,9 @@
                 @if($quotation->step == 100 && $quotation->is_aktif == 0)
                   <div class="col-12 d-flex justify-content-between">
                     <div></div>
-                    <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'9','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                    <!-- <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'9','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                         <span class="align-middle me-sm-1">Edit</span>
-                    </a>
+                    </a> -->
                   </div>
                 @endif
                 </div>
@@ -1234,9 +1253,9 @@
                 @if($quotation->step == 100 && $quotation->is_aktif == 0)
                   <div class="col-12 d-flex justify-content-between">
                     <div></div>
-                    <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'10','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                    <!-- <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'10','edit'=>1])}}" class="btn btn-primary btn-next w-20">
                         <span class="align-middle me-sm-1">Edit</span>
-                    </a>
+                    </a> -->
                   </div>
                 @endif
                 </div>
@@ -1296,7 +1315,7 @@
           <div class="card-header d-flex justify-content-between align-items-center pb-0">
           <h5 class="card-title m-0">Syarat Dan Ketentuan Kerjasama</h5>
           @if($quotation->step == 100 && $quotation->is_aktif == 0)
-          <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'12','edit'=>1])}}">Edit</a></h6>
+          <!-- <h6 class="m-0"><a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'12','edit'=>1])}}">Edit</a></h6> -->
             @endif
           </div>
           <div class="card-body pt-0">

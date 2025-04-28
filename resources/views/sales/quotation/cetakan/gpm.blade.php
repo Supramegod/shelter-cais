@@ -91,7 +91,7 @@
                         {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
                         </td>
                         <td style="text-align:right">
-                        {{"Rp. ".number_format($quotation->total_sebelum_management_fee_coss,2,",",".")}}
+                        {{"Rp. ".number_format($quotation->total_sebelum_management_fee,2,",",".")}}
                         </td>
                     </tr>
                     <tr>

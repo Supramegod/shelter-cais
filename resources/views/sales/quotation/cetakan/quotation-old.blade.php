@@ -65,7 +65,7 @@
             padding-right:5px;
 
         }
-    
+
         .no-l-border {
             border-left:none !important;
         }
@@ -141,7 +141,7 @@ Hormat kami,
                 <tr class="table-success">
                 <th colspan="{{3+count($data->quotation_detail)}}" style="vertical-align: middle;text-align:center">{{$master->nama_site}}</th>
                 </tr>
-            </thead>              
+            </thead>
             <tbody>
                 <tr>
                 <td class="fw-bold" style="text-align:center">Structure</th>
@@ -256,7 +256,7 @@ Hormat kami,
                 </tr>
                 @else
                 <tr>
-                    <td>Takaful</th>
+                    <td>Swasta</th>
                     @foreach($data->quotation_detail as $detailJabatan)
                     <td class="text-end">{{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</th>
                     @endforeach
@@ -363,7 +363,7 @@ Hormat kami,
                 @foreach($data->quotation_detail as $detailJabatan)
                 <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->pembulatan_coss,2,",",".")}}</td>
                 @endforeach
-                </tr>      
+                </tr>
             </tbody>
         </table>
     </div>
@@ -373,11 +373,11 @@ Hormat kami,
         Tunjangan overtime flat total 75 jam. <span class="text-danger">*jika system jam kerja 12 jam </span> <br>
         Tunjangan hari raya ditagihkan provisi setiap bulan. (upah/12) <br>
         @if($master->program_bpjs=="2 BPJS")
-        BPJS Ketenagakerjaan 2 Program (JKK, JKM). 
+        BPJS Ketenagakerjaan 2 Program (JKK, JKM).
         @elseif($master->program_bpjs=="3 BPJS")
-        BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT). 
+        BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT).
         @elseif($master->program_bpjs=="4 BPJS")
-        BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP). 
+        BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
         @endif
 <span class="text-danger">Pengalian base on upah</span>		<br>
 BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>

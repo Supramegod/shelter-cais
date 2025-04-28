@@ -163,6 +163,12 @@
             <div class="col-sm-4">
               <input type="number" id="telp_perusahaan" name="telp_perusahaan" value="{{old('telp_perusahaan')}}" class="form-control @if ($errors->any())   @endif">
             </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">PMA / PMDN</label>
+            <div class="col-sm-10">
+              <input type="text" id="pma" name="pma" value="{{old('pma')}}" class="form-control @if ($errors->any())   @endif">
+            </div>
             <label class="col-sm-2 col-form-label text-sm-end">Alamat Perusahaan</label>
             <div class="col-sm-10">
               <div class="form-floating form-floating-outline mb-2">

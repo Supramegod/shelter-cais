@@ -182,7 +182,7 @@
                         </tr>
                       @else
                         <tr>
-                          <td>Takaful</th>
+                          <td>Swasta</th>
                           <td class="text-center"></th>
                           @foreach($master->quotation_detail as $detailJabatan)
                           <td class="text-end">{{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</th>

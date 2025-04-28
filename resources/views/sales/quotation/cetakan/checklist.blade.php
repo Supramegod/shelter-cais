@@ -16,14 +16,14 @@
             margin-right:20px;
         }
         @media print {
-            .page-break-before { 
-                page-break-before: always; 
+            .page-break-before {
+                page-break-before: always;
             }
-            .page-break-after { 
-                page-break-after: always; 
+            .page-break-after {
+                page-break-after: always;
             }
-            .avoid-page-break-inside { 
-                page-break-inside: avoid; 
+            .avoid-page-break-inside {
+                page-break-inside: avoid;
             }
             table{
               width: 100%;
@@ -40,7 +40,7 @@
 </head>
 <body>
 <div class="container-fluid flex-grow-1 container-p-y" style="background-color:white">
-<form class="overflow-hidden" action="{{route('quotation.save-edit-12')}}" method="POST" enctype="multipart/form-data">        
+<form class="overflow-hidden" action="{{route('quotation.save-edit-12')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -219,7 +219,7 @@
                         @if($quotation->penjamin=="Takaful")
                         <tr>
                           <td>Penjamin</td>
-                          <td colspan="3">{{$quotation->penjamin}}</td>
+                          <td colspan="3">Swasta</td>
                         </tr>
                         @else
                         <tr>

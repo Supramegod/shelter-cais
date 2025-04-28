@@ -288,7 +288,7 @@ class QuotationService
             $kbd->persen_bpjs_kesehatan = $kbd->persen_bpjs_kes;
             $quotation->persen_bpjs_kesehatan = $kbd->persen_bpjs_kesehatan;
         }else{
-            $kbd->bpjs_kesehatan = $kbd->nominal_takaful;
+            $kbd->bpjs_kesehatan = 0;
             $kbd->persen_bpjs_kesehatan = 0;
             $quotation->persen_bpjs_kesehatan = 0;
             // dd($kbd->bpjs_jkk,$kbd->bpjs_jkm,$kbd->bpjs_jht,$kbd->bpjs_jp,$kbd->bpjs_kes);
@@ -498,7 +498,11 @@ class QuotationService
         $quotation->dpp_coss = 11/12 * $quotation->nominal_management_fee_coss;
         $quotation->ppn_coss = $quotation->dpp_coss*12/100;
         $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
-        $quotation->total_invoice_coss = $quotation->grand_total_sebelum_pajak_coss + $quotation->ppn_coss + $quotation->pph_coss;
+        if($quotation->is_ppn == 1){
+            $quotation->total_invoice_coss = $quotation->grand_total_sebelum_pajak_coss + $quotation->ppn_coss + $quotation->pph_coss;
+        }else{
+            $quotation->total_invoice_coss = $quotation->grand_total_sebelum_pajak_coss;
+        }
         $quotation->pembulatan_coss = ceil($quotation->total_invoice_coss / 1000) * 1000;
 
         $quotation->margin_coss = $quotation->grand_total_sebelum_pajak_coss-$quotation->total_sebelum_management_fee;
@@ -541,6 +545,11 @@ class QuotationService
         $quotation->dpp = 11/12 * $quotation->nominal_management_fee;
         $quotation->ppn = $quotation->dpp *12/100;
         $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
+        if($quotation->is_ppn == 1){
+            $quotation->total_invoice = $quotation->grand_total_sebelum_pajak + $quotation->ppn + $quotation->pph;
+        }else{
+            $quotation->total_invoice = $quotation->grand_total_sebelum_pajak;
+        }
         $quotation->total_invoice = $quotation->grand_total_sebelum_pajak + $quotation->ppn + $quotation->pph;
         $quotation->pembulatan = ceil($quotation->total_invoice / 1000) * 1000;
 

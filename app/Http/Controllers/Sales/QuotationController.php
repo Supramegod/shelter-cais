@@ -337,6 +337,29 @@ class QuotationController extends Controller
             $dataToInsertQuotation['quotation_asal_id'] = $qtujuan->id;
             $dataToInsertQuotation['created_at'] = $current_date_time;
             $dataToInsertQuotation['created_by'] = Auth::user()->full_name;
+            $dataToInsertQuotation['updated_at'] = null;
+            $dataToInsertQuotation['updated_by'] = null;
+
+            $dataToInsertQuotation['ot1'] = null;
+            $dataToInsertQuotation['ot2'] = null;
+            $dataToInsertQuotation['ot3'] = null;
+            $isAktif = 1;
+            $statusQuotation = 1;
+            //jika top lebih dari 7 hari
+            if($qtujuan->top=="Lebih Dari 7 Hari"){
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
+
+            // jika persentasi mf kurang dari 7
+            if ($qtujuan->persentase < 7) {
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
+
+            $dataToInsertQuotation['status_quotation_id'] = $statusQuotation;
+            $dataToInsertQuotation['is_aktif'] = $isAktif;
+            $dataToInsertQuotation['step'] = 1;
             $qtujuanId = DB::table('sl_quotation')->insertGetId($dataToInsertQuotation);
 
             //Site
@@ -577,43 +600,43 @@ class QuotationController extends Controller
             ]);
 
             //insert ke activity sebagai activity pertama
-            // $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
+            $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
 
-            // $customerActivityController = new CustomerActivityController();
+            $customerActivityController = new CustomerActivityController();
 
-            // // buat activity baru dari quotation yang diajukan ulang
-            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            // buat activity baru dari quotation yang diajukan ulang
+            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
 
-            // $activityId = DB::table('sl_customer_activity')->insertGetId([
-            //     'leads_id' => $qtujuan->leads_id,
-            //     'quotation_id' => $qasalId,
-            //     'branch_id' => $leads->branch_id,
-            //     'tgl_activity' => $current_date_time,
-            //     'nomor' => $nomorActivity,
-            //     'tipe' => 'Quotation',
-            //     'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
-            //     'is_activity' => 0,
-            //     'user_id' => Auth::user()->id,
-            //     'created_at' => $current_date_time,
-            //     'created_by' => Auth::user()->full_name
-            // ]);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $qtujuan->leads_id,
+                'quotation_id' => $qasalId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
+                'is_activity' => 0,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
-            // // buat activity baru dari quotation baru
-            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            // buat activity baru dari quotation baru
+            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
 
-            // $activityId = DB::table('sl_customer_activity')->insertGetId([
-            //     'leads_id' => $qtujuan->leads_id,
-            //     'quotation_id' => $qtujuanId,
-            //     'branch_id' => $leads->branch_id,
-            //     'tgl_activity' => $current_date_time,
-            //     'nomor' => $nomorActivity,
-            //     'tipe' => 'Quotation',
-            //     'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
-            //     'is_activity' => 0,
-            //     'user_id' => Auth::user()->id,
-            //     'created_at' => $current_date_time,
-            //     'created_by' => Auth::user()->full_name
-            // ]);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $qtujuan->leads_id,
+                'quotation_id' => $qtujuanId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
+                'is_activity' => 0,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
 
             DB::commit();
@@ -985,7 +1008,21 @@ class QuotationController extends Controller
             ->where('m_tim_sales_d.user_id',Auth::user()->id)
             ->get();
 
-            return view('sales.quotation.view',compact('canCreateSpk','quotationTujuan','quotation','salaryRuleQ','listPic','daftarTunjangan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','leads','aplikasiPendukung'));
+            $logNotifikasi = DB::table('log_notification')->where('doc_id',$quotation->id)->whereNull('deleted_at')->orderBy('created_at','desc')->first();
+            $pesanNotif = "";
+
+            if($logNotifikasi != null){
+                $keyword = "dengan alasan :";
+                $pos = strpos($logNotifikasi->pesan, $keyword);
+
+                // Jika ditemukan, ambil substring setelahnya
+                if ($pos !== false) {
+                    $pesanNotif = trim(substr($logNotifikasi->pesan, $pos + strlen($keyword)));
+                }
+            }
+
+
+            return view('sales.quotation.view',compact('pesanNotif','canCreateSpk','quotationTujuan','quotation','salaryRuleQ','listPic','daftarTunjangan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','leads','aplikasiPendukung'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1097,22 +1134,22 @@ class QuotationController extends Controller
             }
 
             //insert ke activity sebagai activity pertama
-            // $customerActivityController = new CustomerActivityController();
-            // $nomorActivity = $customerActivityController->generateNomor($request->perusahaan_id);
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($request->perusahaan_id);
 
-            // $activityId = DB::table('sl_customer_activity')->insertGetId([
-            //     'leads_id' => $request->perusahaan_id,
-            //     'quotation_id' => $newId,
-            //     'branch_id' => $leads->branch_id,
-            //     'tgl_activity' => $current_date_time,
-            //     'nomor' => $nomorActivity,
-            //     'tipe' => 'Quotation',
-            //     'notes' => 'Quotation dengan nomor :'.$quotationNomor.' terbentuk',
-            //     'is_activity' => 0,
-            //     'user_id' => Auth::user()->id,
-            //     'created_at' => $current_date_time,
-            //     'created_by' => Auth::user()->full_name
-            // ]);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $request->perusahaan_id,
+                'quotation_id' => $newId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$quotationNomor.' terbentuk',
+                'is_activity' => 0,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
             DB::commit();
 
@@ -1403,6 +1440,7 @@ class QuotationController extends Controller
                 'thr' => $request->thr,
                 'kompensasi' => $request->kompensasi,
                 'lembur' => $request->lembur,
+                'is_ppn' => $request->is_ppn,
                 'ppn_pph_dipotong' => $request->ppn_pph_dipotong,
                 'tunjangan_holiday' => $request->tunjangan_holiday,
                 'nominal_lembur' => $request->nominal_lembur,
@@ -2025,6 +2063,11 @@ if($quotation->note_harga_jual == null){
                 $isAktif = 0;
                 $statusQuotation = 2;
             }
+            // jika company id = 17 // pt ion
+            if ($quotation->company_id == 17) {
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'is_aktif' => $isAktif,
@@ -2214,21 +2257,29 @@ if($quotation->note_harga_jual == null){
         </div>';
                 }
             })
-            ->editColumn('nomor', function ($data) {
-                $ref = "";
-
+            ->addColumn('can_view', function ($data) {
                 if($data->step != 100){
-                    $ref = "#";
+                    return false;
                 }else{
-                    $ref = route('quotation.view',$data->id);
+                    return true;
                 }
-                return '<a href="'.$ref.'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+            })
+            ->editColumn('nomor', function ($data) {
+                return '<a href="javascript:void(0)" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+
+                // if($data->step != 100){
+                //     $ref = "#";
+                // }else{
+                //     $ref = route('quotation.view',$data->id);
+                // }
+                // return '<a href="'.$ref.'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
 
             })
             ->editColumn('nama_perusahaan', function ($data) {
-                return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
+                return '<a href="javascript:void(0)" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
+                // return '<a href="'.route('leads.view',$data->leads_id).'" style="font-weight:bold;color:#000056">'.$data->nama_perusahaan.'</a>';
             })
-            ->rawColumns(['aksi','nomor','nama_perusahaan','nama_site'])
+            ->rawColumns(['can_view','aksi','nomor','nama_perusahaan','nama_site'])
             ->make(true);
     }
 
@@ -2918,8 +2969,10 @@ if($quotation->note_harga_jual == null){
             $master = DB::table('sl_quotation')->where('id',$request->id)->first();
             $approve = $request->approve;
             $leads = DB::table('sl_leads')->where('id',$master->leads_id)->first();
+            $tingkat = 0;
 
             if(in_array(Auth::user()->role_id,[96])){
+                $tingkat = 1;
                 $ot1 = null;
                 $isAktif = 0;
                 $statusQuotation = $master->status_quotation_id;
@@ -2943,6 +2996,7 @@ if($quotation->note_harga_jual == null){
                 ]);
 
             }else if(in_array(Auth::user()->role_id,[97,40])){
+                $tingkat = 2;
                 $ot2 = null;
                 $isAktif = 0;
                 $statusQuotation = $master->status_quotation_id;
@@ -2993,11 +3047,26 @@ if($quotation->note_harga_jual == null){
 
             // kirim ke notifikasi
             $timSalesD = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
+            $isApprove = 0;
             if ($approve=="false") {
                 $msg = "Quotation dengan nomor :".$master->nomor." di reject oleh ".Auth::user()->full_name." dengan alasan : ".$request->alasan;
             }else{
+                $isApprove = 1;
                 $msg = "Quotation dengan nomor :".$master->nomor." di approve oleh ".Auth::user()->full_name;
             }
+
+            DB::table('log_approval')->insert([
+                'tabel' => 'quotation',
+                'doc_id' => $master->id,
+                'tingkat' => $tingkat,
+                'is_approve' => $isApprove,
+                'note' => $request->alasan,
+                'user_id' => Auth::user()->id,
+                'approval_date' => $current_date_time,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
             if($timSalesD != null){
                 $penerima = $timSalesD->user_id;
                 DB::table('log_notification')->insert([

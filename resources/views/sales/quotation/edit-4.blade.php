@@ -109,7 +109,33 @@
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-12">
+                    <div class="col-sm-6">
+                        <label class="form-label" for="is_ppn">Ada PPN ?</label>
+                        <div class="input-group">
+                        <select id="is_ppn" name="is_ppn" class="form-select" data-allow-clear="true" tabindex="-1">
+                            <option value="0" @if($quotation->company_id==17) selected @endif>Tidak Ada</option>
+                            <option value="1" @if($quotation->company_id!=17) selected @endif>Ada</option>
+                        </select>
+                        </div>
+                    </div>
+                    <script>
+                    function togglePpnPph() {
+                        let isPpn = $("#is_ppn option:selected").val();
+                        if (isPpn == "0") {
+                            $('#ppn_pph_dipotong').parents('.col-sm-6').addClass('d-none');
+                        } else {
+                            $('#ppn_pph_dipotong').parents('.col-sm-6').removeClass('d-none');
+                        }
+                    }
+
+                    $('#is_ppn').on('change', function() {
+                        togglePpnPph();
+                    });
+
+                    // Initialize on page load
+                    togglePpnPph();
+                    </script>
+                  <div class="col-sm-6">
                     <label class="form-label" for="ppn_pph_dipotong">Hitungan PPN & PPh</label>
                     <div class="input-group">
                       <select id="ppn_pph_dipotong" name="ppn_pph_dipotong" class="form-select" data-allow-clear="true" tabindex="-1">
@@ -133,6 +159,7 @@
                       <select id="thr" name="thr" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="Diprovisikan" @if($quotation->thr=="Diprovisikan") selected @endif>Diprovisikan Setiap Bulan</option>
                         <option value="Ditagihkan" @if($quotation->thr=="Ditagihkan") selected @endif>Ditagihkan Terpisah</option>
+                        <option value="Diberikan Langsung" @if($quotation->thr=="Diberikan Langsung") selected @endif>Diberikan Langsung Oleh Client</option>
                       </select>
                   </div>
                 </div>

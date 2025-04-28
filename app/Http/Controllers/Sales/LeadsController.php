@@ -75,9 +75,9 @@ class LeadsController extends Controller
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
             $platform = DB::table('m_platform')->whereNull('deleted_at')->where('id','<>',11)->get();
             $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
-            $kota = DB::connection('mysqlhris')->table('m_city')->get();
-            $kecamatan = DB::connection('mysqlhris')->table('m_district')->get();
-            $kelurahan = DB::connection('mysqlhris')->table('m_village')->get();
+            $kota = [];
+            $kecamatan = [];
+            $kelurahan = [];
 
             return view('sales.leads.add',compact('provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
@@ -107,12 +107,13 @@ class LeadsController extends Controller
             }
 
             $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
-            $kota = DB::connection('mysqlhris')->table('m_city')->where('id',$leads->kota_id)->get();
-            $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('id',$leads->kecamatan_id)->get();
-            $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('id',$leads->kelurahan_id)->get();
+            $kota = DB::connection('mysqlhris')->table('m_city')->where('id',$data->kota_id)->get();
+            $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('id',$data->kecamatan_id)->get();
+            $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('id',$data->kelurahan_id)->get();
 
             return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -330,6 +331,7 @@ class LeadsController extends Controller
                         'jabatan' => $request->jabatan_pic,
                         'no_telp' => $request->no_telp,
                         'email' => $request->email,
+                        'pma' => $request->pma,
                         'notes' => $request->detail_leads,
                         'provinsi_id' => $request->provinsi,
                         'provinsi' => $provinsi ? $provinsi->name : null,
@@ -386,6 +388,7 @@ class LeadsController extends Controller
                         'jabatan' => $request->jabatan_pic,
                         'no_telp' => $request->no_telp,
                         'email' => $request->email,
+                        'pma' => $request->pma,
                         'status_leads_id' => 1,
                         'notes' => $request->detail_leads,
                         'provinsi_id' => $request->provinsi,

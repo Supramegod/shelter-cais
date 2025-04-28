@@ -111,7 +111,7 @@
                       <select id="provinsi" name="provinsi" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
                         @foreach($province as $data)
-                          <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
+                          <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>
                         @endforeach
                       </select>
                       <div id="ump" class="form-text"></div>
@@ -144,7 +144,7 @@
                       <select id="provinsiMulti" name="provinsiMulti" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
                         @foreach($province as $data)
-                          <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>  
+                          <option value="{{$data->id}}" data-ump="{{$data->ump}}">{{$data->name}}</option>
                         @endforeach
                       </select>
                       <div id="ump-multi" class="form-text"></div>
@@ -275,7 +275,7 @@
   $('#btn-modal-cari-leads').on('click',function(){
     $('#modal-leads').modal('show');
   });
-  
+
   let dt_filter_table = $('.dt-column-search');
 
   function showIsian() {
@@ -283,8 +283,8 @@
   }
 
   var table = $('#table-data').DataTable({
-      "initComplete": function (settings, json) {  
-        $("#table-data").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");            
+      "initComplete": function (settings, json) {
+        $("#table-data").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
       },
       "bDestroy": true,
       "iDisplayLength": 25,
@@ -296,9 +296,9 @@
       ajax: {
           url: "{{ route('leads.available-quotation') }}",
           data: function (d) {
-              
+
           },
-      },   
+      },
       "order":[
           [0,'desc']
       ],
@@ -364,7 +364,7 @@
 
     generateNama();
     $('form').bind("keypress", function(e) {
-    if (e.keyCode == 13) {               
+    if (e.keyCode == 13) {
       e.preventDefault();
       return false;
     }
@@ -381,7 +381,7 @@
     };
     if(obj.layanan == null || obj.layanan == "" ){
       msg += "<b>Layanan</b> belum dipilih </br>";
-    }; 
+    };
     if(obj.entitas == null || obj.entitas == "" ){
       msg += "<b>Entitas</b> belum dipilih </br>";
     };
@@ -477,7 +477,7 @@
       $('#ump-multi').text(ump);
     }
   });
- 
+
 function showJumlahSite() {
   let selected = $("#jumlah_site option:selected").val();
   if (selected=="Single Site") {
@@ -497,7 +497,7 @@ $(document).ready(function() {
     pilihLayanan($('#layanan').find(":selected")[0]);
   @endif
 
-  function pilihLayanan(element) {    
+  function pilihLayanan(element) {
     $('#entitas').find('option').remove();
     $('#entitas').append('<option value="">- Pilih data -</option>');
     if(element.value!=""){
@@ -520,6 +520,7 @@ $(document).ready(function() {
           @endif
         @endforeach
       }
+      $('#entitas').append('<option value="17">IONS | PT. Indah Optimal Nusantara</option>');
     }
   }
   $('#layanan').on('change', function() {
@@ -601,7 +602,7 @@ $(document).ready(function() {
         });
         return;
       }
-      
+
       if (siteName === "") {
           alert("Nama Site tidak boleh kosong.");
       }
@@ -655,7 +656,7 @@ function generateNama() {
         Swal.showLoading();
       },
     });
-    
+
     $.ajax({
       url: "{{route('leads.save-leads')}}",
       type: 'POST',
@@ -669,7 +670,7 @@ function generateNama() {
             icon: "success",
             timer: 2000,
           });
-        }else{          
+        }else{
           Swal.fire({
             title: "Pemberitahuan",
             html: res.message,
@@ -697,7 +698,7 @@ function listPerusahaan() {
       });
     }
   });
-  
+
 }
 </script>
 @endsection

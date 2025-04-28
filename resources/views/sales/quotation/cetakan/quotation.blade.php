@@ -71,7 +71,7 @@
             padding-right:5px;
 
         }
-    
+
         .no-l-border {
             border-left:none !important;
         }
@@ -172,7 +172,7 @@ Hormat kami,
                 <th colspan="{{$site->jumlah_detail}}" style="vertical-align: middle;text-align:center">{{$site->nama_site}}</th>
                 @endforeach
                 </tr>
-            </thead>              
+            </thead>
             <tbody>
                 <tr>
                 <td class="fw-bold" style="text-align:center">Structure</th>
@@ -218,11 +218,11 @@ Hormat kami,
                 <td class="text-center fw-bold">Unit/Month</th>
                 @endforeach
                 </tr>
-                @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan")
+                @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan" || $quotation->thr=="Diberikan Langsung")
                 <tr>
                 <td>Provisi Tunjangan Hari Raya (THR)</th>
                 @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} @endif</th>
+                <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @elseif($quotation->thr=="Diberikan Langsung") Diberikan Langsung Oleh Client @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} @endif</th>
                 @endforeach
                 </tr>
                 @endif
@@ -356,7 +356,7 @@ Hormat kami,
                 <tr class="table-success">
                     <td style="text-align:right" class="fw-bold">PEMBULATAN</td>
                     <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pembulatan_coss,2,",",".")}}</td>
-                </tr>      
+                </tr>
             </tbody>
         </table>
     </div>

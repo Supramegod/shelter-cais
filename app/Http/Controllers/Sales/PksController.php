@@ -1072,25 +1072,25 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             ]);
 
 
-            // //insert ke activity sebagai activity pertama
-            // $customerActivityController = new CustomerActivityController();
-            // $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+            //insert ke activity sebagai activity pertama
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
 
-            // $activityId = DB::table('sl_customer_activity')->insertGetId([
-            //     'leads_id' => $quotation->leads_id,
-            //     'quotation_id' => $quotation->id,
-            //     'spk_id' => $dataSpk->id,
-            //     'pks_id' => $newId,
-            //     'branch_id' => $leads->branch_id,1000
-            //     'tgl_activity' => $current_date_time,
-            //     'nomor' => $nomorActivity,
-            //     'tipe' => 'PKS',
-            //     'notes' => 'PKS dengan nomor :'.$pksNomor.' terbentuk dari SPK dengan nomor :'.$dataSpk->nomor,
-            //     'is_activity' => 0,
-            //     'user_id' => Auth::user()->id,
-            //     'created_at' => $current_date_time,
-            //     'created_by' => Auth::user()->full_name
-            // ]);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $quotation->leads_id,
+                'quotation_id' => $quotation->id,
+                'spk_id' => $dataSpk->id,
+                'pks_id' => $newId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'PKS',
+                'notes' => 'PKS dengan nomor :'.$pksNomor.' terbentuk dari SPK dengan nomor :'.$dataSpk->nomor,
+                'is_activity' => 0,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
             DB::commit();
             return redirect()->route('pks.view',$newId);
@@ -1928,41 +1928,41 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'deleted_by' => Auth::user()->full_name
             ]);
 
-            // //insert ke activity sebagai activity pertama
-            // $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
-            // $customerActivityController = new CustomerActivityController();
+            //insert ke activity sebagai activity pertama
+            $qasal = DB::table('sl_quotation')->where('id',$qasalId)->first();
+            $customerActivityController = new CustomerActivityController();
 
-            // // buat activity baru dari quotation yang diajukan ulang
-            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
-            // $activityId = DB::table('sl_customer_activity')->insertGetId([
-            //     'leads_id' => $qtujuan->leads_id,
-            //     'quotation_id' => $qasalId,
-            //     'branch_id' => $leads->branch_id,
-            //     'tgl_activity' => $current_date_time,
-            //     'nomor' => $nomorActivity,
-            //     'tipe' => 'Quotation',
-            //     'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
-            //     'is_activity' => 0,
-            //     'user_id' => Auth::user()->id,
-            //     'created_at' => $current_date_time,
-            //     'created_by' => Auth::user()->full_name
-            // ]);
+            // buat activity baru dari quotation yang diajukan ulang
+            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $qtujuan->leads_id,
+                'quotation_id' => $qasalId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$qasal->nomor.' di ajukan ulang',
+                'is_activity' => 0,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
-            // // buat activity baru dari quotation baru
-            // $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
-            // $activityId = DB::table('sl_customer_activity')->insertGetId([
-            //     'leads_id' => $qtujuan->leads_id,
-            //     'quotation_id' => $qtujuanId,
-            //     'branch_id' => $leads->branch_id,
-            //     'tgl_activity' => $current_date_time,
-            //     'nomor' => $nomorActivity,
-            //     'tipe' => 'Quotation',
-            //     'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
-            //     'is_activity' => 0,
-            //     'user_id' => Auth::user()->id,
-            //     'created_at' => $current_date_time,
-            //     'created_by' => Auth::user()->full_name
-            // ]);
+            // buat activity baru dari quotation baru
+            $nomorActivity = $customerActivityController->generateNomor($qtujuan->leads_id);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $qtujuan->leads_id,
+                'quotation_id' => $qtujuanId,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'Quotation',
+                'notes' => 'Quotation dengan nomor :'.$nomorQuotationBaru.' terbentuk dari ajukan ulang quotation dengan nomor :'.$qasal->nomor,
+                'is_activity' => 0,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
             return redirect()->route('quotation');
 
