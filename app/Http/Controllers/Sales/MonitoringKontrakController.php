@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MonitoringKontrakTemplateExport;
 use \stdClass;
+use Illuminate\Support\Facades\Storage;
 
 class MonitoringKontrakController extends Controller
 {
@@ -863,6 +864,74 @@ class MonitoringKontrakController extends Controller
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
+        }
+    }
+    public function addIssue ($id){
+        try {
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            if($pks == null){
+                abort(404);
+            }
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $nowd = Carbon::now()->toDateString();
+
+            $pks->s_mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->s_kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
+
+            $pks->status_kontrak = "";
+            $statusKontrak = DB::table('m_status_pks')->where('id',$pks->status_pks_id)->first();
+            if($statusKontrak !=null){
+                $pks->status_kontrak = $statusKontrak->nama;
+            }
+
+            $jenisVisit = DB::table('m_jenis_visit')->whereNull('deleted_at')->get();
+
+            return view('sales.pks.add-issue',compact('now','nowd','pks','jenisVisit'));
+        } catch (\Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function saveIssue (Request $request){
+        try {
+            DB::beginTransaction();
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $id = $request->id;
+            $pks = DB::table('sl_pks')->where('id',$id)->first();
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
+
+            $file = $request->file('lampiran');
+            $extension = $file->getClientOriginalExtension();
+
+            $filename = $file->getClientOriginalName();
+            $filename = str_replace(".".$extension,"",$filename);
+            $originalName = $filename.date("YmdHis").rand(10000,99999).".".$extension."";
+
+            Storage::disk('lampiran-issue')->put($originalName, file_get_contents($file));
+
+            $link = env('APP_URL').'/public/uploads/lampiran-issue/'.$originalName;
+
+            DB::table('sl_issue')->insert([
+                'leads_id' => $leads->id,
+                'pks_id' => $pks->id,
+                'site_id' => $pks->site_id,
+                'tgl' => $request->tgl,
+                'judul' => $request->judul,
+                'jenis_keluhan' => $request->jenis_keluhan,
+                'kolaborator' => $request->kolaborator,
+                'deskripsi' => $request->deskripsi,
+                'url_lampiran' => $link,
+                'status' => $request->status,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+
+            DB::commit();
+
+            return response()->json(['status' => 'success', 'message' => 'Issue berhasil disimpan !']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
         }
     }
 }

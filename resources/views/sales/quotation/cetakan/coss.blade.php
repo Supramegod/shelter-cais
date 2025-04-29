@@ -159,10 +159,10 @@
                 </tr>
                 @endif
                 <tr>
-                    <td>BPJS Kesehatan ( {{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}% )</th>
+                    <td>@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Swasta @endif ( {{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}% )</th>
                     @foreach($quotation->quotation_detail as $detailJabatan)
                     <td class="text-end">
-                    @if($quotation->penjamin == null)
+                    @if($detailJabatan->penjamin_kesehatan == "Takaful")
                     {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
                     @else
                     {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>

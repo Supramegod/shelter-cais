@@ -669,6 +669,9 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::post('/sales/monitoring-kontrak/inquiry-import', 'inquiryImport')->name('monitoring-kontrak.inquiry-import');
         Route::post('/sales/monitoring-kontrak/save-import', 'saveImport')->name('monitoring-kontrak.save-import');
+
+        Route::get('/sales/monitoring-kontrak/add-issue/{id}', 'addIssue')->name('monitoring-kontrak.add-issue');
+        Route::post('/sales/monitoring-kontrak/save-issue', 'saveIssue')->name('monitoring-kontrak.save-issue');
     });
 
     Route::controller(EntitasController::class)->group(function() {

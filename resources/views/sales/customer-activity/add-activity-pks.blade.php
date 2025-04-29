@@ -433,7 +433,9 @@
             icon: 'success',
             confirmButtonText: 'OK'
           }).then(() => {
-            window.location.href = "{{ route('monitoring-kontrak') }}";
+            sessionStorage.setItem('forceRefresh', 'true');
+            window.history.go(-1);
+            return false;
           });
         } else {
           Swal.fire({

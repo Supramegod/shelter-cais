@@ -126,6 +126,11 @@
                             </ul>
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade show active" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <a href="{{ route('customer-activity.add-activity-kontrak', $pks->id) }}" class="btn btn-primary">
+                                            <i class="mdi mdi-plus"></i> Tambah Aktifitas
+                                        </a>
+                                    </div>
                                     <ul class="timeline">
                                         @foreach($data as $activity)
                                             <li class="timeline-item">
@@ -153,18 +158,30 @@
 
                                 </div>
                                 <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <a href="{{ route('monitoring-kontrak.add-issue', $pks->id) }}" class="btn btn-danger">
+                                            <i class="mdi mdi-plus"></i> Tambah Issue
+                                        </a>
+                                    </div>
                                     <ul class="timeline">
                                         @foreach($issues as $issue)
                                             <li class="timeline-item">
                                                 <span class="timeline-point timeline-point-danger"></span>
                                                 <div class="timeline-event card card-border-shadow-danger mb-3 ">
                                                     <div class="card-header" style="padding-bottom:0px !important">
-                                                        <h6 class="timeline-title">{{$issue->jenis_keluhan}}</h6>
+                                                        <h6 class="timeline-title">{{$issue->jenis_keluhan}} - {{$issue->judul}}</h6>
                                                     </div>
                                                     <div class="card-body" style="padding-top:0px !important">
                                                         <p class="card-text">{{$issue->deskripsi}}</p>
                                                         <p class="card-text">Issue pada : {{$issue->screated_at}}</p>
                                                     </div>
+                                                    @if($issue->url_lampiran)
+                                                        <div class="card-footer">
+                                                            <a href="{{ $issue->url_lampiran }}" target="_blank" class="btn btn-info">
+                                                                <i class="mdi mdi-eye"></i> View Lampiran
+                                                            </a>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </li>
                                         @endforeach
@@ -183,4 +200,12 @@
 
 @section('pageScript')
 <script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
+<script>
+    window.addEventListener('pageshow', function (event) {
+        if (sessionStorage.getItem('forceRefresh') === 'true') {
+            sessionStorage.removeItem('forceRefresh');
+            location.reload();
+        }
+    });
+</script>
 @endsection

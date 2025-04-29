@@ -102,7 +102,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,29,31,33]))
+        @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,56]))
         <li class="menu-item @if(str_contains(Request::url(), route('quotation'))) active @endif">
             <a href="{{route('quotation')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>

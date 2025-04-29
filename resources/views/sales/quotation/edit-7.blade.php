@@ -11,7 +11,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-7')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-7')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -129,21 +129,23 @@
   hitungJumlah();
 
   function hitungJumlah() {
-    let jumlah =0;    
+    let jumlah =0;
     $('.input-jumlah').each(function( index ) {
-      let harga = parseInt($(this).val())*parseInt($(this).data('harga'));
-      jumlah = jumlah+parseInt(harga);
+      let qty = parseInt($(this).val()) || 0;
+        let harga = parseInt($(this).data('harga')) || 0;
+        let subtotal = qty * harga;
+        jumlah += subtotal;
     });
     $('.total-semua').text("Rp "+jumlah.toLocaleString('id-ID'));
   }
 
   $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
     });
-    
+
   $('#btn-submit').on('click',function(e){
     e.preventDefault();
     var form = $(this).parents('form');

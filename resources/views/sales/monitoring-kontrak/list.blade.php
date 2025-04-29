@@ -384,5 +384,11 @@
 
         ],
     });
+    window.addEventListener('pageshow', function (event) {
+        if (sessionStorage.getItem('forceRefresh') === 'true') {
+            sessionStorage.removeItem('forceRefresh');
+            location.reload();
+        }
+    });
 </script>
 @endsection

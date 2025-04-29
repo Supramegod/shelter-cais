@@ -90,13 +90,15 @@
                 <i class="mdi mdi-upload scaleX-n1-rtl"></i>
               </button>
             </div>
-            @elseif($data->status_spk_id == 2)
+            @elseif($data->status_spk_id == 2 || $data->status_spk_id == 3 || $data->status_spk_id == 4)
             <div class="col-12 text-center mt-2">
               <a target="_blank" href="{{$data->link_spk_disetujui}}" id="btn-lihat-spk" class="btn btn-success w-100 waves-effect waves-light">
                 <span class="me-1">Lihat SPK</span>
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
               </a>
             </div>
+            @endif
+            @if($data->status_spk_id == 2)
             <div class="col-12 text-center mt-2">
             <a href="{{route('pks.add',['id'=> $data->id])}}" class="btn btn-info w-100 waves-effect waves-light"><i class="mdi mdi-arrow-right"></i>&nbsp;  Create PKS</a>
             </div>
@@ -128,7 +130,7 @@
 
 @section('pageScript')
 <script>
-  @if(session()->has('success'))  
+  @if(session()->has('success'))
     Swal.fire({
       title: 'Pemberitahuan',
       html: '{{session()->get('success')}}',
@@ -142,7 +144,7 @@
   $('#btn-kembali').on('click',function () {
     window.location.replace("{{route('spk')}}");
   });
-  
+
   $("#btn-ajukan-ulang").on("click",function(){
     Swal.fire({
       title: 'Konfirmasi',
@@ -190,10 +192,10 @@
             let url = baseUrl.replace(':spk', {{$data->id}});
             // Tambahkan alasan sebagai parameter URL
             url += `?alasan=${encodeURIComponent(alasan)}`;
-              
+
             location.href = url;
             console.log("gogo");
-            
+
           } else if (result.dismiss === Swal.DismissReason.cancel) {
             Swal.fire({
               title: 'Dibatalkan',
@@ -215,7 +217,7 @@
       }
     });
   })
-  
+
   $('#btn-upload-spk').on('click', function() {
         // Menampilkan SweetAlert dengan form upload
         Swal.fire({

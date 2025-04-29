@@ -83,8 +83,12 @@ class PksController extends Controller
                 ->get();
 
         foreach ($data as $key => $value) {
-            $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
-            $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
+            if($value->tgl_pks !=null){
+                $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
+            }
+            if($value->created_at !=null){
+                $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
+            }
             if($value->status_pks_id == null){
                 $value->status = "";
             } else{
@@ -187,7 +191,7 @@ class PksController extends Controller
                 'jenis_perusahaan_id' => $quotation->jenis_perusahaan_id,
                 'jenis_perusahaan' => $quotation->jenis_perusahaan,
                 'link_pks_disetujui' => null,
-                'status_pks_id' => 1,
+                'status_pks_id' => 5,
                 'provinsi_id' => $site->provinsi_id,
                 'provinsi' => $site->provinsi,
                 'kota_id' => $site->kota_id,
@@ -1707,14 +1711,36 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             unset($dataToInsertQuotation['id']);
             unset($dataToInsertQuotation['nomor']);
 
-            $nomorQuotationBaru = $this->generateNomorQuotation($qtujuan->leads_id,$qtujuan->company_id);
+            $nomorQuotationBaru = $this->generateNomor($qtujuan->leads_id,$qtujuan->company_id);
             $dataToInsertQuotation['nomor'] = $nomorQuotationBaru;
             $dataToInsertQuotation['revisi'] = $qtujuan->revisi+1;
             $dataToInsertQuotation['alasan_revisi'] = $request->alasan;
             $dataToInsertQuotation['quotation_asal_id'] = $qtujuan->id;
-            $dataToInsertQuotation['step'] = 1;
             $dataToInsertQuotation['created_at'] = $current_date_time;
             $dataToInsertQuotation['created_by'] = Auth::user()->full_name;
+            $dataToInsertQuotation['updated_at'] = null;
+            $dataToInsertQuotation['updated_by'] = null;
+
+            $dataToInsertQuotation['ot1'] = null;
+            $dataToInsertQuotation['ot2'] = null;
+            $dataToInsertQuotation['ot3'] = null;
+            $isAktif = 1;
+            $statusQuotation = 1;
+            //jika top lebih dari 7 hari
+            if($qtujuan->top=="Lebih Dari 7 Hari"){
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
+
+            // jika persentasi mf kurang dari 7
+            if ($qtujuan->persentase < 7) {
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
+
+            $dataToInsertQuotation['status_quotation_id'] = $statusQuotation;
+            $dataToInsertQuotation['is_aktif'] = $isAktif;
+            $dataToInsertQuotation['step'] = 1;
             $qtujuanId = DB::table('sl_quotation')->insertGetId($dataToInsertQuotation);
 
             //Site
@@ -1749,23 +1775,6 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
 
                     $newId = DB::table("sl_quotation_detail")->insertGetId($dataToInsert);
 
-                    // Quotation Chemical
-                    $chemical = DB::table("sl_quotation_chemical")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
-                    DB::table("sl_quotation_chemical")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
-                        "deleted_at" => $current_date_time ,
-                        "deleted_by" => Auth::user()->full_name,
-                    ]);
-                    foreach ($chemical as $keyd => $valued) {
-                        $dataToInsertD = (array) $valued;
-                        unset($dataToInsertD['id']);
-                        $dataToInsertD['quotation_id'] = $qtujuanId;
-                        $dataToInsertD['quotation_detail_id'] = $newId;
-                        $dataToInsertD['created_at'] = $current_date_time;
-                        $dataToInsertD['created_by'] = Auth::user()->full_name;
-
-                        DB::table("sl_quotation_chemical")->insert($dataToInsertD);
-                    }
-
                     // Quotation Detail Requirement
                     $requirement = DB::table("sl_quotation_detail_requirement")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
                     DB::table("sl_quotation_detail_requirement")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
@@ -1781,6 +1790,40 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                         $dataToInsertD['created_by'] = Auth::user()->full_name;
 
                         DB::table("sl_quotation_detail_requirement")->insert($dataToInsertD);
+                    }
+
+                    // Quotation Detail hpp
+                    $detailhpp = DB::table("sl_quotation_detail_hpp")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+                    DB::table("sl_quotation_detail_hpp")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
+                        "deleted_at" => $current_date_time ,
+                        "deleted_by" => Auth::user()->full_name,
+                    ]);
+                    foreach ($detailhpp as $keyd => $valued) {
+                        $dataToInsertD = (array) $valued;
+                        unset($dataToInsertD['id']);
+                        $dataToInsertD['quotation_id'] = $qtujuanId;
+                        $dataToInsertD['quotation_detail_id'] = $newId;
+                        $dataToInsertD['created_at'] = $current_date_time;
+                        $dataToInsertD['created_by'] = Auth::user()->full_name;
+
+                        DB::table("sl_quotation_detail_hpp")->insert($dataToInsertD);
+                    }
+
+                    // Quotation Detail harga jual
+                    $detailhargajual = DB::table("sl_quotation_detail_coss")->where("quotation_detail_id",$value->id)->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+                    DB::table("sl_quotation_detail_coss")->where("quotation_detail_id",$value->id)->where('quotation_id',$qasalId)->update([
+                        "deleted_at" => $current_date_time ,
+                        "deleted_by" => Auth::user()->full_name,
+                    ]);
+                    foreach ($detailhargajual as $keyd => $valued) {
+                        $dataToInsertD = (array) $valued;
+                        unset($dataToInsertD['id']);
+                        $dataToInsertD['quotation_id'] = $qtujuanId;
+                        $dataToInsertD['quotation_detail_id'] = $newId;
+                        $dataToInsertD['created_at'] = $current_date_time;
+                        $dataToInsertD['created_by'] = Auth::user()->full_name;
+
+                        DB::table("sl_quotation_detail_coss")->insert($dataToInsertD);
                     }
 
                     // Quotation Detail Tunjangan
@@ -1833,6 +1876,22 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 $dataToInsertD['created_by'] = Auth::user()->full_name;
 
                 DB::table("sl_quotation_devices")->insert($dataToInsertD);
+            }
+
+            // Quotation Chemical
+            $chemical = DB::table("sl_quotation_chemical")->whereNull('deleted_at')->where('quotation_id',$qasalId)->get();
+            DB::table("sl_quotation_chemical")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
+            foreach ($chemical as $keyd => $valued) {
+                $dataToInsertD = (array) $valued;
+                unset($dataToInsertD['id']);
+                $dataToInsertD['quotation_id'] = $qtujuanId;
+                $dataToInsertD['created_at'] = $current_date_time;
+                $dataToInsertD['created_by'] = Auth::user()->full_name;
+
+                DB::table("sl_quotation_chemical")->insert($dataToInsertD);
             }
 
             // Quotation Ohc
@@ -1924,6 +1983,12 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
 
             // hapus spk yang diajukan ulang
             DB::table('sl_spk')->where('id',$spk->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+
+            // hapus pks yang diajukan ulang
+            DB::table('sl_spk')->where('id',$pks->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);

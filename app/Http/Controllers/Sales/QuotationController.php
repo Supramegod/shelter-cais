@@ -2220,11 +2220,11 @@ if($quotation->note_harga_jual == null){
             }
             //divisi crm
             else if(in_array(Auth::user()->role_id,[54,55,56])){
-                if(in_array(Auth::user()->role_id,[54])){
-                    $data = $data->where('sl_leads.crm_id',Auth::user()->id);
-                }else if(in_array(Auth::user()->role_id,[55,56])){
+                // if(in_array(Auth::user()->role_id,[54])){
+                //     $data = $data->where('sl_leads.crm_id',Auth::user()->id);
+                // }else if(in_array(Auth::user()->role_id,[55,56])){
 
-                }
+                // }
             };
 
             if(!empty($request->kebutuhan)){

@@ -67,13 +67,10 @@
               @elseif(Auth::user()->role_id==99 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari")
                 <!-- <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button> -->
               @endif
-              @if($quotation->is_aktif==1)
-                <!-- <a href="javascript:void(0)" class="btn btn-secondary" id="btn-copy-quotation"><i class="mdi mdi-content-copy"></i>&nbsp; Copy Ke</a> -->
-                @if($quotation->spk==null)
+              @if($quotation->spk==null)
                 <a href="javascript:void(0)" class="btn btn-danger" id="btn-ajukan-quotation"><i class="mdi mdi-refresh"></i>&nbsp; Ajukan Ulang</a>
                 <button type="button" onclick="window.location.href='{{route('spk.add',['id'=> $quotation->id])}}'" class="btn btn-info" @if($canCreateSpk==0) disabled @endif><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</button>
                 @endif
-              @endif
               <br>
               <div class="btn-group" role="group">
               <button id="btncetak" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" @if($quotation->is_aktif!=1) disabled @endif>
@@ -615,11 +612,11 @@
                         @endif
                         <tr class="">
                           <td style="text-align:center">{{$nomorUrut}}</td>
-                          <td style="text-align:left" class="">BPJS Kesehatan</td>
+                          <td style="text-align:left">@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Swasta @endif</td>
                           <td style="text-align:center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
                           <td style="text-align:right" class="">
-                          @if($quotation->penjamin == null)
+                          @if($detailJabatan->penjamin_kesehatan == "Takaful")
                           {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
                           @else
                           {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
@@ -765,10 +762,10 @@
                     <table class="table" >
                       <thead class="text-center">
                         <tr class="table-success">
-                          <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">Harga Jual {{$quotation->kebutuhan}}</th>
+                          <th colspan="{{2+count($quotation->quotation_detail)}}" style="vertical-align: middle;">Harga Jual {{$quotation->kebutuhan}}</th>
                         </tr>
                         <tr class="table-success">
-                          <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}  ( Provisi = {{$quotation->provisi}} )</th>
+                          <th colspan="{{2+count($quotation->quotation_detail)}}" style="vertical-align: middle;">{{$leads->nama_perusahaan}}  ( Provisi = {{$quotation->provisi}} )</th>
                         </tr>
                         <tr class="table-success">
                           <th colspan="2">&nbsp;</th>
@@ -866,11 +863,11 @@
                         </tr>
                         @endif
                         <tr>
-                          <td>BPJS Kesehatan</td>
-                          <td class="text-center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
+                        <td style="text-align:left">@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Swasta @endif</td>
+                        <td class="text-center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
                           <td class="text-end">
-                          @if($quotation->penjamin == null)
+                          @if($detailJabatan->penjamin_kesehatan == "Takaful")
                           {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
                           @else
                           {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
@@ -936,44 +933,44 @@
                           @endforeach
                         </tr>
                         <tr class="table-success">
-                          <td colspan="2" style="text-align:right" class="fw-bold">Total Sebelum Management Fee</td>
+                          <td colspan="1" style="text-align:right" class="fw-bold">Total Sebelum Management Fee</td>
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->total_sebelum_management_fee_coss,2,",",".")}}</td>
                         </tr>
                         <tr class="">
-                          <td colspan="2" style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari {{$quotation->management_fee}}</span></td>
+                          <td colspan="1" style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari {{$quotation->management_fee}}</span></td>
                           <td style="text-align:center">{{$quotation->persentase}} %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->nominal_management_fee_coss,2,",",".")}}</td>
                         </tr>
                         @if($quotation->is_ppn == 1)
                         <tr class="table-success">
-                          <td colspan="2" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
+                          <td colspan="1" style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->grand_total_sebelum_pajak_coss,2,",",".")}}</td>
                         </tr>
                         <tr class="table-success">
-                          <td colspan="2" style="text-align:right" class="fw-bold">Dasar Pengenaan Pajak</td>
+                          <td colspan="1" style="text-align:right" class="fw-bold">Dasar Pengenaan Pajak</td>
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->dpp_coss,2,",",".")}}</td>
                         </tr>
                         <tr class="">
-                          <td colspan="2" style="text-align:right" class="fw-bold">PPN <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
+                          <td colspan="1" style="text-align:right" class="fw-bold">PPN <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                           <td style="text-align:center">12 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn_coss,2,",",".")}}</td>
                         </tr>
                         <tr class="">
-                          <td colspan="2" style="text-align:right" class="fw-bold">PPh <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
+                          <td colspan="1" style="text-align:right" class="fw-bold">PPh <span class='text-danger'>@if($quotation->ppn_pph_dipotong=="Management Fee")*dari management fee @else *dari Total Upah @endif</span></td>
                           <td style="text-align:center">-2 %</td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pph_coss,2,",",".")}}</td>
                         </tr>
                         @endif
                         <tr class="table-success">
-                          <td colspan="2" style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
+                          <td colspan="1" style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->total_invoice_coss,2,",",".")}}</td>
                         </tr>
                         <tr class="table-success">
-                          <td colspan="2" style="text-align:right" class="fw-bold">PEMBULATAN</td>
+                          <td colspan="1" style="text-align:right" class="fw-bold">PEMBULATAN</td>
                           <td style="text-align:center"></td>
                           <td style="text-align:right" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pembulatan_coss,2,",",".")}}</td>
                         </tr>

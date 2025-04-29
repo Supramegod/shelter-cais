@@ -50,6 +50,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'lampiran-issue' => [
+            'driver' => 'local',
+            'root' => public_path(). '/uploads/lampiran-issue',
+            'url' => env('APP_URL').'/public/uploads/lampiran-issue',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
         'spk' => [
             'driver' => 'local',
             'root' => public_path(). '/spk',
