@@ -488,6 +488,11 @@ class QuotationService
         foreach ($quotation->quotation_detail as $key => $kbd) {
             $quotation->total_bpjs_coss += ($kbd->bpjs_ketenagakerjaan*$kbd->jumlah_hc);
         }
+        $quotation->total_bpjs_kesehatan_coss = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->total_bpjs_kesehatan_coss += ($kbd->bpjs_kesehatan*$kbd->jumlah_hc);
+            $quotation->total_bpjs_kesehatan_coss += ($kbd->nominal_takaful*$kbd->jumlah_hc);
+        }
 
 
         $quotation->nominal_management_fee_coss = 0;
@@ -496,9 +501,14 @@ class QuotationService
         }else if($quotation->management_fee_id==4){
             $quotation->nominal_management_fee_coss = $quotation->total_sebelum_management_fee_coss * $quotation->persentase / 100;
         }else if($quotation->management_fee_id==5){
-            $quotation->nominal_management_fee_coss = $quotation->upah_pokok_coss * $quotation->persentase / 100;            // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
+            // dd($quotation->upah_pokok_coss,$quotation->persentase,$quotation->upah_pokok_coss * $quotation->persentase / 100);
+            $quotation->nominal_management_fee_coss = $quotation->upah_pokok_coss * $quotation->persentase / 100;
         }else if($quotation->management_fee_id==6){
-            $quotation->nominal_management_fee_coss = $quotation->total_bpjs_coss * $quotation->persentase / 100;
+            $quotation->nominal_management_fee_coss = ($quotation->upah_pokok_coss+$quotation->total_bpjs_coss) * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==7){
+            $quotation->nominal_management_fee_coss = ($quotation->upah_pokok_coss+$quotation->total_bpjs_coss+$quotation->total_bpjs_kesehatan_coss) * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==8){
+            $quotation->nominal_management_fee_coss = ($quotation->upah_pokok_coss+$quotation->total_bpjs_kesehatan_coss) * $quotation->persentase / 100;
         }
 
         $quotation->grand_total_sebelum_pajak_coss = $quotation->total_sebelum_management_fee_coss + $quotation->nominal_management_fee_coss;
@@ -541,6 +551,11 @@ class QuotationService
         foreach ($quotation->quotation_detail as $key => $kbd) {
             $quotation->total_bpjs += ($kbd->bpjs_ketenagakerjaan*$kbd->jumlah_hc);
         }
+        $quotation->total_bpjs_kesehatan = 0;
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $quotation->total_bpjs_kesehatan += ($kbd->bpjs_kesehatan*$kbd->jumlah_hc);
+            $quotation->total_bpjs_kesehatan += ($kbd->nominal_takaful*$kbd->jumlah_hc);
+        }
 
         $quotation->nominal_management_fee = 0;
         if($quotation->management_fee_id==1){
@@ -548,10 +563,14 @@ class QuotationService
         }else if($quotation->management_fee_id==4){
             $quotation->nominal_management_fee = $quotation->total_sebelum_management_fee * $quotation->persentase / 100;
         }else if($quotation->management_fee_id==5){
-            $quotation->upah_pokok = $quotation->upah_pokok * $quotation->persentase / 100;
+            $quotation->nominal_management_fee = $quotation->upah_pokok * $quotation->persentase / 100;
             // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
         }else if($quotation->management_fee_id==6){
-            $quotation->nominal_management_fee = $quotation->total_bpjs * $quotation->persentase / 100;
+            $quotation->nominal_management_fee = ($quotation->upah_pokok+$quotation->total_bpjs) * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==7){
+            $quotation->nominal_management_fee = ($quotation->upah_pokok+$quotation->total_bpjs+$quotation->total_bpjs_kesehatan) * $quotation->persentase / 100;
+        }else if($quotation->management_fee_id==8){
+            $quotation->nominal_management_fee = ($quotation->upah_pokok+$quotation->total_bpjs_kesehatan) * $quotation->persentase / 100;
         }
 
         $quotation->grand_total_sebelum_pajak = $quotation->total_sebelum_management_fee + $quotation->nominal_management_fee;

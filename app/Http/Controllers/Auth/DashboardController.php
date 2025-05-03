@@ -53,7 +53,7 @@ class DashboardController extends Controller
                         array_push($dataMenungguAnda,$quotation);
                     }
                 }
-                if($quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
+                if($quotation->ot1 != null && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari"){
                     $jumlahMenungguDirkeu++;
                     if(Auth::user()->role_id==97 || Auth::user()->role_id==40 ){
                         array_push($dataMenungguAnda,$quotation);

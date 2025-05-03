@@ -61,11 +61,25 @@
             <div class="row mb-3">
                 <label class="col-sm-2 col-form-label text-sm-end">Jenis Keluhan <span class="text-danger">*</span></label>
                 <div class="col-sm-4">
-                    <input type="text" id="jenis_keluhan" name="jenis_keluhan" value="" class="form-control">
+                    <select id="jenis_keluhan" name="jenis_keluhan" class="form-control">
+                        <option value="">-- Pilih Jenis Keluhan --</option>
+                        <option value="COMPLAINT">COMPLAINT</option>
+                        <option value="REFRESH PERSONIL">REFRESH PERSONIL</option>
+                        <option value="PERGANTIAN KAPORLAP">PERGANTIAN KAPORLAP</option>
+                        <option value="PERFORMANCE PERSONIL">PERFORMANCE PERSONIL</option>
+                        <option value="PERFORMANCE MANAGEMENT">PERFORMANCE MANAGEMENT</option>
+                        <option value="INVOICE">INVOICE</option>
+                        <option value="KEHILANGAN BARANG">KEHILANGAN BARANG</option>
+                        <option value="TRAINING">TRAINING</option>
+                    </select>
                 </div>
                 <label class="col-sm-2 col-form-label text-sm-end">Status <span class="text-danger">*</span></label>
                 <div class="col-sm-4">
-                    <input type="text" id="status" name="status" value="" class="form-control">
+                    <select id="status" name="status" class="form-control">
+                        <option value="">-- Pilih Status --</option>
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                    </select>
                 </div>
             </div>
             <div class="row mb-3">

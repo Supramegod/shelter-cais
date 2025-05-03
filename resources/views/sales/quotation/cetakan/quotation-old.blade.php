@@ -256,7 +256,7 @@ Hormat kami,
                 </tr>
                 @else
                 <tr>
-                    <td>Swasta</th>
+                    <td>Asuransi Kesehatan Swasta</th>
                     @foreach($data->quotation_detail as $detailJabatan)
                     <td class="text-end">{{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</th>
                     @endforeach

@@ -294,7 +294,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],
@@ -380,7 +380,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],
@@ -454,7 +454,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],
@@ -529,7 +529,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],

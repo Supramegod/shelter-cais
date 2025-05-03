@@ -219,7 +219,7 @@
                         @if($quotation->penjamin=="Takaful")
                         <tr>
                           <td>Penjamin</td>
-                          <td colspan="3">Swasta</td>
+                          <td colspan="3">Asuransi Kesehatan Swasta</td>
                         </tr>
                         @else
                         <tr>

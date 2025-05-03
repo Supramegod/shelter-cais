@@ -250,7 +250,7 @@
               </tr>
               <tr>
                 <td>Penjamin</td>
-                <td>@if($quotation->penjamin =="BPJS"): {{$quotation->penjamin}} @else : Swasta @endif</td>
+                <td>@if($quotation->penjamin =="BPJS"): {{$quotation->penjamin}} @else : Asuransi Kesehatan Swasta @endif</td>
                 @if($quotation->penjamin =="BPJS")
                 <td>Jenis</td>
                 <td>: {{$quotation->program_bpjs}}</td>
@@ -612,7 +612,7 @@
                         @endif
                         <tr class="">
                           <td style="text-align:center">{{$nomorUrut}}</td>
-                          <td style="text-align:left">@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Swasta @endif</td>
+                          <td style="text-align:left">@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Asuransi Kesehatan Swasta @endif</td>
                           <td style="text-align:center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
                           <td style="text-align:right" class="">
@@ -863,7 +863,7 @@
                         </tr>
                         @endif
                         <tr>
-                        <td style="text-align:left">@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Swasta @endif</td>
+                        <td style="text-align:left">@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Asuransi Kesehatan Swasta @endif</td>
                         <td class="text-center">{{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}%</td>
                           @foreach($quotation->quotation_detail as $detailJabatan)
                           <td class="text-end">

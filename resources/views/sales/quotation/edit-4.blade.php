@@ -28,23 +28,25 @@
                   <h4 class="text-center">Upah</h4>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-md mb-md-0 mb-2">
+                  <!-- <div class="col-md mb-md-0 mb-2">
                     <div class="form-check custom-option custom-option-icon hide-custom @if($quotation->upah == 'UMP') checked @endif">
                       <label class="form-check-label custom-option-content" for="ump">
                         <span class="custom-option-body">
                           <span class="custom-option-title">UMP</span>
-                          <!-- <span class="label-provinsi">XXXXXXXXXXXX</span><br>
-                          <span class="label-provinsi">XXXXXXXXXXXX</span> -->
+                          <span class="label-provinsi">XXXXXXXXXXXX</span><br>
+                          <span class="label-provinsi">XXXXXXXXXXXX</span>
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="UMP" id="ump" @if($quotation->upah == 'UMP') checked @endif>
                       </label>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="col-md mb-md-0 mb-2">
                     <div class="form-check custom-option custom-option-icon hide-custom @if($quotation->upah == 'UMK') checked @endif">
                       <label class="form-check-label custom-option-content" for="umk">
                         <span class="custom-option-body">
                           <span class="custom-option-title">UMK</span>
+                          <span class="label-provinsi">{{$quotation->quotation_site[0]->kota}}</span><br>
+                          <span class="label-provinsi">{{number_format($quotation->quotation_site[0]->umk,2,",",".")}}</span>
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="UMK" id="umk" @if($quotation->upah == 'UMK') checked @endif>
                       </label>
@@ -55,7 +57,7 @@
                       <label class="form-check-label custom-option-content" for="custom">
                         <span class="custom-option-body">
                           <span class="custom-option-title">Custom</span>
-                          <!-- <br><span>&nbsp;</span> -->
+                          <br><span>&nbsp;</span>
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="Custom" id="custom" @if($quotation->upah == 'Custom') checked @endif>
                       </label>
@@ -300,17 +302,33 @@ $('.show-custom').on('click',function(){
   if(obj['upah'] == null || obj['upah'] == ""){
     msg += "<b>Jenis Upah</b> belum dipilih </br>";
   }
+  if(obj['hitungan_upah'] == null || obj['hitungan_upah'] == ""){
+    msg += "<b>Hitungan Upah </b> belum dipilih </br>";
+  }
   if(obj['upah'] =="Custom"){
     if(obj['custom-upah'] == null || obj['custom-upah'] == ""){
       msg += "<b>Costum Upah</b> belum dipilih </br>";
+    }else{
+        if({{$quotation->kebutuhan_id}} != 4){
+            let hitunganUpah = obj['hitungan_upah'];
+            let customUpah = obj['custom-upah'].replace(/\./g, '');
+
+            if (hitunganUpah === "Per Hari") {
+                customUpah = customUpah * 21;
+            } else if (hitunganUpah === "Per Jam") {
+                customUpah = customUpah * 21 * 8;
+            }
+            let umk = {{$quotation->quotation_site[0]->umk}};
+            if (customUpah < (0.85 * umk)) {
+                msg += "<b>Custom Upah</b> di bawah 85% dari UMK </br>";
+            }
+        }
     }
   }
   if(obj['manajemen_fee'] == null || obj['manajemen_fee'] == ""){
     msg += "<b>Manajemen Fee </b> belum dipilih </br>";
   }
-  if(obj['hitungan_upah'] == null || obj['hitungan_upah'] == ""){
-    msg += "<b>Hitungan Upah </b> belum dipilih </br>";
-  }
+
   if(obj['persentase'] == null || obj['persentase'] == ""){
     msg += "<b>Persentase </b> belum diisi </br>";
   }

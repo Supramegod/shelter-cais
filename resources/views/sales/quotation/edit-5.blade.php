@@ -55,7 +55,7 @@
                               <th rowspan="2">Posisi</th>
                               <th colspan="4">BPJS</th>
                               <th rowspan="2">Kesehatan</th>
-                              <th rowspan="2">Nominal Swasta</th>
+                              <th rowspan="2">Nominal Asuransi Kesehatan Swasta</th>
                             </tr>
                             <tr class="text-center fw-bold align-middle">
                               <th>JKK</th>
@@ -77,7 +77,7 @@
                               <select name="penjamin[{{ $detail->id }}]" class="form-select penjamin-select" data-detail="{{ $detail->id }}">
                                 <option value="">- Pilih Penjamin -</option>
                                 <option value="BPJS" @if($detail->penjamin_kesehatan == 'BPJS') selected @elseif($detail->penjamin_kesehatan==null) selected @endif>BPJS</option>
-                                <option value="Takaful" @if($detail->penjamin_kesehatan == 'Takaful') selected @endif>Swasta</option>
+                                <option value="Takaful" @if($detail->penjamin_kesehatan == 'Takaful') selected @endif>Asuransi Kesehatan Swasta</option>
                               </select>
                             </td>
                             <td><input type="number" value="{{$detail->nominal_takaful}}" name="nominal_takaful[{{ $detail->id }}]" class="form-control text-end nominal-takaful" disabled></td>
@@ -212,7 +212,7 @@
         let value = $(this).val();
         if (value == 'Takaful') {
           if (obj['nominal_takaful[' + index + ']'] == null || obj['nominal_takaful[' + index + ']'] == "") {
-        msg += "<b>Nominal Swasta</b> belum diisi </br>";
+        msg += "<b>Nominal Asuransi Kesehatan Swasta</b> belum diisi </br>";
           }
         }
       });
