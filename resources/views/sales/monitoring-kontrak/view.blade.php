@@ -1,6 +1,13 @@
 @extends('layouts.master')
 @section('title','View Monitoring Kontrak')
 @section('content')
+<style>
+    .tab {
+        display: inline-block;
+        margin-left: 3em;
+    }
+
+</style>
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="row gy-4 mb-5">
         <!-- Congratulations card -->
@@ -136,14 +143,38 @@
                                             <li class="timeline-item">
                                                 <span class="timeline-point timeline-point-primary"></span>
                                                 <div class="timeline-event card card-border-shadow-primary mb-3 ">
-                                                    <div class="card-header" style="padding-bottom:30px !important">
+                                                    <div class="card-header" style="padding-bottom:0px !important">
                                                         <button class="btn btn-danger btn-sm float-end" onclick="deleteAktifitas({{ $activity->id }})">
                                                             <i class="mdi mdi-trash-can-outline"></i>
                                                         </button>
+                                                        <h6 class="timeline-title">{{$activity->nomor}}</h6>
                                                         <h6 class="timeline-title">{{$activity->tipe}}</h6>
                                                     </div>
                                                     <div class="card-body" style="padding-top:0px !important">
-                                                        <p class="card-text">{{$activity->notes}}</p>
+                                                        @if($activity->tgl_realisasi)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Tanggal : {{ \Carbon\Carbon::createFromFormat('Y-m-d',$activity->tgl_realisasi)->isoFormat('D MMMM Y') }}</p>
+                                                        @endif
+                                                        @if($activity->jam_realisasi)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Jam : {{ \Carbon\Carbon::parse($activity->jam_realisasi)->format('H:i') }}</p>
+                                                        @endif
+                                                        @if($activity->start && $activity->end)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Jam : {{ \Carbon\Carbon::parse($activity->start)->format('H:i') }} s/d {{ \Carbon\Carbon::parse($activity->end)->format('H:i') }}</p>
+                                                        @endif
+                                                        @if($activity->durasi)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Durasi : {{$activity->durasi}}</p>
+                                                        @endif
+                                                        @if($activity->jenis_visit)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Jenis Visit : {{$activity->jenis_visit}}</p>
+                                                        @endif
+                                                        @if($activity->notes)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Notes : {{$activity->notes}}</p>
+                                                        @endif
+                                                        @if($activity->notes_tipe)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Notes : {{$activity->notes_tipe}}</p>
+                                                        @endif
+                                                        @if($activity->notulen)
+                                                            <p class="card-text" style="margin-bottom:0px !important">Notulen : {{$activity->notulen}}</p>
+                                                        @endif
                                                         <p class="card-text">Aktifitas pada : {{$activity->screated_at}}</p>
                                                     </div>
                                                 </div>
