@@ -81,7 +81,7 @@ class MonitoringKontrakController extends Controller
 
             $spk =  DB::table('sl_spk')->where('id',$pks->spk_id)->first();
 
-            $issues = DB::table('sl_issue')->where('pks_id',$pksId)->get();
+            $issues = DB::table('sl_issue')->where('pks_id',$pksId)->whereNull('deleted_at')->get();
             foreach ($issues as $key => $value) {
                 $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
             }
@@ -932,6 +932,55 @@ class MonitoringKontrakController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Issue berhasil disimpan !']);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
+        }
+    }
+    public function deleteIssue(Request $request){
+        $id = $request->id;
+        try {
+            DB::beginTransaction();
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            $issue = DB::table('sl_issue')->where('id', $id)->whereNull('deleted_at')->first();
+            if (!$issue) {
+                return response()->json(['status' => 'error', 'message' => 'Issue tidak ditemukan.']);
+            }
+
+            DB::table('sl_issue')->where('id', $id)->whereNull('deleted_at')->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Issue berhasil dihapus.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            SystemController::saveError($e, Auth::user(), request());
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menghapus issue.']);
+        }
+    }
+
+    public function deleteActivity(Request $request){
+        $id = $request->id;
+        try {
+            DB::beginTransaction();
+            $current_date_time = Carbon::now()->toDateTimeString();
+
+            $activity = DB::table('sl_customer_activity')->where('id', $id)->whereNull('deleted_at')->first();
+            if (!$activity) {
+                return response()->json(['status' => 'error', 'message' => 'Aktivitas tidak ditemukan.']);
+            }
+
+            DB::table('sl_customer_activity')->where('id', $id)->whereNull('deleted_at')->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Aktivitas berhasil dihapus.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            SystemController::saveError($e, Auth::user(), request());
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menghapus aktivitas.']);
         }
     }
 }

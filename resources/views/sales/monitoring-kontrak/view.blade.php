@@ -136,7 +136,10 @@
                                             <li class="timeline-item">
                                                 <span class="timeline-point timeline-point-primary"></span>
                                                 <div class="timeline-event card card-border-shadow-primary mb-3 ">
-                                                    <div class="card-header" style="padding-bottom:0px !important">
+                                                    <div class="card-header" style="padding-bottom:30px !important">
+                                                        <button class="btn btn-danger btn-sm float-end" onclick="deleteAktifitas({{ $activity->id }})">
+                                                            <i class="mdi mdi-trash-can-outline"></i>
+                                                        </button>
                                                         <h6 class="timeline-title">{{$activity->tipe}}</h6>
                                                     </div>
                                                     <div class="card-body" style="padding-top:0px !important">
@@ -169,6 +172,9 @@
                                                 <span class="timeline-point timeline-point-danger"></span>
                                                 <div class="timeline-event card card-border-shadow-danger mb-3 ">
                                                     <div class="card-header" style="padding-bottom:0px !important">
+                                                        <button class="btn btn-danger btn-sm float-end" onclick="deleteIssue({{ $issue->id }})">
+                                                            <i class="mdi mdi-trash-can-outline"></i>
+                                                        </button>
                                                         <h6 class="timeline-title">{{$issue->jenis_keluhan}} - {{$issue->judul}}</h6>
                                                     </div>
                                                     <div class="card-body" style="padding-top:0px !important">
@@ -207,5 +213,117 @@
             location.reload();
         }
     });
+</script>
+<script>
+    function deleteIssue(issueId) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Ingin menghapus issue ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu sementara kami menghapus issue.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('monitoring-kontrak.delete-issue') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: issueId
+                    },
+                    success: function(response) {
+                        if (response.status=="success") {
+                            Swal.fire(
+                                'Terhapus!',
+                                'Issue berhasil dihapus.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Gagal!',
+                                'Terjadi kesalahan saat menghapus issue.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Gagal!',
+                            'Terjadi kesalahan saat menghapus issue.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+    function deleteAktifitas(aktifitasId) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Ingin menghapus Aktifitas ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu sementara kami menghapus aktifitas.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('monitoring-kontrak.delete-activity') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: aktifitasId
+                    },
+                    success: function(response) {
+                        if (response.status=="success") {
+                            Swal.fire(
+                                'Terhapus!',
+                                'Aktifitas berhasil dihapus.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Gagal!',
+                                'Terjadi kesalahan saat menghapus issue.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Gagal!',
+                            'Terjadi kesalahan saat menghapus issue.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
 </script>
 @endsection

@@ -672,6 +672,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/monitoring-kontrak/add-issue/{id}', 'addIssue')->name('monitoring-kontrak.add-issue');
         Route::post('/sales/monitoring-kontrak/save-issue', 'saveIssue')->name('monitoring-kontrak.save-issue');
+        Route::post('/sales/monitoring-kontrak/delete-issue', 'deleteIssue')->name('monitoring-kontrak.delete-issue');
+        Route::post('/sales/monitoring-kontrak/delete-activity', 'deleteActivity')->name('monitoring-kontrak.delete-activity');
     });
 
     Route::controller(EntitasController::class)->group(function() {
