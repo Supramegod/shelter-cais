@@ -8,19 +8,24 @@
     }
 
 </style>
-<div class="container-fluid flex-grow-1 container-p-y">
+<div class="container-fluid flex-grow-1 container-p-y" style="margin-top: 4rem !important;">
     <div class="row gy-4 mb-5">
         <!-- Congratulations card -->
         <div class="col-xl-12">
-            <div class="card h-100">
+            <div class="card h-100 mt-3">
                 <div class="card-header d-flex w-100" style="justify-content: space-between;">
                     <h4 class="card-title mb-1 d-flex flex-wrap">Detail Kontrak</h4>
                     <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
                 </div>
                 <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <button id="btn-toggle" class="btn btn-info btn-sm" onclick="toggleLeftPanel()">
+                            <i class="mdi mdi-eye-off"></i>&nbsp; Hide Detail Kontrak
+                        </button>
+                    </div>
                     <div class="row">
                         <!-- Informasi Leads / Customer -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4 mb-3" id="left-panel">
                             <div class="row mb-5">
                                 <table class="table table-bordered table-striped">
                                     <thead class="thead-light" style="background-color: #007bff;">
@@ -113,7 +118,7 @@
                             </div>
                         </div>
                         <!-- Aktifitas Leads -->
-                        <div class="offset-md-1 col-md-7 mb-3">
+                        <div class="offset-md-1 col-md-7 mb-3" id="right-panel">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
                                     <a class="nav-link active" id="activities-tab" data-bs-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="true">Aktifitas</a>
@@ -183,7 +188,7 @@
                                     </ul>
                                 </div>
                                 <div class="tab-pane fade" id="hpp" role="tabpanel" aria-labelledby="hpp-tab">
-
+                                    @include('sales.quotation.includes.hpp')
                                 </div>
                                 <div class="tab-pane fade" id="coss" role="tabpanel" aria-labelledby="coss-tab">
 
@@ -355,6 +360,30 @@
                 });
             }
         });
+    }
+</script>
+
+<script>
+    function toggleLeftPanel() {
+        const left = document.getElementById('left-panel');
+        const right = document.getElementById('right-panel');
+        const toggleButton = document.getElementById('btn-toggle');
+        if (left.style.display === 'none') {
+            toggleButton.innerHTML = '<i class="mdi mdi-eye-off"></i>&nbsp; Hide Detail Kontrak';
+        } else {
+            toggleButton.innerHTML = '<i class="mdi mdi-eye"></i>&nbsp; Show Detail Kontrak';
+        }
+
+        if (left.style.display === 'none') {
+            left.style.display = 'block';
+            right.classList.remove('col-12');
+            right.classList.add('col-md-7');
+            right.classList.add('offset-md-1');
+        } else {
+            left.style.display = 'none';
+            right.classList.remove('col-md-7', 'offset-md-1');
+            right.classList.add('col-12');
+        }
     }
 </script>
 @endsection

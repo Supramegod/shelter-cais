@@ -10,6 +10,16 @@ class QuotationService
     {
         // PERHITUNGAN HPP DAN COSS
         $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+        $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+        foreach ($quotation->quotation_site as $key => $site) {
+            $site->jumlah_detail = 0;
+            foreach ($quotation->detail as $kd => $vd) {
+                if($vd->quotation_site_id == $site->id){
+                    $site->jumlah_detail += 1;
+                }
+            }
+        }
+
         $qmanajemenFee = DB::table('m_management_fee')->where('id', $quotation->management_fee_id)->first();
         $quotation->management_fee = $qmanajemenFee->nama;
 

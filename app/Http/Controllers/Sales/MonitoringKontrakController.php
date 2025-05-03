@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MonitoringKontrakTemplateExport;
 use \stdClass;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Helper\QuotationService;
 
 class MonitoringKontrakController extends Controller
 {
@@ -52,7 +53,7 @@ class MonitoringKontrakController extends Controller
 
     public function view (Request $request,$pksId){
         try {
-           $pks = DB::table('sl_pks')->where('id',$pksId)->first();
+            $pks = DB::table('sl_pks')->where('id',$pksId)->first();
 
             $data = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('pks_id',$pksId)->orderBy('created_at','desc')->get();
             foreach ($data as $key => $value) {
@@ -120,7 +121,13 @@ class MonitoringKontrakController extends Controller
             if($ro3 !=null){
                 $pks->ro3 = $ro3->full_name."</br>";
             }
-            return view('sales.monitoring-kontrak.view',compact('issues','data','leads','quotation','spk','pks'));
+
+            // hpp coss dan gpm
+            $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
+            $quotationService = new QuotationService();
+            $calcQuotation = $quotationService->calculateQuotation($quotation);
+
+            return view('sales.monitoring-kontrak.view',compact('daftarTunjangan','issues','data','leads','quotation','spk','pks'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

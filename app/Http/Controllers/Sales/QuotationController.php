@@ -907,16 +907,6 @@ class QuotationController extends Controller
                 }
             }
 
-            $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
-            foreach ($quotation->quotation_site as $key => $site) {
-                $site->jumlah_detail = 0;
-                foreach ($quotation->detail as $kd => $vd) {
-                    if($vd->quotation_site_id == $site->id){
-                        $site->jumlah_detail += 1;
-                    }
-                }
-            }
-
             $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
             $jabatanPic = DB::table('m_jabatan_pic')->where('id',$leads->jabatan)->first();
             if($jabatanPic!=null){
@@ -963,9 +953,6 @@ class QuotationController extends Controller
             $listChemical = DB::table('sl_quotation_chemical')->where('quotation_id',$id)->where('jumlah','>',0)->whereNull('deleted_at')->get();
 
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
-            $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
-
-            $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
 
             $jumlahHc = 0;
             foreach ($quotation->quotation_detail as $jhc) {
