@@ -1212,7 +1212,7 @@ if($quotation->note_harga_jual == null){
             $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->id)->first();
             $quotationSite = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $isAktif = 1;
-            $statusQuotation = 3;
+            $statusQuotation = 6;
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'is_aktif' => $isAktif,
