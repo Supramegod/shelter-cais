@@ -954,23 +954,14 @@ class QuotationController extends Controller
 
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
 
-            $jumlahHc = 0;
-            foreach ($quotation->quotation_detail as $jhc) {
-                $jumlahHc += $jhc->jumlah_hc;
-            }
-
             $quotationService = new QuotationService();
             $calcQuotation = $quotationService->calculateQuotation($quotation);
             $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
             $quotation->detail = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
             $quotation->totalHc = 0;
-            foreach ($quotation->quotation_site as $key => $site) {
-                $site->jumlah_detail = 0;
-                foreach ($quotation->quotation_detail as $kd => $vd) {
-                    if($vd->quotation_site_id == $site->id){
-                        $site->jumlah_detail += 1;
-                    }
-                }
+            $jumlahHc = 0;
+            foreach ($quotation->quotation_detail as $jhc) {
+                $jumlahHc += $jhc->jumlah_hc;
             }
 
             foreach ($quotation->detail as $key => $value) {

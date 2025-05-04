@@ -121,19 +121,25 @@
                         <div class="offset-md-1 col-md-7 mb-3" id="right-panel">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="activities-tab" data-bs-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="true">Aktifitas</a>
+                                    <a class="nav-link active" id="activities-tab" data-bs-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="true">
+                                        <i class="mdi mdi-calendar-check"></i> &nbsp; Aktifitas
+                                    </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="hpp-tab" data-bs-toggle="tab" href="#hpp" role="tab" aria-controls="hpp" aria-selected="false">HPP</a>
+                                    <a class="nav-link" id="hpp-tab" data-bs-toggle="tab" href="#hpp" role="tab" aria-controls="hpp" aria-selected="false">
+                                    <i class="mdi mdi-cash-multiple"></i> &nbsp; HPP</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="coss-tab" data-bs-toggle="tab" href="#coss" role="tab" aria-controls="coss" aria-selected="false">Cost Structure</a>
+                                    <a class="nav-link" id="coss-tab" data-bs-toggle="tab" href="#coss" role="tab" aria-controls="coss" aria-selected="false">
+                                        <i class="mdi mdi-currency-usd"></i> &nbsp; Harga Jual</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="gpm-tab" data-bs-toggle="tab" href="#gpm" role="tab" aria-controls="gpm" aria-selected="false">GPM</a>
+                                    <a class="nav-link" id="gpm-tab" data-bs-toggle="tab" href="#gpm" role="tab" aria-controls="gpm" aria-selected="false">
+                                        <i class="mdi mdi-chart-line"></i> &nbsp; GPM</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="issues-tab" data-bs-toggle="tab" href="#issues" role="tab" aria-controls="issues" aria-selected="false">Issue</a>
+                                    <a class="nav-link" id="issues-tab" data-bs-toggle="tab" href="#issues" role="tab" aria-controls="issues" aria-selected="false">
+                                        <i class="mdi mdi-alert-circle"></i> &nbsp; Issue</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -188,17 +194,35 @@
                                     </ul>
                                 </div>
                                 <div class="tab-pane fade" id="hpp" role="tabpanel" aria-labelledby="hpp-tab">
-                                    @include('sales.quotation.includes.hpp')
+                                    @if($quotation != null)
+                                        @include('sales.quotation.includes.hpp')
+                                        @else
+                                        <div class="alert alert-warning" role="alert">
+                                            <strong>Data HPP tidak ditemukan.</strong>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="tab-pane fade" id="coss" role="tabpanel" aria-labelledby="coss-tab">
-
+                                    @if($quotation != null)
+                                        @include('sales.quotation.includes.coss')
+                                        @else
+                                        <div class="alert alert-warning" role="alert">
+                                            <strong>Data Harga Jual tidak ditemukan.</strong>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="tab-pane fade" id="gpm" role="tabpanel" aria-labelledby="gpm-tab">
-
+                                    @if($quotation != null)
+                                        @include('sales.quotation.includes.gpm')
+                                        @else
+                                        <div class="alert alert-warning" role="alert">
+                                            <strong>Data GPM tidak ditemukan.</strong>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">
                                     <div class="d-flex justify-content-end mb-3">
-                                        <a href="{{ route('monitoring-kontrak.add-issue', $pks->id) }}" class="btn btn-danger">
+                                        <a href="{{ route('monitoring-kontrak.add-issue', $pks->id) }}" class="btn btn-primary">
                                             <i class="mdi mdi-plus"></i> Tambah Issue
                                         </a>
                                     </div>

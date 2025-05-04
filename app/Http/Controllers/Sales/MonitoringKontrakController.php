@@ -55,7 +55,7 @@ class MonitoringKontrakController extends Controller
         try {
             $pks = DB::table('sl_pks')->where('id',$pksId)->first();
 
-            $data = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('pks_id',$pksId)->orderBy('created_at','desc')->get();
+            $data = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('pks_id',$pksId)->where('is_activity',1)->orderBy('created_at','desc')->get();
             foreach ($data as $key => $value) {
                 $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
                 $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
@@ -123,9 +123,12 @@ class MonitoringKontrakController extends Controller
             }
 
             // hpp coss dan gpm
-            $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
-            $quotationService = new QuotationService();
-            $calcQuotation = $quotationService->calculateQuotation($quotation);
+            $daftarTunjangan = null;
+            if($quotation != null){
+                $$daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
+                $quotationService = new QuotationService();
+                $calcQuotation = $quotationService->calculateQuotation($quotation);
+            }
 
             return view('sales.monitoring-kontrak.view',compact('daftarTunjangan','issues','data','leads','quotation','spk','pks'));
         } catch (\Exception $e) {
@@ -141,6 +144,7 @@ class MonitoringKontrakController extends Controller
         $activitySub = DB::table('sl_customer_activity')
             ->select('pks_id', DB::raw('COUNT(*) as total_activity'))
             ->whereNull('deleted_at')
+            ->where('is_activity',1)
             ->groupBy('pks_id');
 
         $issueSub = DB::table('sl_issue')

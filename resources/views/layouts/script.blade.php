@@ -155,47 +155,70 @@
     <!-- Custom script -->
 
     <script>
-  function openNormalDataTableModal(url, title) {
+  let currentTable = null;
+
+function openNormalDataTableModal(url, title) {
     $('#normalModalDatatable .modal-title').text(title);
     $('#normalModalDatatable').modal('show');
-    $('#normal-modal-datatable tbody').html('<tr><td colspan="100%" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>');
+
+    // Spinner sementara
+    $('#normal-modal-datatable thead tr').empty();
+    $('#normal-modal-datatable tbody').html(`
+        <tr><td colspan="100%" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        </td></tr>
+    `);
+
     $.ajax({
-      url: url,
-      success: function(data) {
-        $('#normal-modal-datatable tbody').html('');
-        if (data.data.length === 0) {
-            $('#normal-modal-datatable tbody').html('<tr><td colspan="100%" class="text-center">Data tidak tersedia</td></tr>');
-            return;
+        url: url,
+        success: function (data) {
+            if (currentTable) {
+                currentTable.destroy();
+                $('#normal-modal-datatable').empty();
+                $('#normal-modal-datatable').html(`
+                    <thead><tr></tr></thead>
+                    <tbody></tbody>
+                `);
+            }
+
+            if (!data.data || data.data.length === 0) {
+                $('#normal-modal-datatable tbody').html('<tr><td colspan="100%" class="text-center">Data tidak tersedia</td></tr>');
+                return;
+            }
+
+            // Buat kolom dari data
+            const columns = Object.keys(data.data[0]).map(key => ({ title: key, data: key }));
+            columns.forEach(col => {
+                $('#normal-modal-datatable thead tr').append(`<th>${col.title}</th>`);
+            });
+
+            // Tunggu layout stabil (opsional)
+            setTimeout(() => {
+                currentTable = $('#normal-modal-datatable').DataTable({
+                    scrollX: true,
+                    destroy: true,
+                    iDisplayLength: 25,
+                    processing: true,
+                    language: {
+                        loadingRecords: '&nbsp;',
+                        processing: 'Loading...'
+                    },
+                    data: data.data,
+                    columns: columns,
+                    order: [[0, 'desc']],
+                    language: datatableLang,
+                    dom: 'frtip',
+                    buttons: [],
+                });
+            }, 50);
         }
-        let columns = Object.keys(data.data[0]).map(key => ({ title: key, data: key }));
-        let thead = $('#normal-modal-datatable thead tr');
-        thead.empty();
-        columns.forEach(column => {
-          thead.append(`<th>${column.title}</th>`);
-        });
-
-        let table = $('#normal-modal-datatable').DataTable({
-          destroy: true,
-          scrollX: true,
-          "iDisplayLength": 25,
-          'processing': true,
-          'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...'
-          },
-          data: data.data,
-          columns: columns,
-          "order": [
-            [0, 'desc']
-          ],
-          "language": datatableLang,
-          dom: 'frtip',
-          buttons: [],
-        });
-      }
     });
+}
 
-  }
+
+
 </script>
 
     @yield('pageScript')

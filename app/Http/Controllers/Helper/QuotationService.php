@@ -13,7 +13,7 @@ class QuotationService
         $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
         foreach ($quotation->quotation_site as $key => $site) {
             $site->jumlah_detail = 0;
-            foreach ($quotation->detail as $kd => $vd) {
+            foreach ($quotation->quotation_detail as $kd => $vd) {
                 if($vd->quotation_site_id == $site->id){
                     $site->jumlah_detail += 1;
                 }

@@ -888,6 +888,7 @@ class CustomerActivityController extends Controller
                 $data = DB::table('sl_customer_activity')
                             ->select('sl_customer_activity.id','sl_customer_activity.tgl_activity','sl_customer_activity.nomor','sl_customer_activity.tipe','sl_customer_activity.notulen','sl_customer_activity.notes','sl_customer_activity.created_at','sl_customer_activity.created_by as created_by')
                             ->whereNull('sl_customer_activity.deleted_at')
+                            ->where('is_activity',1)
                             ->where('pks_id',$request->pks_id)->get();
 
             }
@@ -929,6 +930,13 @@ class CustomerActivityController extends Controller
                     ->where('pks_id',$request->pks_id)->get();
             }
             return DataTables::of($data)
+            ->editColumn('url_lampiran', function ($data) {
+                if (!empty($data->url_lampiran)) {
+                    return '<div class="text-center"><a href="' . $data->url_lampiran . '" target="_blank" class="btn btn-info btn-sm"><i class="mdi mdi-magnify"></i> Lihat</a></div>';
+                }
+                return '-';
+            })
+            ->rawColumns(['url_lampiran'])
             ->make(true);
         } catch (\Exception $e) {
             dd($e);
