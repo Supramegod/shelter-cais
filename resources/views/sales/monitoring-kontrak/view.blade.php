@@ -17,14 +17,24 @@
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <div>
                             <h4 class="card-title mb-1">Detail Kontrak</h4>
+                            @if($pks->quotation_id == null)
                             <span class="text-danger">
                                 <strong>Belum ada Quotation.</strong>
                             </span>
+                            @elseif($quotation->step < 100)
+                            <span class="text-warning">
+                                <strong>Quotation belum Lengkap.</strong>
+                            </span>
+                            @endif
                         </div>
                         <div>
                             @if($pks->quotation_id == null)
                             <a href="{{ route('lengkapi-quotation.add', $pks->id) }}" class="btn btn-primary">
                                 <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lengkapi Quotation
+                            </a>
+                            @elseif($quotation->step < 100)
+                            <a href="{{ route('lengkapi-quotation.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-primary">
+                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation
                             </a>
                             @endif
 
