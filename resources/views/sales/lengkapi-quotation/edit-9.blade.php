@@ -9,9 +9,9 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @include('sales.quotation.step')
+        @include('sales.lengkapi-quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-9')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('lengkapi-quotation.save-edit-9')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -34,9 +34,9 @@
                           <optgroup label="{{$jenis->nama}}">
                           @foreach($listChemical as $chemical)
                             @if($chemical->jenis_barang_id == $jenis->id)
-                            <option value="{{$chemical->id}}" data-harga="{{$chemical->harga}}">{{$chemical->nama}} | Harga : {{$chemical->harga}}</option>  
+                            <option value="{{$chemical->id}}" data-harga="{{$chemical->harga}}">{{$chemical->nama}} | Harga : {{$chemical->harga}}</option>
                             @endif
-                          @endforeach  
+                          @endforeach
                         @endforeach
                       </select>
                     </div>
@@ -92,7 +92,7 @@
                   </div>
                 </div>
               </div>
-              @include('sales.quotation.action')
+              @include('sales.lengkapi-quotation.action')
             </div>
           </form>
         </div>
@@ -108,12 +108,12 @@
 @section('pageScript')
 <script>
   $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
     });
-    
+
   $('#btn-submit').on('click',function(e){
     e.preventDefault();
     var form = $(this).parents('form');
@@ -136,7 +136,7 @@
           data: function (d) {
               d.quotation_id = {{$quotation->id}};
           },
-      }, 
+      },
       rowGroup: {
           dataSrc: 'jenis_barang'
       },
@@ -211,7 +211,7 @@
       if(barang ==""){
         msg += "Barang Belum Diisi <br />";
       }
-      
+
       if(jumlah ==""){
         msg += "Jumlah Belum Diisi <br />";
       }
@@ -282,7 +282,7 @@
 
   $(document).ready(function() {
     $('#barang').select2();
-    
+
     $('#barang').on('change', function() {
                 var harga = $(this).find(':selected').data('harga');
                 $('#harga').val(harga);

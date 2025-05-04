@@ -9,9 +9,9 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @include('sales.quotation.step')
+        @include('sales.lengkapi-quotation.step')
         <div class="bs-stepper-content">
-          <form id="form" class="card-body overflow-hidden" action="{{route('quotation.save-edit-1')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
+          <form id="form" class="card-body overflow-hidden" action="{{route('lengkapi-quotation.save-edit-1')}}" method="POST" enctype="multipart/form-data">        <!-- Account Details -->
           @csrf
           <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -66,7 +66,7 @@
                   <span class="text-danger">{{$errors->first('jenis_kontrak')}}</span>
                 @endif
               </div>
-              @include('sales.quotation.action')
+              @include('sales.lengkapi-quotation.action')
             </div>
           </form>
         </div>
@@ -116,7 +116,7 @@
 <script>
 // validasi input
 $('form').bind("keypress", function(e) {
-    if (e.keyCode == 13) {               
+    if (e.keyCode == 13) {
       e.preventDefault();
       return false;
     }
@@ -126,7 +126,7 @@ $('#btn-submit').on('click',function(e){
   var form = $(this).parents('form');
   let msg = "";
   let obj = $("form").serializeObject();
-  
+
   if(obj.jenis_kontrak == null || obj.jenis_kontrak == "" ){
     msg += "<b>Jenis kontrak</b> belum dipilih </br>";
   };

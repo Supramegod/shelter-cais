@@ -9,9 +9,9 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @include('sales.quotation.step')
+        @include('sales.lengkapi-quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-12')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('lengkapi-quotation.save-edit-12')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -42,13 +42,13 @@
               </div>
               <div class="row">
                 <div class="col-12 d-flex justify-content-center">
-                  <a href="{{route('quotation.add-quotation-kerjasama',$quotation->id)}}" class="btn btn-info btn-back w-50" id="btn-tambah-kerjasama">
+                  <a href="{{route('lengkapi-quotation.add-quotation-kerjasama',$quotation->id)}}" class="btn btn-info btn-back w-50" id="btn-tambah-kerjasama">
                     <span class="align-middle d-sm-inline-block d-none me-sm-1">Tambah Perjanjian</span>
                     <i class="mdi mdi-plus"></i>
                   </a>
                 </div>
               </div>
-              @include('sales.quotation.action')
+              @include('sales.lengkapi-quotation.action')
             </div>
           </form>
         </div>
@@ -75,11 +75,11 @@
             'processing': 'Loading...'
         },
         ajax: {
-            url: "{{ route('quotation.list-quotation-kerjasama') }}",
+            url: "{{ route('lengkapi-quotation.list-quotation-kerjasama') }}",
             data: function (d) {
                 d.quotation_id = {{$quotation->id}};
             },
-        },   
+        },
         "order":[
             [0,'asc']
         ],
@@ -127,18 +127,18 @@
       });
 
     $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
     });
-    
+
   $('#btn-submit').on('click',function(e){
     e.preventDefault();
     var form = $(this).parents('form');
     form.submit();
   });
-  
+
   });
 </script>
 @endsection

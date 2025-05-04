@@ -9,9 +9,9 @@
     <!-- Vertical Wizard -->
     <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @include('sales.quotation.step')
+        @include('sales.lengkapi-quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-10')}}" method="POST" enctype="multipart/form-data">        
+          <form class="card-body overflow-hidden" action="{{route('lengkapi-quotation.save-edit-10')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -32,14 +32,14 @@
                     Kunjungan Operasional <span class="text-danger fw-bold">*</span>
                   </div>
                   <div class="col-md-4">
-                    <div class="input-group"> 
+                    <div class="input-group">
                       <input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_operasional" value="@if($quotation->kunjungan_operasional!=null){{explode(' ',$quotation->kunjungan_operasional)[0]}}@endif" id="jumlah_kunjungan_operasional" class="form-control minimal">
                       <span class="input-group-text" id="basic-addon41">Kali Dalam 1</span>
                     </div>
                   </div>
                   <div class="col-md-2">
                     <select id="bulan_tahun_kunjungan_operasional" name="bulan_tahun_kunjungan_operasional" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                      <option value="" @if($quotation->kunjungan_operasional=='') selected @endif>- Pilih Data -</option>  
+                      <option value="" @if($quotation->kunjungan_operasional=='') selected @endif>- Pilih Data -</option>
                       <option value="Bulan" @if($quotation->kunjungan_operasional!=null)@if(explode(' ',$quotation->kunjungan_operasional)[1]=='Bulan') selected @endif @endif>Bulan</option>
                       <option value="Tahun" @if($quotation->kunjungan_operasional!=null)@if(explode(' ',$quotation->kunjungan_operasional)[1]=='Tahun') selected @endif @endif>Tahun</option>
                     </select>
@@ -53,14 +53,14 @@
                     Kunjungan Tim CRM <span class="text-danger fw-bold">*</span>
                   </div>
                   <div class="col-md-4">
-                    <div class="input-group"> 
+                    <div class="input-group">
                       <input type="number" placeholder="jumlah kunjungan" name="jumlah_kunjungan_tim_crm" value="@if($quotation->kunjungan_tim_crm!=null){{explode(' ',$quotation->kunjungan_tim_crm)[0]}}@endif" id="jumlah_kunjungan_tim_crm" class="form-control minimal">
                       <span class="input-group-text" id="basic-addon41">Kali Dalam 1</span>
                     </div>
                   </div>
                   <div class="col-md-2">
                     <select id="bulan_tahun_kunjungan_tim_crm" name="bulan_tahun_kunjungan_tim_crm" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                      <option value="" @if($quotation->kunjungan_tim_crm=='') selected @endif>- Pilih Data -</option>  
+                      <option value="" @if($quotation->kunjungan_tim_crm=='') selected @endif>- Pilih Data -</option>
                       <option value="Bulan" @if($quotation->kunjungan_tim_crm!=null)@if(explode(' ',$quotation->kunjungan_tim_crm)[1]=='Bulan') selected @endif @endif>Bulan</option>
                       <option value="Tahun" @if($quotation->kunjungan_tim_crm!=null)@if(explode(' ',$quotation->kunjungan_tim_crm)[1]=='Tahun') selected @endif @endif>Tahun</option>
                     </select>
@@ -75,13 +75,13 @@
                   </div>
                   <div class="col-md-2">
                     <select id="ada_training" name="ada_training" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                      <option value="" @if($quotation->training=='' || $quotation->training==null) selected @endif>- Pilih Data -</option>  
+                      <option value="" @if($quotation->training=='' || $quotation->training==null) selected @endif>- Pilih Data -</option>
                       <option value="Ada" @if($quotation->training!='' && $quotation->training!=null && $quotation->training!='0') selected @endif>Ada</option>
                       <option value="Tidak Ada" @if($quotation->training=='0') selected @endif>Tidak Ada</option>
                     </select>
                   </div>
                   <div class="col-md-4">
-                    <div class="input-group d-training" id="d-training"> 
+                    <div class="input-group d-training" id="d-training">
                       <input type="number" min="0" max="100" name="training" placeholder="input jumlah" value="{{$quotation->training}}" class="form-control minimal" id="training">
                       <span class="input-group-text" id="basic-addon41">Kali Dalam 1 Tahun</span>
                     </div>
@@ -120,11 +120,11 @@
                           <optgroup label="{{$jenis->nama}}">
                           @foreach($listOhc as $ohc)
                             @if($ohc->jenis_barang_id == $jenis->id)
-                            <option value="{{$ohc->id}}" data-harga="{{$ohc->harga}}">{{$ohc->nama}}</option>  
+                            <option value="{{$ohc->id}}" data-harga="{{$ohc->harga}}">{{$ohc->nama}}</option>
                             @endif
-                          @endforeach  
+                          @endforeach
                         @endforeach
-                        
+
                       </select>
                     </div>
                   </div>
@@ -169,7 +169,7 @@
                   </div>
                 </div>
               </div>
-              @include('sales.quotation.action')
+              @include('sales.lengkapi-quotation.action')
             </div>
           </form>
         </div>
@@ -206,8 +206,8 @@
                 <select id="jenis_barang" class="form-select">
                   <option value="">- Pilih Jenis -</option>
                   @foreach($listJenis as $jenis)
-                    <option value="{{$jenis->id}}">{{$jenis->nama}}</option> 
-                  @endforeach 
+                    <option value="{{$jenis->id}}">{{$jenis->nama}}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
@@ -336,12 +336,12 @@
     });
 
   $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
     });
-    
+
   $('#btn-submit').on('click',function(e){
     e.preventDefault();
       var form = $(this).parents('form');
@@ -398,7 +398,7 @@
           data: function (d) {
               d.quotation_id = {{$quotation->id}};
           },
-      }, 
+      },
       rowGroup: {
           dataSrc: 'jenis_barang'
       },
@@ -462,7 +462,7 @@
 
       return null;
     }
-    
+
     if (jumlahTraining<checkedCount) {
       Swal.fire({
             title: "Pemberitahuan",
@@ -473,7 +473,7 @@
 
       return null;
     }
-    
+
     var checkedValues = [];
     $('.training-pilihan:checked').each(function() {
         checkedValues.push($(this).val());
@@ -594,7 +594,7 @@
 
 
   let extra = 0;
-  $('.mask-nominal').on("keyup", function(event) {    
+  $('.mask-nominal').on("keyup", function(event) {
     // When user select text in the document, also abort.
     var selection = window.getSelection().toString();
     if (selection !== '') {
@@ -625,7 +625,7 @@
     });
   });
 
-  $('#barang').on('change', function() {    
+  $('#barang').on('change', function() {
     if($('#barang option:selected').val() !=""){
       $('#harga').val($('#barang option:selected').data("harga"));
     }
@@ -637,7 +637,7 @@
     if (selected!="Ada") {
       $('.d-training').addClass('d-none');
       $('#list-training').addClass('d-none');
-      
+
     }else{
       $('.d-training').removeClass('d-none');
       $('#list-training').removeClass('d-none');

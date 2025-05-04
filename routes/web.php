@@ -264,6 +264,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/lengkapi-quotation/saveEdit11', 'saveEdit11')->name('lengkapi-quotation.save-edit-11');
         Route::post('/sales/lengkapi-quotation/saveEdit12', 'saveEdit12')->name('lengkapi-quotation.save-edit-12');
         Route::post('/sales/lengkapi-quotation/saveEdit13', 'saveEdit13')->name('lengkapi-quotation.save-edit-13');
+        Route::get('/sales/lengkapi-quotation/edit-note-harga-jual/{id}', 'editNoteHargaJual')->name('lengkapi-quotation.edit-note-harga-jual');
+        Route::post('/sales/lengkapi-quotation/save-edit-note-harga-jual', 'saveEditNoteHargaJual')->name('lengkapi-quotation.save-edit-note-harga-jual');
+        Route::get('/sales/lengkapi-quotation/edit-quotation-kerjasama/{id}', 'editQuotationKerjasama')->name('lengkapi-quotation.edit-quotation-kerjasama');
+        Route::get('/sales/lengkapi-quotation/add-quotation-kerjasama/{id}', 'addQuotationKerjasama')->name('lengkapi-quotation.add-quotation-kerjasama');
+        Route::post('/sales/lengkapi-quotation/save-add-quotation-kerjasama', 'saveAddQuotationKerjasama')->name('lengkapi-quotation.save-add-quotation-kerjasama');
+        Route::post('/sales/lengkapi-quotation/save-edit-quotation-kerjasama', 'saveEditQuotationKerjasama')->name('lengkapi-quotation.save-edit-quotation-kerjasama');
+        Route::get('/sales/lengkapi-quotation/list-quotation-kerjasama', 'listQuotationKerjasama')->name('lengkapi-quotation.list-quotation-kerjasama'); // ajax
+
     });
 
 

@@ -9,9 +9,9 @@
     <!-- Vertical Wizard -->
     <div class="mb-4 overflow-auto text-nowrap" style="max-width:fit-content !important;width:auto !important;">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @include('sales.quotation.step')
+        @include('sales.lengkapi-quotation.step')
         <div class="bs-stepper-content">
-          <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-11')}}" method="POST" enctype="multipart/form-data">
+          <form class="card-body overflow-hidden" action="{{route('lengkapi-quotation.save-edit-11')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -315,7 +315,7 @@
                   </table>
                 </div>
                 <div class="mt-3" style="padding-left:40px">
-                <p><b><i>Note :</i></b> <a href="{{route('quotation.edit-note-harga-jual',$quotation->id)}}"><i class="mdi mdi-pencil text-warning"></i></a> <br>
+                <p><b><i>Note :</i></b> <a href="{{route('lengkapi-quotation.edit-note-harga-jual',$quotation->id)}}"><i class="mdi mdi-pencil text-warning"></i></a> <br>
                 {!! $quotation->note_harga_jual !!}</p>
                 </div>
               </div>
@@ -610,7 +610,7 @@
         </div>
       </div>
               </div>
-              @include('sales.quotation.action')
+              @include('sales.lengkapi-quotation.action')
             </div>
           </form>
         </div>
@@ -980,11 +980,8 @@
     },
     preConfirm: () => {
       let inputValue = $('#currency-input').val()
-      console.log(inputValue);
       inputValue = inputValue.replaceAll(".",""); // Remove thousand separators
-      console.log(inputValue);
       inputValue = inputValue.replaceAll(",","."); // Remove thousand separators
-      console.log(inputValue);
 
       if (!inputValue) {
         Swal.showValidationMessage('Nominal tidak boleh kosong');

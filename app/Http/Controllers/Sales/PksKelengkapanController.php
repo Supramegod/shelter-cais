@@ -214,7 +214,7 @@ class PksKelengkapanController extends Controller
             $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
 
-            return view('sales.quotation.edit-'.$request->step,compact('calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule'));
+            return view('sales.lengkapi-quotation.edit-'.$request->step,compact('calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -355,9 +355,9 @@ class PksKelengkapanController extends Controller
 
             DB::commit();
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'2']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'2']);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -463,9 +463,9 @@ class PksKelengkapanController extends Controller
                 DB::commit();
 
                 if($request->edit==0){
-                    return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'3']);
+                    return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'3']);
                 }else{
-                    return redirect()->route('quotation.view',$request->id);
+                    return redirect()->route('lengkapi-quotation.view',$request->id);
                 }
             }
         } catch (\Exception $e) {
@@ -495,9 +495,9 @@ class PksKelengkapanController extends Controller
             // $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'4']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'4']);
             }else{
-                return redirect()->route('quotation.view',$dataQuotation->id);
+                return redirect()->route('lengkapi-quotation.view',$dataQuotation->id);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -629,9 +629,9 @@ class PksKelengkapanController extends Controller
             ]);
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'5']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'5']);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -725,9 +725,9 @@ if($quotation->note_harga_jual == null){
 }
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'6']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'6']);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -840,9 +840,9 @@ if($quotation->note_harga_jual == null){
             DB::commit();
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'7']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'7']);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -912,9 +912,9 @@ if($quotation->note_harga_jual == null){
             ]);
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'8']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'8']);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -984,9 +984,9 @@ if($quotation->note_harga_jual == null){
             ]);
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>$newStep]);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>$newStep]);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1020,9 +1020,9 @@ if($quotation->note_harga_jual == null){
             // $this->perhitunganHPP($data->id);
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'10']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'10']);
             }else{
-                return redirect()->route('quotation.view',$dataQuotation->id);
+                return redirect()->route('lengkapi-quotation.view',$dataQuotation->id);
             }
 
         } catch (\Exception $e) {
@@ -1067,9 +1067,9 @@ if($quotation->note_harga_jual == null){
             ]);
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'11']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'11']);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1193,9 +1193,9 @@ if($quotation->note_harga_jual == null){
             }
 
             if($request->edit==0){
-                return redirect()->route('quotation.step',['id'=>$request->id,'step'=>'12']);
+                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'12']);
             }else{
-                return redirect()->route('quotation.view',$request->id);
+                return redirect()->route('lengkapi-quotation.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1213,30 +1213,6 @@ if($quotation->note_harga_jual == null){
             $quotationSite = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $isAktif = 1;
             $statusQuotation = 3;
-
-            //jika top lebih dari 7 hari
-            if($quotation->top=="Lebih Dari 7 Hari"){
-                $isAktif = 0;
-                $statusQuotation = 2;
-            }
-            // jika nominal kurang dari umk
-            foreach ($quotationSite as $key => $site) {
-                if ($site->nominal_upah<$site->umk) {
-                    $isAktif = 0;
-                    $statusQuotation = 2;
-                }
-            }
-
-            // jika persentasi mf kurang dari 7
-            if ($quotation->persentase < 7) {
-                $isAktif = 0;
-                $statusQuotation = 2;
-            }
-            // jika company id = 17 // pt ion
-            if ($quotation->company_id == 17) {
-                $isAktif = 0;
-                $statusQuotation = 2;
-            }
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'is_aktif' => $isAktif,
@@ -1267,11 +1243,88 @@ if($quotation->note_harga_jual == null){
             }
 
             DB::commit();
-            return redirect()->route('quotation.view',$quotation->id);
+            return redirect()->route('monitoring-kontrak.view',$quotation->pks_id);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
+    }
+    public function editNoteHargaJual($id){
+        $data = DB::table('sl_quotation')->where('id',$id)->first();
+        return view('sales.lengkapi-quotation.edit-note-harga-jual',compact('data'));
+    }
+
+    public function saveEditNoteHargaJual(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $data = DB::table('sl_quotation')->where('id',$request->id)->first();
+            DB::table('sl_quotation')->where('id',$request->id)->update([
+                'note_harga_jual' => $request->raw_text,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            return redirect()->route('lengkapi-quotation.step',['id'=>$data->id,'step'=>'11']);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);}
+    }
+    public function addQuotationKerjasama($id){
+        $quotation = DB::table('sl_quotation')->where('id',$id)->first();
+        return view('sales.lengkapi-quotation.add-quotation-kerjasama',compact('quotation'));
+    }
+
+    public function saveAddQuotationKerjasama(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_kerjasama')->insert([
+                'quotation_id' => $request->quotation_id,
+                'perjanjian' => $request->raw_text,
+                'is_delete' => 1,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
+            return redirect()->route('lengkapi-quotation.step',['id'=>$request->quotation_id,'step'=>'12']);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+    public function editQuotationKerjasama($id){
+        $data = DB::table('sl_quotation_kerjasama')->where('id',$id)->first();
+        $quotation = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
+        return view('sales.lengkapi-quotation.edit-quotation-kerjasama',compact('data','quotation'));
+    }
+
+    public function saveEditQuotationKerjasama(Request $request){
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $data = DB::table('sl_quotation_kerjasama')->where('id',$request->id)->first();
+            DB::table('sl_quotation_kerjasama')->where('id',$request->id)->update([
+                'perjanjian' => $request->raw_text,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            return redirect()->route('lengkapi-quotation.step',['id'=>$data->quotation_id,'step'=>'12']);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);}
+    }
+    public function listQuotationKerjasama (Request $request){
+        $data = DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->quotation_id)->whereNull('deleted_at')->get();
+
+        foreach ($data as $key => $value) {
+            $value->nomor = $key+1;
+        };
+
+        return DataTables::of($data)
+        ->addColumn('aksi', function ($data) {
+            return '<div class="justify-content-center d-flex">
+                    <a href="'.route('lengkapi-quotation.edit-quotation-kerjasama',$data->id).'" class="btn-edit btn btn-warning waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-pencil"></i></a> &nbsp;
+                    <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
+                </div>';
+        })
+        ->rawColumns(['aksi','perjanjian'])
+        ->make(true);
     }
 }

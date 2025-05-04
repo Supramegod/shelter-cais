@@ -123,9 +123,9 @@ class MonitoringKontrakController extends Controller
             }
 
             // hpp coss dan gpm
-            $daftarTunjangan = null;
+            $daftarTunjangan = [];
             if($quotation != null){
-                $$daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
+                $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
                 $quotationService = new QuotationService();
                 $calcQuotation = $quotationService->calculateQuotation($quotation);
             }

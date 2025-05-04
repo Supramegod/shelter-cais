@@ -42,7 +42,7 @@
         @if(!$loop->first)
             <div class="line"></div>
         @endif
-        <a href="@if($data['stepno']<$quotation->step) {{route('quotation.step',['id'=>$request->id,'step'=>$data['stepno']])}} @else javascript:void(0) @endif">
+        <a href="@if($data['stepno']<$quotation->step) {{route('lengkapi-quotation.step',['id'=>$request->id,'step'=>$data['stepno']])}} @else javascript:void(0) @endif">
             <div class="step @if($request->step>$data['stepno']) crossed @elseif($request->step==$data['stepno']) active @endif)">
                 <button type="button" class="step-trigger">
                     <span class="bs-stepper-circle"><i class="mdi mdi-check"></i></span>
