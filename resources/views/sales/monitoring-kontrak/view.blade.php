@@ -14,8 +14,23 @@
         <div class="col-xl-12">
             <div class="card h-100 mt-3">
                 <div class="card-header d-flex w-100" style="justify-content: space-between;">
-                    <h4 class="card-title mb-1 d-flex flex-wrap">Detail Kontrak</h4>
-                    <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div>
+                            <h4 class="card-title mb-1">Detail Kontrak</h4>
+                            <span class="text-danger">
+                                <strong>Belum ada Quotation.</strong>
+                            </span>
+                        </div>
+                        <div>
+                            @if($pks->quotation_id == null)
+                            <a href="{{ route('lengkapi-quotation.add', $pks->id) }}" class="btn btn-primary">
+                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lengkapi Quotation
+                            </a>
+                            @endif
+
+                            <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-3">

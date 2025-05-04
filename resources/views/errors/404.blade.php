@@ -27,6 +27,6 @@
 <body>
     <h1>404 - Halaman Tidak Ditemukan</h1>
     <p>Maaf, halaman yang Anda cari tidak ditemukan.</p>
-    <a href="{{ url('/') }}">Kembali ke Beranda</a>
+    <a href="javascript:history.back()">Kembali ke Halaman Sebelumnya</a>
 </body>
 </html>

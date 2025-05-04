@@ -2140,7 +2140,7 @@ if($quotation->note_harga_jual == null){
                     ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
                     ->leftJoin('m_status_quotation','sl_quotation.status_quotation_id','m_status_quotation.id')
                     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                    ->select('sl_quotation.jumlah_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation',
+                    ->select('sl_quotation.pks_id','sl_quotation.jumlah_site','m_status_quotation.nama as status','sl_quotation.is_aktif','sl_quotation.step','sl_quotation.id as quotation_id','sl_quotation.jenis_kontrak','sl_quotation.company','sl_quotation.kebutuhan','sl_quotation.created_by','sl_quotation.leads_id','sl_quotation.id','sl_quotation.nomor','sl_quotation.nama_perusahaan','sl_quotation.tgl_quotation',
                     DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
                     FROM sl_quotation_site
                     WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site'))
@@ -2217,17 +2217,24 @@ if($quotation->note_harga_jual == null){
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
                 if($data->step != 100){
-                    if($data->jumlah_site=="Multi Site"){
+                    if($data->pks_id !=null){
                         return '<div class="justify-content-center d-flex">
-                            <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
-                            <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Dari Existing</a>
-                            <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
-                        </div>';
-                    }else{
-                        return '<div class="justify-content-center d-flex">
-                        <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a>
+                        <a href="'.route('lengkapi-quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a>
                         <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
                         </div>';
+                    }else{
+                        if($data->jumlah_site=="Multi Site"){
+                            return '<div class="justify-content-center d-flex">
+                                <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
+                                <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Dari Existing</a>
+                                <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
+                            </div>';
+                        }else{
+                            return '<div class="justify-content-center d-flex">
+                            <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a>
+                            <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
+                            </div>';
+                        }
                     }
                 }else{
                     return '<div class="justify-content-center d-flex">

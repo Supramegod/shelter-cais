@@ -14,6 +14,7 @@ use App\Http\Controllers\Sales\CustomerController;
 use App\Http\Controllers\Sales\SiteController;
 use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Http\Controllers\Sales\QuotationController;
+use App\Http\Controllers\Sales\PksKelengkapanController;
 use App\Http\Controllers\Sales\SpkController;
 use App\Http\Controllers\Sales\PksController;
 use App\Http\Controllers\Sales\MonitoringKontrakController;
@@ -245,6 +246,26 @@ Route::group(['middleware' => ['auth']], function () {
         // Ajukan Ulang
         Route::get('/sales/pks/ajukan-ulang-quotation/{pks}', 'ajukanUlangQuotation')->name('pks.ajukan-ulang-quotation');
     });
+
+    Route::controller(PksKelengkapanController::class)->group(function() {
+        Route::get('/sales/lengkapi-quotation/add/{pksId}', 'add')->name('lengkapi-quotation.add');
+        Route::post('/sales/lengkapi-quotation/save', 'save')->name('lengkapi-quotation.save');
+        Route::get('/sales/lengkapi-quotation/step/{id}', 'step')->name('lengkapi-quotation.step');
+        Route::post('/sales/lengkapi-quotation/saveEdit1', 'saveEdit1')->name('lengkapi-quotation.save-edit-1');
+        Route::post('/sales/lengkapi-quotation/saveEdit2', 'saveEdit2')->name('lengkapi-quotation.save-edit-2');
+        Route::post('/sales/lengkapi-quotation/saveEdit3', 'saveEdit3')->name('lengkapi-quotation.save-edit-3');
+        Route::post('/sales/lengkapi-quotation/saveEdit4', 'saveEdit4')->name('lengkapi-quotation.save-edit-4');
+        Route::post('/sales/lengkapi-quotation/saveEdit5', 'saveEdit5')->name('lengkapi-quotation.save-edit-5');
+        Route::post('/sales/lengkapi-quotation/saveEdit6', 'saveEdit6')->name('lengkapi-quotation.save-edit-6');
+        Route::post('/sales/lengkapi-quotation/saveEdit7', 'saveEdit7')->name('lengkapi-quotation.save-edit-7');
+        Route::post('/sales/lengkapi-quotation/saveEdit8', 'saveEdit8')->name('lengkapi-quotation.save-edit-8');
+        Route::post('/sales/lengkapi-quotation/saveEdit9', 'saveEdit9')->name('lengkapi-quotation.save-edit-9');
+        Route::post('/sales/lengkapi-quotation/saveEdit10', 'saveEdit10')->name('lengkapi-quotation.save-edit-10');
+        Route::post('/sales/lengkapi-quotation/saveEdit11', 'saveEdit11')->name('lengkapi-quotation.save-edit-11');
+        Route::post('/sales/lengkapi-quotation/saveEdit12', 'saveEdit12')->name('lengkapi-quotation.save-edit-12');
+        Route::post('/sales/lengkapi-quotation/saveEdit13', 'saveEdit13')->name('lengkapi-quotation.save-edit-13');
+    });
+
 
     Route::controller(QuotationController::class)->group(function() {
         Route::get('/sales/quotation', 'index')->name('quotation');
