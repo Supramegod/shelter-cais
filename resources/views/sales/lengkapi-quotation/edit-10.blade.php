@@ -159,6 +159,7 @@
                                 <th class="text-center">Nama Barang</th>
                                 <th class="text-center">Harga/Unit</th>
                                 <th class="text-center">Jumlah</th>
+                                <th class="text-center">Total</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -398,10 +399,53 @@
           data: function (d) {
               d.quotation_id = {{$quotation->id}};
           },
+          dataSrc: function (json) {
+                if (!Array.isArray(json.data)) return [];
+
+                let grandTotal = 0;
+
+                json.data = json.data.map(item => {
+                    // Normalisasi jenis_barang (walau di data sudah aman)
+                    if (!item.jenis_barang || item.jenis_barang.trim() === '') {
+                    item.jenis_barang = 'LAINNYA';
+                    }
+                    grandTotal += parseFloat(item.raw_total || 0);
+                    return item;
+                });
+
+                json.data.push({
+                    jenis_barang_id: 9999,
+                    jenis_barang: 'TOTAL',
+                    nama: '',
+                    harga: '',
+                    jumlah: '',
+                    total: `<span class="fw-bold">Rp ${grandTotal.toLocaleString('id-ID')}</span>`,
+                    aksi: '',
+                    raw_total: grandTotal,
+                });
+
+                return json.data;
+            }
       },
       rowGroup: {
-          dataSrc: 'jenis_barang'
-      },
+            dataSrc: 'jenis_barang',
+            endRender: function (rows, group) {
+
+                let subtotal = rows
+                .data()
+                .pluck('raw_total') // pakai raw_total biar aman dari string "Rp xxx"
+                .toArray()
+                .map(v => parseFloat(v) || 0)
+                .reduce((a, b) => a + b, 0);
+                if (group == 'TOTAL') {
+                    return $('<tr/>')
+                }
+                return $('<tr/>')
+                .append(`<td colspan="3" class="text-end fw-bold">Subtotal ${group}</td>`)
+                .append(`<td class="text-center fw-bold">Rp ${subtotal.toLocaleString('id-ID')}</td>`)
+                .append('<td></td>');
+            }
+        },
       "order":[
           [0,'asc']
       ],
@@ -436,6 +480,12 @@
           orderable:false
       },
       {
+          data : 'total',
+          name : 'total',
+          className:'text-center',
+          orderable:false
+      },
+      {
           data : 'aksi',
           name : 'aksi',
           width: "10%",
@@ -445,6 +495,8 @@
     ],
       "language": datatableLang,
     });
+
+
 
     $(document).ready(function(){
 
@@ -648,6 +700,145 @@
   }
   $('#ada_training').on('change', function() {
     showTraining(2);
+  });
+</script>
+
+<script>
+    $('body').on('click', '.edit-harga', function() {
+    Swal.fire({
+    title: 'Masukkan Harga ',
+    html: '<input type="text" id="currency-input" class="swal2-input" placeholder="Contoh: 1">',
+    showCancelButton: true,
+    confirmButtonText: 'Simpan',
+    cancelButtonText: 'Batal',
+    didOpen: () => {
+      const input = document.getElementById('currency-input');
+
+      // Apply iMask.js for thousand separator (`,`) and decimal place (`.`)
+      IMask(input, {
+        mask: Number,              // Number mask
+        thousandsSeparator: '.',   // Use comma as thousand separator
+        radix: ',',                // Use dot as decimal separator
+        scale: 2,                  // Two decimal places
+        signed: false,             // No negative numbers
+        padFractionalZeros: true   // Always show two decimals
+      });
+    },
+    preConfirm: () => {
+      let inputValue = $('#currency-input').val()
+      console.log(inputValue);
+      inputValue = inputValue.replaceAll(".",""); // Remove thousand separators
+      console.log(inputValue);
+      inputValue = inputValue.replaceAll(",","."); // Remove thousand separators
+      console.log(inputValue);
+
+      if (!inputValue) {
+        Swal.showValidationMessage('Harga tidak boleh kosong');
+      }
+      return inputValue;
+    }
+  }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.showLoading();
+        const harga = result.value;
+
+        let formData = {
+          "id":$(this).data('id'),
+          "harga":harga,
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.edit-harga-ohc')}}",
+          data:formData,
+          success: function(response){
+            Swal.fire(
+              'Berhasil!',
+              'Harga berhasil disimpan.',
+              'success'
+            );
+            $('#table-data').DataTable().ajax.reload();
+          },
+          error:function(error){
+            Swal.fire(
+              'Gagal!',
+              'Terjadi kesalahan saat menyimpan data.',
+              'error'
+            );
+          }
+        });
+      }
+    });
+  });
+</script>
+<script>
+    $('body').on('click', '.edit-jumlah', function() {
+    Swal.fire({
+    title: 'Masukkan Jumlah ',
+    html: '<input type="text" id="currency-input" class="swal2-input" placeholder="Contoh: 1">',
+    showCancelButton: true,
+    confirmButtonText: 'Simpan',
+    cancelButtonText: 'Batal',
+    didOpen: () => {
+      const input = document.getElementById('currency-input');
+
+      // Apply iMask.js for thousand separator (`,`) and decimal place (`.`)
+      IMask(input, {
+        mask: Number,              // Number mask
+        thousandsSeparator: '.',   // Use comma as thousand separator
+        radix: ',',                // Use dot as decimal separator
+        scale: 2,                  // Two decimal places
+        signed: false,             // No negative numbers
+        padFractionalZeros: true   // Always show two decimals
+      });
+    },
+    preConfirm: () => {
+      let inputValue = $('#currency-input').val()
+      console.log(inputValue);
+      inputValue = inputValue.replaceAll(".",""); // Remove thousand separators
+      console.log(inputValue);
+      inputValue = inputValue.replaceAll(",","."); // Remove thousand separators
+      console.log(inputValue);
+
+      if (!inputValue) {
+        Swal.showValidationMessage('Jumlah tidak boleh kosong');
+      }
+      return inputValue;
+    }
+  }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.showLoading();
+        const jumlah = result.value;
+
+        let formData = {
+          "id":$(this).data('id'),
+          "jumlah":jumlah,
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('quotation.edit-jumlah-ohc')}}",
+          data:formData,
+          success: function(response){
+            Swal.fire(
+              'Berhasil!',
+              'Jumlah berhasil disimpan.',
+              'success'
+            );
+            $('#table-data').DataTable().ajax.reload();
+          },
+          error:function(error){
+            Swal.fire(
+              'Gagal!',
+              'Terjadi kesalahan saat menyimpan data.',
+              'error'
+            );
+          }
+        });
+      }
+    });
   });
 </script>
 @endsection

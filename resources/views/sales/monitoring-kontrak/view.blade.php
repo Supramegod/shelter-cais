@@ -220,29 +220,47 @@
                                 </div>
                                 <div class="tab-pane fade" id="hpp" role="tabpanel" aria-labelledby="hpp-tab">
                                     @if($quotation != null)
+                                    @if($quotation->step >= 100)
                                         @include('sales.quotation.includes.hpp')
-                                        @else
+                                    @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Data HPP tidak ditemukan.</strong>
+                                            <strong>Quotation Belum Lengkap.</strong>
                                         </div>
+                                    @endif
+                                    @else
+                                    <div class="alert alert-warning" role="alert">
+                                        <strong>Data HPP tidak ditemukan.</strong>
+                                    </div>
                                     @endif
                                 </div>
                                 <div class="tab-pane fade" id="coss" role="tabpanel" aria-labelledby="coss-tab">
-                                    @if($quotation != null)
+                                @if($quotation != null)
+                                    @if($quotation->step >= 100)
                                         @include('sales.quotation.includes.coss')
-                                        @else
+                                    @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Data Harga Jual tidak ditemukan.</strong>
+                                            <strong>Harga Jual Belum Lengkap.</strong>
                                         </div>
+                                    @endif
+                                    @else
+                                    <div class="alert alert-warning" role="alert">
+                                        <strong>Data Harga Jual tidak ditemukan.</strong>
+                                    </div>
                                     @endif
                                 </div>
                                 <div class="tab-pane fade" id="gpm" role="tabpanel" aria-labelledby="gpm-tab">
                                     @if($quotation != null)
+                                    @if($quotation->step >= 100)
                                         @include('sales.quotation.includes.gpm')
-                                        @else
+                                    @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Data GPM tidak ditemukan.</strong>
+                                            <strong>Quotation Belum Lengkap.</strong>
                                         </div>
+                                    @endif
+                                    @else
+                                    <div class="alert alert-warning" role="alert">
+                                        <strong>Data GPM tidak ditemukan.</strong>
+                                    </div>
                                     @endif
                                 </div>
                                 <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">

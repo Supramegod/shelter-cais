@@ -3279,24 +3279,25 @@ if($quotation->note_harga_jual == null){
     }
 
     public function listOhc (Request $request){
-        $raw = ['aksi'];
-        $data = DB::select("SELECT m_barang.jenis_barang_id,sl_quotation_ohc.jumlah,sl_quotation_ohc.quotation_id,sl_quotation_ohc.barang_id,sl_quotation_ohc.jenis_barang,sl_quotation_ohc.nama,sl_quotation_ohc.harga
+        $raw = ['aksi','jumlah','harga'];
+        $data = DB::select("SELECT m_barang.jenis_barang_id,sl_quotation_ohc.id as ohc_id,sl_quotation_ohc.jumlah,sl_quotation_ohc.quotation_id,sl_quotation_ohc.barang_id,sl_quotation_ohc.jenis_barang,sl_quotation_ohc.nama,sl_quotation_ohc.harga,(sl_quotation_ohc.harga*sl_quotation_ohc.jumlah) as total
 from sl_quotation_ohc
 INNER JOIN m_barang ON sl_quotation_ohc.barang_id = m_barang.id
 WHERE sl_quotation_ohc.deleted_at is null
 and quotation_id = $request->quotation_id
 ORDER BY m_barang.jenis_barang_id asc,sl_quotation_ohc.nama ASC;");
 
-$total =DB::select("select sum(harga*jumlah) as total from sl_quotation_ohc WHERE deleted_at is null and quotation_id = $request->quotation_id")[0]->total;
-$objectTotal = (object) ['jenis_barang_id' => 100,
-'quotation_id' => 0,
-'barang_id' => 0,
-'jenis_barang' => 'TOTAL',
-'nama' => '',
-'jumlah' => '',
-'harga' => $total];
-
-        array_push($data,$objectTotal);
+// $total =DB::select("select sum(harga*jumlah) as total from sl_quotation_ohc WHERE deleted_at is null and quotation_id = $request->quotation_id")[0]->total;
+// $objectTotal = (object) ['jenis_barang_id' => 100,
+// 'ohc_id' => 0,
+// 'quotation_id' => 0,
+// 'barang_id' => 0,
+// 'jenis_barang' => 'TOTAL',
+// 'nama' => '',
+// 'jumlah' => '',
+// 'total' => $total,
+// 'harga' => ''];
+        // array_push($data,$objectTotal);
         $dt = DataTables::of($data)
         ->addColumn('aksi', function ($data){
             if($data->barang_id==0){
@@ -3310,9 +3311,25 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                     </div>';
         });
         $dt = $dt->editColumn('harga', function ($data){
-            return "Rp ".number_format($data->harga,0,",",".");
+            if($data->harga != ""){
+                return "Rp ".number_format($data->harga,0,",",".") . ' <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-harga" data-id="' . $data->ohc_id . '" data-jumlah="' . $data->jumlah . '" data-harga="' . $data->harga . '" data-tipe="Jumlah" data-tabel="ohc" data-total="'.$data->total.'"></i></a>';
+            }
         });
-
+        $dt = $dt->addColumn('raw_total', function ($data){
+            if($data->total != ""){
+                return $data->total;
+            }
+        });
+        $dt = $dt->editColumn('total', function ($data){
+            if($data->total != ""){
+                return "Rp ".number_format($data->total,0,",",".");
+            }
+        });
+        $dt = $dt->editColumn('jumlah', function ($data){
+            if($data->jumlah != ""){
+                return $data->jumlah . ' <a href="javascript:void(0)"><i class="mdi mdi-pencil text-warning edit-jumlah" data-id="' . $data->ohc_id . '" data-jumlah="' . $data->jumlah . '" data-harga="' . $data->harga . '" data-tipe="Jumlah" data-tabel="ohc" data-total="'.$data->total.'"></i></a>';
+            }
+        });
         $dt = $dt->rawColumns($raw);
         $dt = $dt->make(true);
 
@@ -4141,4 +4158,34 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             ->make(true);
     }
 
+    public function editJumlahOhc(Request $request)
+    {
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_ohc')->where('id', $request->id)->update([
+                'jumlah' => $request->jumlah,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            return response()->json(['status' => 'success', 'message' => 'Jumlah berhasil disimpan.']);
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), $request);
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan jumlah.'], 500);
+        }
+    }
+    public function editHargaOhc(Request $request)
+    {
+        try {
+            $current_date_time = Carbon::now()->toDateTimeString();
+            DB::table('sl_quotation_ohc')->where('id', $request->id)->update([
+                'harga' => $request->harga,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+            return response()->json(['status' => 'success', 'message' => 'Harga berhasil disimpan.']);
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), $request);
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan harga.'], 500);
+        }
+    }
 }

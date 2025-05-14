@@ -352,6 +352,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/quotation/edit-persen-insentif', 'editPersenInsentif')->name('quotation.edit-persen-insentif');
         Route::post('/sales/quotation/edit-persen-bunga-bank', 'editPersenBungaBank')->name('quotation.edit-persen-bunga-bank');
         Route::post('/sales/quotation/edit-nominal', 'editNominal')->name('quotation.edit-nominal');
+        Route::post('/sales/quotation/edit-jumlah-ohc', 'editJumlahOhc')->name('quotation.edit-jumlah-ohc');
+        Route::post('/sales/quotation/edit-harga-ohc', 'editHargaOhc')->name('quotation.edit-harga-ohc');
 
         //PIC
         Route::get('/sales/quotation/list-detail-pic', 'listDetailPic')->name('quotation.list-detail-pic'); // ajax
@@ -525,6 +527,20 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/barang/inquiry-import', 'inquiryImport')->name('barang.inquiry-import');
         Route::post('/master/barang/save-import', 'saveImport')->name('barang.save-import');
 
+        Route::get('/master/barang/kaporlap', 'indexKaporlap')->name('barang.kaporlap');
+        Route::get('/master/barang/list-kaporlap', 'listKaporlap')->name('barang.list-kaporlap'); // ajax
+
+        Route::get('/master/barang/ohc', 'indexOhc')->name('barang.ohc');
+        Route::get('/master/barang/list-ohc', 'listOhc')->name('barang.list-ohc'); // ajax
+
+        Route::get('/master/barang/devices', 'indexDevices')->name('barang.devices');
+        Route::get('/master/barang/list-devices', 'listDevices')->name('barang.list-devices'); // ajax
+
+        Route::get('/master/barang/chemical', 'indexChemical')->name('barang.chemical');
+        Route::get('/master/barang/list-chemical', 'listChemical')->name('barang.list-chemical'); // ajax
+        Route::get('/master/barang/defaultqty/{id}', 'defaultQtyData')->name('barang.defaultqty.data');
+        Route::post('/master/barang/defaultqty/save', 'saveDefaultQty')->name('barang.defaultqty.save');
+        Route::post('/master/barang/defaultqty/delete', 'deleteDefaultQty')->name('barang.defaultqty.delete');
     });
 
     Route::controller(KebutuhanController::class)->group(function() {

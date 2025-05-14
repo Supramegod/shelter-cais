@@ -28,7 +28,8 @@
                                 <tr>
                                     <th class="text-center">ID</th>
                                     <th class="text-center">Aksi</th>
-                                    <th class="text-center">Progress</th>
+                                    <th class="text-center">Quotation</th>
+                                    <!-- <th class="text-center">Progress</th> -->
                                     <th class="text-center">Status Berlaku</th>
                                     <th class="text-center">No PKS</th>
                                     <th class="text-center">Site</th>
@@ -229,10 +230,15 @@
             searchable: false,
         },
         {
-            data : 'progress',
-            name : 'progress',
+            data : 'quotation',
+            name : 'quotation',
             className:'text-center'
         },
+        // {
+        //     data : 'progress',
+        //     name : 'progress',
+        //     className:'text-center'
+        // },
         {
             data : 'status_berlaku',
             name : 'status_berlaku',

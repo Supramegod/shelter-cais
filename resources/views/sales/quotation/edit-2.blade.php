@@ -10,7 +10,7 @@
       <div class="bs-stepper wizard-vertical vertical mt-2">
         @include('sales.quotation.step')
         <div class="bs-stepper-content">
-            <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-2')}}" method="POST" enctype="multipart/form-data">        
+            <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-2')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -43,12 +43,12 @@
                 <div class="col-sm-6">
                   <label class="form-label" for="evaluasi_kontrak">Evaluasi Kontrak</label>
                   <select id="evaluasi_kontrak" name="evaluasi_kontrak" class="form-select" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->evaluasi_kontrak=='') selected @endif>- Pilih Data -</option>  
-                    <option value="1 Bulan" @if($quotation->evaluasi_kontrak=='1 Bulan') selected @endif>1 Bulan</option>  
-                    <option value="3 Bulan" @if($quotation->evaluasi_kontrak=='3 Bulan') selected @endif>3 Bulan</option>  
-                    <option value="6 Bulan" @if($quotation->evaluasi_kontrak=='6 Bulan') selected @endif>6 Bulan</option>  
-                    <option value="1 Tahun" @if($quotation->evaluasi_kontrak=='1 Tahun') selected @endif>1 Tahun</option>  
-                    <option value="2 Tahun" @if($quotation->evaluasi_kontrak=='2 Tahun') selected @endif>2 Tahun</option>  
+                    <option value="" @if($quotation->evaluasi_kontrak=='') selected @endif>- Pilih Data -</option>
+                    <option value="1 Bulan" @if($quotation->evaluasi_kontrak=='1 Bulan') selected @endif>1 Bulan</option>
+                    <option value="3 Bulan" @if($quotation->evaluasi_kontrak=='3 Bulan') selected @endif>3 Bulan</option>
+                    <option value="6 Bulan" @if($quotation->evaluasi_kontrak=='6 Bulan') selected @endif>6 Bulan</option>
+                    <option value="1 Tahun" @if($quotation->evaluasi_kontrak=='1 Tahun') selected @endif>1 Tahun</option>
+                    <option value="2 Tahun" @if($quotation->evaluasi_kontrak=='2 Tahun') selected @endif>2 Tahun</option>
                   </select>
                 </div>
                 <div class="col-sm-6">
@@ -70,22 +70,22 @@
                 <div class="col-sm-4">
                   <label class="form-label" for="durasi_karyawan">Durasi Kontrak Karyawan</label>
                   <select id="durasi_karyawan" name="durasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->durasi_karyawan=='') selected @endif>- Pilih Data -</option>  
-                    <option value="1 Bulan" @if($quotation->durasi_karyawan=='1 Bulan') selected @endif>1 Bulan</option>  
-                    <option value="3 Bulan" @if($quotation->durasi_karyawan=='3 Bulan') selected @endif>3 Bulan</option>  
-                    <option value="6 Bulan" @if($quotation->durasi_karyawan=='6 Bulan') selected @endif>6 Bulan</option>  
-                    <option value="1 Tahun" @if($quotation->durasi_karyawan=='1 Tahun') selected @endif>1 Tahun</option>  
+                    <option value="" @if($quotation->durasi_karyawan=='') selected @endif>- Pilih Data -</option>
+                    <option value="1 Bulan" @if($quotation->durasi_karyawan=='1 Bulan') selected @endif>1 Bulan</option>
+                    <option value="3 Bulan" @if($quotation->durasi_karyawan=='3 Bulan') selected @endif>3 Bulan</option>
+                    <option value="6 Bulan" @if($quotation->durasi_karyawan=='6 Bulan') selected @endif>6 Bulan</option>
+                    <option value="1 Tahun" @if($quotation->durasi_karyawan=='1 Tahun') selected @endif>1 Tahun</option>
                     <option value="2 Tahun" @if($quotation->durasi_karyawan=='2 Tahun') selected @endif>2 Tahun</option>
                   </select>
                 </div>
                 <div class="col-sm-4">
                   <label class="form-label" for="evaluasi_karyawan">Evaluasi Karyawan</label>
                   <select id="evaluasi_karyawan" name="evaluasi_karyawan" class="form-select" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->evaluasi_karyawan=='') selected @endif>- Pilih Data -</option>  
-                    <option value="1 Bulan" @if($quotation->evaluasi_karyawan=='1 Bulan') selected @endif>1 Bulan</option>  
-                    <option value="3 Bulan" @if($quotation->evaluasi_karyawan=='3 Bulan') selected @endif>3 Bulan</option>  
-                    <option value="6 Bulan" @if($quotation->evaluasi_karyawan=='6 Bulan') selected @endif>6 Bulan</option>  
-                    <option value="1 Tahun" @if($quotation->evaluasi_karyawan=='1 Tahun') selected @endif>1 Tahun</option>  
+                    <option value="" @if($quotation->evaluasi_karyawan=='') selected @endif>- Pilih Data -</option>
+                    <option value="1 Bulan" @if($quotation->evaluasi_karyawan=='1 Bulan') selected @endif>1 Bulan</option>
+                    <option value="3 Bulan" @if($quotation->evaluasi_karyawan=='3 Bulan') selected @endif>3 Bulan</option>
+                    <option value="6 Bulan" @if($quotation->evaluasi_karyawan=='6 Bulan') selected @endif>6 Bulan</option>
+                    <option value="1 Tahun" @if($quotation->evaluasi_karyawan=='1 Tahun') selected @endif>1 Tahun</option>
                     <option value="2 Tahun" @if($quotation->evaluasi_karyawan=='2 Tahun') selected @endif>2 Tahun</option>
                   </select>
                 </div>
@@ -94,19 +94,19 @@
                 <div class="col-sm-6">
                   <label class="form-label" for="shift_kerja">Hari Kerja dan Jam Kerja</label>
                   <select id="shift_kerja" name="shift_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->shift_kerja=='') selected @endif>- Pilih Data -</option>  
-                    <option value="Non Shift" @if($quotation->shift_kerja=='Non Shift') selected @endif>Non Shift</option>  
-                    <option value="2 Shift" @if($quotation->shift_kerja=='2 Shift') selected @endif>2 Shift</option>  
-                    <option value="3 Shift" @if($quotation->shift_kerja=='3 Shift') selected @endif>3 Shift</option>  
+                    <option value="" @if($quotation->shift_kerja=='') selected @endif>- Pilih Data -</option>
+                    <option value="Non Shift" @if($quotation->shift_kerja=='Non Shift') selected @endif>Non Shift</option>
+                    <option value="2 Shift" @if($quotation->shift_kerja=='2 Shift') selected @endif>2 Shift</option>
+                    <option value="3 Shift" @if($quotation->shift_kerja=='3 Shift') selected @endif>3 Shift</option>
                   </select>
                 </div>
                 <div class="col-sm-6">
                 <label class="form-label">&nbsp;</label>
                   <select id="jam_kerja" name="jam_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->jam_kerja=='') selected @endif>- Pilih Data -</option>  
-                    <option value="7 Jam Kerja" @if($quotation->jam_kerja=='7 Jam Kerja') selected @endif>7 Jam Kerja</option>  
-                    <option value="8 Jam Kerja" @if($quotation->jam_kerja=='8 Jam Kerja') selected @endif>8 Jam Kerja</option>  
-                    <option value="12 Jam Kerja" @if($quotation->jam_kerja=='12 Jam Kerja') selected @endif>12 Jam Kerja</option>  
+                    <option value="" @if($quotation->jam_kerja=='') selected @endif>- Pilih Data -</option>
+                    <option value="7 Jam Kerja" @if($quotation->jam_kerja=='7 Jam Kerja') selected @endif>7 Jam Kerja</option>
+                    <option value="8 Jam Kerja" @if($quotation->jam_kerja=='8 Jam Kerja') selected @endif>8 Jam Kerja</option>
+                    <option value="12 Jam Kerja" @if($quotation->jam_kerja=='12 Jam Kerja') selected @endif>12 Jam Kerja</option>
                   </select>
                 </div>
               </div>
@@ -116,7 +116,7 @@
                   <select id="salary_rule" name="salary_rule" class="form-select" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($salaryRule as $value)
-                      <option value="{{$value->id}}" data-rilispayroll="{{$value->rilis_payroll}}" data-perkiraaninvoice="{{$value->perkiraan_invoice_diterima}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-cutoff="{{$value->cutoff}}" data-crosscheckabsensi="{{$value->crosscheck_absen}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->cutoff}} | Tgl Gajian : {{$value->rilis_payroll}} | Pengiriman Invoice : {{$value->pengiriman_invoice}}</option>  
+                      <option value="{{$value->id}}" data-rilispayroll="{{$value->rilis_payroll}}" data-perkiraaninvoice="{{$value->perkiraan_invoice_diterima}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-pengirimaninvoice="{{$value->pengiriman_invoice}}" data-cutoff="{{$value->cutoff}}" data-crosscheckabsensi="{{$value->crosscheck_absen}}" @if($quotation->salary_rule_id==$value->id) selected @endif>{{$value->nama_salary_rule}} | Cut Off : {{$value->cutoff}} | Tgl Gajian : {{$value->rilis_payroll}} | Pengiriman Invoice : {{$value->pengiriman_invoice}}</option>
                       @endforeach
                     </select>
                 </div>
@@ -170,8 +170,8 @@
                 <div class="col-sm-12">
                   <label class="form-label" for="sistem_kerja">Sistem Kerja</label>
                   <select id="sistem_kerja" name="sistem_kerja" class="form-select w-100" data-allow-clear="true" tabindex="-1">
-                    <option value="" @if($quotation->sistem_kerja=='') selected @endif>- Pilih Data -</option>  
-                    <option value="No Work No Pay" @if($quotation->sistem_kerja=='No Work No Pay') selected @endif>No Work No Pay</option>  
+                    <option value="" @if($quotation->sistem_kerja=='') selected @endif>- Pilih Data -</option>
+                    <option value="No Work No Pay" @if($quotation->sistem_kerja=='No Work No Pay') selected @endif>No Work No Pay</option>
                   </select>
                 </div>
               </div> -->
@@ -179,9 +179,9 @@
                 <div class="col-sm-4">
                   <label class="form-label" for="basic-default-password42">TOP Invoice</label>
                     <select id="top" name="top" class="form-select @if($errors->has('top')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
-                    <option value="Non TOP" @if($quotation->top=='Non TOP') selected @endif>Non TOP</option>  
-                    <option value="Kurang Dari 7 Hari" @if($quotation->top=='Kurang Dari 7 Hari') selected @endif>Kurang Dari 7 Hari</option>  
-                    <option value="Lebih Dari 7 Hari" @if($quotation->top=='Lebih Dari 7 Hari') selected @endif>Lebih Dari 7 Hari</option>  
+                    <option value="Non TOP" @if($quotation->top=='Non TOP') selected @endif>Non TOP</option>
+                    <option value="Kurang Dari 7 Hari" @if($quotation->top=='Kurang Dari 7 Hari') selected @endif>Kurang Dari 7 Hari</option>
+                    <option value="Lebih Dari 7 Hari" @if($quotation->top=='Lebih Dari 7 Hari') selected @endif>Lebih Dari 7 Hari</option>
                     </select>
                     @if($errors->has('top'))
                       <span class="text-danger">{{$errors->first('top')}}</span>
@@ -190,14 +190,16 @@
                 <div class="col-sm-4 d-top-invoice">
                   <label class="form-label">&nbsp;</label>
                   <select id="jumlah_hari_invoice" name="jumlah_hari_invoice" class="form-select @if($errors->has('jumlah_hari_invoice')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
-                    <option value=""></option>  
-                    <option value="7" @if($quotation->jumlah_hari_invoice=='7') selected @endif>7</option>  
-                    <option value="14" @if($quotation->jumlah_hari_invoice=='14') selected @endif>14</option>  
-                    <option value="15" @if($quotation->jumlah_hari_invoice=='15') selected @endif>15</option>  
-                    <option value="21" @if($quotation->jumlah_hari_invoice=='21') selected @endif>21</option>  
-                    <option value="30" @if($quotation->jumlah_hari_invoice=='30') selected @endif>30</option>  
-                    <option value="60" @if($quotation->jumlah_hari_invoice=='60') selected @endif>60</option>  
-                    <option value="90" @if($quotation->jumlah_hari_invoice=='90') selected @endif>90</option>  
+                    <option value=""></option>
+                    <option value="7" @if($quotation->jumlah_hari_invoice=='7') selected @endif>7</option>
+                    <option value="14" @if($quotation->jumlah_hari_invoice=='14') selected @endif>14</option>
+                    <option value="15" @if($quotation->jumlah_hari_invoice=='15') selected @endif>15</option>
+                    <option value="21" @if($quotation->jumlah_hari_invoice=='21') selected @endif>21</option>
+                    <option value="30" @if($quotation->jumlah_hari_invoice=='30') selected @endif>30</option>
+                    <option value="45" @if($quotation->jumlah_hari_invoice=='45') selected @endif>45</option>
+                    <option value="60" @if($quotation->jumlah_hari_invoice=='60') selected @endif>60</option>
+                    <option value="75" @if($quotation->jumlah_hari_invoice=='75') selected @endif>75</option>
+                    <option value="90" @if($quotation->jumlah_hari_invoice=='90') selected @endif>90</option>
                     </select>
                     @if($errors->has('jumlah_hari_invoice'))
                       <span class="text-danger">{{$errors->first('jumlah_hari_invoice')}}</span>
@@ -206,9 +208,9 @@
                 <div class="col-sm-4 d-top-invoice d-top-tipe">
                   <label class="form-label" for="">&nbsp;</label>
                   <select id="tipe_hari_invoice" name="tipe_hari_invoice" class="form-select @if($errors->has('tipe_hari_invoice')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
-                    <option value=""></option>    
-                    <option value="Kalender" @if($quotation->tipe_hari_invoice=='Kalender') selected @endif>Hari Kalender</option>  
-                    <option class="opt_tipe_hari_kerja" value="Kerja" @if($quotation->tipe_hari_invoice=='Kerja') selected @endif>Hari Kerja</option>  
+                    <option value=""></option>
+                    <option value="Kalender" @if($quotation->tipe_hari_invoice=='Kalender') selected @endif>Hari Kalender</option>
+                    <option class="opt_tipe_hari_kerja" value="Kerja" @if($quotation->tipe_hari_invoice=='Kerja') selected @endif>Hari Kerja</option>
                     </select>
                     @if($errors->has('tipe_hari_invoice'))
                       <span class="text-danger">{{$errors->first('tipe_hari_invoice')}}</span>
@@ -220,9 +222,9 @@
                 <div class="col-sm-2">
                   <label class="form-label" for="ada">Cuti</label>
                     <select id="ada_cuti" name="ada_cuti" class="form-select" data-allow-clear="true" tabindex="-1">
-                      <option value="" @if($quotation->cuti=="" || $quotation->cuti==null) selected @endif>- Pilih Data -</option>  
-                      <option value="Ada" @if($quotation->cuti!=null&&$quotation->cuti!=""&&$quotation->cuti!="Tidak Ada") selected @endif>Ada</option>  
-                      <option value="Tidak Ada" @if( $quotation->cuti=="Tidak Ada") selected @endif>Tidak Ada</option>  
+                      <option value="" @if($quotation->cuti=="" || $quotation->cuti==null) selected @endif>- Pilih Data -</option>
+                      <option value="Ada" @if($quotation->cuti!=null&&$quotation->cuti!=""&&$quotation->cuti!="Tidak Ada") selected @endif>Ada</option>
+                      <option value="Tidak Ada" @if( $quotation->cuti=="Tidak Ada") selected @endif>Tidak Ada</option>
                     </select>
                 </div>
                 <div class="col-sm-10 ada_cuti">
@@ -239,16 +241,16 @@
                           <div class="d-jenis-pay">
                             <label class="form-label" for="gaji_saat_cuti">Gaji Saat Cuti Melahirkan</label>
                             <select id="gaji_saat_cuti" name="gaji_saat_cuti" class="form-select" data-allow-clear="true" tabindex="-1">
-                              <option value="" @if($quotation->gaji_saat_cuti=="") selected @endif>- Pilih Data -</option>  
-                              <option value="No Work No Pay" @if($quotation->gaji_saat_cuti=="No Work No Pay") selected @endif>No Work No Pay</option>  
-                              <option value="Prorate" @if($quotation->gaji_saat_cuti=="Prorate") selected @endif>Prorate</option>  
+                              <option value="" @if($quotation->gaji_saat_cuti=="") selected @endif>- Pilih Data -</option>
+                              <option value="No Work No Pay" @if($quotation->gaji_saat_cuti=="No Work No Pay") selected @endif>No Work No Pay</option>
+                              <option value="Prorate" @if($quotation->gaji_saat_cuti=="Prorate") selected @endif>Prorate</option>
                             </select>
                           </div>
                         </td>
                         <td style="width:33%">
                           <div class="d-prorate">
                             <label class="form-label" for="thr">Prorate</label>
-                            <div class="input-group"> 
+                            <div class="input-group">
                               <input type="number" min="0" max="100" name="prorate" value="{{$quotation->prorate}}" class="form-control minimal" id="prorate">
                               <span class="input-group-text" id="basic-addon41">%</span>
                             </div>
@@ -287,11 +289,19 @@
                           </div>
                         </td>
                       </tr>
+                      <tr>
+                        <td>
+                          <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="Cuti Roster" name="cuti[]" id="cuti-roster" @if(str_contains($quotation->cuti,'Cuti Roster')) checked @endif>
+                            <label class="form-check-label" for="cuti-roster"> Cuti Roster</label>
+                          </div>
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
-                
-                
+
+
               </div>
               @include('sales.quotation.action')
             </div>
@@ -309,7 +319,7 @@
 <script>
   // validasi input
 $('form').bind("keypress", function(e) {
-  if (e.keyCode == 13) {               
+  if (e.keyCode == 13) {
     e.preventDefault();
     return false;
   }
@@ -319,7 +329,7 @@ $('#btn-submit').on('click',function(e){
   var form = $(this).parents('form');
   let msg = "";
   let obj = $("form").serializeObject();
-    
+
   if(obj.mulai_kontrak == null || obj.mulai_kontrak == ""){
     msg += "<b>Mulai Kontrak</b> belum dipilih </br>";
   }
@@ -364,7 +374,7 @@ $('#btn-submit').on('click',function(e){
   // if(obj.sistem_kerja==null || obj.sistem_kerja==""){
   //   msg += "<b>Sistem Kerja</b> belum dipilih </br>";
   // }
-  
+
   if(obj.ada_cuti == null || obj.ada_cuti == ""){
     msg += "<b>Jenis Cuti</b> belum dipilih </br>";
   }else if(obj.ada_cuti == "Ada"){
@@ -441,11 +451,11 @@ function validasiKontrak() {
 
       $('#mulai-kontrak').val('').attr('type', 'text').attr('type', 'date');
       $('#kontrak-selesai').val('').attr('type', 'text').attr('type', 'date');
-    }else{      
+    }else{
       var mulai = $('#mulai-kontrak').val();
       var selesai = $('#kontrak-selesai').val();
 
-      if (mulai && selesai) {        
+      if (mulai && selesai) {
           // Konversi nilai input menjadi objek Date
           var mulaiDate = new Date(mulai);
           var selesaiDate = new Date(selesai);
@@ -554,7 +564,7 @@ function showDTop() {
 
 function showDTipeHari(first) {
   let selected = $("#jumlah_hari_invoice option:selected").val();
-  
+
   if (selected=="21" || selected=="30") {
     $('.opt_tipe_hari_kerja').addClass('d-none');
     $("#tipe_hari_invoice").val("Kalender").change();
@@ -598,7 +608,7 @@ showProrate(1);
 
 function showCuti(first) {
   let selected = $("#ada_cuti option:selected").val();
-  
+
   if (selected!="Ada") {
     $('.ada_cuti').addClass('d-none');
   }else{

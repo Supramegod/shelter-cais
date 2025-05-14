@@ -312,7 +312,8 @@ class QuotationService
         $kbd->tunjangan_hari_raya = $hpp->tunjangan_hari_raya;
         if ($kbd->tunjangan_hari_raya === null) {
             if ($quotation->thr == "Diprovisikan") {
-                $kbd->tunjangan_hari_raya = $kbd->nominal_upah / $provisi;
+                // $kbd->tunjangan_hari_raya = $kbd->nominal_upah / $provisi;
+                $kbd->tunjangan_hari_raya = $kbd->nominal_upah / 12;
             }
         }
 
@@ -320,7 +321,8 @@ class QuotationService
         $kbd->kompensasi = $hpp->kompensasi;
         if ($quotation->kompensasi == "Diprovisikan") {
             if ($kbd->kompensasi === null) {
-                $kbd->kompensasi = $kbd->nominal_upah / $provisi;
+                // $kbd->kompensasi = $kbd->nominal_upah / $provisi;
+                $kbd->kompensasi = $kbd->nominal_upah / 12;
             }
         }
 

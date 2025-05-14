@@ -125,9 +125,11 @@ class MonitoringKontrakController extends Controller
             // hpp coss dan gpm
             $daftarTunjangan = [];
             if($quotation != null){
-                $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
-                $quotationService = new QuotationService();
-                $calcQuotation = $quotationService->calculateQuotation($quotation);
+                if($quotation->step == 100){
+                    $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
+                    $quotationService = new QuotationService();
+                    $calcQuotation = $quotationService->calculateQuotation($quotation);
+                }
             }
 
             return view('sales.monitoring-kontrak.view',compact('daftarTunjangan','issues','data','leads','quotation','spk','pks'));
@@ -279,6 +281,15 @@ class MonitoringKontrakController extends Controller
                 return '#27ae6040';
             }
         })
+        ->addColumn('quotation', function ($data) {
+            if ($data->quotation_id != null) {
+                return '<a href="'.route('quotation.view', $data->quotation_id).'" class="text-body">
+                            <i class="mdi mdi-magnify mdi-20px mx-1"></i>
+                        </a>';
+            } else {
+                return '<i class="mdi mdi-close-circle mdi-20px text-danger mx-1"></i>';
+            }
+        })
         ->addColumn('warna_font', function ($data) {
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
             if($selisih<=0){
@@ -349,7 +360,7 @@ class MonitoringKontrakController extends Controller
                 return '<span class="badge rounded-pill bg-label-success text-capitalized">Lebih dari 3 Bulan</span>';
             }
         })
-        ->rawColumns(['aksi','nomor','nama_site','aktifitas','crm','ro','sales','progress','status_berlaku','issue'])
+        ->rawColumns(['quotation','aksi','nomor','nama_site','aktifitas','crm','ro','sales','progress','status_berlaku','issue'])
         ->make(true);
     }
 
@@ -389,7 +400,7 @@ class MonitoringKontrakController extends Controller
         ->editColumn('nomor_quotation', function ($data) {
             return '<a href="#" style="font-weight:bold;color:#000056">'.$data->nomor_quotation.'</a>';
         })
-        ->rawColumns(['nomor','nama_site','nomor_spk','nomor_quotation'])
+        ->rawColumns(['quotation','nomor','nama_site','nomor_spk','nomor_quotation'])
         ->make(true);
     }
 

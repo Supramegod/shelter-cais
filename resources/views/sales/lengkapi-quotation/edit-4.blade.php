@@ -225,10 +225,10 @@
                     <label class="form-label" for="lembur">Normatif / Flat</label>
                       <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>
-                        @if($quotation->jam_kerja !="12 Jam Kerja")
-                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>
-                        @endif
                         <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>
+                        @if($quotation->jam_kerja !="12 Jam Kerja")
+                        <!-- <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option> -->
+                        @endif
                       </select>
                   </div>
                   <div class="col-sm-3 ada_lembur d-nominal-lembur">
@@ -319,9 +319,9 @@ $('.show-custom').on('click',function(){
                 customUpah = customUpah * 21 * 8;
             }
             let umk = {{$quotation->quotation_site[0]->umk}};
-            if (customUpah < (0.85 * umk)) {
-                msg += "<b>Custom Upah</b> di bawah 85% dari UMK </br>";
-            }
+            // if (customUpah < (0.85 * umk)) {
+            //     msg += "<b>Custom Upah</b> di bawah 85% dari UMK </br>";
+            // }
         }
     }
   }
