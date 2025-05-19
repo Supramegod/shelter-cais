@@ -279,7 +279,7 @@
               </tr>
               <tr>
                 <td>Kompensasi</td>
-                <td>{{$quotation->kompensasi}}</td>
+                <td>{{$quotation->kompensasi}} @if($quotation->jenis_kontrak=="Reguler" && $quotation->kompensasi=="Tidak Ada")<span class="badge bg-label-warning rounded-pill mt-1">Membutuhkan Approval Direktur Sales</span>@endif</td>
               </tr>
               <tr>
                 <td>Tunjangan Hari Libur Nasional</td>
@@ -526,8 +526,11 @@
         </div>
       </div>
       <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="card-title m-0">Detail Harga Jual</h5>
+        <div class="card-header d-flex align-items-center">
+            <h5 class="card-title m-3" style="margin-right:10px">Detail Harga Jual</h5>
+            <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'All']) }}" class="btn btn-success btn-next w-20">
+                <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Semua</span>
+            </a>
         </div>
         <div class="card-body">
           <div class="card-header p-0">
@@ -571,6 +574,12 @@
                   </a> -->
                 </div>
                 @endif
+                    <div class="col-12 d-flex justify-content-between">
+                        <div></div>
+                        <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'Kaporlap']) }}" class="btn btn-success btn-next w-20">
+                            <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Kaporlap</span>
+                        </a>
+                    </div>
                 </div>
                 <div class="row">
                   <div class="table-responsive text-nowrap">
@@ -623,6 +632,12 @@
                     </a> -->
                   </div>
                   @endif
+                    <div class="col-12 d-flex justify-content-between">
+                        <div></div>
+                        <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'OHC']) }}" class="btn btn-success btn-next w-20">
+                            <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export OHC</span>
+                        </a>
+                    </div>
                 </div>
                 <div class="row">
                   <div class="table-responsive text-nowrap">
@@ -674,6 +689,12 @@
                     </a> -->
                   </div>
                 @endif
+                    <div class="col-12 d-flex justify-content-between">
+                        <div></div>
+                        <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'Devices']) }}" class="btn btn-success btn-next w-20">
+                            <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Devices</span>
+                        </a>
+                    </div>
                 </div>
                 <div class="row">
                   <div class="table-responsive text-nowrap">
@@ -726,6 +747,12 @@
                     </a> -->
                   </div>
                 @endif
+                    <div class="col-12 d-flex justify-content-between">
+                        <div></div>
+                        <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'Chemical']) }}" class="btn btn-success btn-next w-20">
+                            <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Chemical</span>
+                        </a>
+                    </div>
                 </div>
                 <div class="row">
                   <div class="table-responsive text-nowrap">

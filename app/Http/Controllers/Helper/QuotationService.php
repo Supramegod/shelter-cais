@@ -346,7 +346,13 @@ class QuotationService
             if ($hpp->lembur !== null) {
                 $kbd->lembur = $hpp->lembur;
             }else{
-                $kbd->lembur = $quotation->nominal_lembur;
+                if($quotation->jenis_bayar_lembur=="Per Jam"){
+                    $kbd->lembur = $quotation->nominal_lembur*$quotation->jam_per_bulan_lembur;
+                }else if($quotation->jenis_bayar_lembur=="Per Hari"){
+                    $kbd->lembur = $quotation->nominal_lembur*26;
+                }else{
+                    $kbd->lembur = $quotation->nominal_lembur;
+                }
             }
             $quotation->lembur_per_jam = null;
             $quotation->nominal_lembur = $kbd->lembur;

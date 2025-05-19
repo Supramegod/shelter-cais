@@ -1225,10 +1225,10 @@ class DashboardController extends Controller
             ->select(
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w1_appt'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w2_appt'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w3_appt'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w4_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w1_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w2_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w3_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w4_appt'),
             )
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
@@ -1270,7 +1270,7 @@ class DashboardController extends Controller
                  sl_customer_activity.notes LIKE "%visit%"
                  OR sl_customer_activity.notes LIKE "%appointment%"
 								 OR sl_customer_activity.notes LIKE "%meeting%"
-								 OR sl_customer_activity.notes LIKE "%zooom%"
+								 OR sl_customer_activity.notes LIKE "%zoom%"
              )
             THEN 1
             ELSE 0

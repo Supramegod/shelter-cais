@@ -17,6 +17,8 @@ use App\Exports\LeadsExport;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Helper\QuotationService;
 use App\Http\Controllers\Sales\CustomerActivityController;
+use App\Exports\QuotationDetailHargaJualExport;
+
 
 class QuotationController extends Controller
 {
@@ -774,9 +776,16 @@ class QuotationController extends Controller
                 foreach ($listKaporlap as $key => $kaporlap) {
                     foreach ($quotation->quotation_detail as $kKd => $vKd) {
                         $kaporlap->{'jumlah_'.$vKd->id} = 0;
-                        $kebkap = DB::table('sl_quotation_kaporlap')->whereNull('deleted_at')->where('barang_id',$kaporlap->id)->where('quotation_detail_id',$vKd->id)->first();
-                        if($kebkap !=null){
-                            $kaporlap->{'jumlah_'.$vKd->id} = $kebkap->jumlah;
+                        if($quotation->step == 7){
+                            $qtyDefault = DB::table('m_barang_default_qty')->whereNull('deleted_at')->where('layanan_id',$quotation->kebutuhan_id)->where('barang_id',$kaporlap->id)->first();
+                            if($qtyDefault != null){
+                                $kaporlap->{'jumlah_'.$vKd->id} = $qtyDefault->qty_default;
+                            }
+                        }else{
+                            $kebkap = DB::table('sl_quotation_kaporlap')->whereNull('deleted_at')->where('barang_id',$kaporlap->id)->where('quotation_detail_id',$vKd->id)->first();
+                            if($kebkap !=null){
+                                $kaporlap->{'jumlah_'.$vKd->id} = $kebkap->jumlah;
+                            }
                         }
                     }
                 }
@@ -794,9 +803,16 @@ class QuotationController extends Controller
 
                 foreach ($listDevices as $key => $devices) {
                     $devices->jumlah = 0;
-                    $kebkap = DB::table('sl_quotation_devices')->whereNull('deleted_at')->where('barang_id',$devices->id)->where('quotation_id',$id)->first();
-                    if($kebkap !=null){
-                        $devices->jumlah = $kebkap->jumlah;
+                    if($quotation->step == 8){
+                        $qtyDefault = DB::table('m_barang_default_qty')->whereNull('deleted_at')->where('layanan_id',$quotation->kebutuhan_id)->where('barang_id',$devices->id)->first();
+                        if($qtyDefault != null){
+                            $devices->jumlah = $qtyDefault->qty_default;
+                        }
+                    }else{
+                        $kebkap = DB::table('sl_quotation_devices')->whereNull('deleted_at')->where('barang_id',$devices->id)->where('quotation_id',$id)->first();
+                        if($kebkap !=null){
+                            $devices->jumlah = $kebkap->jumlah;
+                        }
                     }
                 }
             }
@@ -1350,6 +1366,7 @@ class QuotationController extends Controller
             if($request->lembur!="Flat"){
                 $request->nominal_lembur = null;
                 $request->jenis_bayar_lembur = null;
+                $request->jam_per_bulan_lembur = null;
             }else{
                 if ($request->nominal_lembur != null && $request->nominal_lembur != "") {
                     $request->nominal_lembur = str_replace(".", "", $request->nominal_lembur);
@@ -1426,6 +1443,7 @@ class QuotationController extends Controller
                 'jenis_bayar_tunjangan_holiday' => $request->jenis_bayar_tunjangan_holiday,
                 'jenis_bayar_lembur' => $request->jenis_bayar_lembur,
                 'lembur_ditagihkan' => $request->lembur_ditagihkan,
+                'jam_per_bulan_lembur' => $request->jam_per_bulan_lembur,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -2043,6 +2061,11 @@ if($quotation->note_harga_jual == null){
             }
             // jika company id = 17 // pt ion
             if ($quotation->company_id == 17) {
+                $isAktif = 0;
+                $statusQuotation = 2;
+            }
+            // jika PKWT maka harus ada kompensasi jika tidak ada maka butuh approval
+            if ($quotation->jenis_kontrak == "Reguler" && $quotation->kompensasi == "Tidak Ada") {
                 $isAktif = 0;
                 $statusQuotation = 2;
             }
@@ -2964,7 +2987,7 @@ if($quotation->note_harga_jual == null){
 
                 if($approve=="true"){
                     $ot1 = Auth::user()->full_name;
-                    if($master->top=="Kurang Dari 7 Hari" || $master->top=="Non TOP"){
+                    if($master->top=="Kurang Dari 7 Hari" || $master->top=="Non TOP" || ($master->jenis_kontrak=="Reguler" && $master->kompensasi=="Tidak Ada")){
                         $isAktif = 1;
                         $statusQuotation = 3;
                     }
@@ -4187,5 +4210,13 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
             SystemController::saveError($e, Auth::user(), $request);
             return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan harga.'], 500);
         }
+    }
+
+    public function exportDetailCoss($id,$jenis){
+        $dt = Carbon::now()->toDateTimeString();
+        $quotation = DB::table('sl_quotation')->where('id',$id)->first();
+        $nomor = $quotation->nomor;
+        $nomor = str_replace(['/', '\\'], '-', $nomor);
+        return Excel::download(new QuotationDetailHargaJualExport($id,'All'), 'Detail-Harga-Jual-Quotation-Nomor-'.$nomor.'.xlsx');
     }
 }

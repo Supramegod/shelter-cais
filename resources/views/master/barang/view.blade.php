@@ -72,14 +72,14 @@
               @endif
             </div>
           </div>
-          <!-- <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Jumlah Default</label>
+          <div class="row mb-3">
+            <!-- <label class="col-sm-2 col-form-label text-sm-end">Jumlah Default</label>
             <div class="col-sm-4">
               <input type="jumlah_default" id="jumlah_default" name="jumlah_default" value="{{$data->jumlah_default}}" class="form-control @if ($errors->any()) @if($errors->has('jumlah_default')) is-invalid @else   @endif @endif">
               @if($errors->has('jumlah_default'))
                   <div class="invalid-feedback">{{$errors->first('jumlah_default')}}</div>
               @endif
-            </div>
+            </div> -->
             <label class="col-sm-2 col-form-label text-sm-end">Urutan</label>
             <div class="col-sm-4">
               <input type="urutan" id="urutan" name="urutan" value="{{$data->urutan}}" class="form-control @if ($errors->any()) @if($errors->has('urutan')) is-invalid @else   @endif @endif">
@@ -87,7 +87,7 @@
                   <div class="invalid-feedback">{{$errors->first('urutan')}}</div>
               @endif
             </div>
-          </div> -->
+          </div>
           <div class="pt-4">
           </div>
         </form>

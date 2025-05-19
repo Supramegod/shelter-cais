@@ -1,0 +1,7 @@
+Note update :
+1. Penambahan validasi Jenis Kontrak PKWT harus ada Kompensasi
+2. Penambahan validasi tidak boleh PKWT Custom Upah dibawah 85%
+3. menampilkan form urutan di view barang
+4. Penambahan validasi Jenis Kontrak PKWT harus ada THR
+5. Penambahan Qty Default untuk Kaporlap dan Devices
+

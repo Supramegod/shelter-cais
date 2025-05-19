@@ -386,6 +386,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/cetak-kaporlap/{id}', 'cetakKaporlap')->name('quotation.cetak-kaporlap');
         Route::get('/sales/quotation/cetak-devices/{id}', 'cetakDevices')->name('quotation.cetak-devices');
         Route::get('/sales/quotation/cetak-chemical/{id}', 'cetakChemical')->name('quotation.cetak-chemical');
+
+        // EXPORT
+        Route::get('/sales/quotation/export/detail-coss/{id}/{jenis}', 'exportDetailCoss')->name('quotation.export.detail-coss');
     });
 
 

@@ -541,6 +541,7 @@ class PksKelengkapanController extends Controller
             if($request->lembur!="Flat"){
                 $request->nominal_lembur = null;
                 $request->jenis_bayar_lembur = null;
+                $request->jam_per_bulan_lembur = null;
             }else{
                 if ($request->nominal_lembur != null && $request->nominal_lembur != "") {
                     $request->nominal_lembur = str_replace(".", "", $request->nominal_lembur);
@@ -617,6 +618,7 @@ class PksKelengkapanController extends Controller
                 'jenis_bayar_tunjangan_holiday' => $request->jenis_bayar_tunjangan_holiday,
                 'jenis_bayar_lembur' => $request->jenis_bayar_lembur,
                 'lembur_ditagihkan' => $request->lembur_ditagihkan,
+                'jam_per_bulan_lembur' => $request->jam_per_bulan_lembur,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
