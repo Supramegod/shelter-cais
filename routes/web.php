@@ -46,6 +46,8 @@ use App\Http\Controllers\Master\TrainingClientController;
 use App\Http\Controllers\Sdt\SdtTrainingController;
 use App\Http\Controllers\Sdt\TrainingSiteController;
 
+use App\Http\Controllers\Gada\TrainingGadaController;
+
 use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
@@ -673,6 +675,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sdt/sdt-training/list-area', 'listArea')->name('sdt-training.list-area');
         Route::get('/sdt/sdt-training/list-client', 'listClient')->name('sdt-training.list-client');
 
+    });
+
+    Route::controller(TrainingGadaController::class)->group(function() {
+        Route::get('/gada/training', 'index')->name('training-gada');
+        Route::get('/gada/training/list', 'list')->name('training-gada.list');
+        Route::get('/gada/training/list-log', 'listLog')->name('training-gada.listLog');
+        Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');
     });
 
     Route::controller(TrainingSiteController::class)->group(function() {
