@@ -8,9 +8,9 @@
   <div class="row">
   <div class="col-12 mb-4">
       <div class="bs-stepper wizard-vertical vertical mt-2">
-        @include('sales.quotation.step')
+        @include('sales.quotation-sandbox.step')
         <div class="bs-stepper-content">
-            <form class="card-body overflow-hidden" action="{{route('quotation.save-edit-2')}}" method="POST" enctype="multipart/form-data">
+            <form class="card-body overflow-hidden" action="{{route('quotation-sandbox.save-edit-2')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="id" value="{{$quotation->id}}">
             <!-- Account Details -->
@@ -191,9 +191,15 @@
                   <label class="form-label">&nbsp;</label>
                   <select id="jumlah_hari_invoice" name="jumlah_hari_invoice" class="form-select @if($errors->has('jumlah_hari_invoice')) is-invalid @endif" data-allow-clear="true" tabindex="-1">
                     <option value=""></option>
-                    @foreach($topList as $top)
-                      <option value="{{$top->nama}}" @if($quotation->jumlah_hari_invoice==$top->nama) selected @endif>{{$top->nama}}</option>
-                    @endforeach
+                    <option value="7" @if($quotation->jumlah_hari_invoice=='7') selected @endif>7</option>
+                    <option value="14" @if($quotation->jumlah_hari_invoice=='14') selected @endif>14</option>
+                    <option value="15" @if($quotation->jumlah_hari_invoice=='15') selected @endif>15</option>
+                    <option value="21" @if($quotation->jumlah_hari_invoice=='21') selected @endif>21</option>
+                    <option value="30" @if($quotation->jumlah_hari_invoice=='30') selected @endif>30</option>
+                    <option value="45" @if($quotation->jumlah_hari_invoice=='45') selected @endif>45</option>
+                    <option value="60" @if($quotation->jumlah_hari_invoice=='60') selected @endif>60</option>
+                    <option value="75" @if($quotation->jumlah_hari_invoice=='75') selected @endif>75</option>
+                    <option value="90" @if($quotation->jumlah_hari_invoice=='90') selected @endif>90</option>
                     </select>
                     @if($errors->has('jumlah_hari_invoice'))
                       <span class="text-danger">{{$errors->first('jumlah_hari_invoice')}}</span>
@@ -210,7 +216,6 @@
                       <span class="text-danger">{{$errors->first('tipe_hari_invoice')}}</span>
                     @endif
                 </div>
-                <span class="text-warning mt-3">*TOP invoice lebih dari 7 hari membutuhkan approval dari direksi</span>
               </div>
               <div class="row mb-3">
                 <div class="col-sm-2">
@@ -297,7 +302,7 @@
 
 
               </div>
-              @include('sales.quotation.action')
+              @include('sales.quotation-sandbox.action')
             </div>
           </form>
         </div>

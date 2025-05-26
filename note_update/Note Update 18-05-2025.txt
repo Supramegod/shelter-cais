@@ -1,0 +1,4 @@
+Note Update 18-05-2025
+- perhitungan lembur security ditambah input jumlah jam kerja dan nominal per jam.
+- Export Excel Detail Harga jual pada quotation
+- Tombol Approval ditaruh di bawah

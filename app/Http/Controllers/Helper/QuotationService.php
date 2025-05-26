@@ -67,7 +67,12 @@ class QuotationService
 
 
         // recalculating bunga bank dan insentif karena gross up
-        $persenBungaBank = $quotation->persen_bunga_bank;
+        $persenBungaBank = 0;
+        if($quotation->top!="Non TOP"){
+            $persenBungaBank = $quotation->persen_bunga_bank;
+        }else{
+            $quotation->persen_bunga_bank = 0;
+        }
         $persenInsentif = $quotation->persen_insentif;
         $bungaBank = 0;
         $insentif = 0;
@@ -180,11 +185,11 @@ class QuotationService
         $kbd->bpjs_jht = $hpp->bpjs_jht;
         $kbd->bpjs_jp = $hpp->bpjs_jp;
         $kbd->bpjs_kes = $hpp->bpjs_ks;
-        $kbd->persen_bpjs_jkm = null;
-        $kbd->persen_bpjs_jkk = null;
-        $kbd->persen_bpjs_jht = null;
-        $kbd->persen_bpjs_jp = null;
-        $kbd->persen_bpjs_kes = null;
+        $kbd->persen_bpjs_jkm = $hpp->persen_bpjs_jkm;
+        $kbd->persen_bpjs_jkk = $hpp->persen_bpjs_jkk;
+        $kbd->persen_bpjs_jht = $hpp->persen_bpjs_jht;
+        $kbd->persen_bpjs_jp = $hpp->persen_bpjs_jp;
+        $kbd->persen_bpjs_kes = $hpp->persen_bpjs_ks;
 
         // if($kbd->nominal_takaful=== null){
         //     $kbd->nominal_takaful = $quotation->nominal_takaful;
@@ -245,26 +250,34 @@ class QuotationService
 
         // Hitung JKM
         if ($kbd->bpjs_jkm === null) {
-            $kbd->bpjs_jkm = $upahBpjs * 0.3 / 100;
-            $kbd->persen_bpjs_jkm = 0.3;
+            if($kbd->persen_bpjs_jkm == null){
+                $kbd->persen_bpjs_jkm = 0.3;
+            }
+            $kbd->bpjs_jkm = $upahBpjs * $kbd->persen_bpjs_jkm / 100;
         }
 
         // Hitung JHT (jika program BPJS mencakup JHT)
         if($kbd->bpjs_jht=== null){
-            $kbd->bpjs_jht = $upahBpjs * 3.7 / 100;
-            $kbd->persen_bpjs_jht = 3.7;
+            if($kbd->persen_bpjs_jht == null){
+                $kbd->persen_bpjs_jht = 3.7;
+            }
+            $kbd->bpjs_jht = $upahBpjs * $kbd->persen_bpjs_jht / 100;
         }
 
         // Hitung JP (jika program BPJS mencakup JP)
         if ($kbd->bpjs_jp === null) {
-            $kbd->bpjs_jp = $upahBpjs * 2 / 100;
-            $kbd->persen_bpjs_jp = 2;
+            if($kbd->persen_bpjs_jp == null){
+                $kbd->persen_bpjs_jp = 2;
+            }
+            $kbd->bpjs_jp = $upahBpjs * $kbd->persen_bpjs_jp / 100;
         }
 
         // Hitung BPJS Kesehatan berdasarkan UMK
         if ($kbd->bpjs_kes === null) {
-            $kbd->bpjs_kes = $upahBpjsKes * 4 / 100;
-            $kbd->persen_bpjs_kes = 4;
+            if($kbd->persen_bpjs_kes ==null){
+                $kbd->persen_bpjs_kes = 4;
+            }
+            $kbd->bpjs_kes = $upahBpjsKes * $kbd->persen_bpjs_kes / 100;
         }
 
         if($kbd->is_bpjs_jkk=="0"){
@@ -349,13 +362,13 @@ class QuotationService
                 if($quotation->jenis_bayar_lembur=="Per Jam"){
                     $kbd->lembur = $quotation->nominal_lembur*$quotation->jam_per_bulan_lembur;
                 }else if($quotation->jenis_bayar_lembur=="Per Hari"){
-                    $kbd->lembur = $quotation->nominal_lembur*26;
+                    $kbd->lembur = $quotation->nominal_lembur*25;
                 }else{
                     $kbd->lembur = $quotation->nominal_lembur;
                 }
             }
             $quotation->lembur_per_jam = null;
-            $quotation->nominal_lembur = $kbd->lembur;
+            // $quotation->nominal_lembur = $kbd->lembur;
         } else {
             $quotation->lembur_per_jam = ($umk / 173 * 1.5) * 1;
         }
@@ -364,7 +377,7 @@ class QuotationService
             $kbd->lembur = 0;
         }
 
-        $quotation->nominal_lembur = $kbd->lembur;
+        // $quotation->nominal_lembur = $kbd->lembur;
     }
 
     private function calculateTotalPersonnel($kbd, $quotation, $totalTunjangan)

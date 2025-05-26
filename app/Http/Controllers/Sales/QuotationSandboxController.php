@@ -19,7 +19,7 @@ use App\Http\Controllers\Helper\QuotationService;
 use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Http\Controllers\Sales\QuotationController;
 
-class PksKelengkapanController extends Controller
+class QuotationSandboxController extends Controller
 {
     public function add ($pksId){
         try {
@@ -41,7 +41,7 @@ class PksKelengkapanController extends Controller
                 $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
             }
 
-            return view('sales.lengkapi-quotation.add',compact('kota','pks','now','company','province','leads'));
+            return view('sales.quotation-sandbox.add',compact('kota','pks','now','company','province','leads'));
         } catch (\Exception $e) {
             dd($e);
             abort(500);
@@ -59,27 +59,6 @@ class PksKelengkapanController extends Controller
             $topList = DB::table('m_top')->whereNull('deleted_at')->orderBy('nama','asc')->get();
 
             $province = DB::connection('mysqlhris')->table('m_province')->get();
-            // $dataProvinsi = DB::connection('mysqlhris')->table('m_province')->where('id',$quotation->provinsi_id)->first();
-            // $dataKota = DB::connection('mysqlhris')->table('m_city')->where('id',$quotation->kota_id)->first();
-
-            // $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$dataProvinsi->id)->first();
-            // $dataProvinsi->ump = "Rp. 0";
-            // if($dataUmp !=null){
-            //     $dataProvinsi->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
-            // }
-            // $dataUmk = DB::table("m_umk")->whereNull('deleted_at')->where('city_id',$dataKota->id)->first();
-            // $dataKota->umk = "Rp. 0";
-            // if($dataUmk !=null){
-            //     $dataKota->umk = "Rp. ".number_format($dataUmk->umk,0,",",".");
-            // }
-
-            // foreach ($province as $key => $value) {
-            //     $dataUmp = DB::table("m_ump")->whereNull('deleted_at')->where('province_id',$value->id)->first();
-            //     $value->ump = "Rp. 0";
-            //     if($dataUmp !=null){
-            //         $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
-            //     }
-            // }
             $kota = DB::connection('mysqlhris')->table('m_city')->get();
             $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
@@ -215,7 +194,7 @@ class PksKelengkapanController extends Controller
             $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
 
-            return view('sales.lengkapi-quotation.edit-'.$request->step,compact('topList','calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule'));
+            return view('sales.quotation-sandbox.edit-'.$request->step,compact('topList','calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -235,7 +214,7 @@ class PksKelengkapanController extends Controller
             $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
 
             $quotationController = new QuotationController();
-            $quotationNomor = $quotationController->generateNomor($pks->leads_id,$request->entitas);
+            $quotationNomor = $quotationController->generateNomorSandbox($pks->leads_id,$request->entitas);
             $newId = DB::table('sl_quotation')->insertGetId([
                 'nomor' => $quotationNomor,
                 'tgl_quotation' => $current_date,
@@ -249,6 +228,7 @@ class PksKelengkapanController extends Controller
                 'step' => 1,
                 'status_quotation_id' =>1,
                 'pks_id' => $pks->id,
+                'is_sandbox' => 1,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
@@ -323,7 +303,7 @@ class PksKelengkapanController extends Controller
 
             DB::commit();
 
-            return redirect()->route('lengkapi-quotation.step',['id'=>$newId,'step'=>'1']);
+            return redirect()->route('quotation-sandbox.step',['id'=>$newId,'step'=>'1']);
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -356,9 +336,9 @@ class PksKelengkapanController extends Controller
 
             DB::commit();
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'2']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'2']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -464,9 +444,9 @@ class PksKelengkapanController extends Controller
                 DB::commit();
 
                 if($request->edit==0){
-                    return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'3']);
+                    return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'3']);
                 }else{
-                    return redirect()->route('lengkapi-quotation.view',$request->id);
+                    return redirect()->route('quotation-sandbox.view',$request->id);
                 }
             }
         } catch (\Exception $e) {
@@ -496,9 +476,9 @@ class PksKelengkapanController extends Controller
             // $data = DB::table('sl_quotation_kebutuhan')->whereNull('deleted_at')->where('quotation_id',$request->id)->first();
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'4']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'4']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$dataQuotation->id);
+                return redirect()->route('quotation-sandbox.view',$dataQuotation->id);
             }
         } catch (\Exception $e) {
             dd($e);
@@ -632,9 +612,9 @@ class PksKelengkapanController extends Controller
             ]);
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'5']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'5']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -728,9 +708,9 @@ if($quotation->note_harga_jual == null){
 }
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'6']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'6']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -843,9 +823,9 @@ if($quotation->note_harga_jual == null){
             DB::commit();
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'7']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'7']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -915,9 +895,9 @@ if($quotation->note_harga_jual == null){
             ]);
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'8']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'8']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -987,9 +967,9 @@ if($quotation->note_harga_jual == null){
             ]);
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>$newStep]);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>$newStep]);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1023,9 +1003,9 @@ if($quotation->note_harga_jual == null){
             // $this->perhitunganHPP($data->id);
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'10']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'10']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$dataQuotation->id);
+                return redirect()->route('quotation-sandbox.view',$dataQuotation->id);
             }
 
         } catch (\Exception $e) {
@@ -1052,10 +1032,10 @@ if($quotation->note_harga_jual == null){
                 $request->training ="0";
             }
 
-            $persenBungaBank = $dataQuotation->persen_bunga_bank;
-            if($persenBungaBank == 0 || $persenBungaBank == null){
-                $persenBungaBank = 1.3;
-            };
+            // $persenBungaBank = $dataQuotation->persen_bunga_bank;
+            // if($persenBungaBank == 0 || $persenBungaBank == null){
+            //     $persenBungaBank = 1.3;
+            // };
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
                 'step' => $newStep,
@@ -1070,9 +1050,9 @@ if($quotation->note_harga_jual == null){
             ]);
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'11']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'11']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1196,9 +1176,9 @@ if($quotation->note_harga_jual == null){
             }
 
             if($request->edit==0){
-                return redirect()->route('lengkapi-quotation.step',['id'=>$request->id,'step'=>'12']);
+                return redirect()->route('quotation-sandbox.step',['id'=>$request->id,'step'=>'12']);
             }else{
-                return redirect()->route('lengkapi-quotation.view',$request->id);
+                return redirect()->route('quotation-sandbox.view',$request->id);
             }
 
         } catch (\Exception $e) {
@@ -1255,7 +1235,7 @@ if($quotation->note_harga_jual == null){
     }
     public function editNoteHargaJual($id){
         $data = DB::table('sl_quotation')->where('id',$id)->first();
-        return view('sales.lengkapi-quotation.edit-note-harga-jual',compact('data'));
+        return view('sales.quotation-sandbox.edit-note-harga-jual',compact('data'));
     }
 
     public function saveEditNoteHargaJual(Request $request){
@@ -1267,14 +1247,14 @@ if($quotation->note_harga_jual == null){
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            return redirect()->route('lengkapi-quotation.step',['id'=>$data->id,'step'=>'11']);
+            return redirect()->route('quotation-sandbox.step',['id'=>$data->id,'step'=>'11']);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);}
     }
     public function addQuotationKerjasama($id){
         $quotation = DB::table('sl_quotation')->where('id',$id)->first();
-        return view('sales.lengkapi-quotation.add-quotation-kerjasama',compact('quotation'));
+        return view('sales.quotation-sandbox.add-quotation-kerjasama',compact('quotation'));
     }
 
     public function saveAddQuotationKerjasama(Request $request){
@@ -1287,7 +1267,7 @@ if($quotation->note_harga_jual == null){
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
             ]);
-            return redirect()->route('lengkapi-quotation.step',['id'=>$request->quotation_id,'step'=>'12']);
+            return redirect()->route('quotation-sandbox.step',['id'=>$request->quotation_id,'step'=>'12']);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -1296,7 +1276,7 @@ if($quotation->note_harga_jual == null){
     public function editQuotationKerjasama($id){
         $data = DB::table('sl_quotation_kerjasama')->where('id',$id)->first();
         $quotation = DB::table('sl_quotation')->where('id',$data->quotation_id)->first();
-        return view('sales.lengkapi-quotation.edit-quotation-kerjasama',compact('data','quotation'));
+        return view('sales.quotation-sandbox.edit-quotation-kerjasama',compact('data','quotation'));
     }
 
     public function saveEditQuotationKerjasama(Request $request){
@@ -1308,7 +1288,7 @@ if($quotation->note_harga_jual == null){
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
-            return redirect()->route('lengkapi-quotation.step',['id'=>$data->quotation_id,'step'=>'12']);
+            return redirect()->route('quotation-sandbox.step',['id'=>$data->quotation_id,'step'=>'12']);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);}
@@ -1323,7 +1303,7 @@ if($quotation->note_harga_jual == null){
         return DataTables::of($data)
         ->addColumn('aksi', function ($data) {
             return '<div class="justify-content-center d-flex">
-                    <a href="'.route('lengkapi-quotation.edit-quotation-kerjasama',$data->id).'" class="btn-edit btn btn-warning waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-pencil"></i></a> &nbsp;
+                    <a href="'.route('quotation-sandbox.edit-quotation-kerjasama',$data->id).'" class="btn-edit btn btn-warning waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-pencil"></i></a> &nbsp;
                     <a href="javascript:void(0)" class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can-outline"></i></a> &nbsp;
                 </div>';
         })

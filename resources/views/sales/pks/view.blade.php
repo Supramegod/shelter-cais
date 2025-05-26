@@ -110,12 +110,12 @@
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
               </a>
             </div> -->
-            @if(Auth::user()->role_id==29)
+        @if(Auth::user()->role_id==29)
             <div class="col-12 text-center mt-2">
               <a href="{{route('pks.isi-checklist',$data->id)}}" class="btn btn-primary w-100">Isi Checklist &nbsp; <i class="mdi mdi-pencil"></i></a>
             </div>
             @endif
-            @if($quotation->materai !=null)
+        @if($quotation->materai !=null)
             <div class="col-12 text-center mt-2">
             <a onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-warning w-100" >Cetak Checklist &nbsp; <i class="mdi mdi-printer"></i></a>
           </div>

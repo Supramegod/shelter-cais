@@ -164,6 +164,32 @@
               <input type="number" id="telp_perusahaan" name="telp_perusahaan" value="{{old('telp_perusahaan')}}" class="form-control @if ($errors->any())   @endif">
             </div>
         </div>
+        <!-- <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Benua <span class="text-danger">*</span></label>
+            <div class="col-sm-4">
+                <div class="position-relative">
+                    <select id="benua" name="benua" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($benua as $value)
+                        <option value="{{$value->id_benua}}" @if(old('benua', 2) == $value->id_benua) selected @endif>{{$value->nama_benua}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <label class="col-sm-2 col-form-label text-sm-end">Negara <span class="text-danger">*</span></label>
+            <div class="col-sm-4">
+                <div class="position-relative">
+                    <select id="negara" name="negara" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @if(isset($negaraDefault))
+                            @foreach($negaraDefault as $value)
+                                <option value="{{$value->id_negara}}" @if(old('negara', 79) == $value->id_negara) selected @endif>{{$value->nama_negara}}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+            </div>
+        </div> -->
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">PMA / PMDN</label>
             <div class="col-sm-10">

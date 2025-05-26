@@ -75,11 +75,13 @@ class LeadsController extends Controller
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
             $platform = DB::table('m_platform')->whereNull('deleted_at')->where('id','<>',11)->get();
             $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
+            $benua = DB::table('m_benua')->get();
+            $negaraDefault = DB::table('m_negara')->where('id_benua',2)->get();
             $kota = [];
             $kecamatan = [];
             $kelurahan = [];
 
-            return view('sales.leads.add',compact('provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan'));
+            return view('sales.leads.add',compact('benua','negaraDefault','provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);

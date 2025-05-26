@@ -15,9 +15,11 @@ use App\Http\Controllers\Sales\SiteController;
 use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Http\Controllers\Sales\QuotationController;
 use App\Http\Controllers\Sales\PksKelengkapanController;
+use App\Http\Controllers\Sales\QuotationSandboxController;
 use App\Http\Controllers\Sales\SpkController;
 use App\Http\Controllers\Sales\PksController;
 use App\Http\Controllers\Sales\MonitoringKontrakController;
+use App\Http\Controllers\Sales\PutusKontrakController;
 use App\Http\Controllers\Sales\WhatsappController;
 
 use App\Http\Controllers\Master\PlatformController;
@@ -26,6 +28,7 @@ use App\Http\Controllers\Master\JenisBarangController;
 use App\Http\Controllers\Master\JabatanController;
 use App\Http\Controllers\Master\JenisPerusahaanController;
 use App\Http\Controllers\Master\ManagementFeeController;
+use App\Http\Controllers\Master\TopController;
 use App\Http\Controllers\Master\JenisVisitController;
 use App\Http\Controllers\Master\SalaryRuleController;
 use App\Http\Controllers\Master\StatusLeadsController;
@@ -274,6 +277,31 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
+    Route::controller(QuotationSandboxController::class)->group(function() {
+        Route::get('/sales/quotation-sandbox/add/{pksId}', 'add')->name('quotation-sandbox.add');
+        Route::post('/sales/quotation-sandbox/save', 'save')->name('quotation-sandbox.save');
+        Route::get('/sales/quotation-sandbox/step/{id}', 'step')->name('quotation-sandbox.step');
+        Route::post('/sales/quotation-sandbox/saveEdit1', 'saveEdit1')->name('quotation-sandbox.save-edit-1');
+        Route::post('/sales/quotation-sandbox/saveEdit2', 'saveEdit2')->name('quotation-sandbox.save-edit-2');
+        Route::post('/sales/quotation-sandbox/saveEdit3', 'saveEdit3')->name('quotation-sandbox.save-edit-3');
+        Route::post('/sales/quotation-sandbox/saveEdit4', 'saveEdit4')->name('quotation-sandbox.save-edit-4');
+        Route::post('/sales/quotation-sandbox/saveEdit5', 'saveEdit5')->name('quotation-sandbox.save-edit-5');
+        Route::post('/sales/quotation-sandbox/saveEdit6', 'saveEdit6')->name('quotation-sandbox.save-edit-6');
+        Route::post('/sales/quotation-sandbox/saveEdit7', 'saveEdit7')->name('quotation-sandbox.save-edit-7');
+        Route::post('/sales/quotation-sandbox/saveEdit8', 'saveEdit8')->name('quotation-sandbox.save-edit-8');
+        Route::post('/sales/quotation-sandbox/saveEdit9', 'saveEdit9')->name('quotation-sandbox.save-edit-9');
+        Route::post('/sales/quotation-sandbox/saveEdit10', 'saveEdit10')->name('quotation-sandbox.save-edit-10');
+        Route::post('/sales/quotation-sandbox/saveEdit11', 'saveEdit11')->name('quotation-sandbox.save-edit-11');
+        Route::post('/sales/quotation-sandbox/saveEdit12', 'saveEdit12')->name('quotation-sandbox.save-edit-12');
+        Route::post('/sales/quotation-sandbox/saveEdit13', 'saveEdit13')->name('quotation-sandbox.save-edit-13');
+        Route::get('/sales/quotation-sandbox/edit-note-harga-jual/{id}', 'editNoteHargaJual')->name('quotation-sandbox.edit-note-harga-jual');
+        Route::post('/sales/quotation-sandbox/save-edit-note-harga-jual', 'saveEditNoteHargaJual')->name('quotation-sandbox.save-edit-note-harga-jual');
+        Route::get('/sales/quotation-sandbox/edit-quotation-kerjasama/{id}', 'editQuotationKerjasama')->name('quotation-sandbox.edit-quotation-kerjasama');
+        Route::get('/sales/quotation-sandbox/add-quotation-kerjasama/{id}', 'addQuotationKerjasama')->name('quotation-sandbox.add-quotation-kerjasama');
+        Route::post('/sales/quotation-sandbox/save-add-quotation-kerjasama', 'saveAddQuotationKerjasama')->name('quotation-sandbox.save-add-quotation-kerjasama');
+        Route::post('/sales/quotation-sandbox/save-edit-quotation-kerjasama', 'saveEditQuotationKerjasama')->name('quotation-sandbox.save-edit-quotation-kerjasama');
+        Route::get('/sales/quotation-sandbox/list-quotation-kerjasama', 'listQuotationKerjasama')->name('quotation-sandbox.list-quotation-kerjasama'); // ajax
+    });
 
     Route::controller(QuotationController::class)->group(function() {
         Route::get('/sales/quotation', 'index')->name('quotation');
@@ -458,6 +486,17 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/management-fee/list', 'list')->name('management-fee.list'); // ajax
 
+    });
+
+    Route::controller(TopController::class)->group(function() {
+        Route::get('/master/top', 'index')->name('top');
+        Route::get('/master/top/add', 'add')->name('top.add');
+        Route::get('/master/top/view/{id}', 'view')->name('top.view');
+
+        Route::post('/master/top/save', 'save')->name('top.save');
+        Route::post('/master/top/delete', 'delete')->name('top.delete');
+
+        Route::get('/master/top/list', 'list')->name('top.list'); // ajax
     });
 
     Route::controller(JenisVisitController::class)->group(function() {
@@ -722,6 +761,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/monitoring-kontrak/save-issue', 'saveIssue')->name('monitoring-kontrak.save-issue');
         Route::post('/sales/monitoring-kontrak/delete-issue', 'deleteIssue')->name('monitoring-kontrak.delete-issue');
         Route::post('/sales/monitoring-kontrak/delete-activity', 'deleteActivity')->name('monitoring-kontrak.delete-activity');
+    });
+
+    Route::controller(PutusKontrakController::class)->group(function() {
+        Route::get('/sales/putus-kontrak', 'index')->name('putus-kontrak');
+        Route::get('/sales/putus-kontrak/list', 'list')->name('putus-kontrak.list');
+        Route::get('/sales/putus-kontrak/view/{id}', 'view')->name('putus-kontrak.view');
+        Route::get('/sales/putus-kontrak/add', 'add')->name('putus-kontrak.add');
+        Route::get('/sales/putus-kontrak/add-putus-kontrak/{id}', 'addPutusKontrak')->name('putus-kontrak.add-putus-kontrak');
+        Route::post('/sales/putus-kontrak/save', 'save')->name('putus-kontrak.save');
+        Route::get('/sales/putus-kontrak/available-kontrak', 'availableKontrak')->name('putus-kontrak.available-kontrak'); // ajax
+
     });
 
     Route::controller(EntitasController::class)->group(function() {

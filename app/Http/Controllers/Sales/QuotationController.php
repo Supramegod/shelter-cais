@@ -640,6 +640,11 @@ class QuotationController extends Controller
                 'created_by' => Auth::user()->full_name
             ]);
 
+            // hapus spk dari quotation sebelumnya
+            DB::table("sl_spk")->where('quotation_id',$qasalId)->update([
+                "deleted_at" => $current_date_time ,
+                "deleted_by" => Auth::user()->full_name,
+            ]);
 
             DB::commit();
 
@@ -672,6 +677,10 @@ class QuotationController extends Controller
             $quotation->tgl_penempatan = Carbon::parse($quotation->tgl_penempatan)->format('d F Y');
 
             $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+            $jabatanPic = DB::table('m_jabatan_pic')->where('id',$leads->jabatan)->first();
+            if($jabatanPic!=null){
+                $leads->jabatan = $jabatanPic->nama;
+            }
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
             $sPersonil = "";
             $jPersonil = DB::select("SELECT sum(jumlah_hc) as jumlah_hc FROM sl_quotation_detail WHERE quotation_id = $quotation->id and deleted_at is null;");
@@ -701,6 +710,12 @@ class QuotationController extends Controller
             $listTrainingQ = DB::table('sl_quotation_training')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
 
             $listPic = DB::table('sl_quotation_pic')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
+            foreach ($listPic as $key => $value) {
+                $jabatanPic = DB::table('m_jabatan_pic')->where('id',$value->jabatan)->first();
+                if($jabatanPic!=null){
+                    $value->jabatan = $jabatanPic->nama;
+                }
+            }
             return view('sales.quotation.cetakan.checklist',compact('listPic','listTraining','listTrainingQ','salaryRuleQ','salaryRule','leads','quotation','now'));
         } catch (\Exception $e) {
             dd($e);
@@ -717,6 +732,7 @@ class QuotationController extends Controller
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
             $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            $topList = DB::table('m_top')->whereNull('deleted_at')->orderBy('nama','asc')->get();
 
             $province = DB::connection('mysqlhris')->table('m_province')->get();
             // $dataProvinsi = DB::connection('mysqlhris')->table('m_province')->where('id',$quotation->provinsi_id)->first();
@@ -889,7 +905,7 @@ class QuotationController extends Controller
             $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
 
-            return view('sales.quotation.edit-'.$request->step,compact('calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule'));
+            return view('sales.quotation.edit-'.$request->step,compact('topList','calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -985,6 +1001,12 @@ class QuotationController extends Controller
             }
 
             $listPic = DB::table('sl_quotation_pic')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+            foreach ($listPic as $key => $value) {
+                $jabatanPic = DB::table('m_jabatan_pic')->where('id',$value->jabatan)->first();
+                if($jabatanPic!=null){
+                    $value->jabatan = $jabatanPic->nama;
+                }
+            }
             $kebutuhanDetail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
             foreach ($kebutuhanDetail as $kkd => $vkd) {
                 $vkd->requirement = DB::table('sl_quotation_detail_requirement')->where('quotation_detail_id',$vkd->id)->whereNull('deleted_at')->get();
@@ -1877,8 +1899,10 @@ if($quotation->note_harga_jual == null){
             }
 
             $persenBungaBank = $dataQuotation->persen_bunga_bank;
-            if($dataQuotation->persen_bunga_bank != 0 && $dataQuotation->persen_bunga_bank != null){
-                $persenBungaBank = 1.3;
+            if($persenBungaBank == 0 || $persenBungaBank == null){
+                if($dataQuotation->top !="Non TOP"){
+                    $persenBungaBank = 1.3;
+                }
             };
 
             DB::table('sl_quotation')->where('id',$request->id)->update([
@@ -4088,7 +4112,12 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                 }
             }
             $listKerjasama = DB::table('sl_quotation_kerjasama')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
-            return view('sales.quotation.cetakan.quotation',compact('quotation','listKerjasama','salaryRuleQ','quotationDetail','listPic','daftarTunjangan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','leads','aplikasiPendukung'));
+            // dd($quotation->is_aktif);
+            if ($quotation->is_aktif == 1) {
+                return view('sales.quotation.cetakan.quotation',compact('quotation','listKerjasama','salaryRuleQ','quotationDetail','listPic','daftarTunjangan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','leads','aplikasiPendukung'));
+            }else{
+                return view('sales.quotation.cetakan.quotation-draft',compact('quotation','listKerjasama','salaryRuleQ','quotationDetail','listPic','daftarTunjangan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','leads','aplikasiPendukung'));
+            }
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -4218,5 +4247,33 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
         $nomor = $quotation->nomor;
         $nomor = str_replace(['/', '\\'], '-', $nomor);
         return Excel::download(new QuotationDetailHargaJualExport($id,'All'), 'Detail-Harga-Jual-Quotation-Nomor-'.$nomor.'.xlsx');
+    }
+
+    public function generateNomorSandbox ($leadsId,$companyId){
+        // generate nomor EXSTQUOT/SIG/AAABB-092024-00001
+        $now = Carbon::now();
+
+        $nomor = "EXSTQUOT/";
+        $dataLeads = DB::table('sl_leads')->where('id',$leadsId)->first();
+        $company = DB::connection('mysqlhris')->table('m_company')->where('id',$companyId)->first();
+        if($company != null){
+            $nomor = $nomor.$company->code."/";
+            $nomor = $nomor.$dataLeads->nomor."-";
+        }else{
+            $nomor = $nomor."NN/NNNNN-";
+        }
+
+        $month = $now->month;
+        if($month<10){
+            $month = "0".$month;
+        }
+
+        $urutan = "00001";
+
+        $jumlahData = DB::select("select * from sl_quotation where nomor like '".$nomor.$month.$now->year."-"."%'");
+        $urutan = sprintf("%05d", count($jumlahData)+1);
+        $nomor = $nomor.$month.$now->year."-".$urutan;
+
+        return $nomor;
     }
 }

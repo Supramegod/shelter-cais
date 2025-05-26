@@ -99,12 +99,12 @@
   $('#btn-modal-cari-spk').on('click',function(){
     $('#modal-spk').modal('show');
   });
-  
+
   let dt_filter_table = $('.dt-column-search');
 
   var table = $('#table-data').DataTable({
-      "initComplete": function (settings, json) {  
-        $("#table-data").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");            
+      "initComplete": function (settings, json) {
+        $("#table-data").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
       },
       "bDestroy": true,
       "iDisplayLength": 25,
@@ -116,9 +116,9 @@
       ajax: {
           url: "{{ route('pks.available-spk') }}",
           data: function (d) {
-              
+
           },
-      },   
+      },
       "order":[
           [0,'desc']
       ],
@@ -157,18 +157,18 @@
 
 
     $('form').bind("keypress", function(e) {
-      if (e.keyCode == 13) {               
+      if (e.keyCode == 13) {
         e.preventDefault();
         return false;
       }
     });
-    
+
   $('#btn-submit').on('click',function(e){
     e.preventDefault();
     var form = $(this).parents('form');
     let msg = "";
     let obj = $("form").serializeObject();
-      
+
     if(obj.spk_id == null || obj.spk_id == "" ){
       msg += "<b>Spk</b> belum dipilih </br>";
     };

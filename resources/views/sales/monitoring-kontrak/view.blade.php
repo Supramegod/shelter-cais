@@ -32,10 +32,18 @@
                             <a href="{{ route('lengkapi-quotation.add', $pks->id) }}" class="btn btn-primary">
                                 <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lengkapi Quotation
                             </a>
-                            @elseif($quotation->step < 100)
-                            <a href="{{ route('lengkapi-quotation.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-primary">
-                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation
+                            <a href="{{ route('quotation-sandbox.add', $pks->id) }}" class="btn btn-danger">
+                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Quotation Sandbox
                             </a>
+                            @elseif($quotation->step < 100)
+                                @if($quotation->is_sandbox==0)
+                                <a href="{{ route('lengkapi-quotation.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-primary">
+                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation
+                                </a>
+                                @else
+                                <a href="{{ route('quotation-sandbox.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-danger">
+                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation Sandbox
+                                @endif
                             @endif
 
                             <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>

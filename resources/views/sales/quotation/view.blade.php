@@ -60,14 +60,7 @@
             <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>$quotation->step])}}" class="btn btn-primary"><i class="mdi mdi-list-box-outline"></i>&nbsp; Lanjutkan Pengisian</a>
             @else
             <!-- <button class="btn btn-warning" @if($quotation->is_aktif==1) disabled @endif><i class="mdi mdi-file-refresh"></i>&nbsp; Ajukan Ulang ( Ubah )</button> -->
-              @if(Auth::user()->role_id==96 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot1 == null)
-                <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
-              @elseif(in_array(Auth::user()->role_id,[97,40]) && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari")
-                <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button>
-              @elseif(Auth::user()->role_id==99 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari")
-                <!-- <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif ><i class="mdi mdi-draw-pen"></i>&nbsp; Approval</button> -->
-              @endif
-              @if($quotation->spk==null)
+              @if($quotation->pks==null)
                 <a href="javascript:void(0)" class="btn btn-danger" id="btn-ajukan-quotation"><i class="mdi mdi-refresh"></i>&nbsp; Ajukan Ulang</a>
                 <button type="button" onclick="window.location.href='{{route('spk.add',['id'=> $quotation->id])}}'" class="btn btn-info" @if($canCreateSpk==0) disabled @endif><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</button>
                 @endif
@@ -833,6 +826,33 @@
           </div>
         </div>
       </div>
+      @if(in_array(Auth::user()->role_id,[96,97,40,99,2]))
+      <div class="col-12 col-lg-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center pb-0">
+          <h5 class="card-title m-0">Approval</h5>
+          </div>
+          <div class="card-body pt-0">
+            <div class="row mt-5 d-flex justify-content-center">
+            <div style="gap:10px;"></div>
+                @if(Auth::user()->role_id==96 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot1 == null)
+                    <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" style="width:30%;" @if($quotation->is_aktif==1) disabled @endif>
+                        <i class="mdi mdi-draw-pen"></i>&nbsp; Approval
+                    </button>
+                @elseif(in_array(Auth::user()->role_id,[97,40]) && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 == null && $quotation->top=="Lebih Dari 7 Hari")
+                    <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" style="width:30%;" @if($quotation->is_aktif==1) disabled @endif>
+                        <i class="mdi mdi-draw-pen"></i>&nbsp; Approval
+                    </button>
+                @elseif(Auth::user()->role_id==99 && $quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot2 != null && $quotation->ot1 != null && $quotation->ot3 == null && $quotation->top=="Lebih Dari 7 Hari")
+                    <!-- <button class="btn btn-primary" id="approve-quotation" data-id="{{$quotation->id}}" style="width:30%;" @if($quotation->is_aktif==1) disabled @endif>
+                        <i class="mdi mdi-draw-pen"></i>&nbsp; Approval
+                    </button> -->
+                @endif
+            </div>
+          </div>
+        </div>
+      </div>
+      @endif
     </div>
   </div>
 </div>
