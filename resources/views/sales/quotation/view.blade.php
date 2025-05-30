@@ -65,22 +65,24 @@
                 <button type="button" onclick="window.location.href='{{route('spk.add',['id'=> $quotation->id])}}'" class="btn btn-info" @if($canCreateSpk==0) disabled @endif><i class="mdi mdi-arrow-right"></i>&nbsp;  Create SPK</button>
                 @endif
               <br>
-              <div class="btn-group" role="group">
-              <button id="btncetak" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" @if($quotation->is_aktif!=1) disabled @endif>
-                Cetak Dokumen
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="btncetak">
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-quotation',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Quotation</a></li>
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-coss',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Harga Jual</a></li>
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-hpp',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak HPP</a></li>
-                <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-gpm',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak GPM</a></li>
-                <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-kaporlap',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Kaporlap</a></li> -->
-                <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-devices',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Devices</a></li> -->
-                @if($quotation->kebutuhan_id==3)
-                <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-chemical',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Chemical</a></li> -->
-                @endif
-              </ul>
-            </div>
+                <div class="btn-group" role="group">
+                  <button id="btncetak" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Cetak Dokumen
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="btncetak">
+                    <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-quotation',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Quotation</a></li>
+                    @if($quotation->is_aktif==1)
+                    <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-coss',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Harga Jual</a></li>
+                    <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-hpp',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak HPP</a></li>
+                    <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-gpm',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak GPM</a></li>
+                    @endif
+                    <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-kaporlap',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Kaporlap</a></li> -->
+                    <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-devices',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Devices</a></li> -->
+                    @if($quotation->kebutuhan_id==3)
+                    <!-- <li><a class="dropdown-item" onclick="window.open('{{route('quotation.cetak-chemical',$quotation->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)">Cetak Chemical</a></li> -->
+                    @endif
+                  </ul>
+                </div>
             @endif
             <button id="delete-quotation" class="btn btn-danger" data-id="{{$quotation->id}}" @if($quotation->is_aktif==1) disabled @endif><i class="mdi mdi-trash-can"></i>&nbsp;  Delete</button>
           </div>

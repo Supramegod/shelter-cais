@@ -1032,7 +1032,7 @@ if($quotation->note_harga_jual == null){
                 $request->training ="0";
             }
 
-            // $persenBungaBank = $dataQuotation->persen_bunga_bank;
+            $persenBungaBank = $dataQuotation->persen_bunga_bank;
             // if($persenBungaBank == 0 || $persenBungaBank == null){
             //     $persenBungaBank = 1.3;
             // };
