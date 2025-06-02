@@ -164,7 +164,25 @@
               <input type="number" id="telp_perusahaan" name="telp_perusahaan" value="{{old('telp_perusahaan')}}" class="form-control @if ($errors->any())   @endif">
             </div>
         </div>
-        <!-- <div class="row mb-3">
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Alamat Perusahaan</label>
+            <div class="col-sm-10">
+              <div class="form-floating form-floating-outline mb-2">
+                <textarea class="form-control mt-3 h-px-100 @if ($errors->any())   @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{old('alamat_perusahaan')}}</textarea>
+              </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">PMA / PMDN</label>
+            <div class="col-sm-10">
+              <select id="pma" name="pma" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                <option value="">- Pilih data -</option>
+                <option value="PMA" @if(old('pma') == 'PMA') selected @endif>PMA</option>
+                <option value="PMDN" @if(old('pma', 'PMDN') == 'PMDN') selected @endif>PMDN</option>
+              </select>
+            </div>
+        </div>
+        <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Benua <span class="text-danger">*</span></label>
             <div class="col-sm-4">
                 <div class="position-relative">
@@ -176,6 +194,27 @@
                     </select>
                 </div>
             </div>
+            <script>
+              $(document).ready(function() {
+                $('#benua').on('change', function() {
+                  let benuaId = $(this).val();
+                  $('#negara').empty().append('<option value="">- Pilih data -</option>');
+                  if (benuaId) {
+                    let getNegaraUrl = "{{ route('leads.get-negara', ':benuaId') }}";
+                    getNegaraUrl = getNegaraUrl.replace(':benuaId', benuaId);
+                    $.ajax({
+                      url: getNegaraUrl,
+                      type: 'GET',
+                      success: function(data) {
+                        $.each(data, function(key, value) {
+                          $('#negara').append('<option value="' + value.id_negara + '">' + value.nama_negara + '</option>');
+                        });
+                      }
+                    });
+                  }
+                });
+              });
+            </script>
             <label class="col-sm-2 col-form-label text-sm-end">Negara <span class="text-danger">*</span></label>
             <div class="col-sm-4">
                 <div class="position-relative">
@@ -189,19 +228,7 @@
                     </select>
                 </div>
             </div>
-        </div> -->
-        <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">PMA / PMDN</label>
-            <div class="col-sm-10">
-              <input type="text" id="pma" name="pma" value="{{old('pma')}}" class="form-control @if ($errors->any())   @endif">
-            </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Alamat Perusahaan</label>
-            <div class="col-sm-10">
-              <div class="form-floating form-floating-outline mb-2">
-                <textarea class="form-control mt-3 h-px-100 @if ($errors->any())   @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{old('alamat_perusahaan')}}</textarea>
-              </div>
-            </div>
-          </div>
+        </div>
           <hr class="my-4 mx-4">
           <h6>2. Kebutuhan Leads</h6>
           <div class="row mb-2">

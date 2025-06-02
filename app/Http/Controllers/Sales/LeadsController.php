@@ -112,8 +112,9 @@ class LeadsController extends Controller
             $kota = DB::connection('mysqlhris')->table('m_city')->where('id',$data->kota_id)->get();
             $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('id',$data->kecamatan_id)->get();
             $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('id',$data->kelurahan_id)->get();
-
-            return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan'));
+            $benua = DB::table('m_benua')->get();
+            $negaraDefault = DB::table('m_negara')->where('id_benua', $data->benua_id != null ? $data->benua_id : 2)->get();
+            return view('sales.leads.view',compact('benua','negaraDefault','activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -318,6 +319,8 @@ class LeadsController extends Controller
                 $kota = DB::table($db2.'.m_city')->where('id',$request->kota)->first();
                 $kecamatan = DB::table($db2.'.m_district')->where('id',$request->kecamatan)->first();
                 $kelurahan = DB::table($db2.'.m_village')->where('id',$request->kelurahan)->first();
+                $benua = DB::table('m_benua')->where('id_benua',$request->benua)->first();
+                $negara = DB::table('m_negara')->where('id_negara',$request->negara)->first();
 
                 $msgSave = '';
                 if(!empty($request->id)){
@@ -343,6 +346,10 @@ class LeadsController extends Controller
                         'kecamatan' => $kecamatan ? $kecamatan->name : null,
                         'kelurahan_id' => $request->kelurahan,
                         'kelurahan' => $kelurahan ? $kelurahan->name : null,
+                        'benua_id' => $request->benua,
+                        'benua' => $benua ? $benua->nama_benua : null,
+                        'negara_id' => $request->negara,
+                        'negara' => $negara ? $negara->nama_negara : null,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
                     ]);
@@ -401,6 +408,10 @@ class LeadsController extends Controller
                         'kecamatan' => $kecamatan ? $kecamatan->name : null,
                         'kelurahan_id' => $request->kelurahan,
                         'kelurahan' => $kelurahan ? $kelurahan->name : null,
+                        'benua_id' => $request->benua,
+                        'benua' => $benua ? $benua->nama_benua : null,
+                        'negara_id' => $request->negara,
+                        'negara' => $negara ? $negara->nama_negara : null,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -1097,4 +1108,9 @@ class LeadsController extends Controller
             ->make(true);
     }
 
+    public function getNegara($benuaId)
+    {
+        $negara = DB::table('m_negara')->where('id_benua', $benuaId)->get();
+        return response()->json($negara);
+    }
 }

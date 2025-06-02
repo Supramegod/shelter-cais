@@ -153,6 +153,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/leads/aktifkan', 'aktifkanLeads')->name('leads.aktifkan'); // ajax
         Route::get('/sales/leads/leads-belum-aktif', 'leadsBelumAktif')->name('sales.leads.leads-belum-aktif');
+
+        Route::get('/sales/leads/get-negara/{kecamatanId}', 'getNegara')->name('leads.get-negara'); // ajax
     });
 
     Route::controller(SubmissionController::class)->group(function() {

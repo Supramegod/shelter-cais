@@ -177,15 +177,60 @@
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">PMA / PMDN</label>
             <div class="col-sm-10">
-              <input type="number" id="pma" name="pma" value="{{$data->pma}}" class="form-control @if ($errors->any())   @endif">
+              <select id="pma" name="pma" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+          <option value="">- Pilih data -</option>
+          <option value="PMA" @if(old('pma', $data->pma) == 'PMA') selected @endif>PMA</option>
+          <option value="PMDN" @if(old('pma', $data->pma) == 'PMDN') selected @endif>PMDN</option>
+              </select>
             </div>
-            <label class="col-sm-2 col-form-label text-sm-end">Alamat</label>
-            <div class="col-sm-10">
-              <div class="form-floating form-floating-outline mb-2">
-                <textarea class="form-control mt-3 h-px-100 @if ($errors->any())   @endif" name="alamat_perusahaan" id="alamat_perusahaan" placeholder="">{{$data->alamat}}</textarea>
-              </div>
-            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Benua <span class="text-danger">*</span></label>
+            <div class="col-sm-4">
+          <div class="position-relative">
+              <select id="benua" name="benua" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+            <option value="">- Pilih data -</option>
+            @foreach($benua as $value)
+            <option value="{{$value->id_benua}}" @if(old('benua', $data->benua_id ?? '') == $value->id_benua) selected @endif>{{$value->nama_benua}}</option>
+            @endforeach
+              </select>
           </div>
+            </div>
+            <script>
+              $(document).ready(function() {
+          $('#benua').on('change', function() {
+            let benuaId = $(this).val();
+            $('#negara').empty().append('<option value="">- Pilih data -</option>');
+            if (benuaId) {
+              let getNegaraUrl = "{{ route('leads.get-negara', ':benuaId') }}";
+              getNegaraUrl = getNegaraUrl.replace(':benuaId', benuaId);
+              $.ajax({
+                url: getNegaraUrl,
+                type: 'GET',
+                success: function(data) {
+            $.each(data, function(key, value) {
+              $('#negara').append('<option value="' + value.id_negara + '">' + value.nama_negara + '</option>');
+            });
+                }
+              });
+            }
+          });
+              });
+            </script>
+            <label class="col-sm-2 col-form-label text-sm-end">Negara <span class="text-danger">*</span></label>
+            <div class="col-sm-4">
+          <div class="position-relative">
+              <select id="negara" name="negara" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+            <option value="">- Pilih data -</option>
+            @if(isset($negaraDefault))
+                @foreach($negaraDefault as $value)
+              <option value="{{$value->id_negara}}" @if(old('negara', $data->negara_id ?? '') == $value->id_negara) selected @endif>{{$value->nama_negara}}</option>
+                @endforeach
+            @endif
+              </select>
+          </div>
+            </div>
+        </div>
           <hr class="my-4 mx-4">
           <h6>2. Kebutuhan Leads</h6>
           <div class="row mb-2">
@@ -279,7 +324,7 @@
             </div>
           </div>
           <div class="card-body">
-            @if(in_array(Auth::user()->role_id,[29,30,31,32,33,48,49]))
+            @if(in_array(Auth::user()->role_id,[2,29,30,31,32,33,48,49]))
             <div class="col-12 text-center">
               <button id="btn-update" class="btn btn-primary w-100 waves-effect waves-light">
                 <span class="me-1">Update Data</span>
