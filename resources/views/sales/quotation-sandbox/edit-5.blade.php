@@ -68,7 +68,7 @@
                           @foreach($quotation->quotation_detail as $index => $detail)
                           <tr class="text-center align-middle">
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $detail->jabatan_kebutuhan }}</td>
+                            <td>{{ $detail->jabatan_kebutuhan }} @if($quotation->jumlah_site=="Multi Site") - {{ $detail->kota }} @endif</td>
                             <td><input class="check-bpjs" type="checkbox" name="jkk[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jkk=='1' ) checked @endif></td>
                             <td><input class="check-bpjs" type="checkbox" name="jkm[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jkm=='1') checked @endif></td>
                             <td><input class="check-bpjs" type="checkbox" name="jht[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jht=='1') checked @endif></td>

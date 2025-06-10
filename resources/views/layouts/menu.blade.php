@@ -61,12 +61,11 @@
             </ul>
         </li>
         @endif
-
-        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,40,98,99]))
-        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('customer')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
-            <div data-i18n="Customer">Customer</div>
+        @if(in_array(Auth::user()->role_id,[2,48,49,96,97,98,99]))
+        <li class="menu-item @if(str_contains(Request::url(), route('submission'))) active @endif">
+            <a href="{{route('submission')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-format-list-group"></i>
+            <div data-i18n="Leads">Submission</div>
             </a>
         </li>
         @endif
@@ -78,11 +77,11 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,48,49,96,97,98,99]))
-        <li class="menu-item @if(str_contains(Request::url(), route('submission'))) active @endif">
-            <a href="{{route('submission')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-format-list-group"></i>
-            <div data-i18n="Leads">Submission</div>
+        @if(in_array(Auth::user()->role_id,[2,48,29,30,31,33,52,96,97,40,98,99]))
+        <li class="menu-item @if(str_contains(Request::url(), route('customer')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('customer')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         @endif

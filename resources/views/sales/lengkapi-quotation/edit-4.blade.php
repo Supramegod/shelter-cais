@@ -45,8 +45,8 @@
                       <label class="form-check-label custom-option-content" for="umk">
                         <span class="custom-option-body">
                           <span class="custom-option-title">UMK</span>
-                          <span class="label-provinsi">{{$quotation->quotation_site[0]->kota}}</span><br>
-                          <span class="label-provinsi">{{number_format($quotation->quotation_site[0]->umk,2,",",".")}}</span>
+                          <span class="label-provinsi">@foreach($quotation->quotation_site as $site) @if(!$loop->first) | @endif {{$site->kota}} @endforeach</span><br>
+                          <span class="label-provinsi">@foreach($quotation->quotation_site as $site) @if(!$loop->first) | @endif  {{number_format($site->umk,0,",",".")}} @endforeach</span>
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="UMK" id="umk" @if($quotation->upah == 'UMK') checked @endif>
                       </label>

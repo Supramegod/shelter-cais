@@ -178,7 +178,7 @@
                   </div>
 
                   <div class="row mt-4">
-                  <div class="offset-sm-2 col-sm-10 d-flex">
+                  <div class="col-sm-12 d-flex">
                     <table class="table table-bordered mt-4">
                       <thead>
                           <tr>

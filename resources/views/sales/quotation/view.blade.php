@@ -18,7 +18,7 @@
         class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
           <div class="d-flex flex-column justify-content-center">
             <h5 class="mb-1 mt-3">
-            {{$quotation->nama_perusahaan}} - {{$quotation->nomor}} - Revisi Ke : {{$quotation->revisi}} <span class="badge @if($quotation->status_quotation_id == 8 ) bg-label-danger @else bg-label-info @endif rounded-pill mt-1">{{$quotation->status}}</span>
+            {{$quotation->nama_perusahaan}} - {{$quotation->nomor}} - Revisi Ke : {{$quotation->revisi}} @if($quotation->is_aktif == 0) <span class="badge @if($quotation->status_quotation_id == 8 ) bg-label-danger @else bg-label-info @endif rounded-pill mt-1">{{$quotation->status}}</span> @endif
                @if($quotation->step != 100)
                 <span class="badge bg-label-warning rounded-pill">Data Belum Terisi Lengkap</span>
                @endif
@@ -35,10 +35,10 @@
               <div class="d-flex align-content-center flex-wrap gap-2 mt-3">
                 @if($quotation->is_aktif==1)
                   @if($quotation->spk!=null)
-                  <a href="{{route('spk.view',$quotation->spk->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat SPK</a>
+                  <!-- <a href="{{route('spk.view',$quotation->spk->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat SPK</a> -->
                   @endif
                   @if($quotation->pks!=null)
-                  <a href="{{route('pks.view',$quotation->pks->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat PKS</a>
+                  <!-- <a href="{{route('pks.view',$quotation->pks->id)}}" class="btn btn-success"><i class="mdi mdi-arrow-right"></i>&nbsp;  Lihat PKS</a> -->
                   @endif
                 @endif
               </div>

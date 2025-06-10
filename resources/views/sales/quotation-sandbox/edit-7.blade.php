@@ -42,7 +42,12 @@
                                 <th>{{$data->nama}}</th>
                                 <th>Harga / Unit</th>
                                 @foreach($quotation->quotation_detail as $detailJabatan)
-                                  <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
+                                    <th class="text-center">
+                                    {{$detailJabatan->jabatan_kebutuhan}}
+                                    @if($quotation->jumlah_site=="Multi Site")
+                                    <br />{{$detailJabatan->kota}}
+                                    @endif
+                                    </th>
                                 @endforeach
                               </tr>
                             </thead>

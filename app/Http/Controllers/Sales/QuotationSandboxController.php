@@ -54,7 +54,12 @@ class QuotationSandboxController extends Controller
             $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
             $salaryRule = DB::table('m_salary_rule')->whereNull('deleted_at')->get();
             $quotation->detail = DB::connection('mysqlhris')->table('m_position')->where('is_active',1)->where('layanan_id',$quotation->kebutuhan_id)->orderBy('name','asc')->get();
-            $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            $quotation->quotation_detail = DB::table('sl_quotation_detail')
+                                                ->join('sl_quotation_site','sl_quotation_detail.quotation_site_id','=','sl_quotation_site.id')
+                                                ->select('sl_quotation_detail.*','sl_quotation_site.provinsi as provinsi','sl_quotation_site.kota as kota')
+                                                ->where('sl_quotation_detail.quotation_id',$request->id)
+                                                ->whereNull('sl_quotation_detail.deleted_at')
+                                                ->get();
             $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $topList = DB::table('m_top')->whereNull('deleted_at')->orderBy('nama','asc')->get();
 

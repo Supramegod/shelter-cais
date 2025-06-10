@@ -60,6 +60,33 @@
               </table>
             </div>
           </div>
+          <h6>3. Informasi Site</h6>
+          <div class="row mb-3">
+            <div class="table-responsive overflow-hidden table-site">
+              <table id="table-site" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Nama Site</th>
+                    <th>Provinsi</th>
+                    <th>Kota</th>
+                    <th>Penempatan</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-site">
+                    @foreach($data->site as $index => $site)
+                    <tr>
+                        <td>{{$index + 1}}</td>
+                        <td>{{$site->nama_site}}</td>
+                        <td>{{$site->provinsi}}</td>
+                        <td>{{$site->kota}}</td>
+                        <td>{{$site->penempatan}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
         </form>
       </div>
     </div>

@@ -73,41 +73,144 @@ class PksController extends Controller
     }
 
     public function list (Request $request){
-        $data = DB::table('sl_pks')
-                ->leftJoin('sl_spk','sl_spk.id','sl_pks.spk_id')
-                ->leftJoin('sl_quotation','sl_pks.quotation_id','sl_quotation.id')
-                ->whereNull('sl_pks.deleted_at')
-                ->whereNull('sl_spk.deleted_at')
-                ->whereNull('sl_quotation.deleted_at')
-                ->select('sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation.kebutuhan','sl_pks.status_pks_id')
-                ->get();
+        $db2 = DB::connection('mysqlhris')->getDatabaseName();
 
-        foreach ($data as $key => $value) {
-            if($value->tgl_pks !=null){
-                $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
-            }
-            if($value->created_at !=null){
-                $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
-            }
-            if($value->status_pks_id == null){
-                $value->status = "";
-            } else{
-                $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
-            }
-        }
+        $query = DB::table('sl_pks')
+            ->leftJoin('m_status_pks', 'sl_pks.status_pks_id', '=', 'm_status_pks.id')
+            ->whereNull('sl_pks.deleted_at')
+            ->select(
+                'sl_pks.leads_id',
+                'sl_pks.tgl_pks as tanggal',
+                'sl_pks.status_pks_id',
+                'sl_pks.nomor as no_pks',
+                'sl_pks.nama_perusahaan',
+                'sl_pks.kontrak_awal',
+                'sl_pks.kontrak_akhir',
+                'sl_pks.id',
+                'm_status_pks.nama as status',
+                'sl_pks.created_by',
+                'sl_pks.created_at'
+            );
 
-        return DataTables::of($data)
+        return DataTables::of($query)
+        ->addColumn('s_mulai_kontrak', function ($data) {
+            return $data->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $data->kontrak_awal)->isoFormat('D MMMM Y') : null;
+        })
+        ->addColumn('s_kontrak_selesai', function ($data) {
+            return $data->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $data->kontrak_akhir)->isoFormat('D MMMM Y') : null;
+        })
+        ->editColumn('tanggal', function ($data) {
+            if($data->tanggal !=null){
+                return $data->tanggal ? Carbon::createFromFormat('Y-m-d H:i:s', $data->tanggal)->isoFormat('D MMMM Y') : null;
+            }
+            return null;
+        })
         ->addColumn('aksi', function ($data) {
-            return '<div class="justify-content-center d-flex">
-                                <a href="'.route('pks.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
-                    </div>';
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
+
+            $aksiIcon = "";
+
+            if (is_null($data->leads_id)) {
+                $aksiIcon = '<a href="javascript:void(0)" class="text-body" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Leads atau Site tidak ditemukan, silahkan kontak administrator\', icon: \'warning\'})">
+                    <i class="mdi mdi-magnify mdi-20px mx-1"></i>
+                </a>';
+                $aksiIcon .= '<a href="javascript:void(0)" class="text-body" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Leads atau Site tidak ditemukan, silahkan kontak administrator\', icon: \'warning\'})">
+                    <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
+                </a>';
+            } else {
+                $aksiIcon = '<a href="'.route('monitoring-kontrak.view', $data->id).'" class="text-body">
+                    <i class="mdi mdi-magnify mdi-20px mx-1"></i>
+                </a>';
+                $aksiIcon .= '<a href="'.route('customer-activity.add-activity-kontrak', $data->id).'" class="text-body">
+                    <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
+                </a>';
+            }
+
+            $aksi = '<div class="d-flex align-items-center">
+            '.$aksiIcon.'
+            </div>';
+            return $aksi;
         })
-        ->editColumn('nomor', function ($data) {
-            return '<a href="'.route('pks.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+        ->addColumn('berakhir_dalam', function ($data) {
+            return $this->hitungBerakhirKontrak($data->kontrak_akhir);
         })
-        ->rawColumns(['aksi','nomor'])
+        ->addColumn('warna_row', function ($data) {
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
+            if($selisih<=0){
+                return '#2c3e5040';
+            }else if($selisih<=60){
+                return '#c0392b40';
+            }else if($selisih<=90){
+                return '#f39c1240';
+            }else{
+                return '#27ae6040';
+            }
+        })
+        ->addColumn('warna_font', function ($data) {
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
+            if($selisih<=0){
+                return '#636578';
+            }else if($selisih<=60){
+                return '#636578';
+            }else if($selisih<=90){
+                return '#636578';
+            }else{
+                return '#636578';
+            }
+        })
+        ->addColumn('status_berlaku', function ($data) {
+            $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
+            if($selisih<=0){
+                return '<span class="badge rounded-pill bg-label-danger text-capitalized">Kontrak Habis</span>';
+            }else if($selisih<=60){
+                return '<span class="badge rounded-pill bg-label-danger text-capitalized">Berakhir dalam 2 bulan</span>';
+            }else if($selisih<=90){
+                return '<span class="badge rounded-pill bg-label-warning text-capitalized">Berakhir dalam 3 bulan</span>';
+            }else{
+                return '<span class="badge rounded-pill bg-label-success text-capitalized">Lebih dari 3 Bulan</span>';
+            }
+        })
+        ->rawColumns(['aksi', 'status_berlaku'])
         ->make(true);
     }
+
+
+    // public function list (Request $request){
+    //     $data = DB::table('sl_pks')
+    //             ->leftJoin('sl_spk','sl_spk.id','sl_pks.spk_id')
+    //             ->leftJoin('sl_quotation','sl_pks.quotation_id','sl_quotation.id')
+    //             ->whereNull('sl_pks.deleted_at')
+    //             ->whereNull('sl_spk.deleted_at')
+    //             ->whereNull('sl_quotation.deleted_at')
+    //             ->select('sl_pks.created_by','sl_pks.created_at','sl_pks.id','sl_pks.nomor','sl_spk.nomor as nomor_spk','sl_pks.tgl_pks','sl_quotation.nama_perusahaan','sl_quotation.kebutuhan','sl_pks.status_pks_id')
+    //             ->get();
+
+    //     foreach ($data as $key => $value) {
+    //         if($value->tgl_pks !=null){
+    //             $value->tgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_pks)->isoFormat('D MMMM Y');
+    //         }
+    //         if($value->created_at !=null){
+    //             $value->created_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y');
+    //         }
+    //         if($value->status_pks_id == null){
+    //             $value->status = "";
+    //         } else{
+    //             $value->status = DB::table('m_status_pks')->where('id',$value->status_pks_id)->first()->nama;
+    //         }
+    //     }
+
+    //     return DataTables::of($data)
+    //     ->addColumn('aksi', function ($data) {
+    //         return '<div class="justify-content-center d-flex">
+    //                             <a href="'.route('pks.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+    //                 </div>';
+    //     })
+    //     ->editColumn('nomor', function ($data) {
+    //         return '<a href="'.route('pks.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
+    //     })
+    //     ->rawColumns(['aksi','nomor'])
+    //     ->make(true);
+    // }
 
     public function listTerhapus (Request $request){
         $data = DB::table('sl_pks')
@@ -2133,4 +2236,60 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
 
         return $nomor;
     }
+
+    function hitungBerakhirKontrak($tanggalBerakhir) {
+        if (is_null($tanggalBerakhir)) {
+            return "-";
+        }
+        // Tanggal saat ini
+        $tanggalSekarang = Carbon::now()->format('Y-m-d');
+        $tanggalSekarang = Carbon::createFromFormat('Y-m-d', $tanggalSekarang);
+
+        // Buat objek tanggal dari input
+        $tanggalBerakhir = Carbon::createFromFormat('Y-m-d', $tanggalBerakhir);
+
+        // Jika kontrak sudah habis
+        if ($tanggalSekarang->greaterThanOrEqualTo($tanggalBerakhir)) {
+            return "Kontrak habis";
+        }
+
+        // Hitung selisih
+        $selisih = $tanggalSekarang->diff($tanggalBerakhir);
+
+        // Format output hanya jika nilainya lebih dari 0
+        $hasil = [];
+        if ($selisih->y > 0) {
+            $hasil[] = "{$selisih->y} tahun";
+        }
+        if ($selisih->m > 0) {
+            $hasil[] = "{$selisih->m} bulan";
+        }
+        if ($selisih->d > 0) {
+            $hasil[] = "{$selisih->d} hari";
+        }
+
+        // Gabungkan hasil menjadi string
+        return implode(', ', $hasil);
+    }
+    function selisihKontrakBerakhir($tanggalBerakhir) {
+        if (is_null($tanggalBerakhir)) {
+            return 0;
+        }
+         // Tanggal sekarang
+        $tanggalSekarang = Carbon::now();
+
+        // Tanggal kontrak berakhir
+        $tanggalBerakhir = Carbon::createFromFormat('Y-m-d', $tanggalBerakhir);
+
+        // Jika kontrak sudah habis
+        if ($tanggalSekarang->greaterThanOrEqualTo($tanggalBerakhir)) {
+            return 0;
+        }
+
+        // Hitung selisih dalam hari
+        $selisihHari = $tanggalSekarang->diffInDays($tanggalBerakhir);
+
+        return $selisihHari;
+    }
+
 }

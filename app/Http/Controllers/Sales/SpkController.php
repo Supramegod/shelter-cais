@@ -61,10 +61,27 @@ class SpkController extends Controller
             $now = Carbon::now()->isoFormat('DD MMMM Y');
 
             $quotation =null;
+            $siteList = [];
             if($request->id!=null){
                 $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->id)->first();
+                if($quotation==null){
+                    return redirect()->route('spk.add');
+                }
+                $siteList = DB::table('sl_quotation_site')
+                            ->where('quotation_id',$quotation->id)
+                            ->whereNull('deleted_at')
+                            ->whereNotIn('id', function($query) {
+                                $query->select('quotation_site_id')
+                                    ->from('sl_spk_site')
+                                    ->whereNull('deleted_at');
+                            })
+                            ->get();
             }
-            return view('sales.spk.add',compact('now','quotation'));
+            $view = 'sales.spk.add';
+            if($quotation==null){
+                $view = 'sales.spk.add-2';
+            }
+            return view($view,compact('now','quotation','siteList'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -119,17 +136,38 @@ class SpkController extends Controller
 
     public function availableQuotation (Request $request){
         try {
-            $data = DB::table('sl_quotation')
-                ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
-                ->leftJoin('sl_spk','sl_spk.quotation_id','=','sl_quotation.id')
-                ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
-                ->whereNull('sl_quotation.deleted_at')
-                ->whereNull('sl_spk.id')
-                ->whereNull('sl_spk.deleted_at')
-                ->where('m_tim_sales_d.user_id',Auth::user()->id)
-                ->select("sl_quotation.nomor","sl_quotation.id","sl_quotation.tgl_quotation","sl_quotation.nama_perusahaan","sl_quotation.jumlah_site","sl_quotation.kebutuhan","sl_quotation.kebutuhan as layanan")
-                ->distinct()
-                ->get();
+            // $data = DB::table('sl_quotation')
+            //     ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
+            //     ->leftJoin('sl_spk','sl_spk.quotation_id','=','sl_quotation.id')
+            //     ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+            //     ->whereNull('sl_quotation.deleted_at')
+            //     ->whereNull('sl_spk.id')
+            //     ->whereNull('sl_spk.deleted_at')
+            //     ->where('m_tim_sales_d.user_id',Auth::user()->id)
+            //     ->select("sl_quotation.nomor","sl_quotation.id","sl_quotation.tgl_quotation","sl_quotation.nama_perusahaan","sl_quotation.jumlah_site","sl_quotation.kebutuhan","sl_quotation.kebutuhan as layanan")
+            //     ->distinct()
+            //     ->get();
+                $data = DB::table('sl_quotation')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation.leads_id')
+                    ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                    ->whereNull('sl_quotation.deleted_at')
+                    ->where('sl_quotation.is_aktif',1)
+                    ->where('m_tim_sales_d.user_id',Auth::user()->id)
+                    ->whereExists(function($query) {
+                        $query->select(DB::raw(1))
+                            ->from('sl_quotation_site')
+                            ->whereRaw('sl_quotation_site.quotation_id = sl_quotation.id')
+                            ->whereNull('sl_quotation_site.deleted_at')
+                            ->whereNotExists(function($sub) {
+                                $sub->select(DB::raw(1))
+                                    ->from('sl_spk_site')
+                                    ->whereRaw('sl_spk_site.quotation_site_id = sl_quotation_site.id')
+                                    ->whereNull('sl_spk_site.deleted_at');
+                            });
+                    })
+                    ->select("sl_quotation.nomor","sl_quotation.id","sl_quotation.tgl_quotation","sl_quotation.nama_perusahaan","sl_quotation.jumlah_site","sl_quotation.kebutuhan","sl_quotation.kebutuhan as layanan")
+                    ->distinct()
+                    ->get();
             foreach ($data as $key => $value) {
                 $value->quotation = $value->nomor;
                 $value->tgl_quotation = Carbon::createFromFormat('Y-m-d',$value->tgl_quotation)->isoFormat('D MMMM Y');
@@ -157,7 +195,7 @@ class SpkController extends Controller
                 'leads_id' => $quotation->leads_id,
                 'nomor' => $spkNomor,
                 'nomor_quotation' => $quotation->nomor,
-                'tgl_spk' => $current_date_time,
+                'tgl_spk' => $request->tanggal_spk,
                 'nama_perusahaan' => $quotation->nama_perusahaan,
                 'kebutuhan_id' => $quotation->kebutuhan_id,
                 'kebutuhan' => $quotation->kebutuhan,
@@ -170,8 +208,31 @@ class SpkController extends Controller
                 'created_by' => Auth::user()->full_name
             ]);
 
+            //simpan SPK Site
+            $siteIds = $request->input('site_ids', []);
+            foreach ($siteIds as $siteId) {
+                $quotationSite = DB::table('sl_quotation_site')->where('id', $siteId)->first();
+                DB::table('sl_spk_site')->insert([
+                    'spk_id' => $newId,
+                    'quotation_id' => $quotationSite->quotation_id,
+                    'quotation_site_id' => $quotationSite->id,
+                    'leads_id' => $quotationSite->leads_id,
+                    'nama_site' => $quotationSite->nama_site,
+                    'provinsi_id' => $quotationSite->provinsi_id,
+                    'provinsi' => $quotationSite->provinsi,
+                    'kota_id' => $quotationSite->kota_id,
+                    'kota' => $quotationSite->kota,
+                    'ump' => $quotationSite->ump,
+                    'umk' => $quotationSite->umk,
+                    'nominal_upah' => $quotationSite->nominal_upah,
+                    'penempatan' => $quotationSite->penempatan,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
+
             DB::table('sl_quotation')->where('id',$request->id)->update([
-                'status_quotation_id' => 4,
+                'status_quotation_id' => 3,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -240,6 +301,7 @@ class SpkController extends Controller
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
             $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$data->quotation_id)->first();
             $data->status = DB::table('m_status_spk')->where('id',$data->status_spk_id)->first()->nama;
+            $data->site = DB::table('sl_spk_site')->where('spk_id',$data->id)->whereNull('deleted_at')->get();
 
             return view('sales.spk.view',compact('data','quotation'));
         } catch (\Exception $e) {
