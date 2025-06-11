@@ -92,7 +92,6 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th></th>
                                     <th class="text-center">No SPK</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
@@ -121,7 +120,7 @@
 
 @section('pageScript')
     <script>
-        @if(isset($success) || session()->has('success'))  
+        @if(isset($success) || session()->has('success'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$success}} {{session()->get('success')}}',
@@ -132,7 +131,7 @@
                 buttonsStyling: false
             });
         @endif
-        @if(isset($error) || session()->has('error'))  
+        @if(isset($error) || session()->has('error'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$error}} {{session()->has('error')}}',
@@ -145,15 +144,15 @@
         @endif
             let dt_filter_table = $('.dt-column-search');
 
-            // Formatting function for row details - modify as you need
-            function format(d) {
-                return (
-                    '<dl>' +
-                    '<dt>Status Leads Saat Ini :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">trial</dd>' +
-                    '</dl>'
-                );
-            }
+            // // Formatting function for row details - modify as you need
+            // function format(d) {
+            //     return (
+            //         '<dl>' +
+            //         '<dt>Status Leads Saat Ini :</dt>' +
+            //         '<dd style="font-weight:bold;color:#000056">trial</dd>' +
+            //         '</dl>'
+            //     );
+            // }
 
             var table = $('#table-data').DataTable({
                 scrollX: true,
@@ -178,7 +177,7 @@
                     if(data.status_spk_id==1){
                         $('td', row).css('background-color', '#f39c1240');
                     }
-                },     
+                },
                 "order":[
                     [0,'desc']
                 ],
@@ -187,12 +186,14 @@
                     name : 'id',
                     visible: false,
                     searchable: false
-                },{
-                    className: 'dt-control',
-                    orderable: false,
-                    data: null,
-                    defaultContent: ''
-                },{
+                },
+                // {
+                //     className: 'dt-control',
+                //     orderable: false,
+                //     data: null,
+                //     defaultContent: ''
+                // },
+                {
                     data : 'nomor',
                     name : 'nomor',
                     className:'text-center'
@@ -276,13 +277,13 @@
                         className: 'dropdown-item',
                         orientation: 'landscape',
                         customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                         exportOptions: {
                             columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                             orientation: 'landscape',
                             customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                             // prevent avatar to be display
                             format: {
@@ -317,18 +318,18 @@
             });
 
             // Add event listener for opening and closing details
-            table.on('click', 'td.dt-control', function (e) {
-                let tr = e.target.closest('tr');
-                let row = table.row(tr);
-            
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                }
-                else {
-                    // Open this row
-                    row.child(format(row.data())).show();
-                }
-            });
+            // table.on('click', 'td.dt-control', function (e) {
+            //     let tr = e.target.closest('tr');
+            //     let row = table.row(tr);
+
+            //     if (row.child.isShown()) {
+            //         // This row is already open - close it
+            //         row.child.hide();
+            //     }
+            //     else {
+            //         // Open this row
+            //         row.child(format(row.data())).show();
+            //     }
+            // });
     </script>
 @endsection

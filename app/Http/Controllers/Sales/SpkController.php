@@ -336,7 +336,7 @@ class SpkController extends Controller
             }
 
             $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation[0]->company_id)->first();
-            $quotation[0]->site = DB::table('sl_quotation_site')->where('quotation_id',$quotation[0]->id)->get();
+            $quotation[0]->site = DB::table('sl_spk_site')->where('spk_id',$id)->get();
             return view('sales.spk.cetakan.spk',compact('now','data','quotation','leads','company'));
         } catch (\Exception $e) {
             dd($e);

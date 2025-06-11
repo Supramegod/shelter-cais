@@ -61,10 +61,22 @@ class PksController extends Controller
 
             $data=null;
             $spk =null;
+            $siteList=[];
             if($request->id!=null){
                 $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->id)->first();
+                if($spk==null){
+                    return redirect()->route('pks.add');
+                }
+                $siteList = DB::table('sl_spk_site')
+                    ->where('spk_id',$spk->id)
+                    ->whereNull('deleted_at')
+                    ->get();
             }
-            return view('sales.pks.add',compact('now','spk'));
+
+            $kategoriHC = DB::table('m_kategori_sesuai_hc')
+                ->whereNull('deleted_at')
+                ->get();
+            return view('sales.pks.add',compact('now','spk','siteList','kategoriHC'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -118,7 +130,7 @@ class PksController extends Controller
                     <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
                 </a>';
             } else {
-                $aksiIcon = '<a href="'.route('monitoring-kontrak.view', $data->id).'" class="text-body">
+                $aksiIcon = '<a href="'.route('pks.view', $data->id).'" class="text-body">
                     <i class="mdi mdi-magnify mdi-20px mx-1"></i>
                 </a>';
                 $aksiIcon .= '<a href="'.route('customer-activity.add-activity-kontrak', $data->id).'" class="text-body">
@@ -259,6 +271,7 @@ class PksController extends Controller
 
     public function save(Request $request){
         try {
+            // dd($request->all());
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
             $dataSpk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->spk_id)->first();
@@ -268,7 +281,7 @@ class PksController extends Controller
             $ruleThr = DB::table('m_rule_thr')->where('id',$quotation->rule_thr_id)->first();
             $salaryRule = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
             $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation->company_id)->first();
-            $site = DB::table('sl_quotation_site')->where('quotation_id',$quotation->id)->first();
+            // $site = DB::table('sl_spk_site')->where('id',$request->site_ids[0])->first();
             $timsalesD = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
             $jumlahHcQuotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->sum('jumlah_hc');
 
@@ -277,15 +290,15 @@ class PksController extends Controller
                 'quotation_id' => $quotation->id,
                 'spk_id' => $dataSpk->id,
                 'leads_id' => $quotation->leads_id,
-                'site_id' => $site->id,
+                // 'site_id' => $site->id,
                 'branch_id' => $leads->branch_id,
                 'company_id' => $quotation->company_id,
-                'kode_site' => $leads->nomor,
+                // 'kode_site' => $leads->nomor,
                 'nomor' => $pksNomor,
-                'tgl_pks' => Carbon::now()->toDateString(),
-                'nama_site' => $site->nama_site,
-                'alamat_site' => $site->penempatan,
-                'nama_proyek' => $pksNomor,
+                'tgl_pks' => $request->tanggal_pks,
+                // 'nama_site' => $site->nama_site,
+                // 'alamat_site' => $site->penempatan,
+                // 'nama_proyek' => $pksNomor,
                 'kode_perusahaan' => $leads->nomor,
                 'nama_perusahaan' => $leads->nama_perusahaan,
                 'alamat_perusahaan' => $leads->alamat,
@@ -297,11 +310,11 @@ class PksController extends Controller
                 'jenis_perusahaan' => $quotation->jenis_perusahaan,
                 'link_pks_disetujui' => null,
                 'status_pks_id' => 5,
-                'provinsi_id' => $site->provinsi_id,
-                'provinsi' => $site->provinsi,
-                'kota_id' => $site->kota_id,
-                'kota' => $site->kota,
-                'pma' => '',
+                'provinsi_id' => $leads->provinsi_id,
+                'provinsi' => $leads->provinsi,
+                'kota_id' => $leads->kota_id,
+                'kota' => $leads->kota,
+                'pma' => $leads->pma,
                 'sales_id' => $timsalesD->user_id,
                 'crm_id_1' => $leads->crm_id,
                 'crm_id_2' => $leads->crm_id_1,
@@ -360,11 +373,39 @@ class PksController extends Controller
                 'created_by' => Auth::user()->full_name
             ]);
 
-            DB::table('sl_quotation')->where('id',$quotation->id)->update([
-                'status_quotation_id' => 5,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
+            foreach ($request->site_ids as $key => $value) {
+                $nomorSite = $pksNomor.'-'.sprintf("%04d", ($key+1));
+                $namaProyek = sprintf(
+                        '%s-%s.%s.%s',
+                        Carbon::parse($quotation->mulai_kontrak)->format('my'),
+                        Carbon::parse($quotation->kontrak_selesai)->format('my'),
+                        strtoupper(substr($quotation->kebutuhan, 0, 2)),
+                        strtoupper($leads->nama_perusahaan)
+                    );
+                $site = DB::table('sl_spk_site')->where('id',$value)->first();
+                DB::table('sl_site')->insert([
+                    'quotation_id' => $site->quotation_id,
+                    'spk_id' => $site->spk_id,
+                    'pks_id' => $newId,
+                    'quotation_site_id' => $site->quotation_site_id,
+                    'spk_site_id' => $site->id,
+                    'leads_id' => $site->leads_id,
+                    'nomor' => $nomorSite,
+                    'nomor_proyek' => $nomorSite,
+                    'nama_proyek' => $namaProyek,
+                    'nama_site' => $site->nama_site,
+                    'provinsi_id' => $site->provinsi_id,
+                    'provinsi' => $site->provinsi,
+                    'kota_id' => $site->kota_id,
+                    'kota' => $site->kota,
+                    'ump' => $site->ump,
+                    'umk' => $site->umk,
+                    'nominal_upah' => $site->nominal_upah,
+                    'penempatan' => $site->penempatan,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+            }
 
             DB::table('sl_spk')->where('id',$dataSpk->id)->update([
                 'status_spk_id' => 3,
@@ -1314,7 +1355,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
             $data->status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$data->status_pks_id)->first()->nama;
             $perjanjian = DB::table('sl_pks_perjanjian')->whereNull('deleted_at')->where('pks_id',$id)->whereNull('deleted_at')->get();
-
+            $data->siteList = DB::table('sl_site')->whereNull('deleted_at')->where('pks_id',$id)->get();
             return view('sales.pks.view',compact('perjanjian','quotation','spk','data'));
         } catch (\Exception $e) {
             dd($e);

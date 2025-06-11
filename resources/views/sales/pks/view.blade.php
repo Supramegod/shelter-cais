@@ -65,6 +65,56 @@
               </table>
             </div>
           </div>
+          <h6>3. Informasi SPK</h6>
+          <div class="row mb-3">
+            <div class="table-responsive overflow-hidden table-spk">
+              <table id="table-spk" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Nomor SPK</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-spk">
+                    <tr>
+                        <td>1</td>
+                        <td><b><a href="{{route('spk.view',[$spk->id])}}">{{$spk->nomor}}</a></b></td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <h6>4. Informasi Site</h6>
+          <div class="row mb-3">
+            <div class="table-responsive overflow-hidden table-site">
+              <table id="table-site" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Nomor</th>
+                    <th>Nama Site</th>
+                    <th>Provinsi</th>
+                    <th>Kota</th>
+                    <th>Penempatan</th>
+                    <th>Nama Proyek</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-site">
+                    @foreach($data->siteList as $key => $site)
+                    <tr>
+                        <td>{{$key+1}}</td>
+                        <td><b>{{$site->nomor}}</b></td>
+                        <td>{{$site->nama_site}}</td>
+                        <td>{{$site->provinsi}}</td>
+                        <td>{{$site->kota}}</td>
+                        <td>{{$site->penempatan}}</td>
+                        <td>{{$site->nama_proyek}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
           <h6>3. Perjanjian Kerja Sama</h6>
             @foreach($perjanjian as $key => $value)
             <div class="row mb-1">

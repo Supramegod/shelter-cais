@@ -266,6 +266,14 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Uploading...',
+                    text: 'Mohon tunggu, file sedang diupload.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
                 // Ambil file dari form SweetAlert
                 var file = result.value;
                 var formData = new FormData();

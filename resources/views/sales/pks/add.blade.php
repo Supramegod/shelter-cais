@@ -18,22 +18,31 @@
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
               <h4 class="mb-0">PKS</h4>
-              <h4>Pilih SPK Untuk Dijadikan PKS</h4>
+              <h4>SPK Untuk Dijadikan PKS</h4>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">SPK <span class="text-danger">*</span></label>
-              <div class="col-sm-10">
-                <input type="hidden" id="spk_id" name="spk_id" value="@if($spk !=null) {{$spk->id}} @endif" class="form-control">
-                <div class="input-group">
-                  <input type="text" id="spk" name="spk" value="@if($spk !=null) {{$spk->nomor}} @endif" class="form-control" readonly>
-                  @if($spk ==null)
-                    <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-spk"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Spk</button>
-                    @if($errors->has('spk'))
-                      <div class="invalid-feedback">{{$errors->first('spk')}}</div>
-                    @endif
-                  @endif
+                <label class="col-sm-2 col-form-label text-sm-end">SPK <span class="text-danger">*</span></label>
+                <div class="col-sm-10">
+                    <input type="hidden" id="spk_id" name="spk_id" value="@if($spk !=null) {{$spk->id}} @endif" class="form-control">
+                    <div class="input-group">
+                    <input type="text" id="spk" name="spk" value="@if($spk !=null) {{$spk->nomor}} @endif" class="form-control" readonly>
+                    </div>
                 </div>
-              </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end" for="kategoriHC">Kategori Sesuai HC <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <select id="kategoriHC" name="kategoriHC" class="form-select">
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach($kategoriHC as $kategori)
+                            <option value="{{$kategori->id}}" {{ old('kategoriHC') == $kategori->id ? 'selected' : '' }}>{{$kategori->nama}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_pks">Tanggal PKS <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <input type="date" id="tanggal_pks" name="tanggal_pks" class="form-control" value="{{ old('tanggal_pks', date('Y-m-d')) }}">
+                </div>
             </div>
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
@@ -43,6 +52,41 @@
               <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
               <div class="col-sm-4">
                 <input type="text" id="kebutuhan" name="kebutuhan" value="@if($spk !=null) {{$spk->kebutuhan}} @endif" class="form-control" readonly>
+              </div>
+            </div>
+            <div class="content-header mb-3 text-center">
+              <h4>List Site</h4>
+            </div>
+            <div id="d-table-quotation" class="row mb-3">
+              <div class="table-responsive overflow-hidden table-quotation">
+                <table id="table-quotation" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                  <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="check-all-sites" class="form-check-input" style="transform: scale(1.5); margin-right: 8px;" />
+                        </th>
+                      <th>No.</th>
+                      <th>Nama Site</th>
+                      <th>Provinsi</th>
+                      <th>Kota</th>
+                      <th>Penempatan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($siteList as $key => $site)
+                      <tr>
+                        <td>
+                            <input type="checkbox" name="site_ids[]" value="{{$site->id}}" class="form-check-input site-checkbox" style="transform: scale(1.5); margin-right: 8px;" />
+                        </td>
+                        <td>{{$key+1}}</td>
+                        <td>{{$site->nama_site}}</td>
+                        <td>{{$site->provinsi}}</td>
+                        <td>{{$site->kota}}</td>
+                        <td>{{$site->penempatan}}</td>
+                      </tr>
+                      @endforeach
+                  </tbody>
+                </table>
               </div>
             </div>
             <div class="row">
@@ -60,102 +104,11 @@
   </div>
   <hr class="container-m-nx mb-5" />
 </div>
-
-<div class="modal fade" id="modal-spk" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h3 class="mb-2">Daftar Spk</h3>
-        </div>
-        <div class="row">
-          <div class="table-responsive overflow-hidden table-data">
-            <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                <thead>
-                  <tr>
-                    <th class="text-center">ID</th>
-                    <th class="text-center">Nomor</th>
-                    <th class="text-center">Tgl Spk</th>
-                    <th class="text-center">Nama Perusahaan</th>
-                    <th class="text-center">Kebutuhan</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    {{-- data table ajax --}}
-                </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 <!--/ Content -->
 @endsection
 
 @section('pageScript')
 <script>
-  $('#btn-modal-cari-spk').on('click',function(){
-    $('#modal-spk').modal('show');
-  });
-
-  let dt_filter_table = $('.dt-column-search');
-
-  var table = $('#table-data').DataTable({
-      "initComplete": function (settings, json) {
-        $("#table-data").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-      },
-      "bDestroy": true,
-      "iDisplayLength": 25,
-      'processing': true,
-      'language': {
-          'loadingRecords': '&nbsp;',
-          'processing': 'Loading...'
-      },
-      ajax: {
-          url: "{{ route('pks.available-spk') }}",
-          data: function (d) {
-
-          },
-      },
-      "order":[
-          [0,'desc']
-      ],
-      columns:[{
-                data : 'id',
-                name : 'id',
-                searchable: false
-            },{
-                data : 'nomor',
-                name : 'nomor',
-                className:'text-center'
-            },{
-                data : 'tgl_spk',
-                name : 'tgl_spk',
-                className:'text-center'
-            },{
-                data : 'nama_perusahaan',
-                name : 'nama_perusahaan',
-                className:'text-center'
-            },{
-                data : 'kebutuhan',
-                name : 'kebutuhan',
-                className:'text-center'
-            }],
-      "language": datatableLang,
-  });
-
-  $('#table-data').on('click', 'tbody tr', function() {
-      $('#modal-spk').modal('hide');
-      var rdata = table.row(this).data();
-      $('#spk_id').val(rdata.id);
-      $('#spk').val(rdata.nomor);
-      $('#nama_perusahaan').val(rdata.nama_perusahaan);
-      $('#kebutuhan').val(rdata.kebutuhan);
-    });
-
-
     $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {
         e.preventDefault();
@@ -172,6 +125,18 @@
     if(obj.spk_id == null || obj.spk_id == "" ){
       msg += "<b>Spk</b> belum dipilih </br>";
     };
+
+    if(obj.tanggal_pks == null || obj.tanggal_pks == ""){
+      msg += "<b>Tanggal PKS</b> tidak boleh kosong </br>";
+    }
+    if(obj.kategoriHC == null || obj.kategoriHC == ""){
+      msg += "<b>Kategori Sesuai HC</b> belum dipilih </br>";
+    }
+    if (!obj['site_ids[]']) {
+        msg += "Silakan pilih minimal satu site untuk membuat SPK.<br>";
+    }
+
+
 
     if(msg == ""){
       form.submit();
