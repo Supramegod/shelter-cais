@@ -42,6 +42,7 @@ use App\Http\Controllers\Master\TrainingDivisiController;
 use App\Http\Controllers\Master\TrainingTrainerController;
 use App\Http\Controllers\Master\TrainingAreaController;
 use App\Http\Controllers\Master\TrainingClientController;
+use App\Http\Controllers\Master\TrainingGadaHargaController;
 
 use App\Http\Controllers\Sdt\SdtTrainingController;
 use App\Http\Controllers\Sdt\TrainingSiteController;
@@ -606,6 +607,17 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::get('/master/training-materi/list-training-materi', 'listUmk')->name('training-materi.list-umk'); // ajax
     });
 
+    Route::controller(TrainingGadaHargaController::class)->group(function() {
+        Route::get('/master/training-gada-harga', 'index')->name('training-gada-harga');
+        Route::get('/master/training-gada-harga/add', 'add')->name('training-gada-harga.add');
+        Route::get('/master/training-gada-harga/view/{id}', 'view')->name('training-gada-harga.view');
+        Route::get('/master/training-gada-harga/history', 'historyTrainingByMateri')->name('training-gada-harga.history');
+
+        Route::get('/master/training-gada-harga/list', 'list')->name('training-gada-harga.list'); // ajax
+        Route::post('/master/training-gada-harga/delete', 'delete')->name('training-gada-harga.delete');
+        Route::post('/master/training-gada-harga/save', 'save')->name('training-gada-harga.save');
+    });
+
     Route::controller(TrainingDivisiController::class)->group(function() {
         Route::get('/master/training-divisi', 'index')->name('training-divisi');
         Route::get('/master/training-divisi/add', 'add')->name('training-divisi.add');
@@ -681,6 +693,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/gada/training', 'index')->name('training-gada');
         Route::get('/gada/training/list', 'list')->name('training-gada.list');
         Route::get('/gada/training/list-log', 'listLog')->name('training-gada.listLog');
+        Route::get('/gada/training/data-registrasi', 'dataRegistrasi')->name('training-gada.dataRegistrasi');
+        Route::get('/gada/training/data-invoice', 'dataInvoice')->name('training-gada.dataInvoice');
+
         Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');
     });
 
@@ -731,6 +746,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/log/notifikasi/list', 'list')->name('notifikasi.list'); // ajax
         Route::post('/log/notifikasi/read', 'read')->name('notifikasi.read');
     });
+    
     Route::controller(WhatsappController::class)->group(function() {
         Route::get('/whatsapp/login', 'login')->name('whatsapp.login');
         Route::get('/whatsapp', 'index')->name('whatsapp');
@@ -738,5 +754,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/whatsapp/connectQr', 'connectQr')->name('whatsapp.connectQr');
         Route::post('/whatsapp/connectStatus', 'connectStatus')->name('whatsapp.connectStatus');
         Route::post('/whatsapp/message', 'message')->name('whatsapp.message');
+        Route::post('/whatsapp/sendMessage', 'sendMessage')->name('whatsapp.sendMessage');
     });
 });

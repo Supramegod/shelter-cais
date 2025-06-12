@@ -52,16 +52,39 @@ class TrainingGadaController extends Controller
         try {
             $data = DB::table('training_gada_calon')
             ->where('is_active', 1)
-            ->select('*', DB::raw("IF(status = 1, 'New Register', IF(status = 2, 'Leads', IF(status = 3, 'Cold Prospect', IF(status = 4, 'Hot Prospect', 'Peserta')))) as status_name"))
+            ->select('*', DB::raw("IF(status = 1, 'New Register', IF(status = 2, 'Leads', IF(status = 3, 'Cold Prospect', IF(status = 4, 'Hot Prospect', 'Peserta')))) as status_name"), DB::raw("DATE_FORMAT(last_sent_notif_register,'%d-%m-%Y %H:%i') as last_sent"))
             ->get();          
             return DataTables::of($data)
-            ->addColumn('aksi', function ($data) {
-                return '<div class="justify-content-center d-flex">
-                    <div onclick="showlistLog('.$data->id.')" class="btn btn-info waves-effect btn-xs"><i class="mdi mdi-information"></i>&nbsp;Log</div>&nbsp;
-                    <div onclick="showChangeStatus('.$data->id.')" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-tag"></i>&nbsp;Ubah Status</div>
-                </div>';
+            ->editColumn('status_name', function ($data) {
+                if($data->status == 1 || $data->status == 2 || $data->status == 3 || $data->status == 1){
+                    return '<span class="text-info">'.$data->status_name.'</span>';
+                }else{
+                    return '<div><button onclick="showMessageWhatsapp('.$data->id.','.$data->no_wa.',\''.$data->last_sent.'\',\''.$data->jenis_pelatihan.'\',\''.$data->nama.'\')" class="btn btn-success btn-sm">'.$data->status_name.' </button></div>';
+                }
             })
-            ->rawColumns(['aksi'])
+            ->editColumn('status_bayar', function ($data) {
+                if($data->data_registrasi == 1 && $data->status_bayar == 0){
+                    return '<div><button onclick="showMessageWhatsappInvoice('.$data->id.','.$data->no_wa.',\''.$data->last_sent.'\',\''.$data->jenis_pelatihan.'\',\''.$data->nama.'\')" class="btn btn-danger btn-sm">Belum Bayar</buuton></div>';
+                }else{
+                    return '-';
+                }
+            })
+            ->addColumn('aksi', function ($data) {
+                if($data->data_registrasi == 1){
+                    return '<div class="justify-content-center d-flex">
+                        <div onclick="showChangeStatus('.$data->id.','.$data->status.')" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-tag"></i>&nbsp;Status</div>&nbsp;
+                        <div onclick="showlistLog('.$data->id.')" class="btn btn-info waves-effect btn-xs"><i class="mdi mdi-information"></i>&nbsp;Log</div>&nbsp;
+                        <div onclick="showDataRegistrasi('.$data->id.')" class="btn btn-success waves-effect btn-xs"><i class="mdi mdi-account-plus"></i>&nbsp;Registrasi</div>&nbsp;
+                        <div onclick="uploadBuktiBayar('.$data->id.')" class="btn btn-warning waves-effect btn-xs"><i class="mdi mdi-upload"></i>&nbsp;Bukti Bayar</div>
+                    </div>';
+                }else{
+                    return '<div class="justify-content-center d-flex">
+                        <div onclick="showChangeStatus('.$data->id.','.$data->status.')" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-tag"></i>&nbsp;Status</div>&nbsp;
+                        <div onclick="showlistLog('.$data->id.')" class="btn btn-info waves-effect btn-xs"><i class="mdi mdi-information"></i>&nbsp;Log</div>&nbsp;
+                    </div>';
+                }
+            })
+            ->rawColumns(['aksi','status_name', 'status_bayar'])
             ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -84,6 +107,55 @@ class TrainingGadaController extends Controller
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             // dd($e);
+            abort(500);
+        }
+    }
+
+    public function dataRegistrasi(Request $request){
+        try {
+            $dataRegistrasi = DB::table('training_gada_registrasi')
+            ->where('is_active', 1)
+            ->orderBy('id', 'ASC')->first();
+            
+            return response()->json([
+                'success'   => false,
+                'data'      => $dataRegistrasi,
+                'message'   => "Berhasil get data registrasi"
+            ], 200);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function dataInvoice(Request $request){
+        try {
+            $dataRegistrasi = DB::table('training_gada_calon')
+            ->where('id', $request->pendaftar_id)
+            ->select('jenis_pelatihan')
+            ->orderBy('id', 'ASC')->first();
+            
+            $jenisGada = strtolower(str_replace('GADA', '', $dataRegistrasi->jenis_pelatihan));
+            $jenisGada = str_replace(' ', '', $jenisGada);
+
+            $totalHarga = 0;
+            foreach(explode(',', $jenisGada) as $jenis)
+            {
+                $harga = DB::table('m_training_gada_harga')->where('jenis_training', $jenis)->where('is_active', 1)->select('harga')->first();
+                $totalHarga += (int)$harga->harga;
+            }
+
+            // dd($totalHarga);
+
+            return response()->json([
+                'success'   => false,
+                'totalHarga'=> number_format($totalHarga),
+                'message'   => "Berhasil get data registrasi"
+            ], 200);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
     }

@@ -198,10 +198,16 @@
                         <div data-i18n="Tim Sales">Tim Sales</div>
                     </a>
                 </li>
-                <li class="menu-item @if(str_contains(Request::url(), route('training'))) active @endif">
+                <li class="menu-item @if(Request::url() == route('training')) active @endif">
                     <a href="{{route('training')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Training">Training</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(Request::url() === route('training-gada-harga')) active @endif">
+                    <a href="{{route('training-gada-harga')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training">Training Gada</div>
                     </a>
                 </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">

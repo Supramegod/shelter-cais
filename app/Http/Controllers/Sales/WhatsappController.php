@@ -171,6 +171,41 @@ class WhatsappController extends Controller
         }
     }
 
+    public function sendMessage(Request $request){
+        try {
+            $tokenWhatsapp = DB::table('m_setting')->where('id', 1)->first();
+            $response = Http::asForm()
+            ->withHeaders([
+                'Authorization' => 'Bearer '.$tokenWhatsapp->value
+            ])
+            ->post('https://whatsapp.ulilworld.com/chats/send?id=test1', [
+                'receiver' => $request->no_wa,
+                'message' => $request->message,
+            ]);
+
+            if( $response->successful() ){
+                $current_date_time = Carbon::now()->toDateTimeString();
+                DB::table('training_gada_calon')->where('id', $request->id)->update([
+                    'last_sent_notif_register' => $current_date_time
+                ]);        
+                return response()->json([
+                    'success'   => true,
+                    'data'      => $response->json()['data'],
+                    'message'   => $response->json()['message']
+                ], 200);
+            }else{
+                return response()->json([
+                    'success'   => false,
+                    'data'      => [],
+                    'message'   => $response->json()['message']
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function connectStatus (Request $request){
         try {
             $tokenWhatsapp = DB::table('m_setting')->where('id', 1)->first();
