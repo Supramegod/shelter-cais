@@ -22,31 +22,33 @@
               <h4>Pilih Quotation Untuk Dijadikan SPK</h4>
             </div>
             <div class="row mb-3">
-                <input type="hidden" name="leads_id" id="leads_id" value="{{ old('leads_id') }}">
-              <label class="col-sm-2 col-form-label text-sm-end">Customer / Leads <span class="text-danger">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">Quotation <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads / Customer</button>
+                <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-quotation"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Quotation</button>
               </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_spk">Tanggal SPK <span class="text-danger">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">Nomor Quotation</label>
+              <div class="col-sm-4">
+                <input type="hidden" id="quotation_id" name="quotation_id" value="" class="form-control">
+                <div class="input-group">
+                  <input type="text" id="quotation" name="quotation" value="" class="form-control" readonly>
+                </div>
+              </div>
+              <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_spk">Tanggal SPK <span class="text-danger">*</span></label>
                 <div class="col-sm-4">
                     <input type="date" id="tanggal_spk" name="tanggal_spk" class="form-control" value="{{ old('tanggal_spk', date('Y-m-d')) }}">
                 </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
-                <div class="col-sm-4">
-                    <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="" class="form-control" readonly>
-                </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Provinsi</label>
-                <div class="col-sm-4">
-                    <input type="text" id="provinsi" name="provinsi" value="" class="form-control" readonly>
-                </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Kota</label>
-                <div class="col-sm-4">
-                    <input type="text" id="kota" name="kota" value="" class="form-control" readonly>
-                </div>
+              <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
+              <div class="col-sm-4">
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="" class="form-control" readonly>
+              </div>
+              <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
+              <div class="col-sm-4">
+                <input type="text" id="kebutuhan" name="kebutuhan" value="" class="form-control" readonly>
+              </div>
             </div>
             <br>
             <div class="content-header mb-3 text-center">
@@ -60,9 +62,9 @@
                         <th>
                             <input type="checkbox" id="check-all-sites" class="form-check-input" style="transform: scale(1.5); margin-right: 8px;" />
                         </th>
-                        <th>Quotation</th>
+                        <th>No.</th>
                         <th>Nama Site</th>
-                        <!-- <th>Provinsi</th> -->
+                        <th>Provinsi</th>
                         <th>Kota</th>
                         <th>Penempatan</th>
                     </tr>
@@ -88,7 +90,7 @@
   <hr class="container-m-nx mb-5" />
 </div>
 
-<div class="modal fade" id="modal-leads" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modal-quotation" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
     <div class="modal-content p-3 p-md-5">
       <div class="modal-body">
@@ -102,10 +104,11 @@
                 <thead>
                   <tr>
                     <th class="text-center">ID</th>
-                    <th class="text-center">Nomor</th>
+                    <th class="text-center">Tgl Quotation</th>
+                    <th class="text-center">Jumlah Site</th>
                     <th class="text-center">Nama Perusahaan</th>
-                    <th class="text-center">Provinsi</th>
-                    <th class="text-center">Kota</th>
+                    <th class="text-center">Kebutuhan</th>
+                    <th class="text-center">Quotation</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -123,8 +126,8 @@
 
 @section('pageScript')
 <script>
-  $('#btn-modal-cari-leads').on('click',function(){
-    $('#modal-leads').modal('show');
+  $('#btn-modal-cari-quotation').on('click',function(){
+    $('#modal-quotation').modal('show');
   });
 
   let dt_filter_table = $('.dt-column-search');
@@ -141,7 +144,7 @@
           'processing': 'Loading...'
       },
       ajax: {
-          url: "{{ route('spk.available-leads') }}",
+          url: "{{ route('spk.available-quotation') }}",
           data: function (d) {
 
           },
@@ -154,20 +157,24 @@
                 name : 'id',
                 searchable: false
             },{
-                data : 'nomor',
-                name : 'nomor',
+                data : 'tgl_quotation',
+                name : 'tgl_quotation',
+                className:'text-center'
+            },{
+                data : 'jumlah_site',
+                name : 'jumlah_site',
                 className:'text-center'
             },{
                 data : 'nama_perusahaan',
                 name : 'nama_perusahaan',
                 className:'text-center'
             },{
-                data : 'provinsi',
-                name : 'provinsi',
+                data : 'layanan',
+                name : 'layanan',
                 className:'text-center'
             },{
-                data : 'kota',
-                name : 'kota',
+                data : 'quotation',
+                name : 'quotation',
                 className:'text-center'
             }],
       "language": datatableLang,
@@ -182,18 +189,18 @@
     });
 
   $('#table-data').on('click', 'tbody tr', function() {
-      $('#modal-leads').modal('hide');
+      $('#modal-quotation').modal('hide');
       var rdata = table.row(this).data();
-      $('#leads_id').val(rdata.id);
+      $('#quotation_id').val(rdata.id);
+      $('#quotation').val(rdata.quotation);
       $('#nama_perusahaan').val(rdata.nama_perusahaan);
-      $('#provinsi').val(rdata.provinsi);
-      $('#kota').val(rdata.kota);
+      $('#kebutuhan').val(rdata.kebutuhan);
 
       $("#d-table-quotation").removeClass("d-none");
       $.ajax({
-        url: '{{route("spk.get-site-available-list")}}',
+        url: '{{route("quotation.get-site-list")}}',
         type: 'GET',
-        data: { leads: rdata.id },
+        data: { quotation_id: rdata.id },
         success: function(data) {
         $('#tbody-quotation').empty();
         $('#tbody-quotation').append('');
@@ -204,9 +211,9 @@
               '<td>' +
             '<input type="checkbox" name="site_ids[]" value="' + value.id + '" class="form-check-input site-checkbox" style="transform: scale(1.5); margin-right: 8px;" />' +
               '</td>' +
-              '<td>' + value.quotation + '</td>' +
+              '<td>' + value.no + '</td>' +
               '<td>' + value.nama_site + '</td>' +
-            //   '<td>' + value.provinsi + '</td>' +
+              '<td>' + value.provinsi + '</td>' +
               '<td>' + value.kota + '</td>' +
               '<td>' + value.penempatan + '</td>' +
             '</tr>'
@@ -233,12 +240,14 @@
     let msg = "";
     let obj = $("form").serializeObject();
 
-    if (!obj.leads_id) {
-        msg += "Leads / Customer tidak boleh kosong.<br>";
+    if (!$('#quotation_id').val()) {
+        msg += "Quotation tidak boleh kosong.<br>";
     }
+
     if (!obj['site_ids[]']) {
         msg += "Silakan pilih minimal satu site untuk membuat SPK.<br>";
     }
+
 
     // Check if tanggal_spk is empty
     if (!$('#tanggal_spk').val()) {

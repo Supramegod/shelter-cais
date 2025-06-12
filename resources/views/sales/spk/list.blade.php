@@ -44,32 +44,6 @@
                                 <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="company" name="company">
-                                                <option value="">- Semua Entitas -</option>
-                                                @foreach($company as $data)
-                                                <option value="{{$data->id}}" @if($request->company==$data->id) selected @endif>{{$data->code}}  | {{$data->name}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="company">Entitas</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="kebutuhan" name="kebutuhan">
-                                                <option value="">- Semua Kebutuhan -</option>
-                                                @foreach($kebutuhan as $data)
-                                                <option value="{{$data->id}}" @if($request->company==$data->id) selected @endif>{{$data->nama}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="kebutuhan">Kebutuhan</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
                                             <select class="form-select" id="is_aktif" name="is_aktif">
                                                 <option value="">- Semua Status -</option>
                                                 <option value="0" @if($request->is_aktif=='0') selected @endif>Perlu Approval</option>
@@ -96,8 +70,6 @@
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
                                     <th class="text-center">Site</th>
-                                    <th class="text-center">Kebutuhan</th>
-                                    <th class="text-center">Nomor Quotation</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Created By</th>
                                     <th class="text-center">Aksi</th>
@@ -167,9 +139,6 @@
                     data: function (d) {
                         d.tgl_dari = $('#tgl_dari').val();
                         d.tgl_sampai = $('#tgl_sampai').val();
-                        d.branch = $('#branch').find(":selected").val();
-                        d.company = $('#company').find(":selected").val();
-                        d.kebutuhan = $('#kebutuhan').find(":selected").val();
                         d.is_aktif = $('#is_aktif').find(":selected").val();
                     },
                 },
@@ -208,14 +177,6 @@
                 },{
                     data : 'nama_site',
                     name : 'nama_site',
-                    className:'text-center'
-                },{
-                    data : 'kebutuhan',
-                    name : 'kebutuhan',
-                    className:'text-center'
-                },{
-                    data : 'nomor_quotation',
-                    name : 'nomor_quotation',
                     className:'text-center'
                 },{
                     data : 'status',

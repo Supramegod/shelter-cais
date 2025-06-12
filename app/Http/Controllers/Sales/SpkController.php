@@ -60,28 +60,17 @@ class SpkController extends Controller
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
 
-            $quotation =null;
+            $leads = null;
             $siteList = [];
             if($request->id!=null){
                 $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->id)->first();
-                if($quotation==null){
-                    return redirect()->route('spk.add');
-                }
-                $siteList = DB::table('sl_quotation_site')
-                            ->where('quotation_id',$quotation->id)
-                            ->whereNull('deleted_at')
-                            ->whereNotIn('id', function($query) {
-                                $query->select('quotation_site_id')
-                                    ->from('sl_spk_site')
-                                    ->whereNull('deleted_at');
-                            })
-                            ->get();
+                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
             }
             $view = 'sales.spk.add';
-            if($quotation==null){
+            if($leads==null){
                 $view = 'sales.spk.add-2';
             }
-            return view($view,compact('now','quotation','siteList'));
+            return view($view,compact('now','siteList','leads'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -91,9 +80,18 @@ class SpkController extends Controller
 
     public function list (Request $request){
         $data = DB::table('sl_spk')
-                ->leftJoin('sl_quotation','sl_quotation.id','sl_spk.quotation_id')
+                ->leftJoin('sl_leads','sl_leads.id','sl_spk.leads_id')
                 ->whereNull('sl_spk.deleted_at')
-                ->select('sl_spk.created_by','sl_spk.created_at','sl_spk.id','sl_spk.nomor','sl_quotation.nomor as nomor_quotation','sl_spk.tgl_spk','sl_quotation.nama_perusahaan','sl_quotation.nama_site','sl_quotation.kebutuhan','sl_spk.status_spk_id')
+                ->select(
+                    'sl_spk.created_by',
+                    'sl_spk.created_at',
+                    'sl_spk.id',
+                    'sl_spk.nomor',
+                    'sl_spk.tgl_spk',
+                    'sl_leads.nama_perusahaan',
+                    'sl_spk.status_spk_id',
+                    DB::raw("(SELECT GROUP_CONCAT(nama_site SEPARATOR ',</br> ') FROM sl_spk_site WHERE deleted_at IS NULL AND spk_id = sl_spk.id) as nama_site")
+                )
                 ->get();
 
         foreach ($data as $key => $value) {
@@ -111,7 +109,7 @@ class SpkController extends Controller
         ->editColumn('nomor', function ($data) {
             return '<a href="'.route('spk.view',$data->id).'" style="font-weight:bold;color:#000056">'.$data->nomor.'</a>';
         })
-        ->rawColumns(['aksi','nomor'])
+        ->rawColumns(['aksi','nomor','nama_site'])
         ->make(true);
     }
     public function listTerhapus (Request $request){
@@ -182,24 +180,46 @@ class SpkController extends Controller
         }
     }
 
+    public function availableLeads (Request $request){
+        try {
+                $data = DB::table('sl_quotation_site')
+                    ->Join('sl_quotation','sl_quotation.id','sl_quotation_site.quotation_id')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_quotation_site.leads_id')
+                    ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                    ->whereNull('sl_quotation_site.deleted_at')
+                    ->whereNull('sl_quotation.deleted_at')
+                    ->where('sl_quotation.is_aktif',1)
+                    ->where('m_tim_sales_d.user_id',Auth::user()->id)
+                    ->whereNotExists(function($query) {
+                        $query->select(DB::raw(1))
+                            ->from('sl_spk_site')
+                            ->whereRaw('sl_spk_site.quotation_site_id = sl_quotation_site.id')
+                            ->whereNull('deleted_at');
+                    })
+                    ->select("sl_leads.id","sl_leads.nomor","sl_leads.nama_perusahaan","sl_leads.provinsi","sl_leads.kota")
+                    ->distinct()
+                    ->get();
+            return DataTables::of($data)
+            ->make(true);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
     public function save(Request $request){
         try {
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
-            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$request->quotation_id)->first();
-            $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+            $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
 
-            $spkNomor = $this->generateNomor($quotation->leads_id,$quotation->company_id);
+            $spkNomor = $this->generateNomorNew($request->leads_id);
             $newId = DB::table('sl_spk')->insertGetId([
-                'quotation_id' => $quotation->id,
-                'leads_id' => $quotation->leads_id,
+                'leads_id' => $leads->id,
                 'nomor' => $spkNomor,
-                'nomor_quotation' => $quotation->nomor,
                 'tgl_spk' => $request->tanggal_spk,
-                'nama_perusahaan' => $quotation->nama_perusahaan,
-                'kebutuhan_id' => $quotation->kebutuhan_id,
-                'kebutuhan' => $quotation->kebutuhan,
-                'jenis_site' => $quotation->jumlah_site,
+                'nama_perusahaan' => $leads->nama_perusahaan,
                 'tim_sales_id' => $leads->tim_sales_id,
                 'tim_sales_d_id' => $leads->tim_sales_d_id,
                 'link_spk_disetujui' => null,
@@ -212,6 +232,7 @@ class SpkController extends Controller
             $siteIds = $request->input('site_ids', []);
             foreach ($siteIds as $siteId) {
                 $quotationSite = DB::table('sl_quotation_site')->where('id', $siteId)->first();
+                $quotation = DB::table('sl_quotation')->where('id', $quotationSite->quotation_id)->first();
                 DB::table('sl_spk_site')->insert([
                     'spk_id' => $newId,
                     'quotation_id' => $quotationSite->quotation_id,
@@ -226,30 +247,33 @@ class SpkController extends Controller
                     'umk' => $quotationSite->umk,
                     'nominal_upah' => $quotationSite->nominal_upah,
                     'penempatan' => $quotationSite->penempatan,
+                    'kebutuhan_id' => $quotation->kebutuhan_id,
+                    'kebutuhan' => $quotation->kebutuhan,
+                    'jenis_site' => $quotation->jumlah_site,
+                    'nomor_quotation' => $quotation->nomor,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
             }
 
-            DB::table('sl_quotation')->where('id',$request->id)->update([
-                'status_quotation_id' => 3,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
+            // DB::table('sl_quotation')->where('id',$request->id)->update([
+            //     'status_quotation_id' => 3,
+            //     'updated_at' => $current_date_time,
+            //     'updated_by' => Auth::user()->full_name
+            // ]);
 
             //insert ke activity sebagai activity pertama
             $customerActivityController = new CustomerActivityController();
-            $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+            $nomorActivity = $customerActivityController->generateNomor($leads->id);
 
             $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $quotation->leads_id,
-                'quotation_id' => $quotation->id,
+                'leads_id' => $leads->id,
                 'spk_id' => $newId,
                 'branch_id' => $leads->branch_id,
                 'tgl_activity' => $current_date_time,
                 'nomor' => $nomorActivity,
                 'tipe' => 'SPK',
-                'notes' => 'SPK dengan nomor :'.$spkNomor.' terbentuk dari Quotation dengan nomor :'.$quotation->nomor,
+                'notes' => 'SPK dengan nomor :'.$spkNomor.' terbentuk',
                 'is_activity' => 0,
                 'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
@@ -266,7 +290,7 @@ class SpkController extends Controller
     }
 
     public function generateNomor ($leadsId,$companyId){
-        // generate nomor QUOT/SIG/AAABB-092024-00001
+        // generate nomor SPK/SIG/AAABB-092024-00001
         $now = Carbon::now();
 
         $nomor = "SPK/";
@@ -293,17 +317,46 @@ class SpkController extends Controller
         return $nomor;
     }
 
+    public function generateNomorNew ($leadsId){
+        // generate nomor SPK/AAABB-092024-00001
+        $now = Carbon::now();
+
+        $nomor = "SPK/";
+        $dataLeads = DB::table('sl_leads')->where('id',$leadsId)->first();
+        $nomor = $nomor.$dataLeads->nomor."-";
+
+        $month = $now->month;
+        if($month<10){
+            $month = "0".$month;
+        }
+
+        $urutan = "00001";
+
+        $jumlahData = DB::select("select * from sl_spk where nomor like '".$nomor.$month.$now->year."-"."%'");
+        $urutan = sprintf("%05d", count($jumlahData)+1);
+        $nomor = $nomor.$month.$now->year."-".$urutan;
+
+        return $nomor;
+    }
+
+
     public function view (Request $request,$id){
         try {
             $data = DB::table('sl_spk')->where('id',$id)->first();
 
             $data->stgl_spk = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_spk)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
-            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$data->quotation_id)->first();
+            $listQuotation = [];
             $data->status = DB::table('m_status_spk')->where('id',$data->status_spk_id)->first()->nama;
             $data->site = DB::table('sl_spk_site')->where('spk_id',$data->id)->whereNull('deleted_at')->get();
+            foreach ($data->site as $key => $value) {
+                $quotation = DB::table('sl_quotation')->where('id',$value->quotation_id)->first();
+                if ($quotation && !in_array($quotation->id, array_column($listQuotation, 'id'))) {
+                    $listQuotation[] = $quotation;
+                }
+            }
 
-            return view('sales.spk.view',compact('data','quotation'));
+            return view('sales.spk.view',compact('data','listQuotation'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -745,6 +798,27 @@ class SpkController extends Controller
 
         foreach ($site as $key => $value) {
             $value->no = $key+1;
+        }
+
+        return $site;
+    }
+
+    public function getSiteAvailableList(Request $request){
+        $site = DB::table("sl_quotation_site")
+        ->leftJoin('sl_quotation','sl_quotation.id','=','sl_quotation_site.quotation_id')
+        ->where("sl_quotation_site.leads_id",$request->leads)
+        ->whereNull('sl_quotation_site.deleted_at')
+        ->whereNotIn('sl_quotation_site.id', function($query) {
+            $query->select('quotation_site_id')
+                ->from('sl_spk_site')
+                ->whereNull('deleted_at');
+        })
+        ->select("sl_quotation.nomor","sl_quotation_site.id","sl_quotation_site.nama_site","sl_quotation_site.provinsi_id","sl_quotation_site.provinsi","sl_quotation_site.kota_id","sl_quotation_site.kota","sl_quotation_site.ump","sl_quotation_site.umk","sl_quotation_site.nominal_upah","sl_quotation_site.penempatan")
+        ->orderBy('sl_quotation.nomor','asc')
+        ->get();
+
+        foreach ($site as $key => $value) {
+            $value->quotation = $value->nomor;
         }
 
         return $site;

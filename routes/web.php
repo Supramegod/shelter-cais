@@ -216,6 +216,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/sales/spk/list', 'list')->name('spk.list'); // ajax
         Route::get('/sales/spk/list-terhapus', 'listTerhapus')->name('spk.list-terhapus'); // ajax
+        Route::get('/sales/spk/available-leads', 'availableLeads')->name('spk.available-leads'); // ajax
+        Route::get('/sales/spk/get-site-available-list', 'getSiteAvailableList')->name('spk.get-site-available-list'); // ajax
         Route::get('/sales/spk/available-quotation', 'availableQuotation')->name('spk.available-quotation'); // ajax
         Route::post('/sales/spk/save', 'save')->name('spk.save');
         Route::get('/sales/spk/view/{id}', 'view')->name('spk.view');

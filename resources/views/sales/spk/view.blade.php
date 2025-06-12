@@ -25,15 +25,7 @@
                 <tbody>
                   <tr>
                     <td>Nama Perusahaan</td>
-                    <td>: {{$quotation->nama_perusahaan}}</td>
-                    <td>Kebutuhan</td>
-                    <td>: {{$quotation->kebutuhan}}</td>
-                  </tr>
-                  <tr>
-                    <td>Entitas</td>
-                    <td>: {{$quotation->company}}</td>
-                    <td>Jumlah Site</td>
-                    <td>: {{$quotation->jumlah_site}}</td>
+                    <td>: {{$data->nama_perusahaan}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -48,14 +40,18 @@
                     <th>No.</th>
                     <th>Nomor</th>
                     <th>Kebutuhan</th>
+                    <th>Jenis Kontrak</th>
                   </tr>
                 </thead>
-                <tbody id="tbody-quotation">
-                  <tr>
-                    <td>1</td>
-                    <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
-                    <td>{{$quotation->kebutuhan}}</td>
-                  </tr>
+                <tbody>
+                    @foreach($listQuotation as $index => $quotation)
+                    <tr>
+                        <td>{{$index + 1}}</td>
+                        <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
+                        <td>{{$quotation->kebutuhan}}</td>
+                        <td>{{$quotation->jenis_kontrak}}</td>
+                    </tr>
+                    @endforeach
                 </tbody>
               </table>
             </div>
@@ -68,7 +64,6 @@
                   <tr>
                     <th>No.</th>
                     <th>Nama Site</th>
-                    <th>Provinsi</th>
                     <th>Kota</th>
                     <th>Penempatan</th>
                   </tr>
@@ -78,7 +73,6 @@
                     <tr>
                         <td>{{$index + 1}}</td>
                         <td>{{$site->nama_site}}</td>
-                        <td>{{$site->provinsi}}</td>
                         <td>{{$site->kota}}</td>
                         <td>{{$site->penempatan}}</td>
                     </tr>

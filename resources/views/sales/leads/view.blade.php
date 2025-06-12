@@ -337,7 +337,7 @@
             </div>
           </div>
           <div class="card-body">
-            @if(in_array(Auth::user()->role_id,[2,29,30,31,32,33,48,49]))
+            @if(in_array(Auth::user()->role_id,[2,29,30,31,32,33,48,49,54,55,56]))
             <div class="col-12 text-center">
               <button id="btn-update" class="btn btn-primary w-100 waves-effect waves-light">
                 <span class="me-1">Update Data</span>
@@ -345,7 +345,7 @@
               </button>
             </div>
             @endif
-            @if(in_array(Auth::user()->role_id,[29,31,32,33]))
+            @if(in_array(Auth::user()->role_id,[29,31,32,33,54,55,56]))
             <div class="col-12 text-center mt-2">
               <button id="btn-quotation" class="btn btn-success w-100 waves-effect waves-light">
                 <span class="me-1">Create Quotation</span>
@@ -353,7 +353,7 @@
               </button>
             </div>
             @endif
-            @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
+            @if(in_array(Auth::user()->role_id,[29,30,31,32,33,54,55,56]))
             <div class="col-12 text-center mt-2">
               <button id="btn-activity" class="btn btn-info w-100 waves-effect waves-light">
                 <span class="me-1">Create Activity</span>

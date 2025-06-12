@@ -19,27 +19,29 @@
           <div id="account-details-1" class="content active">
             <div class="content-header mb-5 text-center">
               <h4 class="mb-0">SPK</h4>
-              <h4>Pilih Quotation Untuk Dijadikan SPK</h4>
+              <h4>Quotation Untuk Dijadikan SPK</h4>
             </div>
             <div class="row mb-3">
-                <input type="hidden" name="leads_id" id="leads_id" value="{{$leads->id}}">
+              <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
+              <div class="col-sm-4">
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{$quotation->nama_perusahaan}}" class="form-control" readonly>
+              </div>
+              <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
+              <div class="col-sm-4">
+                <input type="text" id="kebutuhan" name="kebutuhan" value="{{$quotation->kebutuhan}}" class="form-control" readonly>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Quotation</label>
+              <div class="col-sm-4">
+                <div class="input-group">
+                    <input type="hidden" name="quotation_id" id="quotation_id" value="{{$quotation->id}}" class="form-control">
+                  <input type="text" id="quotation" name="quotation" value="{{$quotation->nomor}}" class="form-control" readonly>
+                </div>
+              </div>
                 <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_spk">Tanggal SPK <span class="text-danger">*</span></label>
                 <div class="col-sm-4">
                     <input type="date" id="tanggal_spk" name="tanggal_spk" class="form-control" value="{{ old('tanggal_spk', date('Y-m-d')) }}">
-                </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
-                <div class="col-sm-4">
-                    <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{$leads->nama_perusahaan}}" class="form-control" readonly>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Provinsi</label>
-                <div class="col-sm-4">
-                    <input type="text" id="provinsi" name="provinsi" value="{{$leads->provinsi}}" class="form-control" readonly>
-                </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Kota</label>
-                <div class="col-sm-4">
-                    <input type="text" id="kota" name="kota" value="{{$leads->kota}}" class="form-control" readonly>
                 </div>
             </div>
             <br>
@@ -54,13 +56,26 @@
                         <th>
                             <input type="checkbox" id="check-all-sites" class="form-check-input" style="transform: scale(1.5); margin-right: 8px;" />
                         </th>
-                        <th>Quotation</th>
-                        <th>Nama Site</th>
-                        <th>Kota</th>
-                        <th>Penempatan</th>
+                      <th>No.</th>
+                      <th>Nama Site</th>
+                      <th>Provinsi</th>
+                      <th>Kota</th>
+                      <th>Penempatan</th>
                     </tr>
                   </thead>
-                  <tbody id="tbody-quotation">
+                  <tbody>
+                    @foreach($siteList as $key => $site)
+                      <tr>
+                        <td>
+                            <input type="checkbox" name="site_ids[]" value="{{$site->id}}" class="form-check-input site-checkbox" style="transform: scale(1.5); margin-right: 8px;" />
+                        </td>
+                        <td>{{$key+1}}</td>
+                        <td>{{$site->nama_site}}</td>
+                        <td>{{$site->provinsi}}</td>
+                        <td>{{$site->kota}}</td>
+                        <td>{{$site->penempatan}}</td>
+                      </tr>
+                      @endforeach
                   </tbody>
                 </table>
               </div>
@@ -85,48 +100,13 @@
 
 @section('pageScript')
 <script>
-  $('#check-all-sites').on('change', function() {
+    $('#check-all-sites').on('change', function() {
         $('.site-checkbox').prop('checked', this.checked);
     });
 
     $('.site-checkbox').on('change', function() {
         $('#check-all-sites').prop('checked', $('.site-checkbox:checked').length === $('.site-checkbox').length);
     });
-
-    $('#leads_id').val('{{$leads->id}}');
-    $('#nama_perusahaan').val('{{$leads->nama_perusahaan}}');
-    $('#provinsi').val('{{$leads->provinsi}}');
-    $('#kota').val('{{$leads->kota}}');
-
-    $.ajax({
-    url: '{{route("spk.get-site-available-list")}}',
-    type: 'GET',
-    data: { leads: {{$leads->id}} },
-    success: function(data) {
-    $('#tbody-quotation').empty();
-    $('#tbody-quotation').append('');
-
-    $.each(data, function(key, value) {
-        $('#tbody-quotation').append(
-        '<tr>' +
-            '<td>' +
-        '<input type="checkbox" name="site_ids[]" value="' + value.id + '" class="form-check-input site-checkbox" style="transform: scale(1.5); margin-right: 8px;" />' +
-            '</td>' +
-            '<td>' + value.quotation + '</td>' +
-            '<td>' + value.nama_site + '</td>' +
-        //   '<td>' + value.provinsi + '</td>' +
-            '<td>' + value.kota + '</td>' +
-            '<td>' + value.penempatan + '</td>' +
-        '</tr>'
-        );
-    });
-    },
-    error: function() {
-        alert('Gagal mengambil data');
-    }
-    });
-
-
     $('form').bind("keypress", function(e) {
       if (e.keyCode == 13) {
         e.preventDefault();
@@ -140,9 +120,6 @@
     let msg = "";
     let obj = $("form").serializeObject();
 
-    if (!obj.leads_id) {
-        msg += "Leads / Customer tidak boleh kosong.<br>";
-    }
     if (!obj['site_ids[]']) {
         msg += "Silakan pilih minimal satu site untuk membuat SPK.<br>";
     }

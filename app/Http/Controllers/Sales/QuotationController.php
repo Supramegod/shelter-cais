@@ -2227,6 +2227,24 @@ if($quotation->note_harga_jual == null){
                     DB::raw('(SELECT GROUP_CONCAT(nama_site SEPARATOR "<br /> ")
                     FROM sl_quotation_site
                     WHERE sl_quotation_site.quotation_id = sl_quotation.id) as nama_site'))
+                    // DB::raw('(
+                    //     SELECT
+                    //         GROUP_CONCAT(
+                    //             IF(
+                    //                 EXISTS(
+                    //                     SELECT 1
+                    //                     FROM sl_spk_site
+                    //                     WHERE sl_spk_site.quotation_site_id = sl_quotation_site.id
+                    //                     AND sl_spk_site.deleted_at IS NULL
+                    //                 ),
+                    //                 CONCAT(nama_site, \' <i class="mdi mdi-check-circle" style="color:green"></i>\'),
+                    //                 nama_site
+                    //             )
+                    //             SEPARATOR "<br /> "
+                    //         )
+                    //     FROM sl_quotation_site
+                    //     WHERE sl_quotation_site.quotation_id = sl_quotation.id
+                    // ) as nama_site'))
                     ->whereNull('sl_quotation.deleted_at')->whereNull('sl_leads.deleted_at');
 
             if(!empty($request->tgl_dari)){
@@ -2303,19 +2321,25 @@ if($quotation->note_harga_jual == null){
                     if($data->pks_id !=null){
                         return '<div class="justify-content-center d-flex">
                         <a href="'.route('lengkapi-quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a>
-                        <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
+                        <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'"><i class="mdi mdi-trash-can-outline"></i></a>
                         </div>';
                     }else{
                         if($data->jumlah_site=="Multi Site"){
                             return '<div class="justify-content-center d-flex">
-                                <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a> &nbsp;
-                                <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Copy Dari Existing</a>
-                                <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
+                                <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs" title="Lanjutkan Pengisian">
+                                    <i class="mdi mdi-arrow-right-bold-circle-outline"></i>
+                                </a> &nbsp;
+                                <a href="javascript:void(0)" class="btn btn-warning waves-effect btn-xs copy-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'" title="Copy Dari Existing">
+                                    <i class="mdi mdi-content-copy"></i>
+                                </a> &nbsp;
+                                <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'"><i class="mdi mdi-trash-can-outline"></i></a>
                             </div>';
                         }else{
                             return '<div class="justify-content-center d-flex">
-                            <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs">Lanjutkan Pengisian</a>
-                            <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'">Hapus Quotation</a>
+                            <a href="'.route('quotation.step',['id'=>$data->quotation_id,'step'=>$data->step]).'" class="btn btn-primary waves-effect btn-xs" title="Lanjutkan Pengisian">
+                                <i class="mdi mdi-arrow-right-bold-circle-outline"></i>
+                            </a> &nbsp;
+                            <a href="javascript:void(0)" class="btn btn-danger waves-effect btn-xs hapus-quotation" data-id="'.$data->id.'" data-nomor="'.$data->nomor.'"><i class="mdi mdi-trash-can-outline"></i></a>
                             </div>';
                         }
                     }
