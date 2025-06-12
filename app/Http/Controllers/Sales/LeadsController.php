@@ -72,6 +72,7 @@ class LeadsController extends Controller
             $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
             $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
             $platform = DB::table('m_platform')->whereNull('deleted_at')->where('id','<>',11)->get();
             $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
@@ -81,7 +82,7 @@ class LeadsController extends Controller
             $kecamatan = [];
             $kelurahan = [];
 
-            return view('sales.leads.add',compact('benua','negaraDefault','provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan'));
+            return view('sales.leads.add',compact('benua','negaraDefault','provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan','bidangPerusahaan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -99,6 +100,7 @@ class LeadsController extends Controller
             $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
             $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
             $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
 
@@ -114,7 +116,7 @@ class LeadsController extends Controller
             $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('id',$data->kelurahan_id)->get();
             $benua = DB::table('m_benua')->get();
             $negaraDefault = DB::table('m_negara')->where('id_benua', $data->benua_id != null ? $data->benua_id : 2)->get();
-            return view('sales.leads.view',compact('benua','negaraDefault','activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan'));
+            return view('sales.leads.view',compact('benua','negaraDefault','activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan','bidangPerusahaan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -321,13 +323,17 @@ class LeadsController extends Controller
                 $kelurahan = DB::table($db2.'.m_village')->where('id',$request->kelurahan)->first();
                 $benua = DB::table('m_benua')->where('id_benua',$request->benua)->first();
                 $negara = DB::table('m_negara')->where('id_negara',$request->negara)->first();
-
+                $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('id',$request->jenis_perusahaan)->first();
+                $bidangPerusahaan = DB::table('m_bidang_perusahaan')->where('id',$request->bidang_perusahaan)->first();
                 $msgSave = '';
                 if(!empty($request->id)){
                     DB::table('sl_leads')->where('id',$request->id)->update([
                         'nama_perusahaan' => $request->nama_perusahaan,
                         'telp_perusahaan' => $request->telp_perusahaan,
                         'jenis_perusahaan_id' => $request->jenis_perusahaan,
+                        'jenis_perusahaan' => $jenisPerusahaan ? $jenisPerusahaan->nama : null,
+                        'bidang_perusahaan_id' => $request->bidang_perusahaan,
+                        'bidang_perusahaan' => $bidangPerusahaan ? $bidangPerusahaan->nama : null,
                         'branch_id' => $request->branch,
                         'platform_id' => $request->platform,
                         'kebutuhan_id' => $request->kebutuhan,

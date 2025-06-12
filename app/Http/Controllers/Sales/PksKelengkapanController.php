@@ -85,9 +85,22 @@ class PksKelengkapanController extends Controller
             //         $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
             //     }
             // }
+            $leads = null;
+            if($quotation->leads_id != null){
+                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+                if($quotation->bidang_perusahaan_id == null){
+                    $quotation->jenis_perusahaan_id = $leads->jenis_perusahaan_id;
+                }
+                if($quotation->bidang_perusahaan_id == null && $leads->bidang_perusahaan_id != null){
+                    $quotation->bidang_perusahaan_id = $leads->bidang_perusahaan_id;
+                }
+            }
+
             $kota = DB::connection('mysqlhris')->table('m_city')->get();
             $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
+            //Step 5 - BPJS
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
 
             //step 6 - aplikasi pendukung
             $aplikasiPendukung = null;
@@ -655,6 +668,7 @@ class PksKelengkapanController extends Controller
             $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->first();
             $quotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $jenisPerusahaanId = $request['jenis-perusahaan'];
+            $bidangPerusahaanId = $request['bidang-perusahaan'];
             $resiko = $request['resiko'];
             $programBpjs = $request['program-bpjs'];
             $isAktif = 1;
@@ -686,6 +700,13 @@ class PksKelengkapanController extends Controller
                     $jenisPerusahaan = $jenisPerusahaanList->nama;
                 }
             }
+            $bidangPerusahaan = null;
+            if($bidangPerusahaanId != null){
+                $bidangPerusahaanList = DB::table('m_bidang_perusahaan')->where('id',$bidangPerusahaanId)->first();
+                if($bidangPerusahaanList != null){
+                    $bidangPerusahaan = $bidangPerusahaanList->nama;
+                }
+            }
 
             $isAktif = $quotation->is_aktif;
             // if($isAktif==2){
@@ -710,8 +731,20 @@ class PksKelengkapanController extends Controller
                 'step' => $newStep,
                 'jenis_perusahaan_id' => $jenisPerusahaanId,
                 'jenis_perusahaan' => $jenisPerusahaan,
+                'bidang_perusahaan_id' => $bidangPerusahaanId,
+                'bidang_perusahaan' => $bidangPerusahaan,
                 'resiko' => $resiko,
                 'is_aktif' => $isAktif,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+            //update leads
+            DB::table('sl_leads')->where('id',$quotation->leads_id)->update([
+                'jenis_perusahaan_id' => $jenisPerusahaanId,
+                'jenis_perusahaan' => $jenisPerusahaan,
+                'bidang_perusahaan_id' => $bidangPerusahaanId,
+                'bidang_perusahaan' => $bidangPerusahaan,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);

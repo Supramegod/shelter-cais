@@ -76,7 +76,11 @@ class PksController extends Controller
             $kategoriHC = DB::table('m_kategori_sesuai_hc')
                 ->whereNull('deleted_at')
                 ->get();
-            return view('sales.pks.add',compact('now','spk','siteList','kategoriHC'));
+            $view = 'sales.pks.add';
+            if($spk==null){
+                $view = 'sales.pks.add-2';
+            }
+            return view($view,compact('now','spk','siteList','kategoriHC'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -105,6 +109,15 @@ class PksController extends Controller
             );
 
         return DataTables::of($query)
+        ->filterColumn('tanggal', function($query, $keyword) {
+            $query->where('sl_pks.tgl_pks', 'like', "%{$keyword}%");
+        })
+        ->filterColumn('no_pks', function($query, $keyword) {
+            $query->where('sl_pks.nomor', 'like', "%{$keyword}%");
+        })
+        ->filterColumn('status', function($query, $keyword) {
+            $query->where('m_status_pks.nama', 'like', "%{$keyword}%");
+        })
         ->addColumn('s_mulai_kontrak', function ($data) {
             return $data->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $data->kontrak_awal)->isoFormat('D MMMM Y') : null;
         })
@@ -256,7 +269,21 @@ class PksController extends Controller
                 ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                 ->where('m_tim_sales_d.user_id',Auth::user()->id)
                 ->whereNull('sl_spk.deleted_at')
-                ->where('sl_spk.status_spk_id',2)
+                // ->where('sl_spk.status_spk_id',2)
+                ->whereExists(function($query) {
+                        $query->select(DB::raw(1))
+                            ->from('sl_spk_site')
+                            ->whereRaw('sl_spk_site.spk_id = sl_spk.id')
+                            ->whereNull('sl_spk_site.deleted_at')
+                            ->whereNotExists(function($sub) {
+                                $sub->select(DB::raw(1))
+                                    ->from('sl_site')
+                                    ->whereRaw('sl_site.spk_site_id = sl_spk_site.id')
+                                    ->whereNull('sl_site.deleted_at')
+                                    ->where('sl_site.pks_id', '!=', null)
+                                    ->where('sl_site.spk_site_id', '!=', null);
+                            });
+                    })
                 ->select("sl_spk.id","sl_spk.nomor","sl_spk.nama_perusahaan","sl_spk.tgl_spk","sl_spk.kebutuhan")
                 ->get();
 

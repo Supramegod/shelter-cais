@@ -222,6 +222,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/spk/upload-spk', 'uploadSPK')->name('spk.upload-spk');
         Route::get('/sales/spk/cetak-spk/{id}', 'cetakSpk')->name('spk.cetak-spk');
 
+        Route::get('/sales/spk/get-site-list', 'getSiteList')->name('spk.get-site-list'); // ajax
         // Ajukan Ulang
         Route::get('/sales/spk/ajukan-ulang-quotation/{spk}', 'ajukanUlangQuotation')->name('spk.ajukan-ulang-quotation');
 
@@ -763,6 +764,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/monitoring-kontrak/save-issue', 'saveIssue')->name('monitoring-kontrak.save-issue');
         Route::post('/sales/monitoring-kontrak/delete-issue', 'deleteIssue')->name('monitoring-kontrak.delete-issue');
         Route::post('/sales/monitoring-kontrak/delete-activity', 'deleteActivity')->name('monitoring-kontrak.delete-activity');
+
+        Route::get('/sales/monitoring-kontrak/modal/list-site', 'listSite')->name('monitoring-kontrak.modal.list-site'); // ajax
     });
 
     Route::controller(PutusKontrakController::class)->group(function() {

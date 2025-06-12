@@ -761,9 +761,22 @@ class QuotationController extends Controller
             //         $value->ump = "Rp. ".number_format($dataUmp->ump,0,",",".");
             //     }
             // }
+            $leads = null;
+            if($quotation->leads_id != null){
+                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+                if($quotation->bidang_perusahaan_id == null){
+                    $quotation->jenis_perusahaan_id = $leads->jenis_perusahaan_id;
+                }
+                if($quotation->bidang_perusahaan_id == null && $leads->bidang_perusahaan_id != null){
+                    $quotation->bidang_perusahaan_id = $leads->bidang_perusahaan_id;
+                }
+            }
+
             $kota = DB::connection('mysqlhris')->table('m_city')->get();
             $manfee = DB::table('m_management_fee')->whereNull('deleted_at')->get();
+            //Step 5 - BPJS
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
 
             //step 6 - aplikasi pendukung
             $aplikasiPendukung = null;
@@ -870,7 +883,6 @@ class QuotationController extends Controller
             }
 
             // step 11 Harga Jual
-            $leads = null;
             $data = null;
             $daftarTunjangan = null;
             $listTraining = [];
@@ -897,7 +909,6 @@ class QuotationController extends Controller
                 foreach ($data->detail as $key => $value) {
                     $data->totalHc += $value->jumlah_hc;
                 }
-                $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
             }
             $isEdit = false;
 
@@ -910,7 +921,7 @@ class QuotationController extends Controller
             $listTraining = DB::table('m_training')->whereNull('deleted_at')->get();
             $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
 
-            return view('sales.quotation.edit-'.$request->step,compact('topList','calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule'));
+            return view('sales.quotation.edit-'.$request->step,compact('topList','calcQuotation','listJabatanPic','listTrainingQ','listTraining','daftarTunjangan','salaryRuleQ','data','leads','isEdit','listChemical','listDevices','listOhc','listJenis','listKaporlap','jenisPerusahaan','aplikasiPendukung','arrAplikasiSel','manfee','kota','province','quotation','request','company','salaryRule','bidangPerusahaan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1501,6 +1512,7 @@ class QuotationController extends Controller
             $quotation = DB::table('sl_quotation')->where('id',$request->id)->whereNull('deleted_at')->first();
             $quotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
             $jenisPerusahaanId = $request['jenis-perusahaan'];
+            $bidangPerusahaanId = $request['bidang-perusahaan'];
             $resiko = $request['resiko'];
             $programBpjs = $request['program-bpjs'];
             $isAktif = 1;
@@ -1532,6 +1544,13 @@ class QuotationController extends Controller
                     $jenisPerusahaan = $jenisPerusahaanList->nama;
                 }
             }
+            $bidangPerusahaan = null;
+            if($bidangPerusahaanId != null){
+                $bidangPerusahaanList = DB::table('m_bidang_perusahaan')->where('id',$bidangPerusahaanId)->first();
+                if($bidangPerusahaanList != null){
+                    $bidangPerusahaan = $bidangPerusahaanList->nama;
+                }
+            }
 
             $isAktif = $quotation->is_aktif;
             // if($isAktif==2){
@@ -1556,8 +1575,20 @@ class QuotationController extends Controller
                 'step' => $newStep,
                 'jenis_perusahaan_id' => $jenisPerusahaanId,
                 'jenis_perusahaan' => $jenisPerusahaan,
+                'bidang_perusahaan_id' => $bidangPerusahaanId,
+                'bidang_perusahaan' => $bidangPerusahaan,
                 'resiko' => $resiko,
                 'is_aktif' => $isAktif,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
+
+            //update leads
+            DB::table('sl_leads')->where('id',$quotation->leads_id)->update([
+                'jenis_perusahaan_id' => $jenisPerusahaanId,
+                'jenis_perusahaan' => $jenisPerusahaan,
+                'bidang_perusahaan_id' => $bidangPerusahaanId,
+                'bidang_perusahaan' => $bidangPerusahaan,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);

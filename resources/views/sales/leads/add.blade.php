@@ -20,11 +20,24 @@
           <h6>1. Informasi Perusahaan</h6>
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan <span class="text-danger">*</span></label>
-            <div class="col-sm-4">
+            <div class="col-sm-10">
               <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="{{old('nama_perusahaan')}}" class="form-control @if ($errors->any()) @if($errors->has('nama_perusahaan')) is-invalid @else   @endif @endif">
               @if($errors->has('nama_perusahaan'))
                   <div class="invalid-feedback">{{$errors->first('nama_perusahaan')}}</div>
               @endif
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Kategori Perusahaan</label>
+            <div class="col-sm-4">
+              <div class="position-relative">
+                <select id="bidang_perusahaan" name="bidang_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
+                  <option value="">- Pilih data -</option>
+                  @foreach($bidangPerusahaan as $value)
+                  <option value="{{$value->id}}" @if(old('bidang_perusahaan') == $value->id) selected @endif>{{$value->nama}}</option>
+                  @endforeach
+                </select>
+              </div>
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Jenis Perusahaan</label>
             <div class="col-sm-4">

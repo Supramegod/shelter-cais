@@ -730,4 +730,24 @@ class SpkController extends Controller
 
         return $nomor;
     }
+
+    public function getSiteList(Request $request){
+        $site = DB::table("sl_spk_site")
+        ->where("spk_id",$request->spk_id)
+        ->whereNull('deleted_at')
+        ->whereNotIn('id', function($query) {
+            $query->select('spk_site_id')
+                ->from('sl_site')
+                ->whereNull('deleted_at')
+                ->where('spk_site_id', '!=', null);
+        })
+        ->get();
+
+        foreach ($site as $key => $value) {
+            $value->no = $key+1;
+        }
+
+        return $site;
+    }
+
 }

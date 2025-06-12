@@ -32,6 +32,7 @@
                                     <!-- <th class="text-center">Progress</th> -->
                                     <th class="text-center">Status Berlaku</th>
                                     <th class="text-center">No PKS</th>
+                                    <th class="text-center">Customer</th>
                                     <th class="text-center">Site</th>
                                     <th class="text-center">Awal Kontrak</th>
                                     <th class="text-center">Akhir Kontrak</th>
@@ -249,8 +250,12 @@
             name : 'nomor',
             className:'text-center'
         },{
-            data : 'nama_site',
-            name : 'nama_site',
+            data : 'nama_perusahaan',
+            name : 'nama_perusahaan',
+            className:'text-center'
+        },{
+            data : 'site',
+            name : 'site',
             className:'text-center'
         },{
             data : 's_mulai_kontrak',

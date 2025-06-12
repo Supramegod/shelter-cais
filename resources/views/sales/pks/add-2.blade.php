@@ -23,26 +23,69 @@
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">SPK <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="hidden" id="spk_id" name="spk_id" value="@if($spk !=null) {{$spk->id}} @endif" class="form-control">
+                <input type="hidden" id="spk_id" name="spk_id" value="" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="spk" name="spk" value="@if($spk !=null) {{$spk->nomor}} @endif" class="form-control" readonly>
                   @if($spk ==null)
                     <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-spk"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Spk</button>
-                    @if($errors->has('spk'))
-                      <div class="invalid-feedback">{{$errors->first('spk')}}</div>
-                    @endif
                   @endif
                 </div>
               </div>
             </div>
             <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Nomor SPK <span class="text-danger">*</span></label>
+              <div class="col-sm-10">
+                <div class="input-group">
+                  <input type="text" id="spk" name="spk" value="" class="form-control" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-sm-end" for="kategoriHC">Kategori Sesuai HC <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <select id="kategoriHC" name="kategoriHC" class="form-select">
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach($kategoriHC as $kategori)
+                            <option value="{{$kategori->id}}" {{ old('kategoriHC') == $kategori->id ? 'selected' : '' }}>{{$kategori->nama}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_pks">Tanggal PKS <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <input type="date" id="tanggal_pks" name="tanggal_pks" class="form-control" value="{{ old('tanggal_pks', date('Y-m-d')) }}">
+                </div>
+            </div>
+            <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
               <div class="col-sm-4">
-                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="@if($spk !=null) {{$spk->nama_perusahaan}} @endif" class="form-control" readonly>
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="" class="form-control" readonly>
               </div>
               <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
               <div class="col-sm-4">
-                <input type="text" id="kebutuhan" name="kebutuhan" value="@if($spk !=null) {{$spk->kebutuhan}} @endif" class="form-control" readonly>
+                <input type="text" id="kebutuhan" name="kebutuhan" value="" class="form-control" readonly>
+              </div>
+            </div>
+            <div class="content-header mb-3 text-center">
+              <h4>List Site</h4>
+            </div>
+            <div id="d-table-spk" class="row mb-3">
+              <div class="table-responsive overflow-hidden table-spk">
+                <table id="table-spk" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                  <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="check-all-sites" class="form-check-input" style="transform: scale(1.5); margin-right: 8px;" />
+                        </th>
+                      <th>No.</th>
+                      <th>Nama Site</th>
+                      <th>Provinsi</th>
+                      <th>Kota</th>
+                      <th>Penempatan</th>
+                    </tr>
+                  </thead>
+                  <tbody class="tbody-spk" id="tbody-spk">
+                    {{-- data table ajax --}}
+                  </tbody>
+                </table>
               </div>
             </div>
             <div class="row">
@@ -153,6 +196,35 @@
       $('#spk').val(rdata.nomor);
       $('#nama_perusahaan').val(rdata.nama_perusahaan);
       $('#kebutuhan').val(rdata.kebutuhan);
+
+      $("#d-table-spk").removeClass("d-none");
+      $.ajax({
+        url: '{{route("spk.get-site-list")}}',
+        type: 'GET',
+        data: { spk_id: rdata.id },
+        success: function(data) {
+        $('#tbody-spk').empty();
+        $('#tbody-spk').append('');
+
+        $.each(data, function(key, value) {
+          $('#tbody-spk').append(
+            '<tr>' +
+              '<td>' +
+            '<input type="checkbox" name="site_ids[]" value="' + value.id + '" class="form-check-input site-checkbox" style="transform: scale(1.5); margin-right: 8px;" />' +
+              '</td>' +
+              '<td>' + value.no + '</td>' +
+              '<td>' + value.nama_site + '</td>' +
+              '<td>' + value.provinsi + '</td>' +
+              '<td>' + value.kota + '</td>' +
+              '<td>' + value.penempatan + '</td>' +
+            '</tr>'
+          );
+        });
+        },
+        error: function() {
+          alert('Gagal mengambil data');
+        }
+      });
     });
 
 
@@ -173,6 +245,18 @@
       msg += "<b>Spk</b> belum dipilih </br>";
     };
 
+    if(obj.tanggal_pks == null || obj.tanggal_pks == ""){
+      msg += "<b>Tanggal PKS</b> tidak boleh kosong </br>";
+    }
+    if(obj.kategoriHC == null || obj.kategoriHC == ""){
+      msg += "<b>Kategori Sesuai HC</b> belum dipilih </br>";
+    }
+    if (!obj['site_ids[]']) {
+        msg += "Silakan pilih minimal satu site untuk membuat SPK.<br>";
+    }
+
+
+
     if(msg == ""){
       form.submit();
     }else{
@@ -184,5 +268,12 @@
     }
   });
 
+$('#check-all-sites').on('change', function() {
+        $('.site-checkbox').prop('checked', this.checked);
+    });
+
+    $('.site-checkbox').on('change', function() {
+        $('#check-all-sites').prop('checked', $('.site-checkbox:checked').length === $('.site-checkbox').length);
+    });
 </script>
 @endsection
