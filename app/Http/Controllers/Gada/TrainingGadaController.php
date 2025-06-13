@@ -115,6 +115,7 @@ class TrainingGadaController extends Controller
         try {
             $dataRegistrasi = DB::table('training_gada_registrasi')
             ->where('is_active', 1)
+            ->where('training_gada_calon_id', $request->pendaftar_id)
             ->orderBy('id', 'ASC')->first();
             
             return response()->json([
