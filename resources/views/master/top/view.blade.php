@@ -20,12 +20,21 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">TOP <span class="text-danger">*</span></label>
             <div class="col-sm-9">
-              <input type="text" id="nama" name="nama" value="{{$data->nama}}" class="form-control @if ($errors->any()) @if($errors->has('nama')) is-invalid @else   @endif @endif">
+              <input type="number" id="nama" name="nama" value="{{$data->nama}}" class="form-control @if ($errors->any()) @if($errors->has('nama')) is-invalid @else   @endif @endif">
               @if($errors->has('nama'))
                   <div class="invalid-feedback">{{$errors->first('nama')}}</div>
               @endif
             </div>
           </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Persentase <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+                <input type="number" id="persentase" name="persentase" value="{{ old('persentase', $data->persentase ?? '') }}" class="form-control @if ($errors->any()) @if($errors->has('persentase')) is-invalid @else   @endif @endif" min="0" max="100" step="0.01">
+                @if($errors->has('persentase'))
+                        <div class="invalid-feedback">{{$errors->first('persentase')}}</div>
+                @endif
+            </div>
+        </div>
           <div class="pt-4">
           </div>
         </form>

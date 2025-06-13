@@ -22,6 +22,7 @@ class SpkController extends Controller
     public function index (Request $request){
         $tglDari = $request->tgl_dari;
         $tglSampai = $request->tgl_sampai;
+        $status = $request->status;
 
         if($tglDari==null){
             $tglDari = carbon::now()->startOfMonth()->subMonths(3)->toDateString();
@@ -37,6 +38,7 @@ class SpkController extends Controller
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $company = DB::connection('mysqlhris')->table('m_company')->where('is_active',1)->get();
         $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+        $statusList = DB::table('m_status_spk')->whereNull('deleted_at')->get();
 
         $error = null;
         $success = null;
@@ -48,7 +50,7 @@ class SpkController extends Controller
             $tglSampai = carbon::now()->toDateString();
             $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
         }
-        return view('sales.spk.list',compact('branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
+        return view('sales.spk.list',compact('statusList','status','branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
     }
 
     public function indexTerhapus (Request $request){
@@ -91,8 +93,12 @@ class SpkController extends Controller
                     'sl_leads.nama_perusahaan',
                     'sl_spk.status_spk_id',
                     DB::raw("(SELECT GROUP_CONCAT(nama_site SEPARATOR ',</br> ') FROM sl_spk_site WHERE deleted_at IS NULL AND spk_id = sl_spk.id) as nama_site")
-                )
-                ->get();
+                );
+
+            if(!empty($request->status)){
+                $data = $data->where('sl_spk.status_spk_id',$request->status);
+            }
+            $data = $data->get();
 
         foreach ($data as $key => $value) {
             $value->tgl_spk = Carbon::createFromFormat('Y-m-d H:i:s',$value->tgl_spk)->isoFormat('D MMMM Y');

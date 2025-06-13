@@ -59,6 +59,7 @@ class TopController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'nama' => 'required',
+                'persentase' => 'required',
             ], [
                 'min' => 'Masukkan :attribute minimal :min',
                 'max' => 'Masukkan :attribute maksimal :max',
@@ -74,12 +75,14 @@ class TopController extends Controller
                 if(!empty($request->id)){
                     DB::table('m_top')->where('id',$request->id)->update([
                         'nama' => $request->nama,
+                        'persentase' => $request->persentase,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
                     ]);
                 }else{
                     DB::table('m_top')->insert([
                         'nama' => $request->nama,
+                        'persentase' => $request->persentase,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);

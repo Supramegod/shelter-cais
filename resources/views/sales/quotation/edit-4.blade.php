@@ -331,12 +331,24 @@ $('.show-custom').on('click',function(){
         }
     }
   }
+
+
   if(obj['manajemen_fee'] == null || obj['manajemen_fee'] == ""){
     msg += "<b>Manajemen Fee </b> belum dipilih </br>";
   }
 
   if(obj['persentase'] == null || obj['persentase'] == ""){
     msg += "<b>Persentase </b> belum diisi </br>";
+  }else{
+    if({{$quotation->kebutuhan_id}} == 1 || {{$quotation->kebutuhan_id}} == 3 || {{$quotation->kebutuhan_id}} == 4){
+        if(parseFloat(obj['persentase']) < 6){
+            msg += "<b>Persentase</b> tidak boleh di bawah 6% </br>";
+        }
+    }else if({{$quotation->kebutuhan_id}} == 2){
+        if(parseFloat(obj['persentase']) < 4.5){
+            msg += "<b>Persentase</b> tidak boleh di bawah 4.5% </br>";
+        }
+    }
   }
   if(obj.ada_thr==null || obj.ada_thr==""){
     msg += "<b>THR</b> belum dipilih </br>";

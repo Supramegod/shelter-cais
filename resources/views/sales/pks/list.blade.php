@@ -70,12 +70,13 @@
                                 <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="is_aktif" name="is_aktif">
+                                            <select class="form-select" id="status" name="status">
                                                 <option value="">- Semua Status -</option>
-                                                <option value="0" @if($request->is_aktif=='0') selected @endif>Perlu Approval</option>
-                                                <option value="1" @if($request->is_aktif=='1') selected @endif>PKS Aktif</option>
+                                                @foreach($statusList as $dataStatus)
+                                                <option value="{{$dataStatus->id}}" @if($status==$dataStatus->id) selected @endif>{{$dataStatus->nama}}</option>
+                                                @endforeach
                                             </select>
-                                            <label for="is_aktif">Status Data</label>
+                                            <label for="status">Status Data</label>
                                         </div>
                                     </div>
                                 </div>
@@ -137,7 +138,7 @@
                     data: function (d) {
                         d.tgl_dari = $('#tgl_dari').val();
                         d.tgl_sampai = $('#tgl_sampai').val();
-                        d.is_aktif = $('#is_aktif').find(":selected").val();
+                        d.status = $('#status').find(":selected").val();
                     },
                 },
                 "createdRow": function( row, data, dataIndex){

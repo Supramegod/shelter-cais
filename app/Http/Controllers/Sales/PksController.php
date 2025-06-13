@@ -23,6 +23,7 @@ class PksController extends Controller
     public function index (Request $request){
         $tglDari = $request->tgl_dari;
         $tglSampai = $request->tgl_sampai;
+        $status = $request->status;
 
         if($tglDari==null){
             $tglDari = carbon::now()->startOfMonth()->subMonths(3)->toDateString();
@@ -33,6 +34,7 @@ class PksController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
+        $statusList = DB::table('m_status_pks')->whereNull('deleted_at')->get();
 
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
@@ -49,7 +51,7 @@ class PksController extends Controller
             $tglSampai = carbon::now()->toDateString();
             $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
         }
-        return view('sales.pks.list',compact('branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
+        return view('sales.pks.list',compact('status','statusList','branch','tglDari','tglSampai','request','error','success','company','kebutuhan'));
     }
     public function indexTerhapus (Request $request){
         return view('sales.pks.list-terhapus');
@@ -120,6 +122,9 @@ class PksController extends Controller
                 'sl_pks.created_by',
                 'sl_pks.created_at'
             );
+        if(!empty($request->status)){
+            $query = $query->where('sl_pks.status_pks_id',$request->status);
+        }
 
         return DataTables::of($query)
         ->filterColumn('tanggal', function($query, $keyword) {

@@ -28,6 +28,7 @@
                                 <tr>
                                     <th class="text-center">ID</th>
                                     <th class="text-center">TOP</th>
+                                    <th class="text-center">Persentase</th>
                                     <th class="text-center">Dibuat Tanggal</th>
                                     <th class="text-center">Dibuat Oleh</th>
                                     <th class="text-center">Aksi</th>
@@ -100,6 +101,10 @@
                 },{
                     data : 'nama',
                     name : 'nama',
+                    className:'text-center'
+                },{
+                    data : 'persentase',
+                    name : 'persentase',
                     className:'text-center'
                 },{
                     data : 'created_at',
