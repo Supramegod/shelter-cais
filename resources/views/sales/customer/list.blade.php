@@ -25,7 +25,7 @@
                     <form action="{{route('customer')}}" method="GET">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-2">
+                                <!-- <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
                                             <input type="date" class="form-control" id="tgl_dari" name="tgl_dari" value="{{$tglDari}}">
@@ -40,7 +40,7 @@
                                             <label for="tgl_sampai">Tanggal Sampai</label>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
@@ -125,7 +125,7 @@
 
 @section('pageScript')
 <script>
-    @if(isset($success) || session()->has('success'))  
+    @if(isset($success) || session()->has('success'))
         Swal.fire({
             title: 'Pemberitahuan',
             html: '{{$success}} {{session()->get('success')}}',
@@ -136,7 +136,7 @@
             buttonsStyling: false
         });
     @endif
-    @if(isset($error) || session()->has('error'))  
+    @if(isset($error) || session()->has('error'))
         Swal.fire({
             title: 'Pemberitahuan',
             html: '{{$error}} {{session()->has('error')}}',
@@ -170,7 +170,7 @@
             "createdRow": function( row, data, dataIndex){
                 $('td', row).css('background-color', data.warna_background);
                 $('td', row).css('color', data.warna_font);
-            },      
+            },
             "order":[
                 [0,'desc']
             ],
@@ -279,13 +279,13 @@
                     className: 'dropdown-item',
                     orientation: 'landscape',
                     customize: function(doc) {
-                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                         },
                     exportOptions: {
                         columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                         orientation: 'landscape',
                         customize: function(doc) {
-                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                         },
                         // prevent avatar to be display
                         format: {
@@ -314,5 +314,22 @@
         //     let rdata = table.row(this).data();
         //     window.location.href = "customer/view/"+rdata.id;
         // })
+
+        $('#table-data').on('click', 'tbody tr', function() {
+            let rdata = table.row(this).data();
+            if(rdata.can_view){
+                window.location.href = "leads/view/"+rdata.id;
+            }else{
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    html: 'Anda tidak bisa melihat data ini',
+                    icon: 'warning',
+                    customClass: {
+                    confirmButton: 'btn btn-warning waves-effect waves-light'
+                    },
+                    buttonsStyling: false
+                });
+            }
+        })
 </script>
 @endsection

@@ -30,7 +30,7 @@ class SiteController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
@@ -73,7 +73,7 @@ class SiteController extends Controller
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
-        
+
     }
 
     public function list (Request $request){
@@ -81,12 +81,22 @@ class SiteController extends Controller
             $db2 = DB::connection('mysqlhris')->getDatabaseName();
             $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
 
-            $data = DB::table('sl_site')
-                        ->join('sl_leads','sl_leads.id','=','sl_site.leads_id')
-                        ->leftJoin('m_tim_sales_d','sl_site.tim_sales_d_id','=','m_tim_sales_d.id')
-                        ->select('sl_site.*','sl_leads.nama_perusahaan','m_tim_sales_d.nama as sales')
-                        ->whereNull('sl_leads.deleted_at');
-            
+            $data = DB::table("sl_quotation_site")
+            ->Join('sl_leads','sl_quotation_site.leads_id','=','sl_leads.id')
+            ->leftJoin('sl_spk_site','sl_quotation_site.id','=','sl_spk_site.quotation_site_id')
+            ->leftJoin('sl_site','sl_quotation_site.id','=','sl_site.quotation_site_id')
+            ->whereNull('sl_quotation_site.deleted_at')
+            ->whereNull('sl_leads.deleted_at')
+            ->select('sl_quotation_site.id','sl_leads.nama_perusahaan','sl_quotation_site.nama_site','sl_quotation_site.provinsi','sl_quotation_site.kota','sl_quotation_site.penempatan','sl_quotation_site.created_at','sl_quotation_site.created_by','sl_spk_site.id as spk_site_id','sl_site.id as site_id')
+            ->orderBy('sl_quotation_site.id', 'desc');
+
+
+            // $data = DB::table('sl_site')
+            //             ->join('sl_leads','sl_leads.id','=','sl_site.leads_id')
+            //             ->leftJoin('m_tim_sales_d','sl_site.tim_sales_d_id','=','m_tim_sales_d.id')
+            //             ->select('sl_site.*','sl_leads.nama_perusahaan','m_tim_sales_d.nama as sales')
+            //             ->whereNull('sl_leads.deleted_at');
+
             // if(!empty($request->tgl_dari)){
             //     $data = $data->where('sl_leads.tgl_leads','>=',$request->tgl_dari);
             // }else{
@@ -108,27 +118,27 @@ class SiteController extends Controller
             // }
 
             //divisi sales
-            if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
-                // sales
-                if(Auth::user()->role_id==29){
-                    $data = $data->where('m_tim_sales_d.user_id',Auth::user()->id);
-                }else if(Auth::user()->role_id==30){
-                }
-                // spv sales
-                else if(Auth::user()->role_id==31){
-                    $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
-                    $memberSales = [];
-                    $sales = DB::table('m_tim_sales_d')->whereNull('deleted_at')->where('tim_sales_id',$tim->tim_sales_id)->get();
-                    foreach ($sales as $key => $value) {
-                        array_push($memberSales,$value->user_id);
-                    }
-                    $data = $data->whereIn('m_tim_sales_d.user_id',$memberSales);
-                }
-                // Asisten Manager Sales , Manager Sales
-                else if(Auth::user()->role_id==32 || Auth::user()->role_id==33){
+            // if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
+            //     // sales
+            //     if(Auth::user()->role_id==29){
+            //         $data = $data->where('m_tim_sales_d.user_id',Auth::user()->id);
+            //     }else if(Auth::user()->role_id==30){
+            //     }
+            //     // spv sales
+            //     else if(Auth::user()->role_id==31){
+            //         $tim = DB::table('m_tim_sales_d')->where('user_id',Auth::user()->id)->first();
+            //         $memberSales = [];
+            //         $sales = DB::table('m_tim_sales_d')->whereNull('deleted_at')->where('tim_sales_id',$tim->tim_sales_id)->get();
+            //         foreach ($sales as $key => $value) {
+            //             array_push($memberSales,$value->user_id);
+            //         }
+            //         $data = $data->whereIn('m_tim_sales_d.user_id',$memberSales);
+            //     }
+            //     // Asisten Manager Sales , Manager Sales
+            //     else if(Auth::user()->role_id==32 || Auth::user()->role_id==33){
 
-                }
-            }
+            //     }
+            // }
             //divisi RO
             // else if(in_array(Auth::user()->role_id,[4,5,6,8])){
             //     if(in_array(Auth::user()->role_id,[4,5])){
@@ -145,9 +155,9 @@ class SiteController extends Controller
 
             //     }
             // };
-            
+
             $data = $data->get();
-                        
+
 
             foreach ($data as $key => $value) {
                 // $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
@@ -155,9 +165,10 @@ class SiteController extends Controller
 
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
-                return '<div class="justify-content-center d-flex">
-                                    <a href="'.route('site.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
-                        </div>';
+                return '';
+                // return '<div class="justify-content-center d-flex">
+                //                     <a href="'.route('site.view',$data->id).'" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                //         </div>';
             })
             // ->editColumn('nomor', function ($data) use ($tim) {
             //     $canView = false;
@@ -179,7 +190,19 @@ class SiteController extends Controller
             // ->editColumn('nama_perusahaan', function ($data) {
             //     return '<a href="'.route('leads.view',$data->id).'" style="font-weight:bold;color:rgb(130, 131, 147)">'.$data->nama_perusahaan.'</a>';
             // })
-            ->rawColumns(['aksi'])
+            ->addColumn('spk', function ($data) {
+                if ($data->spk_site_id !== null) {
+                    return '<i class="mdi mdi-check-circle text-success"></i>';
+                }
+                return '';
+            })
+            ->addColumn('kontrak', function ($data) {
+                if ($data->site_id !== null) {
+                    return '<i class="mdi mdi-check-circle text-success"></i>';
+                }
+                return '';
+            })
+            ->rawColumns(['aksi','spk','kontrak'])
             ->make(true);
         } catch (\Exception $e) {
             dd($e);
@@ -188,7 +211,7 @@ class SiteController extends Controller
         }
     }
 
-    
+
     public function availableCustomer (Request $request){
         try {
             $db2 = DB::connection('mysqlhris')->getDatabaseName();
@@ -203,7 +226,7 @@ class SiteController extends Controller
                         ->select('sl_leads.ro','sl_leads.crm','m_tim_sales.nama as tim_sales','m_tim_sales_d.nama as sales','sl_leads.tim_sales_id','sl_leads.tim_sales_d_id','sl_leads.status_leads_id','sl_leads.id','sl_leads.tgl_leads','sl_leads.nama_perusahaan','m_kebutuhan.nama as kebutuhan','sl_leads.pic','sl_leads.no_telp','sl_leads.email', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at')
                         ->whereNotNull('sl_leads.customer_id');
-            
+
             //divisi sales
             if(in_array(Auth::user()->role_id,[29,30,31,32,33])){
                 // sales
@@ -242,9 +265,9 @@ class SiteController extends Controller
 
                 }
             };
-            
+
             $data = $data->get();
-                        
+
 
             foreach ($data as $key => $value) {
                 $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');

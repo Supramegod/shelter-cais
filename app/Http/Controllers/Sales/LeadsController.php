@@ -137,7 +137,7 @@ class LeadsController extends Controller
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at')
-                        ->whereNull('sl_leads.customer_id');
+                        ->where('status_leads_id','!=',102);
 
             if(!empty($request->tgl_dari)){
                 $data = $data->where('sl_leads.tgl_leads','>=',$request->tgl_dari);

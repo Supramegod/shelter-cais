@@ -1428,7 +1428,8 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
 
             $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
-            $data->status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$data->status_pks_id)->first()->nama;
+            $status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$data->status_pks_id)->first();
+            $data->status = $status ? $status->nama : "";
             $perjanjian = DB::table('sl_pks_perjanjian')->whereNull('deleted_at')->where('pks_id',$id)->whereNull('deleted_at')->get();
             $data->site = DB::table('sl_site')->whereNull('deleted_at')->where('pks_id',$id)->get();
 
