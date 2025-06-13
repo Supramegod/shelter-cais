@@ -24,20 +24,8 @@
               <table class="table">
                 <tbody>
                   <tr>
-                    <td>Nomor SPK</td>
-                    <td colspan="3">: <b><a href="{{route('spk.view',[$spk->id])}}">{{$spk->nomor}}</a></b></td>
-                  </tr>
-                  <tr>
                     <td>Nama Perusahaan</td>
-                    <td>: {{$quotation->nama_perusahaan}}</td>
-                    <td>Kebutuhan</td>
-                    <td>: {{$quotation->kebutuhan}}</td>
-                  </tr>
-                  <tr>
-                    <td>Entitas</td>
-                    <td>: {{$quotation->company}}</td>
-                    <td>Jumlah Site</td>
-                    <td>: {{$quotation->jumlah_site}}</td>
+                    <td>: {{$leads->nama_perusahaan}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -49,18 +37,34 @@
               <table id="table-quotation" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                 <thead>
                   <tr>
-                    <th>No.</th>
-                    <th>Nomor</th>
-                    <th>Kebutuhan</th>
+                    <th class="text-center">No.</th>
+                    <th class="text-center">Nomor</th>
+                    <th class="text-center">Kebutuhan</th>
+                    <th class="text-center">Jenis Kontrak</th>
+                    <th class="text-center">Checklist</th>
                   </tr>
                 </thead>
-                <tbody id="tbody-quotation">
-                  <tr>
-                    <td>1</td>
-                    <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
-                    <td>{{$quotation->nama_site}}</td>
-                    <td>{{$quotation->kebutuhan}}</td>
-                  </tr>
+                <tbody>
+                    @foreach($listQuotation as $index => $quotation)
+                    <tr>
+                        <td>{{$index + 1}}</td>
+                        <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
+                        <td>{{$quotation->kebutuhan}}</td>
+                        <td>{{$quotation->jenis_kontrak}}</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2 mt-2">
+                                <a href="{{ route('pks.isi-checklist', ['id' => $quotation->id, 'pks_id' => $data->id]) }}" class="btn btn-primary" title="Isi Checklist">
+                                    <i class="mdi mdi-pencil"></i>
+                                </a>
+                                @if($quotation->materai !=null)
+                                <a onclick="window.open('{{route('quotation.cetak-checklist', ['id' => $quotation->id, 'pks_id' => $data->id])}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-warning" title="Cetak Checklist">
+                                    <i class="mdi mdi-printer"></i>
+                                </a>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
               </table>
             </div>
@@ -71,15 +75,17 @@
               <table id="table-spk" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                 <thead>
                   <tr>
-                    <th>No.</th>
-                    <th>Nomor SPK</th>
+                     <th class="text-center">No.</th>
+                     <th class="text-center">Nomor</th>
                   </tr>
                 </thead>
-                <tbody id="tbody-spk">
+                <tbody>
+                    @foreach($listSpk as $index => $spk)
                     <tr>
-                        <td>1</td>
+                        <td>{{$index + 1}}</td>
                         <td><b><a href="{{route('spk.view',[$spk->id])}}">{{$spk->nomor}}</a></b></td>
                     </tr>
+                    @endforeach
                 </tbody>
               </table>
             </div>
@@ -90,25 +96,19 @@
               <table id="table-site" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                 <thead>
                   <tr>
-                    <th>No.</th>
-                    <th>Nomor</th>
-                    <th>Nama Site</th>
-                    <th>Provinsi</th>
-                    <th>Kota</th>
-                    <th>Penempatan</th>
-                    <th>Nama Proyek</th>
+                     <th class="text-center">No.</th>
+                     <th class="text-center">Nama Site</th>
+                     <th class="text-center">Kota</th>
+                     <th class="text-center">Penempatan</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-site">
-                    @foreach($data->siteList as $key => $site)
+                    @foreach($data->site as $index => $site)
                     <tr>
-                        <td>{{$key+1}}</td>
-                        <td><b>{{$site->nomor}}</b></td>
+                        <td>{{$index + 1}}</td>
                         <td>{{$site->nama_site}}</td>
-                        <td>{{$site->provinsi}}</td>
                         <td>{{$site->kota}}</td>
                         <td>{{$site->penempatan}}</td>
-                        <td>{{$site->nama_proyek}}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -160,17 +160,7 @@
                 <i class="mdi mdi-download scaleX-n1-rtl"></i>
               </a>
             </div> -->
-        @if(Auth::user()->role_id==29)
-            <div class="col-12 text-center mt-2">
-              <a href="{{route('pks.isi-checklist',$data->id)}}" class="btn btn-primary w-100">Isi Checklist &nbsp; <i class="mdi mdi-pencil"></i></a>
-            </div>
-            @endif
-        @if($quotation->materai !=null)
-            <div class="col-12 text-center mt-2">
-            <a onclick="window.open('{{route('quotation.cetak-checklist',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-warning w-100" >Cetak Checklist &nbsp; <i class="mdi mdi-printer"></i></a>
-          </div>
-          @endif
-          <hr class="my-4 mx-4">
+          <!-- <hr class="my-4 mx-4"> -->
           @if($data->status_pks_id == 1 && Auth::user()->role_id==96)
           <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="1"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Sales</button>
@@ -194,7 +184,7 @@
               <i class="mdi mdi-upload scaleX-n1-rtl"></i>
             </button>
           </div>
-          @elseif($data->status_pks_id == 6 && Auth::user()->role_id==56)
+          @elseif($data->status_pks_id == 6 && in_array(Auth::user()->role_id, [56, 2]))
           <div class="col-12 text-center mt-2">
             <button class="btn btn-info w-100 waves-effect waves-light" id="aktifkan-site" data-id="{{$data->id}}">
               <span class="me-1">Aktifkan Site</span>
@@ -217,6 +207,12 @@
               </a>
           </div>
           @endif
+          <!-- <div class="col-12 text-center mt-2">
+            <button class="btn btn-info w-100 waves-effect waves-light" id="aktifkan-site" data-id="{{$data->id}}">
+              <span class="me-1">Aktifkan Site</span>
+              <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
+            </button>
+          </div> -->
           <hr class="my-4 mx-4">
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">

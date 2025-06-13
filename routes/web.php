@@ -253,6 +253,10 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Ajukan Ulang
         Route::get('/sales/pks/ajukan-ulang-quotation/{pks}', 'ajukanUlangQuotation')->name('pks.ajukan-ulang-quotation');
+
+        Route::get('/sales/pks/available-leads', 'availableLeads')->name('pks.available-leads'); // ajax
+        Route::get('/sales/pks/get-site-available-list', 'getSiteAvailableList')->name('pks.get-site-available-list'); // ajax
+        Route::get('/sales/pks/get-detail-quotation', 'getDetailQuotation')->name('pks.get-detail-quotation'); // ajax
     });
 
     Route::controller(PksKelengkapanController::class)->group(function() {

@@ -21,23 +21,23 @@
               <h4>Pilih SPK Untuk Dijadikan PKS</h4>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">SPK <span class="text-danger">*</span></label>
+              <label class="col-sm-2 col-form-label text-sm-end">Leads / Customer <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="hidden" id="spk_id" name="spk_id" value="" class="form-control">
+                <input type="hidden" id="leads_id" name="leads_id" value="" class="form-control">
                 <div class="input-group">
-                  @if($spk ==null)
-                    <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-spk"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Spk</button>
-                  @endif
+                    <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads / Customer</button>
                 </div>
               </div>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Nomor SPK <span class="text-danger">*</span></label>
-              <div class="col-sm-10">
-                <div class="input-group">
-                  <input type="text" id="spk" name="spk" value="" class="form-control" readonly>
-                </div>
+              <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
+              <div class="col-sm-4">
+                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="" class="form-control" readonly>
               </div>
+              <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_pks">Tanggal PKS <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <input type="date" id="tanggal_pks" name="tanggal_pks" class="form-control" value="{{ old('tanggal_pks', date('Y-m-d')) }}">
+                </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-2 col-form-label text-sm-end" for="kategoriHC">Kategori Sesuai HC <span class="text-danger">*</span></label>
@@ -49,44 +49,88 @@
                         @endforeach
                     </select>
                 </div>
-                <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_pks">Tanggal PKS <span class="text-danger">*</span></label>
+                <label class="col-sm-2 col-form-label text-sm-end" for="loyalty">Loyalty <span class="text-danger">*</span></label>
                 <div class="col-sm-4">
-                    <input type="date" id="tanggal_pks" name="tanggal_pks" class="form-control" value="{{ old('tanggal_pks', date('Y-m-d')) }}">
+                    <select id="loyalty" name="loyalty" class="form-select">
+                        <option value="">-- Pilih Loyalty --</option>
+                        @foreach($loyalty as $item)
+                            <option value="{{$item->id}}" {{ old('loyalty') == $item->id ? 'selected' : '' }}>{{$item->nama}}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label text-sm-end">Nama Perusahaan</label>
-              <div class="col-sm-4">
-                <input type="text" id="nama_perusahaan" name="nama_perusahaan" value="" class="form-control" readonly>
-              </div>
-              <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
-              <div class="col-sm-4">
-                <input type="text" id="kebutuhan" name="kebutuhan" value="" class="form-control" readonly>
-              </div>
+            <div id="d-list-site" class="d-none">
+                <hr class="my-4" />
+                <div class="content-header mt-3 mb-3 text-center">
+                <h4>List Site</h4>
+                </div>
+                <div id="d-table-spk" class="row mb-3">
+                <div class="table-responsive overflow-hidden table-spk">
+                    <table id="table-spk" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="check-all-sites" class="form-check-input" style="transform: scale(1.5); margin-right: 8px;" />
+                            </th>
+                        <th>SPK</th>
+                        <th>Nama Site</th>
+                        <th>Kota</th>
+                        <th>Penempatan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody-spk" id="tbody-spk">
+                        {{-- data table ajax --}}
+                    </tbody>
+                    </table>
+                </div>
+                </div>
             </div>
-            <div class="content-header mb-3 text-center">
-              <h4>List Site</h4>
-            </div>
-            <div id="d-table-spk" class="row mb-3">
-              <div class="table-responsive overflow-hidden table-spk">
-                <table id="table-spk" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                  <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" id="check-all-sites" class="form-check-input" style="transform: scale(1.5); margin-right: 8px;" />
-                        </th>
-                      <th>No.</th>
-                      <th>Nama Site</th>
-                      <th>Provinsi</th>
-                      <th>Kota</th>
-                      <th>Penempatan</th>
-                    </tr>
-                  </thead>
-                  <tbody class="tbody-spk" id="tbody-spk">
-                    {{-- data table ajax --}}
-                  </tbody>
-                </table>
-              </div>
+            <div id="d-crosscheck-data" class="d-none">
+                <hr class="my-4" />
+                <div class="content-header mt-3 mb-3 text-center">
+                <h4>Crosscheck Data</h4>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end" for="entitas">Entitas <span class="text-danger">*</span></label>
+                    <div class="col-sm-4">
+                        <select id="entitas" name="entitas" class="form-select">
+                            <option value="">-- Pilih Entitas --</option>
+                            @foreach($companyList as $entitas)
+                                <option value="{{ $entitas->id }}" {{ old('entitas') == $entitas->id ? 'selected' : '' }}>{{ $entitas->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_awal_kontrak">Tanggal Awal Kontrak <span class="text-danger">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="date" id="tanggal_awal_kontrak" name="tanggal_awal_kontrak" class="form-control" value="{{ old('tanggal_awal_kontrak') }}">
+                    </div>
+                    <label class="col-sm-2 col-form-label text-sm-end" for="tanggal_akhir_kontrak">Tanggal Akhir Kontrak <span class="text-danger">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="date" id="tanggal_akhir_kontrak" name="tanggal_akhir_kontrak" class="form-control" value="{{ old('tanggal_akhir_kontrak') }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end" for="rule_thr">Rule THR <span class="text-danger">*</span></label>
+                    <div class="col-sm-4">
+                        <select id="rule_thr" name="rule_thr" class="form-select">
+                            <option value="">-- Pilih Rule THR --</option>
+                            @foreach($ruleThrs as $thr)
+                                <option value="{{ $thr->id }}" {{ old('rule_thr') == $thr->id ? 'selected' : '' }}>{{ $thr->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <label class="col-sm-2 col-form-label text-sm-end" for="salary_rule">Salary Rule <span class="text-danger">*</span></label>
+                    <div class="col-sm-4">
+                        <select id="salary_rule" name="salary_rule" class="form-select">
+                            <option value="">-- Pilih Salary Rule --</option>
+                            @foreach($salaryRules as $rule)
+                                <option value="{{ $rule->id }}" {{ old('salary_rule') == $rule->id ? 'selected' : '' }}>{{ $rule->nama_salary_rule }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="row">
               <div class="col-12 d-flex flex-row-reverse">
@@ -104,13 +148,13 @@
   <hr class="container-m-nx mb-5" />
 </div>
 
-<div class="modal fade" id="modal-spk" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modal-leads" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-simple modal-enable-otp modal-dialog-centered">
     <div class="modal-content p-3 p-md-5">
       <div class="modal-body">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="text-center mb-4">
-          <h3 class="mb-2">Daftar Spk</h3>
+          <h3 class="mb-2">Daftar Leads / Customer SPK</h3>
         </div>
         <div class="row">
           <div class="table-responsive overflow-hidden table-data">
@@ -119,9 +163,9 @@
                   <tr>
                     <th class="text-center">ID</th>
                     <th class="text-center">Nomor</th>
-                    <th class="text-center">Tgl Spk</th>
                     <th class="text-center">Nama Perusahaan</th>
-                    <th class="text-center">Kebutuhan</th>
+                    <th class="text-center">Provinsi</th>
+                    <th class="text-center">Kota</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -139,8 +183,8 @@
 
 @section('pageScript')
 <script>
-  $('#btn-modal-cari-spk').on('click',function(){
-    $('#modal-spk').modal('show');
+  $('#btn-modal-cari-leads').on('click',function(){
+    $('#modal-leads').modal('show');
   });
 
   let dt_filter_table = $('.dt-column-search');
@@ -157,7 +201,7 @@
           'processing': 'Loading...'
       },
       ajax: {
-          url: "{{ route('pks.available-spk') }}",
+          url: "{{ route('pks.available-leads') }}",
           data: function (d) {
 
           },
@@ -174,34 +218,34 @@
                 name : 'nomor',
                 className:'text-center'
             },{
-                data : 'tgl_spk',
-                name : 'tgl_spk',
-                className:'text-center'
-            },{
                 data : 'nama_perusahaan',
                 name : 'nama_perusahaan',
                 className:'text-center'
             },{
-                data : 'kebutuhan',
-                name : 'kebutuhan',
+                data : 'provinsi',
+                name : 'provinsi',
+                className:'text-center'
+            },{
+                data : 'kota',
+                name : 'kota',
                 className:'text-center'
             }],
       "language": datatableLang,
   });
 
-  $('#table-data').on('click', 'tbody tr', function() {
-      $('#modal-spk').modal('hide');
-      var rdata = table.row(this).data();
-      $('#spk_id').val(rdata.id);
-      $('#spk').val(rdata.nomor);
-      $('#nama_perusahaan').val(rdata.nama_perusahaan);
-      $('#kebutuhan').val(rdata.kebutuhan);
 
-      $("#d-table-spk").removeClass("d-none");
+  $('#table-data').on('click', 'tbody tr', function() {
+      $('#modal-leads').modal('hide');
+    $('#d-list-site').removeClass('d-none');
+      var rdata = table.row(this).data();
+      $('#leads_id').val(rdata.id);
+      $('#nama_perusahaan').val(rdata.nama_perusahaan);
+      $('#provinsi').val(rdata.provinsi);
+      $('#kota').val(rdata.kota);
       $.ajax({
-        url: '{{route("spk.get-site-list")}}',
+        url: '{{route("pks.get-site-available-list")}}',
         type: 'GET',
-        data: { spk_id: rdata.id },
+        data: { leads: rdata.id },
         success: function(data) {
         $('#tbody-spk').empty();
         $('#tbody-spk').append('');
@@ -212,9 +256,8 @@
               '<td>' +
             '<input type="checkbox" name="site_ids[]" value="' + value.id + '" class="form-check-input site-checkbox" style="transform: scale(1.5); margin-right: 8px;" />' +
               '</td>' +
-              '<td>' + value.no + '</td>' +
+              '<td>' + value.spk + '</td>' +
               '<td>' + value.nama_site + '</td>' +
-              '<td>' + value.provinsi + '</td>' +
               '<td>' + value.kota + '</td>' +
               '<td>' + value.penempatan + '</td>' +
             '</tr>'
@@ -241,8 +284,8 @@
     let msg = "";
     let obj = $("form").serializeObject();
 
-    if(obj.spk_id == null || obj.spk_id == "" ){
-      msg += "<b>Spk</b> belum dipilih </br>";
+    if(obj.leads_id == null || obj.leads_id == "" ){
+      msg += "<b>Leads / Customer</b> belum dipilih </br>";
     };
 
     if(obj.tanggal_pks == null || obj.tanggal_pks == ""){
@@ -250,6 +293,24 @@
     }
     if(obj.kategoriHC == null || obj.kategoriHC == ""){
       msg += "<b>Kategori Sesuai HC</b> belum dipilih </br>";
+    }
+    if(obj.loyalty == null || obj.loyalty == ""){
+        msg += "<b>Loyalty</b> belum dipilih </br>";
+    }
+    if(obj.tanggal_awal_kontrak == null || obj.tanggal_awal_kontrak == ""){
+        msg += "<b>Tanggal Awal Kontrak</b> tidak boleh kosong </br>";
+    }
+    if(obj.tanggal_akhir_kontrak == null || obj.tanggal_akhir_kontrak == ""){
+        msg += "<b>Tanggal Akhir Kontrak</b> tidak boleh kosong </br>";
+    }
+    if(obj.entitas == null || obj.entitas == ""){
+        msg += "<b>Entitas</b> belum dipilih </br>";
+    }
+    if(obj.rule_thr == null || obj.rule_thr == ""){
+        msg += "<b>Rule THR</b> belum dipilih </br>";
+    }
+    if(obj.salary_rule == null || obj.salary_rule == ""){
+        msg += "<b>Salary Rule</b> belum dipilih </br>";
     }
     if (!obj['site_ids[]']) {
         msg += "Silakan pilih minimal satu site untuk membuat SPK.<br>";
@@ -268,12 +329,56 @@
     }
   });
 
-$('#check-all-sites').on('change', function() {
+    $('#check-all-sites').on('change', function() {
         $('.site-checkbox').prop('checked', this.checked);
     });
 
     $('.site-checkbox').on('change', function() {
         $('#check-all-sites').prop('checked', $('.site-checkbox:checked').length === $('.site-checkbox').length);
+    });
+
+    $('#tbody-spk').on('change', '.site-checkbox', function() {
+        let checkedSites = $('.site-checkbox:checked');
+        if (checkedSites.length > 0) {
+            $('#d-crosscheck-data').removeClass('d-none');
+        } else {
+            $('#d-crosscheck-data').addClass('d-none');
+        }
+    });
+
+    $('#tbody-spk').on('change', '.site-checkbox', function() {
+        let checkedSites = $('.site-checkbox:checked');
+        if (checkedSites.length > 0) {
+            let firstCheckedId = checkedSites.first().val();
+            $.ajax({
+                url: '{{ route("pks.get-detail-quotation") }}',
+                type: 'GET',
+                data: { id: firstCheckedId },
+                success: function(response) {
+                    if(response.status =="success"){
+                        let data = response.data;
+                        $('#tanggal_awal_kontrak').val(data.mulai_kontrak);
+                        $('#tanggal_akhir_kontrak').val(data.kontrak_selesai);
+                        $('#entitas').val(data.company_id).trigger('change');
+                        $('#rule_thr').val(data.rule_thr_id).trigger('change');
+                        $('#salary_rule').val(data.salary_rule_id).trigger('change');
+                    }else{
+                        Swal.fire({
+                            title: "Pemberitahuan",
+                            html: response.message,
+                            icon: "warning"
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Gagal mengambil detail quotation",
+                        icon: "error"
+                    });
+                }
+            });
+        }
     });
 </script>
 @endsection

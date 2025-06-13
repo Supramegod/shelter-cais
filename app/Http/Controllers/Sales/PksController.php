@@ -62,6 +62,7 @@ class PksController extends Controller
             $data=null;
             $spk =null;
             $siteList=[];
+            $leads = null;
             if($request->id!=null){
                 $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->id)->first();
                 if($spk==null){
@@ -71,16 +72,28 @@ class PksController extends Controller
                     ->where('spk_id',$spk->id)
                     ->whereNull('deleted_at')
                     ->get();
+                $leads = DB::table('sl_leads')->where('id',$spk->leads_id)->first();
             }
 
             $kategoriHC = DB::table('m_kategori_sesuai_hc')
                 ->whereNull('deleted_at')
                 ->get();
+            $loyalty = DB::table('m_loyalty')->whereNull('deleted_at')->get();
+            $salaryRules = DB::table('m_salary_rule')
+                ->whereNull('deleted_at')
+                ->get();
+            $ruleThrs = DB::table('m_rule_thr')
+                ->whereNull('deleted_at')
+                ->get();
+            $companyList = DB::connection('mysqlhris')->table('m_company')
+                ->where('is_active',1)
+                ->get();
+
             $view = 'sales.pks.add';
             if($spk==null){
                 $view = 'sales.pks.add-2';
             }
-            return view($view,compact('now','spk','siteList','kategoriHC'));
+            return view($view,compact('leads','now','spk','siteList','kategoriHC','loyalty','salaryRules','ruleThrs','companyList'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -134,7 +147,6 @@ class PksController extends Controller
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
 
             $aksiIcon = "";
-
             if (is_null($data->leads_id)) {
                 $aksiIcon = '<a href="javascript:void(0)" class="text-body" onclick="Swal.fire({title: \'Pemberitahuan\', text: \'Leads atau Site tidak ditemukan, silahkan kontak administrator\', icon: \'warning\'})">
                     <i class="mdi mdi-magnify mdi-20px mx-1"></i>
@@ -298,43 +310,57 @@ class PksController extends Controller
 
     public function save(Request $request){
         try {
-            // dd($request->all());
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
-            $dataSpk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->spk_id)->first();
-            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$dataSpk->quotation_id)->first();
-            $leads = DB::table('sl_leads')->where('id',$dataSpk->leads_id)->first();
-            $quotation = DB::table('sl_quotation')->where('id',$dataSpk->quotation_id)->first();
-            $ruleThr = DB::table('m_rule_thr')->where('id',$quotation->rule_thr_id)->first();
-            $salaryRule = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
-            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$quotation->company_id)->first();
-            // $site = DB::table('sl_spk_site')->where('id',$request->site_ids[0])->first();
+            $leads = DB::table('sl_leads')->where('id',$request->leads_id)->first();
             $timsalesD = DB::table('m_tim_sales_d')->where('id',$leads->tim_sales_d_id)->first();
-            $jumlahHcQuotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->sum('jumlah_hc');
+            $kategoriSesuaiHc = DB::table('m_kategori_sesuai_hc')
+                ->whereNull('deleted_at')
+                ->where('id',$request->kategoriHC)
+                ->first();
+            $loyalty = DB::table('m_loyalty')
+                ->whereNull('deleted_at')
+                ->where('id',$request->loyalty)
+                ->first();
+            $kebutuhan = DB::table('m_kebutuhan')
+                ->whereNull('deleted_at')
+                ->where('id',$leads->kebutuhan_id)
+                ->first();
 
-            $pksNomor = $this->generateNomor($quotation->leads_id,$quotation->company_id);
+            $ruleThr = DB::table('m_rule_thr')->where('id',$request->rule_thr)->first();
+            $salaryRule = DB::table('m_salary_rule')->where('id',$request->salary_rule)->first();
+            $company = DB::connection('mysqlhris')->table('m_company')->where('id',$request->entitas)->first();
+            // $site = DB::table('sl_spk_site')->where('id',$request->site_ids[0])->first();
+            // $dataSpk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$request->spk_id)->first();
+            // $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$dataSpk->quotation_id)->first();
+            // $jumlahHcQuotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->sum('jumlah_hc');
+
+            $pksNomor = $this->generateNomorNew($leads->id);
             $newId = DB::table('sl_pks')->insertGetId([
-                'quotation_id' => $quotation->id,
-                'spk_id' => $dataSpk->id,
-                'leads_id' => $quotation->leads_id,
-                // 'site_id' => $site->id,
-                'branch_id' => $leads->branch_id,
-                'company_id' => $quotation->company_id,
-                // 'kode_site' => $leads->nomor,
-                'nomor' => $pksNomor,
-                'tgl_pks' => $request->tanggal_pks,
+                // 'quotation_id' => $quotation->id,
+                // 'spk_id' => $dataSpk->id,
                 // 'nama_site' => $site->nama_site,
                 // 'alamat_site' => $site->penempatan,
                 // 'nama_proyek' => $pksNomor,
+                // 'site_id' => $site->id,
+                // 'kode_site' => $leads->nomor,
+                // 'jumlah_hc' => $jumlahHcQuotationDetail,
+                'salary_rule_id' => $salaryRule->id,
+                'rule_thr_id' => $ruleThr->id,
+                'company_id' => $company->id,
+                'leads_id' => $leads->id,
+                'branch_id' => $leads->branch_id,
+                'nomor' => $pksNomor,
+                'tgl_pks' => $request->tanggal_pks,
                 'kode_perusahaan' => $leads->nomor,
                 'nama_perusahaan' => $leads->nama_perusahaan,
                 'alamat_perusahaan' => $leads->alamat,
-                'layanan_id' => $quotation->kebutuhan_id,
-                'layanan' => $quotation->kebutuhan,
-                'bidang_usaha_id' => null,
-                'bidang_usaha' => null,
-                'jenis_perusahaan_id' => $quotation->jenis_perusahaan_id,
-                'jenis_perusahaan' => $quotation->jenis_perusahaan,
+                'layanan_id' => $leads->kebutuhan_id,
+                'layanan' => $kebutuhan->nama,
+                'bidang_usaha_id' => $leads->bidang_perusahaan_id,
+                'bidang_usaha' => $leads->bidang_perusahaan,
+                'jenis_perusahaan_id' => $leads->jenis_perusahaan_id,
+                'jenis_perusahaan' => $leads->jenis_perusahaan,
                 'link_pks_disetujui' => null,
                 'status_pks_id' => 5,
                 'provinsi_id' => $leads->provinsi_id,
@@ -350,11 +376,13 @@ class PksController extends Controller
                 'ro_id_1' => $leads->ro_id_1,
                 'ro_id_2' => $leads->ro_id_2,
                 'ro_id_3' => $leads->ro_id_3,
-                'loyalty_id' => 1,
-                'loyalty' => 'SILVER',
-                'kontrak_awal' => $quotation->mulai_kontrak,
-                'kontrak_akhir' => $quotation->kontrak_selesai,
-                'jumlah_hc' => $jumlahHcQuotationDetail,
+                'loyalty_id' => $loyalty->id,
+                'loyalty' => $loyalty->nama,
+                'kontrak_awal' => $request->tanggal_awal_kontrak,
+                'kontrak_akhir' => $request->tanggal_akhir_kontrak,
+                'kategori_sesuai_hc_id' => $kategoriSesuaiHc->id,
+                'kategori_sesuai_hc' => $kategoriSesuaiHc->nama,
+
                 'total_sebelum_pajak' => null,
                 'dasar_pengenaan_pajak' => null,
                 'ppn' => null,
@@ -378,8 +406,8 @@ class PksController extends Controller
                 'training' => null,
                 'biaya_training' => null,
                 'tgl_kirim_invoice' => null,
-                'jumlah_hari_top' => $quotation->jumlah_hari_invoice,
-                'tipe_hari_top' => $quotation->tipe_hari_invoice,
+                'jumlah_hari_top' => null,
+                'tipe_hari_top' => null,
                 'tgl_gaji' => null,
                 'pic_1' => null,
                 'jabatan_pic_1' => null,
@@ -393,8 +421,6 @@ class PksController extends Controller
                 'jabatan_pic_3' => null,
                 'email_pic_3' => null,
                 'telp_pic_3' => null,
-                'kategori_sesuai_hc_id' => null,
-                'kategori_sesuai_hc' => null,
                 'is_aktif' => 0,
                 'created_at' => $current_date_time,
                 'created_by' => Auth::user()->full_name
@@ -404,9 +430,9 @@ class PksController extends Controller
                 $nomorSite = $pksNomor.'-'.sprintf("%04d", ($key+1));
                 $namaProyek = sprintf(
                         '%s-%s.%s.%s',
-                        Carbon::parse($quotation->mulai_kontrak)->format('my'),
-                        Carbon::parse($quotation->kontrak_selesai)->format('my'),
-                        strtoupper(substr($quotation->kebutuhan, 0, 2)),
+                        Carbon::parse($request->mulai_kontrak)->format('my'),
+                        Carbon::parse($request->selesai_kontrak)->format('my'),
+                        strtoupper(substr($kebutuhan->nama, 0, 2)),
                         strtoupper($leads->nama_perusahaan)
                     );
                 $site = DB::table('sl_spk_site')->where('id',$value)->first();
@@ -429,16 +455,13 @@ class PksController extends Controller
                     'umk' => $site->umk,
                     'nominal_upah' => $site->nominal_upah,
                     'penempatan' => $site->penempatan,
+                    'kebutuhan_id' => $site->kebutuhan_id,
+                    'kebutuhan' => $site->kebutuhan,
+                    'nomor_quotation' => $site->nomor_quotation,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
             }
-
-            DB::table('sl_spk')->where('id',$dataSpk->id)->update([
-                'status_spk_id' => 3,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
 
             //insert perjanjian
             $pembukaan = '<p class="NoSpacing1" align="center" style="margin-bottom:6.0pt;text-align:center"><b><span lang="EN-US" style="font-size:14.0pt;
@@ -446,12 +469,12 @@ font-family:&quot;Arial&quot;,sans-serif">PERJANJIAN KERJASAMA ALIH DAYA<o:p></o
 
 <p class="NoSpacing1" align="center" style="text-align:center"><b><span lang="EN-US" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif">ANTARA<o:p></o:p></span></b></p>
 
-<p class="NoSpacing1" align="center" style="text-align:center"><b><span lang="EN-US" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$quotation->nama_perusahaan.'</span></b><b><span lang="IN" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
+<p class="NoSpacing1" align="center" style="text-align:center"><b><span lang="EN-US" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$leads->nama_perusahaan.'</span></b><b><span lang="IN" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
 IN"><o:p></o:p></span></b></p>
 
 <p class="NoSpacing1" align="center" style="text-align:center"><b><span lang="EN-US" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif">DENGAN<o:p></o:p></span></b></p>
 
-<p class="NoSpacing1" align="center" style="text-align:center"><b><span lang="EN-US" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$quotation->company.'<o:p></o:p></span></b></p>
+<p class="NoSpacing1" align="center" style="text-align:center"><b><span lang="EN-US" style="font-size:14.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$company->name.'<o:p></o:p></span></b></p>
 
 <p class="NoSpacing1" align="center" style="text-align:center"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
 
@@ -475,14 +498,14 @@ mso-ansi-language:IN">Antara:<o:p></o:p></span></b></p>
 mso-ansi-language:IN">&nbsp;</span></b></p>
 
 <p class="MsoNoSpacing" style="margin-left:211.5pt;text-align:justify;text-justify:
-inter-ideograph;text-indent:-211.5pt;tab-stops:202.5pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$quotation->nama_perusahaan.'</span></b><b><span lang="IN" style="font-size:12.0pt;
+inter-ideograph;text-indent:-211.5pt;tab-stops:202.5pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$leads->nama_perusahaan.'</span></b><b><span lang="IN" style="font-size:12.0pt;
 font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></b><span lang="IN" style="font-size:12.0pt;
 font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">:<b>&nbsp; </b>Dalam hal ini diwakili oleh </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.strtoupper($leads->pic).' </span></b><span lang="IN" style="font-size:12.0pt;font-family:
 &quot;Arial&quot;,sans-serif;mso-ansi-language:IN">sebagai</span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif"> </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">Direktur </span></b><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
 IN">yang berkedudukan di <span style="background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">Jala</span></span><span lang="EN-US" style="font-size: 12pt; font-family: Arial, sans-serif; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">n </span><span lang="EN-US" style="font-size: 12pt; font-family: Arial, sans-serif; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">Pos
 No. 2, Ps. Baru, Kecamatan Sawah Besar, Kota Jakarta Pusat, Daerah Khusus Ibukota
 Jakarta 10710 </span><span lang="IN" style="font-size: 12pt; font-family: Arial, sans-serif; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">dan b</span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">ertindak
-untuk dan atas nama <b>'.$quotation->nama_perusahaan.'</b>, untuk selanjutnya dalam
+untuk dan atas nama <b>'.$leads->nama_perusahaan.'</b>, untuk selanjutnya dalam
 perjanjian ini disebut sebagai <b>PIHAK PERTAMA</b>.<span style="background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><o:p></o:p></span></span></p>
 
 <p class="MsoNoSpacing" style="margin-left:247.5pt;text-indent:-247.5pt"><span lang="IN" style="font-size: 12pt; font-family: Arial, sans-serif; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;">&nbsp;</span></p>
@@ -494,7 +517,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">dan<o:p></o:p></s
 font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
 
 <p class="MsoNoSpacing" style="margin-left:211.5pt;text-align:justify;text-justify:
-inter-ideograph;text-indent:-211.5pt;tab-stops:202.5pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$quotation->company.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></b><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
+inter-ideograph;text-indent:-211.5pt;tab-stops:202.5pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$company->name.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></b><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
 IN;mso-bidi-font-weight:bold">:</span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp; </span></b><span lang="EN-US" style="font-size:
 12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-bidi-font-weight:bold">Dalam hal ini
 diwakili oleh </span><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.strtoupper($company->nama_direktur).' </span></b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-bidi-font-weight:
@@ -507,7 +530,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">di Jalan</span><s
 Raya No. 206E, Kel. Ngesrep, Kec. Banyumanik, Kota Semarang. dan bertindak
 untuk dan atas nama</span><span lang="EN-US" style="font-size:12.0pt;font-family:
 &quot;Arial&quot;,sans-serif;mso-ansi-language:IN"> </span><b><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;
-mso-ansi-language:IN">'.$quotation->company.'</span></b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;
+mso-ansi-language:IN">'.$company->name.'</span></b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;
 mso-bidi-font-weight:bold">,</span><span lang="EN-US" style="font-size:12.0pt;
 font-family:&quot;Arial&quot;,sans-serif"> </span><span lang="IN" style="font-size:12.0pt;
 font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">untuk</span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif"> </span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN">selanjutnya</span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif"> </span><span lang="IN" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:
@@ -549,14 +572,14 @@ memenuhi kebutuhan <b>PIHAK PERTAMA</b>;<o:p></o:p></span></p>
 margin-left:36.0pt;text-align:justify;text-justify:inter-ideograph;text-indent:
 -18.0pt;mso-list:l0 level1 lfo1"><!--[if !supportLists]--><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;
 mso-fareast-font-family:Arial">3)<span style="font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-variant-emoji: normal; font-weight: normal; font-stretch: normal; font-size: 7pt; line-height: normal; font-family: &quot;Times New Roman&quot;;">&nbsp;&nbsp;&nbsp; </span></span></b><!--[endif]--><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">Bahwa <b>PIHAK
-PERTAMA </b>membutuhkan Jasa '.$quotation->kebutuhan.' dan oleh karena itu <b>PIHAK
+PERTAMA </b>membutuhkan Jasa '.$kebutuhan->nama.' dan oleh karena itu <b>PIHAK
 PERTAMA </b>menunjuk <b>PIHAK KEDUA</b>;<o:p></o:p></span></p>
 
 <p class="NoSpacing1" style="margin-top:0cm;margin-right:0cm;margin-bottom:6.0pt;
 margin-left:36.0pt;text-align:justify;text-justify:inter-ideograph;text-indent:
 -18.0pt;mso-list:l0 level1 lfo1"><!--[if !supportLists]--><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif;
 mso-fareast-font-family:Arial">4)<span style="font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-variant-emoji: normal; font-weight: normal; font-stretch: normal; font-size: 7pt; line-height: normal; font-family: &quot;Times New Roman&quot;;">&nbsp;&nbsp;&nbsp; </span></span></b><!--[endif]--><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">Bahwa <b>PIHAK
-KEDUA </b>dengan ini bersedia untuk melaksanakan penyediaan Jasa '.$quotation->kebutuhan.' sesuai yang disepakati dengan <b>PIHAK PERTAMA</b>;<o:p></o:p></span></p>
+KEDUA </b>dengan ini bersedia untuk melaksanakan penyediaan Jasa '.$kebutuhan->nama.' sesuai yang disepakati dengan <b>PIHAK PERTAMA</b>;<o:p></o:p></span></p>
 
 <p class="MsoListParagraph" style="margin-bottom:6.0pt;text-align:justify;
 text-justify:inter-ideograph;text-indent:-18.0pt;mso-pagination:widow-orphan;
@@ -595,7 +618,7 @@ inter-ideograph;tab-stops:0cm">
 inter-ideograph;tab-stops:0cm"><b><span lang="EN-US" style="mso-bidi-font-size:11.0pt;font-family:&quot;Arial&quot;,sans-serif">PIHAK
 PERTAMA </span></b><span lang="EN-US" style="mso-bidi-font-size:11.0pt;
 font-family:&quot;Arial&quot;,sans-serif">menunjuk<b>
-PIHAK KEDUA </b>sebagai jasa penyedia dan pengelola Tenaga Kerja alih daya<b> </b>(<i>outsourcing</i>)<b> </b>Jasa '.$quotation->kebutuhan.' untuk <b>PIHAK
+PIHAK KEDUA </b>sebagai jasa penyedia dan pengelola Tenaga Kerja alih daya<b> </b>(<i>outsourcing</i>)<b> </b>Jasa '.$kebutuhan->nama.' untuk <b>PIHAK
 PERTAMA </b>yang akan ditempatkan di jalan
 Kebon Rojo, Krembangan Sel., Kec. Krembangan, Surabaya, Jawa Timur 60175 dan
 atas pelaksanaan pekerjaan tersebut <b>PIHAK
@@ -868,7 +891,7 @@ margin-left:31.5pt;text-align:justify;text-justify:inter-ideograph;text-indent:
 auto;text-autospace:ideograph-numeric ideograph-other"><!--[if !supportLists]--><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif;mso-fareast-font-family:Arial">a.<span style="font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-variant-emoji: normal; font-stretch: normal; font-size: 7pt; line-height: normal; font-family: &quot;Times New Roman&quot;;">&nbsp; </span></span><!--[endif]--><b><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif">PIHAK
 PERTAMA </span></b><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif">sepakat
 untuk membayar <b>Biaya Kontrak</b> setiap
-bulan (menyesuaikan <i>actual</i> <i>invoice</i>) kepada <b>PIHAK KEDUA </b>untuk pekerjaan alih daya '.$quotation->kebutuhan.' yang
+bulan (menyesuaikan <i>actual</i> <i>invoice</i>) kepada <b>PIHAK KEDUA </b>untuk pekerjaan alih daya '.$kebutuhan->nama.' yang
 dikaryakan di tempat <b>PIHAK PERTAMA</b>;<o:p></o:p></span></p>
 
 <p class="MsoNormal" style="margin-left:31.7pt;text-align:justify;text-justify:
@@ -964,7 +987,7 @@ transfer bank ke:<o:p></o:p></span></p>
 <b>1420001290823</b></span><span lang="NL" style="font-family:&quot;Arial&quot;,sans-serif;
 mso-ansi-language:NL"><o:p></o:p></span></p>
 
-<p class="MsoNormal" style="margin-bottom: 6pt; text-indent: 32.4pt; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><span lang="IN" style="font-family: Arial, sans-serif;">Nama Rekening</span><span lang="NL" style="font-family: Arial, sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <b>'.$quotation->company.'</b></span><b><span lang="NL" style="font-family:&quot;Arial&quot;,sans-serif;
+<p class="MsoNormal" style="margin-bottom: 6pt; text-indent: 32.4pt; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;"><span lang="IN" style="font-family: Arial, sans-serif;">Nama Rekening</span><span lang="NL" style="font-family: Arial, sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <b>'.$company->name.'</b></span><b><span lang="NL" style="font-family:&quot;Arial&quot;,sans-serif;
 mso-ansi-language:NL"><o:p></o:p></span></b></p>
 
 <p class="LO-normal" style="margin-top:0cm;margin-right:0cm;margin-bottom:6.0pt;
@@ -1154,7 +1177,7 @@ pihak.<o:p></o:p></span></p><p class="MsoNoSpacing"><span lang="EN-US" style="fo
   <td width="390" valign="top" style="width: 292.5pt; border-width: initial; border-style: none; border-color: initial; padding: 0cm 5.4pt;">
   <p class="NoSpacing1" style="margin-left:-.9pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">PIHAK
   PERTAMA<o:p></o:p></span></b></p>
-  <p class="NoSpacing1" style="margin-left:-.9pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$quotation->nama_perusahaan.'<o:p></o:p></span></b></p>
+  <p class="NoSpacing1" style="margin-left:-.9pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">'.$leads->nama_perusahaan.'<o:p></o:p></span></b></p>
   <p class="NoSpacing1" style="margin-left:-.9pt"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">&nbsp;</span></b></p>
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:
@@ -1168,7 +1191,7 @@ pihak.<o:p></o:p></span></p><p class="MsoNoSpacing"><span lang="EN-US" style="fo
   <td width="228" valign="top" style="width: 171pt; border-width: initial; border-style: none; border-color: initial; padding: 0cm 5.4pt;">
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif">PIHAK KEDUA<o:p></o:p></span></b></p>
   <p class="NoSpacing1"><b><span lang="EN-US" style="font-size:12.0pt;font-family:
-  &quot;Arial&quot;,sans-serif">'.$quotation->company.'<o:p></o:p></span></b></p>
+  &quot;Arial&quot;,sans-serif">'.$company->name.'<o:p></o:p></span></b></p>
   <p class="NoSpacing1"><span lang="EN-US" style="font-size:12.0pt;font-family:
   &quot;Arial&quot;,sans-serif">&nbsp;</span></p>
   <p class="NoSpacing1"><span lang="EN-US" style="font-size:12.0pt;font-family:
@@ -1316,18 +1339,16 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
 
             //insert ke activity sebagai activity pertama
             $customerActivityController = new CustomerActivityController();
-            $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+            $nomorActivity = $customerActivityController->generateNomor($leads->id);
 
             $activityId = DB::table('sl_customer_activity')->insertGetId([
-                'leads_id' => $quotation->leads_id,
-                'quotation_id' => $quotation->id,
-                'spk_id' => $dataSpk->id,
+                'leads_id' => $leads->id,
                 'pks_id' => $newId,
                 'branch_id' => $leads->branch_id,
                 'tgl_activity' => $current_date_time,
                 'nomor' => $nomorActivity,
                 'tipe' => 'PKS',
-                'notes' => 'PKS dengan nomor :'.$pksNomor.' terbentuk dari SPK dengan nomor :'.$dataSpk->nomor,
+                'notes' => 'PKS dengan nomor :'.$pksNomor.' terbentuk',
                 'is_activity' => 0,
                 'user_id' => Auth::user()->id,
                 'created_at' => $current_date_time,
@@ -1372,18 +1393,60 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         return $nomor;
     }
 
+    public function generateNomorNew ($leadsId){
+        // generate nomor PKS/AAABB-092024-00001
+        $now = Carbon::now();
+
+        $nomor = "PKS/";
+        $dataLeads = DB::table('sl_leads')->where('id',$leadsId)->first();
+        if($dataLeads != null){
+            $nomor = $nomor.$dataLeads->nomor."-";
+        }else{
+            $nomor = $nomor."NN/NNNNN-";
+        }
+
+        $month = $now->month;
+        if($month<10){
+            $month = "0".$month;
+        }
+
+        $urutan = "00001";
+
+        $jumlahData = DB::select("select * from sl_pks where nomor like '".$nomor.$month.$now->year."-"."%'");
+        $urutan = sprintf("%05d", count($jumlahData)+1);
+        $nomor = $nomor.$month.$now->year."-".$urutan;
+
+        return $nomor;
+    }
+
     public function view (Request $request,$id){
         try {
             $data = DB::table('sl_pks')->whereNull('deleted_at')->where('id',$id)->first();
-            $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$data->spk_id)->first();
-            $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->first();
+            $leads = DB::table('sl_leads')->where('id',$data->leads_id)->first();
+            // $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$data->spk_id)->first();
+            // $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->first();
 
             $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
             $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
             $data->status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$data->status_pks_id)->first()->nama;
             $perjanjian = DB::table('sl_pks_perjanjian')->whereNull('deleted_at')->where('pks_id',$id)->whereNull('deleted_at')->get();
-            $data->siteList = DB::table('sl_site')->whereNull('deleted_at')->where('pks_id',$id)->get();
-            return view('sales.pks.view',compact('perjanjian','quotation','spk','data'));
+            $data->site = DB::table('sl_site')->whereNull('deleted_at')->where('pks_id',$id)->get();
+
+            $listQuotation = [];
+            $listSpk = [];
+
+            foreach ($data->site as $key => $value) {
+                $quotation = DB::table('sl_quotation')->where('id',$value->quotation_id)->first();
+                $spk = DB::table('sl_spk')->where('id',$value->spk_id)->first();
+                if ($quotation && !in_array($quotation->id, array_column($listQuotation, 'id'))) {
+                    $listQuotation[] = $quotation;
+                }
+                if ($spk && !in_array($spk->id, array_column($listSpk, 'id'))) {
+                    $listSpk[] = $spk;
+                }
+            }
+
+            return view('sales.pks.view',compact('perjanjian','data','listSpk','listQuotation','leads'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -1457,21 +1520,21 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'updated_by' => Auth::user()->full_name
             ]);
 
-            DB::table('sl_quotation')->where('id',$pks->quotation_id)->update([
-                'status_quotation_id' => 6,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
-            DB::table('sl_spk')->where('id',$pks->spk_id)->update([
-                'status_spk_id' => 4,
-                'updated_at' => $current_date_time,
-                'updated_by' => Auth::user()->full_name
-            ]);
+            // DB::table('sl_quotation')->where('id',$pks->quotation_id)->update([
+            //     'status_quotation_id' => 6,
+            //     'updated_at' => $current_date_time,
+            //     'updated_by' => Auth::user()->full_name
+            // ]);
+            // DB::table('sl_spk')->where('id',$pks->spk_id)->update([
+            //     'status_spk_id' => 4,
+            //     'updated_at' => $current_date_time,
+            //     'updated_by' => Auth::user()->full_name
+            // ]);
 
 
             // dimasukkan ke customer dan site
-            $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->whereNull('deleted_at')->first();
-            $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+            // $quotation = DB::table('sl_quotation')->where('id',$pks->quotation_id)->whereNull('deleted_at')->first();
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
 
             // cek leads dulu apakah ada pic_id_1,2,3 dan ro_id
             if($leads->ro_id==null || ( $leads->ro_id_1==null && $leads->ro_id_2==null && $leads->ro_id_3==null)){
@@ -1491,39 +1554,49 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 }
             }
 
-            $custId = null;
+            DB::table('sl_leads')->where('id',$leads->id)->update([
+                'status_leads_id' => 102,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
 
-            if($leads->customer_id!=null){
-                $custId = $leads->customer_id;
-            }else{
-                $custId = DB::table('sl_customer')->insertGetId([
-                    'leads_id' => $leads->id,
-                    'nomor' =>  $leads->nomor,
-                    'tgl_customer' => $current_date_time,
-                    'nama_perusahaan' => $leads->nama_perusahaan,
-                    'tim_sales_id' => $leads->tim_sales_id,
-                    'tim_sales_d_id' => $leads->tim_sales_d_id,
-                    'created_at' => $current_date_time,
-                    'created_by' => Auth::user()->full_name
-                ]);
 
-                DB::table('sl_leads')->where('id',$leads->id)->update([
-                    'customer_id' => $custId,
-                    'status_leads_id' => 102,
-                    'updated_at' => $current_date_time,
-                    'updated_by' => Auth::user()->full_name
-                ]);
-            }
+            // $custId = null;
+
+            // if($leads->customer_id!=null){
+            //     $custId = $leads->customer_id;
+            // }else{
+            //     // $custId = DB::table('sl_customer')->insertGetId([
+            //     //     'leads_id' => $leads->id,
+            //     //     'nomor' =>  $leads->nomor,
+            //     //     'tgl_customer' => $current_date_time,
+            //     //     'nama_perusahaan' => $leads->nama_perusahaan,
+            //     //     'tim_sales_id' => $leads->tim_sales_id,
+            //     //     'tim_sales_d_id' => $leads->tim_sales_d_id,
+            //     //     'created_at' => $current_date_time,
+            //     //     'created_by' => Auth::user()->full_name
+            //     // ]);
+
+
+            // }
+            DB::table('sl_leads')->where('id',$leads->id)->update([
+                // 'customer_id' => $custId,
+                'status_leads_id' => 102,
+                'updated_at' => $current_date_time,
+                'updated_by' => Auth::user()->full_name
+            ]);
 
             // SINGKRON KE CLIENT HRIS
             $clientId = null;
-            if($leads->customer_id!=null){
-                $clientId = DB::connection('mysqlhris')->table('m_client')->where('customer_id',$custId)->first()->id;
+            // cari di HRIS
+            $client = DB::connection('mysqlhris')->table('m_client')->where('customer_id',$leads->id)->where('is_active',1)->first();
+            if($client!=null){
+                $clientId = $client->id;
             }else{
                 $clientId = DB::connection('mysqlhris')->table('m_client')->insertGetId([
-                    'customer_id' => $custId,
+                    'customer_id' => $leads->id,
                     'name' => $leads->nama_perusahaan,
-                    'address' => $leads->alamat,
+                    'address' => $leads->alamat ?? '-',
                     'is_active' => 1,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->id,
@@ -1532,35 +1605,19 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 ]);
             }
 
-            $quotationSite = DB::table('sl_quotation_site')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
+            $siteList = DB::table('sl_site')->where('pks_id',$pks->id)->whereNull('deleted_at')->get();
 
-            foreach ($quotationSite as $ks => $site) {
-                $siteId = DB::table('sl_site')->insertGetId([
-                    'quotation_id' => $quotation->id,
-                    'quotation_site_id' => $site->id,
-                    'leads_id' =>  $leads->id,
-                    'customer_id' => $custId,
-                    'nama_site' => $site->nama_site,
-                    'provinsi_id' => $site->provinsi_id,
-                    'provinsi' => $site->provinsi,
-                    'kota_id' => $site->kota_id,
-                    'kota' => $site->kota,
-                    'penempatan' => $site->penempatan,
-                    'tim_sales_id' => $leads->tim_sales_id,
-                    'tim_sales_d_id' => $leads->tim_sales_d_id,
-                    'created_at' => $current_date_time,
-                    'created_by' => Auth::user()->full_name,
-                ]);
-
+            foreach ($siteList as $ks => $site) {
+                $quotation = DB::table('sl_quotation')->where('id',$site->quotation_id)->first();
                 // SINGKRON KE SITE HRIS
                 $siteHrisId = DB::connection('mysqlhris')->table('m_site')->insertGetId([
-                    'site_id' => $siteId,
+                    'site_id' => $site->id,
                     'code' => $leads->nomor,
                     'proyek_id' => 0, // ACCURATE
                     'contract_number' => $pks->nomor,
                     'name' => $site->nama_site,
                     'address' => $site->penempatan,
-                    'layanan_id' => $quotation->kebutuhan_id,
+                    'layanan_id' => $site->kebutuhan_id,
                     'client_id' => $clientId,
                     'city_id' => $site->kota_id,
                     'branch_id' => $leads->branch_id,
@@ -1571,8 +1628,8 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     'supervisor_id' => $leads->ro_id,
                     'reliever' => $quotation->joker_reliever,
                     'contract_value' => 0,
-                    'contract_start' => $quotation->mulai_kontrak,
-                    'contract_end' => $quotation->kontrak_selesai,
+                    'contract_start' => $pks->kontrak_awal,
+                    'contract_end' => $pks->kontrak_akhir,
                     'contract_terminated' => null,
                     'note_terminated' => '',
                     'contract_status' => 'Aktif',
@@ -1586,49 +1643,47 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     'updated_at' => $current_date_time,
                     'updated_by' => Auth::user()->id
                 ]);
-            }
 
-            // BUAT VACANCY
-            $detailQuotation = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_id',$quotation->id)->get();
+                $detailQuotation = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_site_id',$site->quotation_site_id)->get();
 
-            foreach ($detailQuotation as $kd => $d) {
-                $icon = 1;
-                if ($quotation->kebutuhan_id == 1) {
-                    $icon = 6;
-                } else if ($quotation->kebutuhan_id == 2) {
-                    $icon = 4;
-                } else if ($quotation->kebutuhan_id == 3) {
-                    $icon = 2;
-                } else if ($quotation->kebutuhan_id == 4) {
-                    $icon = 3;
-                };
+                foreach ($detailQuotation as $kd => $d) {
+                    $icon = 1;
+                    if ($quotation->kebutuhan_id == 1) {
+                        $icon = 6;
+                    } else if ($quotation->kebutuhan_id == 2) {
+                        $icon = 4;
+                    } else if ($quotation->kebutuhan_id == 3) {
+                        $icon = 2;
+                    } else if ($quotation->kebutuhan_id == 4) {
+                        $icon = 3;
+                    };
 
-                $siteCais = DB::table('sl_site')->where('quotation_site_id',$d->quotation_site_id)->first();
-                $siteHris = DB::connection('mysqlhris')->table('m_site')->where('site_id',$siteCais->id)->first();
+                    $siteHris = DB::connection('mysqlhris')->table('m_site')->where('id',$siteHrisId)->first();
 
-                DB::connection('mysqlhris')->table('m_vacancy')->insert([
-                    'icon_id' => $icon,
-                    'start_date' => $current_date_time,
-                    'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
-                    'company_id' => $quotation->company_id,
-                    'site_id' => $siteHris->id,
-                    'position_id' => $d->position_id,
-                    'province_id' => $siteCais->provinsi_id,
-                    'city_id' => $siteCais->kota_id,
-                    'title' => $d->jabatan_kebutuhan,
-                    'type' => '',
-                    'content' => '',
-                    'needs' => $d->jumlah_hc,
-                    'phone_number1' => '',
-                    'phone_number2' => '',
-                    'flyer' => '',
-                    'is_active' => 1,
-                    'durasi_ketelitian' => 0,
-                    'created_at' => $current_date_time,
-                    'created_by' => Auth::user()->id,
-                    'updated_at' => $current_date_time,
-                    'updated_by' => Auth::user()->id
-                ]);
+                    DB::connection('mysqlhris')->table('m_vacancy')->insert([
+                        'icon_id' => $icon,
+                        'start_date' => $current_date_time,
+                        'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
+                        'company_id' => $quotation->company_id,
+                        'site_id' => $siteHris->id,
+                        'position_id' => $d->position_id,
+                        'province_id' => $site->provinsi_id,
+                        'city_id' => $site->kota_id,
+                        'title' => $d->jabatan_kebutuhan,
+                        'type' => '',
+                        'content' => '',
+                        'needs' => $d->jumlah_hc,
+                        'phone_number1' => '',
+                        'phone_number2' => '',
+                        'flyer' => '',
+                        'is_active' => 1,
+                        'durasi_ketelitian' => 0,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->id,
+                        'updated_at' => $current_date_time,
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }
             }
 
             // masukkan COSS ke tabel
@@ -1669,18 +1724,18 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
                     'provisi_seragam' =>  $kbd->personil_kaporlap,
                     'provisi_peralatan' => $kbd->personil_devices ,
-                    'chemical' => $kbd->personil_chemical,
+                    'provisi_chemical' => $kbd->personil_chemical,
                     'total_biaya_per_personil' => $kbd->total_personil,
                     'total_biaya_all_personil' => $kbd->sub_total_personil,
-                    'management_fee' => $kbd->management_fee,
-                    'persen_management_fee' => $quotation->persentase,
-                    'ohc' => $kbd->total_ohc,
-                    'grand_total' => $kbd->grand_total,
-                    'ppn' => $kbd->ppn,
-                    'pph' => $kbd->pph,
-                    'total_invoice' => $kbd->total_invoice,
-                    'pembulatan' => $kbd->pembulatan,
-                    'is_pembulatan' => $kbd->is_pembulatan,
+                    'management_fee' => $calcQuotation->nominal_management_fee,
+                    'persen_management_fee' => $calcQuotation->persentase,
+                    'provisi_ohc' => $kbd->personil_ohc,
+                    'grand_total' => $calcQuotation->grand_total_sebelum_pajak,
+                    'ppn' => $calcQuotation->ppn,
+                    'pph' => $calcQuotation->pph,
+                    'total_invoice' => $calcQuotation->total_invoice,
+                    'pembulatan' => $calcQuotation->pembulatan,
+                    'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
@@ -1710,28 +1765,28 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
                     'provisi_seragam' =>  $kbd->personil_kaporlap,
                     'provisi_peralatan' => $kbd->personil_devices ,
-                    'chemical' => $kbd->personil_chemical,
+                    'provisi_chemical' => $kbd->personil_chemical,
                     'total_exclude_base_manpower' => $kbd->total_exclude_base_manpower,
                     'bunga_bank' => $kbd->bunga_bank,
                     'insentif' => $kbd->insentif,
-                    'management_fee' => $kbd->management_fee_coss,
-                    'persen_bunga_bank' => $quotation->persen_bunga_bank,
-                    'persen_insentif' => $quotation->persen_insentif,
-                    'persen_management_fee' => $quotation->persentase,
-                    'grand_total' => $kbd->grand_total_coss,
-                    'ppn' => $kbd->ppn_coss,
-                    'pph' => $kbd->pph_coss,
-                    'total_invoice' => $kbd->total_invoice_coss,
-                    'pembulatan' => $kbd->pembulatan_coss,
-                    'is_pembulatan' => $kbd->is_pembulatan,
+                    'management_fee' => $calcQuotation->nominal_management_fee_coss,
+                    'persen_bunga_bank' => $calcQuotation->persen_bunga_bank,
+                    'persen_insentif' => $calcQuotation->persen_insentif,
+                    'persen_management_fee' => $calcQuotation->persentase,
+                    'grand_total' => $calcQuotation->grand_total_sebelum_pajak_coss,
+                    'ppn' => $calcQuotation->ppn_coss,
+                    'pph' => $calcQuotation->pph_coss,
+                    'total_invoice' => $calcQuotation->total_invoice_coss,
+                    'pembulatan' => $calcQuotation->pembulatan_coss,
+                    'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
                     'created_at' => $current_date_time,
                     'created_by' => Auth::user()->full_name
                 ]);
 
-                $totalNominal += $kbd->total_invoice;
-                $totalNominalCoss += $kbd->total_invoice_coss;
-                $ppn += $kbd->ppn;
-                $ppnCoss += $kbd->ppn_coss;
+                $totalNominal += $calcQuotation->total_invoice;
+                $totalNominalCoss += $calcQuotation->total_invoice_coss;
+                $ppn += $calcQuotation->ppn;
+                $ppnCoss += $calcQuotation->ppn_coss;
                 $totalBiaya += $kbd->sub_total_personil;
                 $totalBiayaCoss += $kbd->sub_total_personil;
                 $margin = $totalNominal-$ppn-$totalBiaya;
@@ -1760,24 +1815,22 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
 
             // Masukkan ke activity
             //insert ke activity sebagai activity pertama
-            // $customerActivityController = new CustomerActivityController();
-            // $nomorActivity = $customerActivityController->generateNomor($quotation->leads_id);
+            $customerActivityController = new CustomerActivityController();
+            $nomorActivity = $customerActivityController->generateNomor($leads->id);
 
-            // $activityId = DB::table('sl_customer_activity')->insertGetId([
-            //     'leads_id' => $quotation->leads_id,
-            //     'quotation_id' => $quotation->id,
-            //     'spk_id' => $pks->spk_id,
-            //     'pks_id' => $pks->id,
-            //     'branch_id' => $leads->branch_id,
-            //     'tgl_activity' => $current_date_time,
-            //     'nomor' => $nomorActivity,
-            //     'tipe' => 'PKS',
-            //     'notes' => 'PKS dengan nomor :'.$pks->nomor.' telah diaktifkan oleh '.Auth::user()->full_name,
-            //     'is_activity' => 0,
-            //     'user_id' => Auth::user()->id,
-            //     'created_at' => $current_date_time,
-            //     'created_by' => Auth::user()->full_name
-            // ]);
+            $activityId = DB::table('sl_customer_activity')->insertGetId([
+                'leads_id' => $quotation->leads_id,
+                'pks_id' => $pks->id,
+                'branch_id' => $leads->branch_id,
+                'tgl_activity' => $current_date_time,
+                'nomor' => $nomorActivity,
+                'tipe' => 'PKS',
+                'notes' => 'PKS dengan nomor :'.$pks->nomor.' telah diaktifkan oleh '.Auth::user()->full_name,
+                'is_activity' => 0,
+                'user_id' => Auth::user()->id,
+                'created_at' => $current_date_time,
+                'created_by' => Auth::user()->full_name
+            ]);
 
             DB::commit();
             DB::connection('mysqlhris')->commit();
@@ -1796,9 +1849,12 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
     }
 
     public function isiChecklist(Request $request,$id){
-        $pks = DB::table('sl_pks')->where('id',$id)->first();
-        $spk = DB::table('sl_spk')->where('id',$pks->spk_id)->whereNull('deleted_at')->first();
-        $quotation = DB::table('sl_quotation')->where('id',$spk->quotation_id)->whereNull('deleted_at')->first();
+        $pks = DB::table('sl_pks')->where('id',$request->pks_id)->first();
+        // $spk = DB::table('sl_spk')->where('id',$pks->spk_id)->whereNull('deleted_at')->first();
+        $quotation = DB::table('sl_quotation')->where('id',$id)->whereNull('deleted_at')->first();
+
+        //cari PKS di sl_site
+        $site = DB::table('sl_site')->where('quotation_id',$id)->where('pks_id',$pks->id)->whereNotNull('quotation_id')->whereNotNull('pks_id')->get();
 
         $listRo = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id',[4,5,6,8])->orderBy('full_name','asc')->get();
         $listCrm = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id',[54,55,56])->orderBy('full_name','asc')->get();
@@ -1814,13 +1870,19 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
         $salaryRuleQ = DB::table('m_salary_rule')->where('id',$quotation->salary_rule_id)->first();
         $sPersonil = "";
-        $jPersonil = DB::select("SELECT sum(jumlah_hc) as jumlah_hc FROM sl_quotation_detail WHERE quotation_id = $quotation->id and deleted_at is null;");
+        $jPersonil = DB::table('sl_quotation_detail')
+            ->where('quotation_id', $quotation->id)
+            ->whereIn('sl_quotation_detail.quotation_site_id', $site->pluck('quotation_site_id'))
+            ->whereNull('deleted_at')
+            ->selectRaw('SUM(jumlah_hc) as jumlah_hc')
+            ->get();
         if($jPersonil!=null){
             if ($jPersonil[0]->jumlah_hc!=null && $jPersonil[0]->jumlah_hc!=0) {
                 $sPersonil .= $jPersonil[0]->jumlah_hc." Manpower (";
                 $detailPersonil = DB::table('sl_quotation_detail')
                 ->whereNull('sl_quotation_detail.deleted_at')
                 ->where('sl_quotation_detail.quotation_id',$quotation->id)
+                ->whereIn('sl_quotation_detail.quotation_site_id', $site->pluck('quotation_site_id'))
                 ->get();
                 foreach ($detailPersonil as $idp => $vdp) {
                     if($idp !=0){
@@ -1837,8 +1899,9 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $sPersonil = "-";
         }
         $quotation->jumlah_personel = $sPersonil;
+        $ruleThr = DB::table('m_rule_thr')->where('id',$pks->rule_thr_id)->first();
 
-        return view('sales.pks.checklist-form',compact('listCrm','listRo','pks','quotation','listJabatanPic','listTrainingQ','listTraining','salaryRuleQ','leads'));
+        return view('sales.pks.checklist-form',compact('ruleThr','pks','listCrm','listRo','quotation','listJabatanPic','listTrainingQ','listTraining','salaryRuleQ','leads','site'));
     }
 
     public function saveChecklist(Request $request){
@@ -2358,6 +2421,74 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         $selisihHari = $tanggalSekarang->diffInDays($tanggalBerakhir);
 
         return $selisihHari;
+    }
+
+    public function availableLeads (Request $request){
+        try {
+                $data = DB::table('sl_spk_site')
+                    ->Join('sl_spk','sl_spk.id','sl_spk_site.spk_id')
+                    ->leftJoin('sl_leads','sl_leads.id','sl_spk_site.leads_id')
+                    ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
+                    ->whereNull('sl_spk_site.deleted_at')
+                    ->whereNull('sl_spk.deleted_at')
+                    ->where('m_tim_sales_d.user_id',Auth::user()->id)
+                    ->whereNotExists(function($query) {
+                        $query->select(DB::raw(1))
+                            ->from('sl_site')
+                            ->whereRaw('sl_site.spk_site_id = sl_spk_site.id')
+                            ->whereNotNull('sl_site.spk_site_id')
+                            ->whereNull('deleted_at');
+                    })
+                    ->select("sl_leads.id","sl_leads.nomor","sl_leads.nama_perusahaan","sl_leads.provinsi","sl_leads.kota")
+                    ->distinct()
+                    ->get();
+            return DataTables::of($data)
+            ->make(true);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function getSiteAvailableList(Request $request){
+        $site = DB::table("sl_spk_site")
+        ->leftJoin('sl_spk','sl_spk.id','=','sl_spk_site.spk_id')
+        ->where("sl_spk_site.leads_id",$request->leads)
+        ->whereNull('sl_spk_site.deleted_at')
+        ->whereNotIn('sl_spk_site.id', function($query) {
+            $query->select('spk_site_id')
+                ->from('sl_site')
+                ->whereNotNull('sl_site.spk_site_id')
+                ->whereNull('deleted_at');
+        })
+        ->select("sl_spk.nomor","sl_spk_site.id","sl_spk_site.nama_site","sl_spk_site.provinsi_id","sl_spk_site.provinsi","sl_spk_site.kota_id","sl_spk_site.kota","sl_spk_site.ump","sl_spk_site.umk","sl_spk_site.nominal_upah","sl_spk_site.penempatan")
+        ->orderBy('sl_spk.nomor','asc')
+        ->get();
+
+        foreach ($site as $key => $value) {
+            $value->spk = $value->nomor;
+        }
+
+        return $site;
+    }
+
+    public function getDetailQuotation(Request $request){
+        try {
+            $site = DB::table('sl_spk_site')->where('id',$request->id)->first();
+            if(!$site){
+                return response()->json(['status' => 'error', 'message' => 'Site not found'], 404);
+            }
+            $quotation = DB::table('sl_quotation')->where('id',$site->quotation_id)->first();
+            if(!$quotation){
+                return response()->json(['status' => 'error', 'message' => 'Quotation not found'], 404);
+            }
+        } catch (\Throwable $th) {
+            SystemController::saveError($th, Auth::user(), request());
+            return response()->json(['status' => 'error', 'message' => 'An error occurred while fetching quotation details'], 500);
+        }
+
+        return response()->json(['status' => 'success', 'data' => $quotation]);
     }
 
 }
