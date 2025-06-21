@@ -75,7 +75,7 @@ class TrainingGadaController extends Controller
                         <div onclick="showChangeStatus('.$data->id.','.$data->status.')" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-tag"></i>&nbsp;Status</div>&nbsp;
                         <div onclick="showlistLog('.$data->id.')" class="btn btn-info waves-effect btn-xs"><i class="mdi mdi-information"></i>&nbsp;Log</div>&nbsp;
                         <div onclick="showDataRegistrasi('.$data->id.')" class="btn btn-success waves-effect btn-xs"><i class="mdi mdi-account-plus"></i>&nbsp;Registrasi</div>&nbsp;
-                        <div onclick="uploadBuktiBayar('.$data->id.')" class="btn btn-warning waves-effect btn-xs"><i class="mdi mdi-upload"></i>&nbsp;Bukti Bayar</div>
+                        <div onclick="showDataBuktiBayar('.$data->id.')" class="btn btn-warning waves-effect btn-xs"><i class="mdi mdi-upload"></i>&nbsp;Bukti Bayar</div>
                     </div>';
                 }else{
                     return '<div class="justify-content-center d-flex">
@@ -109,6 +109,35 @@ class TrainingGadaController extends Controller
             // dd($e);
             abort(500);
         }
+    }
+
+    public function uploadBuktiBayar(Request $request)
+    {
+        $file = $request->file('image');
+        $id = $request->bukti_bayar_id;
+        $extension = $file->getClientOriginalExtension();
+
+        $filename = $file->getClientOriginalName();
+        $filename = str_replace(".".$extension,"",$filename);
+        $originalName = $id.$filename.".".$extension."";
+        $current_date_time = Carbon::now()->toDateTimeString();
+
+        // dd($originalName);
+        Storage::disk('training-gada-bukti-bayar')->put($originalName, file_get_contents($file));
+
+        $link = env('APP_URL').'/public/uploads/training-gada/bukti-bayar/'.$originalName;
+
+        DB::table('training_gada_bukti_bayar')->insert([
+            'training_id' => $id,
+            'type' => 'image',
+            'path' => $link,
+            'file_name' => $originalName,
+            'keterangan' => $request->bukti_bayar_keterangan,
+            'created_at' => $current_date_time,
+            'is_active' => 1
+        ]);
+
+        return redirect()->back()->with('success', "Berhasil upload bukti bayar");
     }
 
     public function dataRegistrasi(Request $request){

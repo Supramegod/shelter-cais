@@ -249,6 +249,68 @@
         }); 
     }
 
+    function showDataBuktiBayar(i) {
+      $("#bukti_bayar_id").val(i);
+      $('#modal-bukti-bayar').modal('show');  
+      
+        // let formData = {
+        //     "pendaftar_id":i,
+        //     "_token": "{{ csrf_token() }}"
+        // };
+         
+        // $.ajax({
+        //     type: "GET",
+        //     url: "{{route('training-gada.dataRegistrasi')}}",
+        //     data:formData,
+        //     success: function(response){
+        //         console.log(response);
+        //         $('#modal-data-registrasi').modal('show');  
+                
+        //         $("#register_date").val(response.data.register_date);
+        //         $("#polda_provinsi").val(response.data.polda_provinsi);
+        //         $("#polres_kabupaten").val(response.data.polres_kabupaten);
+        //         $("#nama_lengkap").val(response.data.nama_lengkap);
+        //         $("#tempat_lahir").val(response.data.tempat_lahir);
+        //         $("#tanggal_lahir").val(response.data.tanggal_lahir);
+        //         $("#alamat_rumah").val(response.data.alamat_rumah);
+        //         $("#tinggi_badan").val(response.data.tinggi_badan);
+        //         $("#berat_badan").val(response.data.berat_badan);
+        //         $("#golongan_darah").val(response.data.golongan_darah);
+        //         $("#nomor_ktp").val(response.data.nomor_ktp);
+        //         $("#sidik_jari_1").val(response.data.sidik_jari_1);
+        //         $("#sidik_jari_2").val(response.data.sidik_jari_2);
+        //         $("#nama_istri").val(response.data.nama_istri);
+        //         $("#jumlah_anak").val(response.data.jumlah_anak);
+        //         $("#nama_bapak").val(response.data.nama_bapak);
+        //         $("#nama_ibu").val(response.data.nama_ibu);
+        //         $("#nama_sd").val(response.data.nama_sd);
+        //         $("#sd_lulus").val(response.data.sd_lulus);
+        //         $("#nama_smp").val(response.data.nama_smp);
+        //         $("#smp_lulus").val(response.data.smp_lulus);
+        //         $("#nama_sma").val(response.data.nama_sma);
+        //         $("#sma_lulus").val(response.data.sma_lulus);
+        //         $("#nama_perguruan_tinggi").val(response.data.nama_perguruan_tinggi);
+        //         $("#perguruan_tinggi_lulus").val(response.data.perguruan_tinggi_lulus);
+        //         $("#lokasi_penugasan").val(response.data.lokasi_penugasan);
+        //         $("#nama_lokasi_penugasan").val(response.data.nama_lokasi_penugasan);
+        //         $("#alamat_lokasi_penugasan").val(response.data.alamat_lokasi_penugasan);
+        //         $("#kota_lokasi_penugasan").val(response.data.kota_lokasi_penugasan);
+        //         $("#asal_perusahaan").val(response.data.asal_perusahaan);
+        //         $("#status_perusahaan").val(response.data.status_perusahaan);
+        //         $("#agama").val(response.data.agama);
+        //         $("#nomor_whatsapp").val(response.data.nomor_whatsapp);
+        //         $("#pendidikan_terakhir").val(response.data.pendidikan_terakhir);
+        //     },
+        //     error:function(error){
+        //         Swal.fire({
+        //             title: 'Pemberitahuan',
+        //             text: error,
+        //             icon: 'error'
+        //         })
+        //     }
+        // }); 
+    }
+
     function sendMessage(typeNotif) {
       $('#modal-notifikasi-pendaftaran').modal('hide');
       let formData = {
@@ -490,6 +552,54 @@
       <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
         <button onclick="sendMessage('registrasi')" class="btn btn-primary">Kirim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-bukti-bayar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3 p-md-5">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Upload Bukti Bayar <p id="nama"></p></h4>
+        </div>
+        <br>
+        <div class="row mb-3">    
+          <form action="{{route('training-gada.upload-bukti-bayar')}}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <!-- <h6>1. Informasi Perusahaan</h6> -->
+            <input type="hidden" id="bukti_bayar_id" name="bukti_bayar_id">
+            
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-sm-end">File</label>
+              <div class="col-sm-9">
+                <div class="position-relative">
+                  <input type="file" name="image" class="form-control @if ($errors->any())   @endif">
+                </div>
+              </div>
+            </div> 
+
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-sm-end">Keterangan</label>
+              <div class="col-sm-9">
+                <div class="form-floating form-floating-outline mb-4">
+                  <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="bukti_bayar_keterangan" placeholder=""></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="pt-4">
+              <div class="row justify-content-end">
+                <div class="col-sm-12 d-flex justify-content-end">
+                  <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Add Bukti Bayar</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>  
+        <!-- </div> -->
       </div>
     </div>
   </div>

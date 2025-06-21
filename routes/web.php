@@ -696,6 +696,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/gada/training/data-registrasi', 'dataRegistrasi')->name('training-gada.dataRegistrasi');
         Route::get('/gada/training/data-invoice', 'dataInvoice')->name('training-gada.dataInvoice');
 
+        Route::post('/gada/training/upload-bukti-bayar', 'uploadBuktiBayar')->name('training-gada.upload-bukti-bayar');
         Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');
     });
 
