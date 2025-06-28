@@ -375,7 +375,8 @@ class SpkController extends Controller
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             $data = DB::table("sl_spk")->where("id",$id)->first();
-            $quotation = DB::table("sl_quotation")->where("id",$data->quotation_id)->get();
+            $spkSite =  DB::table("sl_spk_site")->where("spk_id",$id)->get();
+            $quotation = DB::table("sl_quotation")->where("id",$spkSite[0]->quotation_id)->get();
             $leads = DB::table("sl_leads")->where("id",$data->leads_id)->first();
             $jabatanPic = DB::table("m_jabatan_pic")->where("id",$leads->jabatan)->first();
             if($jabatanPic!=null){

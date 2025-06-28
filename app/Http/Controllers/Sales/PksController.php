@@ -1452,6 +1452,25 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 }
             }
 
+            $data->isIsiChecklist = true;
+            foreach ($listQuotation as $key => $value) {
+                if($value->materai==null){
+                    $data->isIsiChecklist = false;
+                }
+            }
+
+            // cek lowongan apakah sudah ada
+            $data->isLowongan = false;
+            foreach ($data->site as $key => $value) {
+                $siteHris = DB::connection('mysqlhris')->table('m_site')->where('site_id',$value->id)->where('is_active',1)->first();
+                if($siteHris){
+                    $vacancy = DB::connection('mysqlhris')->table('m_vacancy')->where('site_id',$siteHris->id)->where('is_active',1)->first();
+                    if($vacancy){
+                        $data->isLowongan = true;
+                    }
+                }
+            }
+
             return view('sales.pks.view',compact('perjanjian','data','listSpk','listQuotation','leads'));
         } catch (\Exception $e) {
             dd($e);
@@ -1522,6 +1541,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             DB::table('sl_pks')->where('id',$request->id)->update([
                 'ot5' => Auth::user()->full_name,
                 'status_pks_id' => 7,
+                'is_aktif' => 1,
                 'updated_at' => $current_date_time,
                 'updated_by' => Auth::user()->full_name
             ]);
@@ -1664,31 +1684,32 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                         $icon = 3;
                     };
 
-                    $siteHris = DB::connection('mysqlhris')->table('m_site')->where('id',$siteHrisId)->first();
+                    //vacancy dikomen karena ada tombol sendiri untuk membuat vacancy / lowongan
+                    // $siteHris = DB::connection('mysqlhris')->table('m_site')->where('id',$siteHrisId)->first();
 
-                    DB::connection('mysqlhris')->table('m_vacancy')->insert([
-                        'icon_id' => $icon,
-                        'start_date' => $current_date_time,
-                        'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
-                        'company_id' => $quotation->company_id,
-                        'site_id' => $siteHris->id,
-                        'position_id' => $d->position_id,
-                        'province_id' => $site->provinsi_id,
-                        'city_id' => $site->kota_id,
-                        'title' => $d->jabatan_kebutuhan,
-                        'type' => '',
-                        'content' => '',
-                        'needs' => $d->jumlah_hc,
-                        'phone_number1' => '',
-                        'phone_number2' => '',
-                        'flyer' => '',
-                        'is_active' => 1,
-                        'durasi_ketelitian' => 0,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->id,
-                        'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->id
-                    ]);
+                    // DB::connection('mysqlhris')->table('m_vacancy')->insert([
+                    //     'icon_id' => $icon,
+                    //     'start_date' => $current_date_time,
+                    //     'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
+                    //     'company_id' => $quotation->company_id,
+                    //     'site_id' => $siteHris->id,
+                    //     'position_id' => $d->position_id,
+                    //     'province_id' => $site->provinsi_id,
+                    //     'city_id' => $site->kota_id,
+                    //     'title' => $d->jabatan_kebutuhan,
+                    //     'type' => '',
+                    //     'content' => '',
+                    //     'needs' => $d->jumlah_hc,
+                    //     'phone_number1' => '',
+                    //     'phone_number2' => '',
+                    //     'flyer' => '',
+                    //     'is_active' => 1,
+                    //     'durasi_ketelitian' => 0,
+                    //     'created_at' => $current_date_time,
+                    //     'created_by' => Auth::user()->id,
+                    //     'updated_at' => $current_date_time,
+                    //     'updated_by' => Auth::user()->id
+                    // ]);
                 }
             }
 
@@ -1846,9 +1867,9 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                 'message' => 'berhasil mengaktifkan site'
             ]);
         } catch (\Exception $e) {
+            dd($e);
             DB::rollback();
             DB::connection('mysqlhris')->rollback();
-            dd($e);
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
         }
@@ -1906,6 +1927,7 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         }
         $quotation->jumlah_personel = $sPersonil;
         $ruleThr = DB::table('m_rule_thr')->where('id',$pks->rule_thr_id)->first();
+
 
         return view('sales.pks.checklist-form',compact('ruleThr','pks','listCrm','listRo','quotation','listJabatanPic','listTrainingQ','listTraining','salaryRuleQ','leads','site'));
     }
@@ -2495,6 +2517,99 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         }
 
         return response()->json(['status' => 'success', 'data' => $quotation]);
+    }
+
+    public function buatLowongan(Request $request){
+        try {
+            DB::beginTransaction();
+            DB::connection('mysqlhris')->beginTransaction();
+
+            $current_date_time = Carbon::now()->toDateTimeString();
+            $pks = DB::table('sl_pks')->where('id',$request->id)->first();
+
+            $siteList = DB::table('sl_site')->where('pks_id',$pks->id)->whereNull('deleted_at')->get();
+            foreach ($siteList as $ks => $site) {
+                $quotation = DB::table('sl_quotation')->where('id',$site->quotation_id)->first();
+                if($quotation == null){
+                    DB::rollback();
+                    DB::connection('mysqlhris')->rollback();
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Quotation tidak ditemukan untuk site ID: '.$site->id
+                    ], 404);
+                }
+
+                $siteHris = DB::connection('mysqlhris')->table('m_site')->where('site_id',$site->id)->where('is_active',1)->first();
+                if($siteHris == null){
+                    DB::rollback();
+                    DB::connection('mysqlhris')->rollback();
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Site HRIS tidak ditemukan untuk site ID: '.$site->id
+                    ], 404);
+                }
+                $detailQuotation = DB::table('sl_quotation_detail')->whereNull('deleted_at')->where('quotation_site_id',$site->quotation_site_id)->get();
+                if($detailQuotation->isEmpty()){
+                    DB::rollback();
+                    DB::connection('mysqlhris')->rollback();
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Detail Quotation tidak ditemukan untuk site ID: '.$site->quotation_site_id
+                    ], 404);
+                }
+
+                foreach ($detailQuotation as $kd => $d) {
+                    $icon = 1;
+                    if ($quotation->kebutuhan_id == 1) {
+                        $icon = 6;
+                    } else if ($quotation->kebutuhan_id == 2) {
+                        $icon = 4;
+                    } else if ($quotation->kebutuhan_id == 3) {
+                        $icon = 2;
+                    } else if ($quotation->kebutuhan_id == 4) {
+                        $icon = 3;
+                    };
+
+                    DB::connection('mysqlhris')->table('m_vacancy')->insert([
+                        'icon_id' => $icon,
+                        'start_date' => $current_date_time,
+                        'end_date' => Carbon::now()->addDays(7)->toDateTimeString(),
+                        'company_id' => $quotation->company_id,
+                        'site_id' => $siteHris->id,
+                        'position_id' => $d->position_id,
+                        'province_id' => $site->provinsi_id,
+                        'city_id' => $site->kota_id,
+                        'title' => $d->jabatan_kebutuhan,
+                        'type' => '',
+                        'content' => '',
+                        'needs' => $d->jumlah_hc,
+                        'phone_number1' => '',
+                        'phone_number2' => '',
+                        'flyer' => '',
+                        'is_active' => 1,
+                        'durasi_ketelitian' => 0,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->id,
+                        'updated_at' => $current_date_time,
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }
+            }
+
+            DB::commit();
+            DB::connection('mysqlhris')->commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'berhasil membuat lowongan'
+            ]);
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollback();
+            DB::connection('mysqlhris')->rollback();
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
     }
 
 }

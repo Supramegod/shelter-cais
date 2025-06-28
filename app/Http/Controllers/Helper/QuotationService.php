@@ -8,6 +8,9 @@ class QuotationService
 {
     public function calculateQuotation($quotation)
     {
+        //inisial value
+        $quotation->persen_bpjs_ketenagakerjaan = 0;
+        $quotation->persen_bpjs_kesehatan = 0;
         // PERHITUNGAN HPP DAN COSS
         $quotation->quotation_detail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
         $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
@@ -303,8 +306,13 @@ class QuotationService
 
         $kbd->persen_bpjs_ketenagakerjaan = $kbd->persen_bpjs_jkk+$kbd->persen_bpjs_jkm+$kbd->persen_bpjs_jht+$kbd->persen_bpjs_jp;
         $kbd->bpjs_ketenagakerjaan = $kbd->bpjs_jkk+$kbd->bpjs_jkm+$kbd->bpjs_jht+$kbd->bpjs_jp;
-        $quotation->persen_bpjs_ketenagakerjaan = $kbd->persen_bpjs_ketenagakerjaan;
-        $quotation->penjamin = $kbd->penjamin_kesehatan;
+        if($kbd->persen_bpjs_ketenagakerjaan != 0 && $kbd->persen_bpjs_ketenagakerjaan != null ){
+            $quotation->persen_bpjs_ketenagakerjaan = $kbd->persen_bpjs_ketenagakerjaan;
+        }
+
+        if($kbd->penjamin_kesehatan == "BPJS"){
+            $quotation->penjamin = $kbd->penjamin_kesehatan;
+        }
 
         if($kbd->penjamin_kesehatan=="BPJS"){
             $kbd->bpjs_kesehatan = $kbd->bpjs_kes;
@@ -313,7 +321,7 @@ class QuotationService
         }else{
             $kbd->bpjs_kesehatan = 0;
             $kbd->persen_bpjs_kesehatan = 0;
-            $quotation->persen_bpjs_kesehatan = 0;
+            // $quotation->persen_bpjs_kesehatan = 0;
             // dd($kbd->bpjs_jkk,$kbd->bpjs_jkm,$kbd->bpjs_jht,$kbd->bpjs_jp,$kbd->bpjs_kes);
         };
     }
@@ -527,18 +535,18 @@ class QuotationService
 
 
         $quotation->nominal_management_fee_coss = 0;
-        if($quotation->management_fee_id==1){
+        if($quotation->management_fee_id==1){ // total upah
             $quotation->nominal_management_fee_coss = $quotation->total_base_manpower_coss * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==4){
+        }else if($quotation->management_fee_id==4){ // total invoice
             $quotation->nominal_management_fee_coss = $quotation->total_sebelum_management_fee_coss * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==5){
+        }else if($quotation->management_fee_id==5){ // upah pokok
             // dd($quotation->upah_pokok_coss,$quotation->persentase,$quotation->upah_pokok_coss * $quotation->persentase / 100);
             $quotation->nominal_management_fee_coss = $quotation->upah_pokok_coss * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==6){
+        }else if($quotation->management_fee_id==6){ // Upah Pokok + BPJS TK
             $quotation->nominal_management_fee_coss = ($quotation->upah_pokok_coss+$quotation->total_bpjs_coss) * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==7){
+        }else if($quotation->management_fee_id==7){ // Upah Pokok + BPJS TK & Kesehatan
             $quotation->nominal_management_fee_coss = ($quotation->upah_pokok_coss+$quotation->total_bpjs_coss+$quotation->total_bpjs_kesehatan_coss) * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==8){
+        }else if($quotation->management_fee_id==8){ // Upah Pokok + Asuransi Kesehatan
             $quotation->nominal_management_fee_coss = ($quotation->upah_pokok_coss+$quotation->total_bpjs_kesehatan_coss) * $quotation->persentase / 100;
         }
 
@@ -589,18 +597,18 @@ class QuotationService
         }
 
         $quotation->nominal_management_fee = 0;
-        if($quotation->management_fee_id==1){
+        if($quotation->management_fee_id==1){ // Total Upah
             $quotation->nominal_management_fee = $quotation->total_base_manpower * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==4){
+        }else if($quotation->management_fee_id==4){ // Total Invoice
             $quotation->nominal_management_fee = $quotation->total_sebelum_management_fee * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==5){
+        }else if($quotation->management_fee_id==5){ // Upah Pokok
             $quotation->nominal_management_fee = $quotation->upah_pokok * $quotation->persentase / 100;
             // $kbd->management_fee = $quotation->nominal_upah*$quotation->persentase/100;
-        }else if($quotation->management_fee_id==6){
+        }else if($quotation->management_fee_id==6){ // Upah Pokok + BPJS TK
             $quotation->nominal_management_fee = ($quotation->upah_pokok+$quotation->total_bpjs) * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==7){
+        }else if($quotation->management_fee_id==7){ // Upah Pokok + BPJS TK & Kesehatan
             $quotation->nominal_management_fee = ($quotation->upah_pokok+$quotation->total_bpjs+$quotation->total_bpjs_kesehatan) * $quotation->persentase / 100;
-        }else if($quotation->management_fee_id==8){
+        }else if($quotation->management_fee_id==8){ // Upah Pokok + Asuransi Kesehatan
             $quotation->nominal_management_fee = ($quotation->upah_pokok+$quotation->total_bpjs_kesehatan) * $quotation->persentase / 100;
         }
 

@@ -174,7 +174,6 @@
     },{
         data : 'notes',
         name : 'notes',
-        className:'text-center'
     },{
         data : 'aksi',
     name : 'aksi',
@@ -182,6 +181,21 @@
         orderable: false,
         searchable: false,
     }],
+    columnDefs: [
+        {
+            targets: 10, // kolom ke-3 (indeks mulai dari 0)
+            createdCell: function (td, cellData, rowData, row, col) {
+                $(td).css({
+                    'max-width': '300px',
+                    'white-space': 'normal',
+                    'word-wrap': 'break-word'
+                });
+            }
+        }
+    ],
+    fixedColumns: {
+        leftColumns: 1 // freeze kolom pertama (indeks 0)
+    },
     "language": datatableLang,
 });
 

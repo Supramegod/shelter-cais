@@ -18,15 +18,43 @@
         <form class="card-body overflow-hidden" action="{{route('leads.save')}}" method="POST">
           @csrf
           <input type="hidden" name="id" value="{{$data->id}}">
-          <h6>1. Informasi PKS</h6>
+          <h6>1. Informasi Leads / Customer</h6>
           <div class="row mb-3">
             <div class="table-responsive">
               <table class="table">
                 <tbody>
+                    <tr>
+                        <td>Nomor</td>
+                        <td colspan="3">: <a href="#"><b>{{$leads->nomor ?? '-'}}</b></a></td>
+                    </tr>
                   <tr>
                     <td>Nama Perusahaan</td>
                     <td>: {{$leads->nama_perusahaan}}</td>
+                    <td>Bidang Perusahaan</td>
+                    <td>: {{$leads->bidang_perusahaan}}</td>
                   </tr>
+                <tr>
+                    <td>PMA</td>
+                    <td>: {{$leads->pma ?? '-'}}</td>
+                    <td>Negara</td>
+                    <td>: {{$leads->negara ?? '-'}}</td>
+                </tr>
+                <tr>
+                    <td>Provinsi</td>
+                    <td>: {{$leads->provinsi ?? '-'}}</td>
+                    <td>Kota</td>
+                    <td>: {{$leads->kota ?? '-'}}</td>
+                </tr>
+                <tr>
+                    <td>Kecamatan</td>
+                    <td>: {{$leads->kecamatan ?? '-'}}</td>
+                    <td>Kelurahan</td>
+                    <td>: {{$leads->kelurahan ?? '-'}}</td>
+                </tr>
+                <tr>
+                    <td>Alamat</td>
+                    <td colspan="3">: {{$leads->alamat ?? '-'}}</td>
+                </tr>
                 </tbody>
               </table>
             </div>
@@ -161,6 +189,21 @@
               </a>
             </div> -->
           <!-- <hr class="my-4 mx-4"> -->
+           @if($data->link_pks_disetujui !=null)
+          <div class="col-12 text-center mt-2">
+            <a target="_blank" href="{{$data->link_pks_disetujui}}" id="btn-lihat-pks" class="btn btn-success w-100 waves-effect waves-light">
+              <span class="me-1">Lihat PKS</span>
+              <i class="mdi mdi-download scaleX-n1-rtl"></i>
+            </a>
+          </div>
+          @else
+          <div class="col-12 text-center mt-2">
+            <a onclick="window.open('{{route('pks.cetak-pks',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
+                <span class="me-1">Download PKS</span>
+                <i class="mdi mdi-download scaleX-n1-rtl"></i>
+              </a>
+          </div>
+          @endif
           @if($data->status_pks_id == 1 && Auth::user()->role_id==96)
           <div class="col-12 text-center mt-2">
             <button class="btn btn-primary w-100 waves-effect waves-light" id="approve-pks" data-id="{{$data->id}}" data-ot="1"><i class="mdi mdi-draw-pen"></i>&nbsp; Approval Direktur Sales</button>
@@ -191,28 +234,27 @@
               <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
             </button>
           </div>
+          @elseif($data->status_pks_id == 7 && in_array(Auth::user()->role_id, [56, 2]))
+            <div class="col-12 text-center mt-2">
+                <button class="btn btn-success w-100 waves-effect waves-light">
+                    <span class="me-1">Site Aktif</span>
+                    <i class="mdi mdi-check"></i>
+                </button>
+            </div>
           @endif
-          @if($data->link_pks_disetujui !=null)
           <div class="col-12 text-center mt-2">
-            <a target="_blank" href="{{$data->link_pks_disetujui}}" id="btn-lihat-pks" class="btn btn-success w-100 waves-effect waves-light">
-              <span class="me-1">Lihat PKS</span>
-              <i class="mdi mdi-download scaleX-n1-rtl"></i>
-            </a>
-          </div>
-          @else
-          <div class="col-12 text-center mt-2">
-            <a onclick="window.open('{{route('pks.cetak-pks',$data->id)}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-pks" class="btn btn-warning w-100 waves-effect waves-light">
-                <span class="me-1">Download PKS</span>
-                <i class="mdi mdi-download scaleX-n1-rtl"></i>
-              </a>
-          </div>
-          @endif
-          <!-- <div class="col-12 text-center mt-2">
-            <button class="btn btn-info w-100 waves-effect waves-light" id="aktifkan-site" data-id="{{$data->id}}">
-              <span class="me-1">Aktifkan Site</span>
+            @if(!$data->isLowongan)
+            <button class="btn btn-warning w-100 waves-effect waves-light" id="buat-lowongan" data-id="{{$data->id}}">
+              <span class="me-1">Buat Lowongan</span>
               <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
             </button>
-          </div> -->
+            @else
+            <button class="btn btn-success w-100 waves-effect waves-light">
+                <span class="me-1">Lowongan Terbentuk</span>
+                <i class="mdi mdi-check"></i>
+            </button>
+            @endif
+          </div>
           <hr class="my-4 mx-4">
             <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
@@ -329,6 +371,19 @@
 
 
   $('#btn-upload-pks').on('click', function() {
+        @if(!$data->isIsiChecklist)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Checklist Belum Lengkap',
+            text: 'Silakan isi checklist pada quotation terlebih dahulu sebelum Upload PKS.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+        @endif
         // Menampilkan SweetAlert dengan form upload
         Swal.fire({
             title: 'Upload File',
@@ -388,6 +443,19 @@
     });
 
     $('body').on('click', '#approve-pks', function() {
+        @if(!$data->isIsiChecklist)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Checklist Belum Lengkap',
+            text: 'Silakan isi checklist pada quotation terlebih dahulu sebelum approve PKS.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+        @endif
     Swal.fire({
       icon: "question",
       title: "Apakah anda yakin ingin menyetujui data ini ?",
@@ -438,7 +506,83 @@
       }
     });
   });
+
+$('body').on('click', '#buat-lowongan', function() {
+    @if($data->status_pks_id != 7)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Site Belum Aktif',
+            text: 'Silakan aktifkan site terlebih dahulu sebelum membuat lowongan.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+    @endif
+    Swal.fire({
+        icon: "question",
+        title: "Apakah anda yakin ingin membuat lowongan untuk PKS ini?",
+        showCancelButton: true,
+        confirmButtonText: "Buat Lowongan",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Now loading',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+
+            axios.post("{{ route('pks.buat-lowongan') }}", {
+                id: $(this).data('id'),
+                _token: "{{ csrf_token() }}"
+            })
+            .then(function(response) {
+                Swal.close();
+                Swal.fire({
+                    title: "Pemberitahuan",
+                    html: "Lowongan berhasil dibuat.",
+                    icon: "success",
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        location.reload();
+                    }
+                });
+            })
+            .catch(function(error) {
+                Swal.fire({
+                    title: "Terjadi Kesalahan",
+                    html: "Terjadi kesalahan saat membuat lowongan.",
+                    icon: "error",
+                });
+                Swal.close();
+            });
+        }
+    });
+});
   $('body').on('click', '#aktifkan-site', function() {
+    @if(!$data->isIsiChecklist)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Checklist Belum Lengkap',
+            text: 'Silakan isi checklist pada quotation terlebih dahulu sebelum mengaktifkan site.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+    @endif
     Swal.fire({
       icon: "question",
       title: "Apakah anda yakin ingin mengaktifkan data ini ?",
@@ -501,6 +645,11 @@
             });
           },
           error:function(error){
+            Swal.fire({
+                title: "Terjadi Kesalahan",
+                html: "Terjadi kesalahan saat memproses permintaan.",
+                icon: "error",
+            });
             console.log(error);
             Swal.close();
           }

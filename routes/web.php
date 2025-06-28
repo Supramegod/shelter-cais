@@ -244,6 +244,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::post('/sales/pks/approve', 'approve')->name('pks.approve');
         Route::post('/sales/pks/aktifkan-site', 'aktifkanSite')->name('pks.aktifkan-site');
+        Route::post('/sales/pks/buat-lowongan', 'buatLowongan')->name('pks.buat-lowongan');
         Route::get('/sales/pks/cetak-pks/{id}', 'cetakPks')->name('pks.cetak-pks');
         Route::get('/sales/pks/isi-checklist/{id}', 'isiChecklist')->name('pks.isi-checklist');
         Route::post('/sales/pks/save-checklist', 'saveChecklist')->name('pks.save-checklist');

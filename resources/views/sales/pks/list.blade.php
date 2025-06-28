@@ -111,6 +111,27 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="mt-3">
+                        <strong>Keterangan Status:</strong>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#f39c1240;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Menunggu upload PKS</span>
+                            </li>
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#3498db40;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Menunggu diaktifkan oleh Manager CRM</span>
+                            </li>
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#e74c3c40;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Kontrak Terminated</span>
+                            </li>
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#adb5bd40;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Status tidak ditemukan</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -142,9 +163,20 @@
                     },
                 },
                 "createdRow": function( row, data, dataIndex){
-                    if(data.status_pks_id==1 || data.status_pks_id==2 || data.status_pks_id==3 || data.status_pks_id== 4 || data.status_pks_id==5){
-                        $('td', row).css('background-color', '#f39c1240');
+                    if (data.status_pks_id == 5) {
+                        $('td', row).css('background-color', '#f39c1240'); // kuning
+                    } else if (data.status_pks_id == 6) {
+                        $('td', row).css('background-color', '#3498db40'); // biru
+                    } else if (data.status_pks_id == 8) {
+                        $('td', row).css('background-color', '#9b59b640'); // ungu
+                    } else if (data.status_pks_id == 100) {
+                        $('td', row).css('background-color', '#e74c3c40'); // merah
+                    } else if (data.status_pks_id === null) {
+                        $('td', row).css('background-color', '#adb5bd40'); // abu-abu
                     }
+                    // if(data.status_pks_id==1 || data.status_pks_id==2 || data.status_pks_id==3 || data.status_pks_id== 4 || data.status_pks_id==5){
+                    //     $('td', row).css('background-color', '#f39c1240');
+                    // }
                 },
                 "order":[
                     [0,'desc']
