@@ -20,6 +20,9 @@ npm-debug.log
 yarn-error.log
 cais.zip
 public.zip
+/meeting
+/note
+/note_update
 /.fleet
 /.idea
 /.vscode
