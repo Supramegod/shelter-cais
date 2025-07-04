@@ -153,6 +153,10 @@ class MonitoringKontrakController extends Controller
             ->select('pks_id', DB::raw('COUNT(*) as total_issue'))
             ->whereNull('deleted_at')
             ->groupBy('pks_id');
+        $siteSub = DB::table('sl_site')
+            ->select('pks_id', DB::raw("GROUP_CONCAT(nama_site SEPARATOR ',</br> ') as site"))
+            ->whereNull('deleted_at')
+            ->groupBy('pks_id');
         // $siteSub = DB::table('sl_site')
         //     ->select('pks_id', DB::raw('COUNT(*) as total_site'))
         //     ->whereNull('deleted_at')
@@ -170,6 +174,7 @@ class MonitoringKontrakController extends Controller
             ->leftJoin('m_status_pks', 'sl_pks.status_pks_id', '=', 'm_status_pks.id')
             ->leftJoinSub($activitySub, 'activity', 'activity.pks_id', '=', 'sl_pks.id')
             ->leftJoinSub($issueSub, 'issue', 'issue.pks_id', '=', 'sl_pks.id')
+            ->leftJoinSub($siteSub, 'site', 'site.pks_id', '=', 'sl_pks.id')
             // ->leftJoinSub($siteSub, 'site', 'site.pks_id', '=', 'sl_pks.id')
             ->whereNull('sl_pks.deleted_at')
             ->select(
@@ -178,9 +183,11 @@ class MonitoringKontrakController extends Controller
                 DB::raw('CONCAT_WS("<br />", crm1.full_name, crm2.full_name, crm3.full_name) as crm'),
                 DB::raw('CONCAT_WS("<br />", rospv.full_name, ro1.full_name, ro2.full_name, ro3.full_name) as ro'),
                 'sales.full_name as sales',
+                'site.site',
                 DB::raw('IFNULL(activity.total_activity, 0) as aktifitas'),
                 DB::raw('IFNULL(issue.total_issue, 0) as issue'),
-                DB::raw("(SELECT GROUP_CONCAT(nama_site SEPARATOR ',</br> ') FROM sl_site WHERE deleted_at IS NULL AND pks_id = sl_pks.id) as site")
+
+                // DB::raw("(SELECT GROUP_CONCAT(nama_site SEPARATOR ',</br> ') FROM sl_site WHERE deleted_at IS NULL AND pks_id = sl_pks.id) as site")
 
                 // DB::raw('IFNULL(site.total_site, 0) as site')
             );
@@ -188,6 +195,9 @@ class MonitoringKontrakController extends Controller
         return DataTables::of($query)
         ->filterColumn('sales', function($query, $keyword) {
             $query->where('sales.full_name', 'like', "%{$keyword}%");
+        })
+        ->filterColumn('site', function($query, $keyword) {
+            $query->where('site.site', 'like', "%{$keyword}%");
         })
         ->filterColumn('status', function($query, $keyword) {
             $query->where('m_status_pks.nama', 'like', "%{$keyword}%");
@@ -295,11 +305,12 @@ class MonitoringKontrakController extends Controller
                             <i class="mdi mdi-magnify mdi-20px mx-1"></i>
                         </a>';
             } else {
-                if($data->site ==null || $data->site ==""){
-                    return '<i class="mdi mdi-close-circle mdi-20px text-danger mx-1"></i>';
-                }else{
-                    return '<i class="mdi mdi-check-circle mdi-20px text-success mx-1"></i>';
-                }
+                return '<i class="mdi mdi-close-circle mdi-20px text-danger mx-1"></i>';
+                // if($data->site ==null || $data->site ==""){
+                //     return '<i class="mdi mdi-close-circle mdi-20px text-danger mx-1"></i>';
+                // }else{
+                //     return '<i class="mdi mdi-check-circle mdi-20px text-success mx-1"></i>';
+                // }
             }
         })
         ->addColumn('warna_font', function ($data) {

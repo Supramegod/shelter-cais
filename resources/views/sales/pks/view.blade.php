@@ -536,35 +536,38 @@ $('body').on('click', '#buat-lowongan', function() {
                     Swal.showLoading()
                 }
             });
-
-            axios.post("{{ route('pks.buat-lowongan') }}", {
+            var formData = {
                 id: $(this).data('id'),
                 _token: "{{ csrf_token() }}"
-            })
-            .then(function(response) {
-                Swal.close();
-                Swal.fire({
-                    title: "Pemberitahuan",
-                    html: "Lowongan berhasil dibuat.",
-                    icon: "success",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.timer) {
-                        location.reload();
-                    }
-                });
-            })
-            .catch(function(error) {
-                Swal.fire({
-                    title: "Terjadi Kesalahan",
-                    html: "Terjadi kesalahan saat membuat lowongan.",
-                    icon: "error",
-                });
-                Swal.close();
+            };
+            $.ajax({
+                type: "POST",
+                url: "{{ route('pks.buat-lowongan') }}",
+                data: formData,
+                success: function(response) {
+                    Swal.fire({
+                        title: "Pemberitahuan",
+                        html: "Lowongan berhasil dibuat.",
+                        icon: "success",
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function(xhr, status, errorThrown) {
+                    console.log("AJAX ERROR:", xhr.status, errorThrown);
+                    Swal.fire({
+                        title: "Terjadi Kesalahan",
+                        html: "Terjadi kesalahan saat membuat lowongan. Status: " + xhr.status,
+                        icon: "error",
+                    });
+                }
             });
         }
     });
@@ -589,7 +592,6 @@ $('body').on('click', '#buat-lowongan', function() {
       showCancelButton: true,
       confirmButtonText: "Aktifkan",
     }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         Swal.fire({
           title: 'Now loading',
@@ -606,54 +608,51 @@ $('body').on('click', '#buat-lowongan', function() {
         };
 
         $.ajax({
-          type: "POST",
-          url: "{{route('pks.aktifkan-site')}}",
-          data:formData,
-          success: function(response){
-            if (response.status == 'error') {
-              Swal.fire({
-                title: "Pemberitahuan",
-                html: response.message,
-                icon: "error",
-              });
-              return;
-            }
+            type: "POST",
+            url: "{{route('pks.aktifkan-site')}}",
+            data: formData,
+            success: function(response) {
+                if (response.status == 'error') {
+                Swal.fire({
+                    title: "Pemberitahuan",
+                    html: response.message,
+                    icon: "error",
+                });
+                return;
+                }
 
-            Swal.close();
-            let timerInterval;
-            Swal.fire({
-              title: "Pemberitahuan",
-              html: "Data berhasil diaktifkan.",
-              icon: "success",
-              timer: 2000,
-              timerProgressBar: true,
-              didOpen: () => {
-                Swal.showLoading();
-                const timer = Swal.getPopup().querySelector("b");
-                timerInterval = setInterval(() => {
-                  timer.textContent = `${Swal.getTimerLeft()}`;
-                }, 100);
-              },
-              willClose: () => {
-                clearInterval(timerInterval);
-              }
-            }).then((result) => {
-              /* Read more about handling dismissals below */
-              if (result.dismiss === Swal.DismissReason.timer) {
-                location.reload();
-              }
-            });
-          },
-          error:function(error){
-            Swal.fire({
+                let timerInterval;
+                Swal.fire({
+                title: "Pemberitahuan",
+                html: "Data berhasil diaktifkan.",
+                icon: "success",
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                    const timer = Swal.getPopup().querySelector("b");
+                    timerInterval = setInterval(() => {
+                    timer.textContent = `${Swal.getTimerLeft()}`;
+                    }, 100);
+                },
+                willClose: () => {
+                    clearInterval(timerInterval);
+                }
+                }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    location.reload();
+                }
+                });
+            },
+            error: function(xhr, status, errorThrown) {
+                console.log("AJAX ERROR:", xhr.status, errorThrown);
+                Swal.fire({
                 title: "Terjadi Kesalahan",
-                html: "Terjadi kesalahan saat memproses permintaan.",
+                html: "Terjadi kesalahan saat memproses permintaan. Status: " + xhr.status,
                 icon: "error",
+                });
+            }
             });
-            console.log(error);
-            Swal.close();
-          }
-        });
       }
     });
   });

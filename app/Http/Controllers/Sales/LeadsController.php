@@ -888,10 +888,10 @@ class LeadsController extends Controller
                 }
             }
             //divisi RO
-            else if(in_array(Auth::user()->role_id,[4,5,6,8])){
-                if(in_array(Auth::user()->role_id,[4,5])){
+            else if(in_array(Auth::user()->role_id,[6,8])){
+                if(in_array(Auth::user()->role_id,[999])){
                     $data = $data->where('sl_leads.ro_id',Auth::user()->id);
-                }else if(in_array(Auth::user()->role_id,[6,8])){
+                }else if(in_array(Auth::user()->role_id,[4,5,6,8])){
 
                 }
             }
@@ -1118,5 +1118,27 @@ class LeadsController extends Controller
     {
         $negara = DB::table('m_negara')->where('id_benua', $benuaId)->get();
         return response()->json($negara);
+    }
+
+    public function generateNullKode()
+    {
+        try {
+            $leads = DB::table('sl_leads')->whereNull('nomor')->whereNull('deleted_at')->get();
+            $nomor = "";
+            foreach ($leads as $key => $lead) {
+                if($key==0){
+                    $nomor = $this->generateNomor();
+                }else{
+                    $nomor = $this->generateNomorLanjutan($nomor);
+                }
+                DB::table('sl_leads')->where('id', $lead->id)->update([
+                    'nomor' => $nomor
+                ]);
+            }
+            return response()->json(['status' => 'success', 'message' => 'Nomor berhasil digenerate untuk semua leads yang belum memiliki nomor.']);
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), request());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
     }
 }

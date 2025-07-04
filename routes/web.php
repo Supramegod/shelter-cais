@@ -97,11 +97,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
         Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
-
+        Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
 
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
         Route::get('/dashboard/aktifkan/list', 'getListDashboardAktifkanData')->name('dashboard-aktifkan.list');
+        Route::get('/dashboard/pks-siap-aktif/list', 'listPksSiapAktif')->name('dashboard-pks-siap-aktif.list');
 
         // ajax modal
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-hari-ini', 'listAktifitasSalesHariIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-hari-ini');
@@ -155,6 +156,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/leads/leads-belum-aktif', 'leadsBelumAktif')->name('sales.leads.leads-belum-aktif');
 
         Route::get('/sales/leads/get-negara/{kecamatanId}', 'getNegara')->name('leads.get-negara'); // ajax
+
+        // generate null kode
+        Route::get('/sales/leads/generate-null-kode', 'generateNullKode')->name('leads.generate-null-kode'); // ajax
     });
 
     Route::controller(SubmissionController::class)->group(function() {

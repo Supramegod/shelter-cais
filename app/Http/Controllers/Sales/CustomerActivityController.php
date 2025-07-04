@@ -595,10 +595,10 @@ class CustomerActivityController extends Controller
                 }
             }
             //divisi RO
-            else if(in_array(Auth::user()->role_id,[4,5,6,8])){
-                if(in_array(Auth::user()->role_id,[4,5])){
+            else if(in_array(Auth::user()->role_id,[6,8])){
+                if(in_array(Auth::user()->role_id,[999])){
                     $data = $data->where('sl_leads.ro_id',Auth::user()->id);
-                }else if(in_array(Auth::user()->role_id,[6,8])){
+                }else if(in_array(Auth::user()->role_id,[4,5,6,8])){
 
                 }
             }
