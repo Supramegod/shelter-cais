@@ -7,6 +7,9 @@
 /public/pks
 /storage/*.key
 /vendor
+/meeting
+/note
+/note_update
 .env
 .env.backup
 .env.production
@@ -20,9 +23,7 @@ npm-debug.log
 yarn-error.log
 cais.zip
 public.zip
-/meeting
-/note
-/note_update
+
 /.fleet
 /.idea
 /.vscode
