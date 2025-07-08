@@ -43,11 +43,13 @@ use App\Http\Controllers\Master\TrainingTrainerController;
 use App\Http\Controllers\Master\TrainingAreaController;
 use App\Http\Controllers\Master\TrainingClientController;
 use App\Http\Controllers\Master\TrainingGadaHargaController;
+use App\Http\Controllers\Master\TrainingGadaJadwalController;
 
 use App\Http\Controllers\Sdt\SdtTrainingController;
 use App\Http\Controllers\Sdt\TrainingSiteController;
 
 use App\Http\Controllers\Gada\TrainingGadaController;
+use App\Http\Controllers\Gada\TrainingGadaPembayaranController;
 
 use App\Http\Controllers\Setting\EntitasController;
 
@@ -97,6 +99,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
         Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
+        Route::get('/dashboard/training-gada', 'dashboardTrainingGada')->name('dashboard-training-gada');
 
 
         // list
@@ -618,6 +621,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/training-gada-harga/save', 'save')->name('training-gada-harga.save');
     });
 
+    Route::controller(TrainingGadaJadwalController::class)->group(function() {
+        Route::get('/master/training-gada-jadwal', 'index')->name('training-gada-jadwal');
+        Route::get('/master/training-gada-jadwal/add', 'add')->name('training-gada-jadwal.add');
+        Route::get('/master/training-gada-jadwal/view/{id}', 'view')->name('training-gada-jadwal.view');
+
+        Route::get('/master/training-gada-jadwal/list', 'list')->name('training-gada-jadwal.list'); // ajax
+        Route::post('/master/training-gada-jadwal/delete', 'delete')->name('training-gada-jadwal.delete');
+        Route::post('/master/training-gada-jadwal/save', 'save')->name('training-gada-jadwal.save');
+    });
+
     Route::controller(TrainingDivisiController::class)->group(function() {
         Route::get('/master/training-divisi', 'index')->name('training-divisi');
         Route::get('/master/training-divisi/add', 'add')->name('training-divisi.add');
@@ -695,9 +708,24 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/gada/training/list-log', 'listLog')->name('training-gada.listLog');
         Route::get('/gada/training/data-registrasi', 'dataRegistrasi')->name('training-gada.dataRegistrasi');
         Route::get('/gada/training/data-invoice', 'dataInvoice')->name('training-gada.dataInvoice');
+        Route::get('/gada/training/generate-invoice/{id}', 'generateInvoice')->name('training-gada.generateInvoice');
+        // Route::get('/gada/training/terbilang', 'terbilang')->name('training-gada.terbilang');
 
         Route::post('/gada/training/upload-bukti-bayar', 'uploadBuktiBayar')->name('training-gada.upload-bukti-bayar');
-        Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');
+        Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');        
+    });
+
+    Route::controller(TrainingGadaPembayaranController::class)->group(function() {
+        Route::get('/gada/training-pembayaran', 'index')->name('training-gada-pembayaran');
+        Route::get('/gada/training-pembayaran/list', 'list')->name('training-gada-pembayaran.list');
+        // Route::get('/gada/training/list-log', 'listLog')->name('training-gada.listLog');
+        // Route::get('/gada/training/data-registrasi', 'dataRegistrasi')->name('training-gada.dataRegistrasi');
+        // Route::get('/gada/training/data-invoice', 'dataInvoice')->name('training-gada.dataInvoice');
+        // Route::get('/gada/training/generate-invoice/{id}', 'generateInvoice')->name('training-gada.generateInvoice');
+        // Route::get('/gada/training/terbilang', 'terbilang')->name('training-gada.terbilang');
+
+        // Route::post('/gada/training/upload-bukti-bayar', 'uploadBuktiBayar')->name('training-gada.upload-bukti-bayar');
+        // Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');        
     });
 
     Route::controller(TrainingSiteController::class)->group(function() {

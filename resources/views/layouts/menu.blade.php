@@ -58,6 +58,12 @@
                         <div>Dashboard SDT Training</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-training-gada'))) active @endif">
+                    <a href="{{route('dashboard-training-gada')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Dashboard Training Gada</div>
+                    </a>
+                </li>
             </ul>
         </li>
         @endif
@@ -163,18 +169,18 @@
                 <div data-i18n="Traning Gada">Training Gada</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item @if(str_contains(Request::url(), route('training-gada'))) active @endif">
+                <li class="menu-item @if(Request::url() === route('training-gada')) active @endif">
                     <a href="{{route('training-gada')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
                         <div data-i18n="Data Registrasi">Data Registrasi</div>
                     </a>
                 </li>
-                <!-- <li class="menu-item">
-                    <a href="{{route('training-site')}}" class="menu-link">
+                <li class="menu-item @if(Request::url() === route('training-gada-pembayaran')) active @endif">
+                    <a href="{{route('training-gada-pembayaran')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Training Site">Training Site</div>
+                        <div data-i18n="Training Site">Data Pembayaran</div>
                     </a>
-                </li> -->
+                </li>
             </ul>
         </li>
         @endif
@@ -207,7 +213,13 @@
                 <li class="menu-item @if(Request::url() === route('training-gada-harga')) active @endif">
                     <a href="{{route('training-gada-harga')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Training">Training Gada</div>
+                        <div data-i18n="Training Gada">Training Gada</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(Request::url() === route('training-gada-jadwal')) active @endif">
+                    <a href="{{route('training-gada-jadwal')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Gada Jadwal">Training Gada Jadwal</div>
                     </a>
                 </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">

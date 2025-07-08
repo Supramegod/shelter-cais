@@ -14,15 +14,15 @@
             <div class="card">
                 <div class="card-header d-flex" style="padding-bottom: 0px !important;">
                     <div class="col-md-6 text-left col-12 my-auto">
-                        <h3 class="page-title">Data Pendaftar Training Gada</h3>
+                        <h3 class="page-title">Data Pembayaran Training Gada</h3>
                         <ol class="breadcrumb" style="background-color:white !important;padding:0 !important">
 							<li class="breadcrumb-item"><a href="javascript:void(0);">SDT</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Training Gada</li>
+							<li class="breadcrumb-item active" aria-current="page">Pembayaran Training Gada</li>
 						</ol>
                     </div>
                 </div>
                 <div class="card-body pt-4">
-                    <form action="{{route('sdt-training')}}" method="GET">
+                    <form action="{{route('training-gada-pembayaran')}}" method="GET">
                         <div class="col-md-12">
                             <div class="row">
                             </div>
@@ -32,16 +32,14 @@
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                             <thead>
                                 <tr>
-                                    <th class="text-left">Nama</th>
                                     <th class="text-left">Nik</th>    
-                                    <th class="text-left">Email</th>
-                                    <th class="text-left">No WA</th>
-                                    <th class="text-left">Jenis Pelatihan</th>
-                                    <th class="text-left">Alamat</th>
-                                    <th class="text-left">Register Date</th>
-                                    <th class="text-left">Status</th>
+                                    <th class="text-left">Nama</th>
+                                    <th class="text-left">Training</th>
+                                    <th class="text-left">Nominal</th>
+                                    <th class="text-left">Status Bayar</th>
+                                    <th class="text-left">Tanggal Bayar</th>
+                                    <th class="text-left">Bukti Bayar</th>
                                     <th class="text-left">Invoice</th>
-                                    <th class="text-left">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -62,374 +60,374 @@
 @section('pageScript')
 <script>
     
-    function saveData() {
-        Swal.fire({
-          target: document.getElementById('modal-status'),
-          title: 'Konfirmasi',
-          text: 'Apakah anda ingin mengubah status?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: 'primary',
-          cancelButtonColor: 'warning',
-          confirmButtonText: 'Ubah'
-      }).then(function (result) {
-        let id = $('#register_id').val();
-        let status_id = $('#status_id').val();
-        let keterangan = $('#keterangan').val();
+    // function saveData() {
+    //     Swal.fire({
+    //       target: document.getElementById('modal-status'),
+    //       title: 'Konfirmasi',
+    //       text: 'Apakah anda ingin mengubah status?',
+    //       icon: 'question',
+    //       showCancelButton: true,
+    //       confirmButtonColor: 'primary',
+    //       cancelButtonColor: 'warning',
+    //       confirmButtonText: 'Ubah'
+    //   }).then(function (result) {
+    //     let id = $('#register_id').val();
+    //     let status_id = $('#status_id').val();
+    //     let keterangan = $('#keterangan').val();
         
-        if(status_id == ''){
-            Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: "Mohon untuk memilih data status",
-                    icon: 'error'
-                })
-        }else{
-            if (result.isConfirmed) {
-                    let formData = {
-                        "id":id,
-                        "status_id":status_id,
-                        "keterangan":keterangan,
-                        "_token": "{{ csrf_token() }}"
-                    };
+    //     if(status_id == ''){
+    //         Swal.fire({
+    //                 title: 'Pemberitahuan',
+    //                 text: "Mohon untuk memilih data status",
+    //                 icon: 'error'
+    //             })
+    //     }else{
+    //         if (result.isConfirmed) {
+    //                 let formData = {
+    //                     "id":id,
+    //                     "status_id":status_id,
+    //                     "keterangan":keterangan,
+    //                     "_token": "{{ csrf_token() }}"
+    //                 };
 
-                    let table ='#table-data';
-                    $.ajax({
-                        type: "POST",
-                        url: "{{route('training-gada.updateStatus')}}",
-                        data:formData,
-                        success: function(response){
-                            // console.log(response);
-                            // alert(response)
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Pemberitahuan',
-                                    text: response.message,
-                                    icon: 'success',
-                                    timer: 1000,
-                                    timerProgressBar: true,
-                                    willClose: () => {
-                                      $('#modal-status').modal('hide');
-                                      location.reload();
-                                    }
-                                })
-                            } else {
-                                Swal.fire({
-                                    title: 'Pemberitahuan',
-                                    text: response.message,
-                                    icon: 'error'
-                                })
-                            }
-                        },
-                        error:function(error){
-                            Swal.fire({
-                                title: 'Pemberitahuan',
-                                text: error,
-                                icon: 'error'
-                            })
-                        }
-                    });
-            } 
-        }
-        });
-    };
+    //                 let table ='#table-data';
+    //                 $.ajax({
+    //                     type: "POST",
+    //                     url: "{{route('training-gada.updateStatus')}}",
+    //                     data:formData,
+    //                     success: function(response){
+    //                         // console.log(response);
+    //                         // alert(response)
+    //                         if (response.success) {
+    //                             Swal.fire({
+    //                                 title: 'Pemberitahuan',
+    //                                 text: response.message,
+    //                                 icon: 'success',
+    //                                 timer: 1000,
+    //                                 timerProgressBar: true,
+    //                                 willClose: () => {
+    //                                   $('#modal-status').modal('hide');
+    //                                   location.reload();
+    //                                 }
+    //                             })
+    //                         } else {
+    //                             Swal.fire({
+    //                                 title: 'Pemberitahuan',
+    //                                 text: response.message,
+    //                                 icon: 'error'
+    //                             })
+    //                         }
+    //                     },
+    //                     error:function(error){
+    //                         Swal.fire({
+    //                             title: 'Pemberitahuan',
+    //                             text: error,
+    //                             icon: 'error'
+    //                         })
+    //                     }
+    //                 });
+    //         } 
+    //     }
+    //     });
+    // };
 
-    function showChangeStatus(i, status) {
-        $("#status_id").val(status).change();
-        $('#modal-status').modal('show');  
-        $("#keterangan").val('');
-        $("#register_id").val(i);
-    }
+    // function showChangeStatus(i, status) {
+    //     $("#status_id").val(status).change();
+    //     $('#modal-status').modal('show');  
+    //     $("#keterangan").val('');
+    //     $("#register_id").val(i);
+    // }
 
-    function showMessageWhatsapp(i, noWa, lastSent, jenisPelatihan, nama) {
-      var message = "Dear "+nama+"\nCalon Peserta Training " + jenisPelatihan + "\n\n";
-      message = message + "Mohon untuk melengkapi data melalui Form pada Link berikut :\nhttps://docs.google.com/forms/d/e/1FAIpQLSeYoyfuvBByJY-1TWOj-wLYJ-eoz-xQvOypRBh7EgUjeFrWLA/viewform";
-      // message = str_replace(',', ' dan ', $message);
+    // function showMessageWhatsapp(i, noWa, lastSent, jenisPelatihan, nama) {
+    //   var message = "Dear "+nama+"\nCalon Peserta Training " + jenisPelatihan + "\n\n";
+    //   message = message + "Mohon untuk melengkapi data melalui Form pada Link berikut :\nhttps://docs.google.com/forms/d/e/1FAIpQLSeYoyfuvBByJY-1TWOj-wLYJ-eoz-xQvOypRBh7EgUjeFrWLA/viewform";
+    //   // message = str_replace(',', ' dan ', $message);
 
-        $("#notif_register_id").val(i);
-        $("#notif_register_wa").val(noWa);
-        $("#notif_register_kirim").text(lastSent);
-        $("#notif_register_message").text(message);
-        $('#modal-notifikasi-pendaftaran').modal('show');
-    }
+    //     $("#notif_register_id").val(i);
+    //     $("#notif_register_wa").val(noWa);
+    //     $("#notif_register_kirim").text(lastSent);
+    //     $("#notif_register_message").text(message);
+    //     $('#modal-notifikasi-pendaftaran').modal('show');
+    // }
     
-    function showMessageWhatsappInvoice(i, noWa, lastSent, jenisPelatihan, nama, statusBayar, link, linkInvoice) {
-      let formData = {
-            "pendaftar_id":i,
-            "_token": "{{ csrf_token() }}"
-      };
+    // function showMessageWhatsappInvoice(i, noWa, lastSent, jenisPelatihan, nama, statusBayar, link, linkInvoice) {
+    //   let formData = {
+    //         "pendaftar_id":i,
+    //         "_token": "{{ csrf_token() }}"
+    //   };
         
-      if(statusBayar == 0){
-        $.ajax({
-          type: "GET",
-          url: "{{route('training-gada.dataInvoice')}}",
-          data:formData,
-          success: function(response){
-              console.log(response);
+    //   if(statusBayar == 0){
+    //     $.ajax({
+    //       type: "GET",
+    //       url: "{{route('training-gada.dataInvoice')}}",
+    //       data:formData,
+    //       success: function(response){
+    //           console.log(response);
               
-              var message = "Dear "+nama+"\nCalon Peserta Training " + jenisPelatihan + "\n\n";
-              message = message + "Mohon untuk segera melakukan pembayaran sejumlah Rp. "+response.totalHarga+", ke nomor rekening :\n\n";
-              message = message + "BCA : 12345678910\n";
-              message = message + "MANDIRI : 12345678910\n";
-              message = message + "BNI : 12345678910\n\n";
-              message = message + "Terima Kasih";
-              // message = str_replace(',', ' dan ', $message);
+    //           var message = "Dear "+nama+"\nCalon Peserta Training " + jenisPelatihan + "\n\n";
+    //           message = message + "Mohon untuk segera melakukan pembayaran sejumlah Rp. "+response.totalHarga+", ke nomor rekening :\n\n";
+    //           message = message + "BCA : 12345678910\n";
+    //           message = message + "MANDIRI : 12345678910\n";
+    //           message = message + "BNI : 12345678910\n\n";
+    //           message = message + "Terima Kasih";
+    //           // message = str_replace(',', ' dan ', $message);
 
-              $("#notif_payment_id").val(i);
-              $("#notif_payment_wa").val(noWa);
-              $("#notif_payment_kirim").text(lastSent);
-              $("#notif_payment_message").text(message);
-              $('#modal-notifikasi-payment').modal('show');
-              $("#notif_payment_bukti").text('');
-              $("#notif_payment_bukti").attr("class", "");
-              $("#notif_payment_invoice").text('');
-              $("#notif_payment_invoice").attr("class", "");
-          },
-          error:function(error){
-              Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: error,
-                  icon: 'error'
-              })
-          }
-        });
-      }else{
-        $.ajax({
-          type: "GET",
-          url: "{{route('training-gada.dataInvoice')}}",
-          data:formData,
-          success: function(response){
-              console.log(response);
+    //           $("#notif_payment_id").val(i);
+    //           $("#notif_payment_wa").val(noWa);
+    //           $("#notif_payment_kirim").text(lastSent);
+    //           $("#notif_payment_message").text(message);
+    //           $('#modal-notifikasi-payment').modal('show');
+    //           $("#notif_payment_bukti").text('');
+    //           $("#notif_payment_bukti").attr("class", "");
+    //           $("#notif_payment_invoice").text('');
+    //           $("#notif_payment_invoice").attr("class", "");
+    //       },
+    //       error:function(error){
+    //           Swal.fire({
+    //               title: 'Pemberitahuan',
+    //               text: error,
+    //               icon: 'error'
+    //           })
+    //       }
+    //     });
+    //   }else{
+    //     $.ajax({
+    //       type: "GET",
+    //       url: "{{route('training-gada.dataInvoice')}}",
+    //       data:formData,
+    //       success: function(response){
+    //           console.log(response);
               
-              var message = "Dear "+nama+"\nCalon Peserta Training " + jenisPelatihan + "\n\n";
-              message = message + "Terima Kasih telah melakukan pembayaran";
+    //           var message = "Dear "+nama+"\nCalon Peserta Training " + jenisPelatihan + "\n\n";
+    //           message = message + "Terima Kasih telah melakukan pembayaran";
               
-              $("#notif_payment_id").val(i);
-              $("#notif_payment_wa").val(noWa);
-              $("#notif_payment_kirim").text(lastSent);
-              $("#notif_payment_message").text(message);
-              $("#notif_payment_bukti").text('Download');
-              $("#notif_payment_invoice").text('Download');
-              $('#modal-notifikasi-payment').modal('show');
-              $("#notif_payment_bukti").attr("href", link);
-              $("#notif_payment_bukti").attr("class", "waves-effect col-form-label btn btn-info btn-xs");
-              $("#notif_payment_invoice").attr("href", linkInvoice);
-              $("#notif_payment_invoice").attr("class", "waves-effect col-form-label btn btn-info btn-xs");
-              // $("a.mylink").attr("href", "http://cupcream.com");
+    //           $("#notif_payment_id").val(i);
+    //           $("#notif_payment_wa").val(noWa);
+    //           $("#notif_payment_kirim").text(lastSent);
+    //           $("#notif_payment_message").text(message);
+    //           $("#notif_payment_bukti").text('Download');
+    //           $("#notif_payment_invoice").text('Download');
+    //           $('#modal-notifikasi-payment').modal('show');
+    //           $("#notif_payment_bukti").attr("href", link);
+    //           $("#notif_payment_bukti").attr("class", "waves-effect col-form-label btn btn-info btn-xs");
+    //           $("#notif_payment_invoice").attr("href", linkInvoice);
+    //           $("#notif_payment_invoice").attr("class", "waves-effect col-form-label btn btn-info btn-xs");
+    //           // $("a.mylink").attr("href", "http://cupcream.com");
 
 
-          },
-          error:function(error){
-              Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: error,
-                  icon: 'error'
-              })
-          }
-        });
-      } 
-    }
+    //       },
+    //       error:function(error){
+    //           Swal.fire({
+    //               title: 'Pemberitahuan',
+    //               text: error,
+    //               icon: 'error'
+    //           })
+    //       }
+    //     });
+    //   } 
+    // }
 
     
-    function showDataRegistrasi(i) {
-        let formData = {
-            "pendaftar_id":i,
-            "_token": "{{ csrf_token() }}"
-        };
+    // function showDataRegistrasi(i) {
+    //     let formData = {
+    //         "pendaftar_id":i,
+    //         "_token": "{{ csrf_token() }}"
+    //     };
          
-        $.ajax({
-            type: "GET",
-            url: "{{route('training-gada.dataRegistrasi')}}",
-            data:formData,
-            success: function(response){
-                console.log(response);
-                $('#modal-data-registrasi').modal('show');  
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "{{route('training-gada.dataRegistrasi')}}",
+    //         data:formData,
+    //         success: function(response){
+    //             console.log(response);
+    //             $('#modal-data-registrasi').modal('show');  
                 
-                $("#register_date").val(response.data.register_date);
-                $("#polda_provinsi").val(response.data.polda_provinsi);
-                $("#polres_kabupaten").val(response.data.polres_kabupaten);
-                $("#nama_lengkap").val(response.data.nama_lengkap);
-                $("#tempat_lahir").val(response.data.tempat_lahir);
-                $("#tanggal_lahir").val(response.data.tanggal_lahir);
-                $("#alamat_rumah").val(response.data.alamat_rumah);
-                $("#tinggi_badan").val(response.data.tinggi_badan);
-                $("#berat_badan").val(response.data.berat_badan);
-                $("#golongan_darah").val(response.data.golongan_darah);
-                $("#nomor_ktp").val(response.data.nomor_ktp);
-                $("#sidik_jari_1").val(response.data.sidik_jari_1);
-                $("#sidik_jari_2").val(response.data.sidik_jari_2);
-                $("#nama_istri").val(response.data.nama_istri);
-                $("#jumlah_anak").val(response.data.jumlah_anak);
-                $("#nama_bapak").val(response.data.nama_bapak);
-                $("#nama_ibu").val(response.data.nama_ibu);
-                $("#nama_sd").val(response.data.nama_sd);
-                $("#sd_lulus").val(response.data.sd_lulus);
-                $("#nama_smp").val(response.data.nama_smp);
-                $("#smp_lulus").val(response.data.smp_lulus);
-                $("#nama_sma").val(response.data.nama_sma);
-                $("#sma_lulus").val(response.data.sma_lulus);
-                $("#nama_perguruan_tinggi").val(response.data.nama_perguruan_tinggi);
-                $("#perguruan_tinggi_lulus").val(response.data.perguruan_tinggi_lulus);
-                $("#lokasi_penugasan").val(response.data.lokasi_penugasan);
-                $("#nama_lokasi_penugasan").val(response.data.nama_lokasi_penugasan);
-                $("#alamat_lokasi_penugasan").val(response.data.alamat_lokasi_penugasan);
-                $("#kota_lokasi_penugasan").val(response.data.kota_lokasi_penugasan);
-                $("#asal_perusahaan").val(response.data.asal_perusahaan);
-                $("#status_perusahaan").val(response.data.status_perusahaan);
-                $("#agama").val(response.data.agama);
-                $("#nomor_whatsapp").val(response.data.nomor_whatsapp);
-                $("#pendidikan_terakhir").val(response.data.pendidikan_terakhir);
-            },
-            error:function(error){
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: error,
-                    icon: 'error'
-                })
-            }
-        }); 
-    }
+    //             $("#register_date").val(response.data.register_date);
+    //             $("#polda_provinsi").val(response.data.polda_provinsi);
+    //             $("#polres_kabupaten").val(response.data.polres_kabupaten);
+    //             $("#nama_lengkap").val(response.data.nama_lengkap);
+    //             $("#tempat_lahir").val(response.data.tempat_lahir);
+    //             $("#tanggal_lahir").val(response.data.tanggal_lahir);
+    //             $("#alamat_rumah").val(response.data.alamat_rumah);
+    //             $("#tinggi_badan").val(response.data.tinggi_badan);
+    //             $("#berat_badan").val(response.data.berat_badan);
+    //             $("#golongan_darah").val(response.data.golongan_darah);
+    //             $("#nomor_ktp").val(response.data.nomor_ktp);
+    //             $("#sidik_jari_1").val(response.data.sidik_jari_1);
+    //             $("#sidik_jari_2").val(response.data.sidik_jari_2);
+    //             $("#nama_istri").val(response.data.nama_istri);
+    //             $("#jumlah_anak").val(response.data.jumlah_anak);
+    //             $("#nama_bapak").val(response.data.nama_bapak);
+    //             $("#nama_ibu").val(response.data.nama_ibu);
+    //             $("#nama_sd").val(response.data.nama_sd);
+    //             $("#sd_lulus").val(response.data.sd_lulus);
+    //             $("#nama_smp").val(response.data.nama_smp);
+    //             $("#smp_lulus").val(response.data.smp_lulus);
+    //             $("#nama_sma").val(response.data.nama_sma);
+    //             $("#sma_lulus").val(response.data.sma_lulus);
+    //             $("#nama_perguruan_tinggi").val(response.data.nama_perguruan_tinggi);
+    //             $("#perguruan_tinggi_lulus").val(response.data.perguruan_tinggi_lulus);
+    //             $("#lokasi_penugasan").val(response.data.lokasi_penugasan);
+    //             $("#nama_lokasi_penugasan").val(response.data.nama_lokasi_penugasan);
+    //             $("#alamat_lokasi_penugasan").val(response.data.alamat_lokasi_penugasan);
+    //             $("#kota_lokasi_penugasan").val(response.data.kota_lokasi_penugasan);
+    //             $("#asal_perusahaan").val(response.data.asal_perusahaan);
+    //             $("#status_perusahaan").val(response.data.status_perusahaan);
+    //             $("#agama").val(response.data.agama);
+    //             $("#nomor_whatsapp").val(response.data.nomor_whatsapp);
+    //             $("#pendidikan_terakhir").val(response.data.pendidikan_terakhir);
+    //         },
+    //         error:function(error){
+    //             Swal.fire({
+    //                 title: 'Pemberitahuan',
+    //                 text: error,
+    //                 icon: 'error'
+    //             })
+    //         }
+    //     }); 
+    // }
 
-    function showDataBuktiBayar(i) {
-      $("#bukti_bayar_id").val(i);
-      $('#modal-bukti-bayar').modal('show');  
+    // function showDataBuktiBayar(i) {
+    //   $("#bukti_bayar_id").val(i);
+    //   $('#modal-bukti-bayar').modal('show');  
       
-        // let formData = {
-        //     "pendaftar_id":i,
-        //     "_token": "{{ csrf_token() }}"
-        // };
+    //     // let formData = {
+    //     //     "pendaftar_id":i,
+    //     //     "_token": "{{ csrf_token() }}"
+    //     // };
          
-        // $.ajax({
-        //     type: "GET",
-        //     url: "{{route('training-gada.dataRegistrasi')}}",
-        //     data:formData,
-        //     success: function(response){
-        //         console.log(response);
-        //         $('#modal-data-registrasi').modal('show');  
+    //     // $.ajax({
+    //     //     type: "GET",
+    //     //     url: "{{route('training-gada.dataRegistrasi')}}",
+    //     //     data:formData,
+    //     //     success: function(response){
+    //     //         console.log(response);
+    //     //         $('#modal-data-registrasi').modal('show');  
                 
-        //         $("#register_date").val(response.data.register_date);
-        //         $("#polda_provinsi").val(response.data.polda_provinsi);
-        //         $("#polres_kabupaten").val(response.data.polres_kabupaten);
-        //         $("#nama_lengkap").val(response.data.nama_lengkap);
-        //         $("#tempat_lahir").val(response.data.tempat_lahir);
-        //         $("#tanggal_lahir").val(response.data.tanggal_lahir);
-        //         $("#alamat_rumah").val(response.data.alamat_rumah);
-        //         $("#tinggi_badan").val(response.data.tinggi_badan);
-        //         $("#berat_badan").val(response.data.berat_badan);
-        //         $("#golongan_darah").val(response.data.golongan_darah);
-        //         $("#nomor_ktp").val(response.data.nomor_ktp);
-        //         $("#sidik_jari_1").val(response.data.sidik_jari_1);
-        //         $("#sidik_jari_2").val(response.data.sidik_jari_2);
-        //         $("#nama_istri").val(response.data.nama_istri);
-        //         $("#jumlah_anak").val(response.data.jumlah_anak);
-        //         $("#nama_bapak").val(response.data.nama_bapak);
-        //         $("#nama_ibu").val(response.data.nama_ibu);
-        //         $("#nama_sd").val(response.data.nama_sd);
-        //         $("#sd_lulus").val(response.data.sd_lulus);
-        //         $("#nama_smp").val(response.data.nama_smp);
-        //         $("#smp_lulus").val(response.data.smp_lulus);
-        //         $("#nama_sma").val(response.data.nama_sma);
-        //         $("#sma_lulus").val(response.data.sma_lulus);
-        //         $("#nama_perguruan_tinggi").val(response.data.nama_perguruan_tinggi);
-        //         $("#perguruan_tinggi_lulus").val(response.data.perguruan_tinggi_lulus);
-        //         $("#lokasi_penugasan").val(response.data.lokasi_penugasan);
-        //         $("#nama_lokasi_penugasan").val(response.data.nama_lokasi_penugasan);
-        //         $("#alamat_lokasi_penugasan").val(response.data.alamat_lokasi_penugasan);
-        //         $("#kota_lokasi_penugasan").val(response.data.kota_lokasi_penugasan);
-        //         $("#asal_perusahaan").val(response.data.asal_perusahaan);
-        //         $("#status_perusahaan").val(response.data.status_perusahaan);
-        //         $("#agama").val(response.data.agama);
-        //         $("#nomor_whatsapp").val(response.data.nomor_whatsapp);
-        //         $("#pendidikan_terakhir").val(response.data.pendidikan_terakhir);
-        //     },
-        //     error:function(error){
-        //         Swal.fire({
-        //             title: 'Pemberitahuan',
-        //             text: error,
-        //             icon: 'error'
-        //         })
-        //     }
-        // }); 
-    }
+    //     //         $("#register_date").val(response.data.register_date);
+    //     //         $("#polda_provinsi").val(response.data.polda_provinsi);
+    //     //         $("#polres_kabupaten").val(response.data.polres_kabupaten);
+    //     //         $("#nama_lengkap").val(response.data.nama_lengkap);
+    //     //         $("#tempat_lahir").val(response.data.tempat_lahir);
+    //     //         $("#tanggal_lahir").val(response.data.tanggal_lahir);
+    //     //         $("#alamat_rumah").val(response.data.alamat_rumah);
+    //     //         $("#tinggi_badan").val(response.data.tinggi_badan);
+    //     //         $("#berat_badan").val(response.data.berat_badan);
+    //     //         $("#golongan_darah").val(response.data.golongan_darah);
+    //     //         $("#nomor_ktp").val(response.data.nomor_ktp);
+    //     //         $("#sidik_jari_1").val(response.data.sidik_jari_1);
+    //     //         $("#sidik_jari_2").val(response.data.sidik_jari_2);
+    //     //         $("#nama_istri").val(response.data.nama_istri);
+    //     //         $("#jumlah_anak").val(response.data.jumlah_anak);
+    //     //         $("#nama_bapak").val(response.data.nama_bapak);
+    //     //         $("#nama_ibu").val(response.data.nama_ibu);
+    //     //         $("#nama_sd").val(response.data.nama_sd);
+    //     //         $("#sd_lulus").val(response.data.sd_lulus);
+    //     //         $("#nama_smp").val(response.data.nama_smp);
+    //     //         $("#smp_lulus").val(response.data.smp_lulus);
+    //     //         $("#nama_sma").val(response.data.nama_sma);
+    //     //         $("#sma_lulus").val(response.data.sma_lulus);
+    //     //         $("#nama_perguruan_tinggi").val(response.data.nama_perguruan_tinggi);
+    //     //         $("#perguruan_tinggi_lulus").val(response.data.perguruan_tinggi_lulus);
+    //     //         $("#lokasi_penugasan").val(response.data.lokasi_penugasan);
+    //     //         $("#nama_lokasi_penugasan").val(response.data.nama_lokasi_penugasan);
+    //     //         $("#alamat_lokasi_penugasan").val(response.data.alamat_lokasi_penugasan);
+    //     //         $("#kota_lokasi_penugasan").val(response.data.kota_lokasi_penugasan);
+    //     //         $("#asal_perusahaan").val(response.data.asal_perusahaan);
+    //     //         $("#status_perusahaan").val(response.data.status_perusahaan);
+    //     //         $("#agama").val(response.data.agama);
+    //     //         $("#nomor_whatsapp").val(response.data.nomor_whatsapp);
+    //     //         $("#pendidikan_terakhir").val(response.data.pendidikan_terakhir);
+    //     //     },
+    //     //     error:function(error){
+    //     //         Swal.fire({
+    //     //             title: 'Pemberitahuan',
+    //     //             text: error,
+    //     //             icon: 'error'
+    //     //         })
+    //     //     }
+    //     // }); 
+    // }
 
-    function sendMessage(typeNotif) {
-      $('#modal-notifikasi-pendaftaran').modal('hide');
-      let formData = {
-            "id" : typeNotif == 'registrasi' ? $('#notif_register_id').val() : $('#notif_payment_id').val(),
-            "no_wa" : typeNotif == 'registrasi' ? $('#notif_register_wa').val() : $('#notif_payment_wa').val(),
-            "message" : typeNotif == 'registrasi' ? $('#notif_register_message').val() : $('#notif_payment_message').val(),
-            "_token": "{{ csrf_token() }}"
-        };
+    // function sendMessage(typeNotif) {
+    //   $('#modal-notifikasi-pendaftaran').modal('hide');
+    //   let formData = {
+    //         "id" : typeNotif == 'registrasi' ? $('#notif_register_id').val() : '',
+    //         "no_wa" : typeNotif == 'registrasi' ? $('#notif_register_wa').val() : '',
+    //         "message" : typeNotif == 'registrasi' ? $('#notif_register_message').val() : '',
+    //         "_token": "{{ csrf_token() }}"
+    //     };
                     
-        $.ajax({
-            type: "POST",
-            url: "{{route('whatsapp.sendMessage')}}",
-            data:formData,
-            success: function(response){
-                console.log(response)
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'success'
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'error'
-                    })
-                }
-            },
-            error:function(error){
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: error,
-                    icon: 'error'
-                })
-            }
-        });
-    };
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "{{route('whatsapp.sendMessage')}}",
+    //         data:formData,
+    //         success: function(response){
+    //             console.log(response)
+    //             if (response.success) {
+    //                 Swal.fire({
+    //                     title: 'Pemberitahuan',
+    //                     text: response.message,
+    //                     icon: 'success'
+    //                 });
+    //             } else {
+    //                 Swal.fire({
+    //                     title: 'Pemberitahuan',
+    //                     text: response.message,
+    //                     icon: 'error'
+    //                 })
+    //             }
+    //         },
+    //         error:function(error){
+    //             Swal.fire({
+    //                 title: 'Pemberitahuan',
+    //                 text: error,
+    //                 icon: 'error'
+    //             })
+    //         }
+    //     });
+    // };
 
-    function showlistLog(i) {
-        $('#modal-status-log').modal('show'); 
-        let formData = {
-            "pendaftar_id":i,
-            "_token": "{{ csrf_token() }}"
-        };
+    // function showlistLog(i) {
+    //     $('#modal-status-log').modal('show'); 
+    //     let formData = {
+    //         "pendaftar_id":i,
+    //         "_token": "{{ csrf_token() }}"
+    //     };
         
-        $("#table-data-log").dataTable().fnDestroy();
-        var table = $('#table-data-log').DataTable({
-        scrollX: true,
-            "iDisplayLength": 25,
-            'processing': true,
-            'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': 'Loading...',
-            "bDestroy": true
-        },
-        ajax: {
-            url: "{{ route('training-gada.listLog') }}",
-            data: function (d) {
-                d.pendaftar_id = i;
-            },
-        },
-        columns:[
-            {
-            data : 'created_date',
-            name : 'created_date',
-            className:'text-left'
-        },{
-            data : 'status_name',
-            name : 'status_name',
-            className:'text-left'
-        },{
-            data : 'keterangan',
-            name : 'keterangan',
-            className:'text-left'
-        }],
-            "language": datatableLang
-        });
-    }
+    //     $("#table-data-log").dataTable().fnDestroy();
+    //     var table = $('#table-data-log').DataTable({
+    //     scrollX: true,
+    //         "iDisplayLength": 25,
+    //         'processing': true,
+    //         'language': {
+    //         'loadingRecords': '&nbsp;',
+    //         'processing': 'Loading...',
+    //         "bDestroy": true
+    //     },
+    //     ajax: {
+    //         url: "{{ route('training-gada.listLog') }}",
+    //         data: function (d) {
+    //             d.pendaftar_id = i;
+    //         },
+    //     },
+    //     columns:[
+    //         {
+    //         data : 'created_date',
+    //         name : 'created_date',
+    //         className:'text-left'
+    //     },{
+    //         data : 'status_name',
+    //         name : 'status_name',
+    //         className:'text-left'
+    //     },{
+    //         data : 'keterangan',
+    //         name : 'keterangan',
+    //         className:'text-left'
+    //     }],
+    //         "language": datatableLang
+    //     });
+    // }
 
     @if(isset($success) || session()->has('success'))  
     @endif
@@ -447,7 +445,7 @@
         'processing': 'Loading...'
     },
             ajax: {
-                url: "{{ route('training-gada.list') }}",
+                url: "{{ route('training-gada-pembayaran.list') }}",
                 data: function (d) {},
             },
             "createdRow": function( row, data, dataIndex){
@@ -457,45 +455,33 @@
             "order":[
                 // [0,'desc']
             ],
+              // <th class="text-left">Nik</th>    
+              //                       <th class="text-left">Nama</th>
+              //                       <th class="text-left">Training</th>
+              //                       <th class="text-left">Nominal</th>
+              //                       <th class="text-left">Status Bayar</th>
+              //                       <th class="text-left">Tanggal Bayar</th>
+              //                       <th class="text-left">Bukti Bayar</th>
+              //                       <th class="text-left">Invoice</th>
             columns:[
             {
-                data : 'nama',
-                name : 'nama',
+                data : 'nik',
+                name : 'nik',
                 width: "15%",
                 className:'text-left'
             },{
-                data : 'nik',
-                name : 'nik',
-                width: "10%",
-                className:'text-left'
-            },{
-                data : 'email',
-                name : 'email',
-                width: "10%",
-                className:'text-left'
-            },{
-                data : 'no_wa',
-                name : 'no_wa',
+                data : 'nama',
+                name : 'nama',
                 width: "10%",
                 className:'text-left'
             },{
                 data : 'jenis_pelatihan',
-                name : 'jenis_pelatihan',
+                name : 'training',
                 width: "10%",
                 className:'text-left'
             },{
-                data : 'alamat',
-                name : 'alamat',
-                width: "10%",
-                className:'text-left'
-            },{
-                data : 'register_date',
-                name : 'register_date',
-                width: "10%",
-                className:'text-left'
-            },{
-                data : 'status_name',
-                name : 'status',
+                data : 'harga',
+                name : 'nominal',
                 width: "10%",
                 className:'text-left'
             },{
@@ -504,11 +490,20 @@
                 width: "10%",
                 className:'text-left'
             },{
-                data : 'aksi',
-                name : 'aksi',
-                width: "5%",
-                orderable: false,
-                searchable: false,
+                data : 'payment_date',
+                name : 'tanggal_bayar',
+                width: "10%",
+                className:'text-left'
+            },{
+                data : 'bukti_bayar',
+                name : 'bukti_bayar',
+                width: "10%",
+                className:'text-left'
+            },{
+                data : 'invoice',
+                name : 'invoice',
+                width: "10%",
+                className:'text-left'
             }],
             "language": datatableLang
         });

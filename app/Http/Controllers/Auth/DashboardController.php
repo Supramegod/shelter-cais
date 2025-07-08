@@ -111,6 +111,136 @@ class DashboardController extends Controller
         return view('home.dashboard-sdt-training',compact('jumlahTraining','jumlahClient','jumlahTrainer','jumlahMateri'));
     }
 
+    public function dashboardTrainingGada (Request $request){
+        $totalNewRegister = DB::table('training_gada_calon')
+            ->where('is_active', 1)
+            ->where('status', 1)
+            ->whereMonth('created_date', Carbon::now()->month)
+            ->count();
+
+        $totalLead = DB::table('training_gada_calon')
+            ->where('is_active', 1)
+            ->where('status', 2)
+            ->whereMonth('created_date', Carbon::now()->month)
+            ->count();
+
+        $totalNewCold = DB::table('training_gada_calon')
+            ->where('is_active', 1)
+            ->where('status', 3)
+            ->whereMonth('created_date', Carbon::now()->month)
+            ->count();
+
+        $totalNewHot = DB::table('training_gada_calon')
+            ->where('is_active', 1)
+            ->where('status', 4)
+            ->whereMonth('created_date', Carbon::now()->month)
+            ->count();
+
+        $totalNewPeserta = DB::table('training_gada_calon')
+            ->where('is_active', 1)
+            ->where('status', 5)
+            ->whereMonth('created_date', Carbon::now()->month)
+            ->count();
+
+        $leadsByKebutuhan = DB::table('sl_leads')
+            ->leftJoin('m_kebutuhan', 'sl_leads.kebutuhan_id', '=', 'm_kebutuhan.id')
+            ->whereNull('sl_leads.deleted_at')
+            ->whereYear('sl_leads.created_at', Carbon::now()->year)
+            ->select('m_kebutuhan.nama as kebutuhan','sl_leads.kebutuhan_id', DB::raw('MONTH(sl_leads.created_at) as bulan'), DB::raw('count(*) as jumlah_leads'))
+            ->groupBy('sl_leads.kebutuhan_id','kebutuhan', 'bulan')
+            ->get();
+
+
+        $statusPembayaranPesertaPie = DB::table('training_gada_transaksi')
+            ->where('is_active', 1)
+            ->whereYear('created_date', Carbon::now()->year)
+            ->select('status as status_id', DB::raw("IF(status = 0, 'Belum Bayar', 'Sudah Bayar') as status"), DB::raw('MONTH(created_date) as bulan'), DB::raw('sum(harga) as jumlah_data'))
+            ->groupBy('status_id', 'status', 'bulan')
+            ->get();
+
+            // dd($statusPembayaranPesertaPie);
+
+            // dd($leadsByKebutuhan);
+
+        $leadsGroupedByKebutuhan = [];
+
+        // foreach ($leadsByKebutuhan as $lead) {
+        //     if (!isset($leadsGroupedByKebutuhan[$lead->kebutuhan_id])) {
+        //         $leadsGroupedByKebutuhan[$lead->kebutuhan_id] = [
+        //             'kebutuhan' => $lead->kebutuhan,
+        //             'kebutuhan_id' => $lead->kebutuhan_id,
+        //             'jumlah_leads' => array_fill(1, 12, ['bulan' => 0, 'leads' => 0])
+        //         ];
+        //     }
+        //     $leadsGroupedByKebutuhan[$lead->kebutuhan_id]['jumlah_leads'][$lead->bulan] = [
+        //         'bulan' => $lead->bulan,
+        //         'leads' => $lead->jumlah_leads
+        //     ];
+        // }
+
+        // dd($leadsGroupedByKebutuhan);
+        foreach ($statusPembayaranPesertaPie as $data) {
+            if (!isset($leadsGroupedByKebutuhan[$data->status_id])) {
+                $leadsGroupedByKebutuhan[$data->status_id] = [
+                    'status' => $data->status,
+                    'status_id' => $data->status_id,
+                    'jumlah_data' => array_fill(1, 12, ['bulan' => 0, 'data' => 0])
+                ];
+            }
+            $leadsGroupedByKebutuhan[$data->status_id]['jumlah_data'][$data->bulan] = [
+                'bulan' => $data->bulan,
+                'data' => $data->jumlah_data
+            ];
+        }
+        
+
+        // dd($leadsGroupedByKebutuhan);
+
+        $pembayaranPesertaGada = array_values($leadsGroupedByKebutuhan);
+
+        // $statusPembayaranPesertaPie = DB::table('sl_leads')
+        //     ->leftJoin('m_platform', 'sl_leads.platform_id', '=', 'm_platform.id')
+        //     ->whereNull('sl_leads.deleted_at')
+        //     ->whereNotNull('m_platform.id')
+        //     ->select('m_platform.nama as platform',DB::raw('count(*) as jumlah_leads'))
+        //     ->groupBy('platform')
+        //     ->get();
+
+        $statusPembayaranPesertaPie = DB::table('training_gada_transaksi')
+            ->where('is_active', 1)
+            ->whereMonth('created_date', Carbon::now()->month)
+            ->select(DB::raw("IF(status = 0, 'Belum Bayar', 'Sudah Bayar') as status"),DB::raw('count(*) as jumlah_data'))
+            ->groupBy('status')
+            ->get();
+
+        // $leadsWithCustomer = DB::table('sl_leads')
+        //     ->whereNull('deleted_at')
+        //     ->whereNotNull('customer_id')
+        //     ->count();
+
+        // $leadsWithoutCustomer = DB::table('sl_leads')
+        //     ->whereNull('deleted_at')
+        //     ->whereNull('customer_id')
+        //     ->count();
+
+        // $leadsGroupKebutuhan = DB::table('sl_leads')
+        //     ->leftJoin('m_kebutuhan', 'sl_leads.kebutuhan_id', '=', 'm_kebutuhan.id')
+        //     ->whereNull('sl_leads.deleted_at')
+        //     ->whereNotNull('m_kebutuhan.id')
+        //     ->select('m_kebutuhan.nama as kebutuhan',DB::raw('count(*) as jumlah_leads'))
+        //     ->groupBy('kebutuhan')
+        //     ->get();
+        // $totalLeadsKebutuhan = DB::table('sl_leads')
+        //     ->whereNull('deleted_at')
+        //     ->whereNotNull('kebutuhan_id')
+        //     ->count();
+
+        $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
+        // return view('home.dashboard-training-gada',compact('totalLeadsKebutuhan','leadsGroupKebutuhan','leadsWithoutCustomer','leadsWithCustomer','leadsBySumber','leadsGroupedByKebutuhan','leadsBelumAdaQuotation','leadsBelumAdaSales','leadsBelumAdaCustomer','leadsBelumAdaAktifitas','warna','leadsBaruHariIni','leadsBaruMingguIni','leadsBaruBulanIni','leadsBaruTahunIni'));
+        // return view('home.dashboard-training-gada',compact('totalNewRegister', 'totalLead', 'totalNewCold', 'totalNewHot', 'totalNewPeserta' , 'warna', 'leadsGroupedByKebutuhan', 'statusPembayaranPesertaPie', 'leadsWithCustomer', 'leadsWithoutCustomer', 'leadsGroupKebutuhan', 'totalLeadsKebutuhan'));
+        return view('home.dashboard-training-gada',compact('totalNewRegister', 'totalLead', 'totalNewCold', 'totalNewHot', 'totalNewPeserta' , 'warna', 'pembayaranPesertaGada', 'statusPembayaranPesertaPie'));
+    }
+
     public function dashboardAktifitasSales(Request $request) {
         $db2 = DB::connection('mysqlhris')->getDatabaseName();
         $cabangList = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
