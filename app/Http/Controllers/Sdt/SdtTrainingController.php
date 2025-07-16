@@ -398,36 +398,24 @@ class SdtTrainingController extends Controller
                     'keterangan' => $request->keterangan,
                     'waktu_mulai' => $request->start_date,
                     'waktu_selesai' => $request->end_date,
-                    // 'id_pel_tipe' => $request->tipe_id,
                     'id_pel_tempat' => $request->tempat_id,
                     'id_materi' => $request->materi_id,
-                    // 'id_laman' => $request->laman_id,
                     'alamat' => $request->alamat,
                     'link_zoom' => $request->link_zoom,
                     'updated_at' => $current_date_time,
-                    // 'id_area' => $request->area_id,
                     'enable' => ($request->enable == 'on' ? 1 : 0)
                 ]);
                 $msgSave = 'Training berhasil diubah.';
                 
             }else{
-                $message = "*Undangan Training Shelter*
-                Tanggal Jam : {tanggal}
-                Materi : {materi}
-                Trainer : {trainer}
-                Tempat : {tempat}
-                Tipe : {tipe}
-                Alamat : {alamat}
-                Link Zoom : {zoom}
-                Keterangan : {keterangan}
-                Link Kehadiran : {link}";
-
+                $message = "*Undangan Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
+                $messageReminder = "*Reminder Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
+                
                 // $nomor = $this->generateNomor();
                 $trainingId = DB::table('sdt_training')->insertGetId([
                     'keterangan' => $request->keterangan,
                     'waktu_mulai' => $request->start_date,
                     'waktu_selesai' => $request->end_date,
-                    // 'id_pel_tipe' => $request->tipe_id,
                     'id_pel_tempat' => $request->tempat_id,
                     'id_materi' => $request->materi_id,
                     'id_laman' => $request->laman_id,
@@ -436,13 +424,15 @@ class SdtTrainingController extends Controller
                     'id_user' => Auth::user()->id,
                     'created_at' => $current_date_time,
                     'whatsapp_message' => $message,
+                    'notification_message' => $messageReminder,
+                    'notification_reminder_before_day' => 3,
+                    'notification_reminder_status' => 0,
                     'id_area' => $request->area_id,
                 ]);
-                
+    
                 foreach ($request->client_id as $x) {
                     $trainingClient = DB::table('sdt_training_client')->insertGetId([
                         'id_client' => (int) $x,
-                        // 'peserta_hadir' => $request->peserta,
                         'id_training' => $trainingId
                     ]);    
                     // dd($trainingClient);
@@ -460,6 +450,110 @@ class SdtTrainingController extends Controller
             // }
             DB::commit();
             return redirect()->back()->with('success', $msgSave);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function dataNotification(Request $request){
+        try {
+            
+            $dataTraining = DB::table('sdt_training')
+            ->select('id_training', 'notification_message', 'notification_reminder_before_day', DB::raw("IF(notification_reminder_status = 1, 'Sudah Kirim', 'Belum Kirim') as notification_reminder_status"),)
+            ->where('id_training', $request->training_id)
+            ->first();
+
+            $dataNotif = DB::table('sdt_training_notification_detail')
+            ->select('id','no_wa', 'nama')
+            ->where('active', 1)
+            ->where('id_training', $request->training_id)
+            ->orderBy('id', 'ASC')
+            ->get();
+            
+            return response()->json([
+                'success'       => true,
+                'data_training' => $dataTraining,
+                // 'data_table'    => $dataTableReturn,
+                'message'       => "Berhasil get data Notification"
+            ], 200);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveNotification(Request $request) {
+        try {
+            // dd($request->id . " " . $request->message . " " . $request->days);
+            DB::beginTransaction();
+            DB::table('sdt_training')->where('id_training', $request->id)->update([
+                'notification_message' => $request->message,
+                'notification_reminder_before_day' => $request->days
+            ]);
+            
+            DB::commit();
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil merubah pesan whatsapp"
+            ], 200);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveNotificationPenerima(Request $request) {
+        try {
+            $trainerId = DB::table('sdt_training_notification_detail')->insertGetId([
+                'id_training' => $request->id,
+                'nama' => $request->nama,
+                'no_wa' => $request->wa,
+                'active' => 1
+            ]);
+            
+            $msgSave = 'Penerima reminder berhasil disimpan ';
+            DB::commit();
+
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menambahkan penerima reminder"
+            ], 200);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function dataNotificationTable(Request $request){
+        try {
+            $dataNotif = DB::table('sdt_training_notification_detail')
+            ->select('id','no_wa', 'nama')
+            ->where('active', 1)
+            ->where('id_training', $request->training_id)
+            ->orderBy('id', 'ASC')
+            ->get();
+            
+            // dd($data);
+            return DataTables::of($dataNotif)
+            ->addColumn('aksi', function ($data) {
+                return '<div class="justify-content-center d-flex">
+                    <div class="btn-delete-reminder btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                </div>';
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+
+            return response()->json([
+                'success'       => true,
+                'data_training' => $dataTraining,
+                'data_table'    => $dataTableReturn,
+                'message'       => "Berhasil get data Notification"
+            ], 200);
+
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -668,6 +762,23 @@ class SdtTrainingController extends Controller
         try {
             DB::table('sdt_training_client_detail')->where('id', $request->id)->update([
                 'is_active' => 0 
+            ]);
+
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function deleteNotification(Request $request){
+        try {
+            DB::table('sdt_training_notification_detail')->where('id', $request->id)->update([
+                'active' => 0 
             ]);
 
             return response()->json([

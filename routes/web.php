@@ -672,13 +672,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sdt/sdt-training', 'index')->name('sdt-training');
         Route::get('/sdt/sdt-training/add', 'add')->name('sdt-training.add');
         Route::get('/sdt/sdt-training/view/{id}', 'view')->name('sdt-training.view');
-        //
-        // Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
-        // Route::get('/sales/leads/import', 'import')->name('leads.import');
-        // Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
+        Route::get('/sdt/sdt-training/data-notification', 'dataNotification')->name('sdt-training.dataNotification');
+        Route::get('/sdt/sdt-training/data-notification-table', 'dataNotificationTable')->name('sdt-training.dataNotificationTable');
+        Route::post('/sdt/sdt-training/data-notification', 'saveNotification')->name('sdt-training.saveNotification');
+        Route::post('/sdt/sdt-training/delete-notification', 'deleteNotification')->name('sdt-training.deleteNotification');
+        Route::post('/sdt/sdt-training/penerima-notification', 'saveNotificationPenerima')->name('sdt-training.saveNotificationPenerima');
 
-        // Route::post('/sales/leads/inquiry-import', 'inquiryImport')->name('leads.inquiry-import');
-        // Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
         Route::post('/sdt/sdt-training/save', 'save')->name('sdt-training.save');
         Route::post('/sdt/sdt-training/delete', 'delete')->name('sdt-training.delete');
         Route::post('/sdt/sdt-training/delete-trainer', 'deleteTrainer')->name('sdt-training.delete-trainer');

@@ -244,6 +244,13 @@
             </div>
 
             <div class="col-12 text-center mt-2">
+              <button id="btn-reminder-whatsapp" onclick="reminderWhatsapp()" class="btn btn-danger w-100 waves-effect waves-light">
+                <span class="me-1">Reminder Whatsapp</span>
+                  <i class="mdi mdi-information scaleX-n1-rtl"></i>
+              </button>
+            </div>
+
+            <div class="col-12 text-center mt-2">
               <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
                 <span class="me-1">Kembali</span>
                 <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
@@ -702,6 +709,190 @@
       });
   });
 
+  $('body').on('click', '.btn-delete-reminder', function() {
+      let id = $(this).data('id');
+      Swal.fire({
+          target: document.getElementById('modal-reminder-whatsapp'),
+          title: 'Konfirmasi',
+          text: 'Apakah anda ingin hapus penerima reminder?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: 'primary',
+          cancelButtonColor: 'warning',
+          confirmButtonText: 'Hapus'
+      }).then(function (result) {
+          console.log(result)
+          if (result.isConfirmed) {
+              let formData = {
+                  "id":id,
+                  "_token": "{{ csrf_token() }}"
+              };
+
+              let table ='#table-data-reminder';
+              $.ajax({
+                  type: "POST",
+                  url: "{{route('sdt-training.deleteNotification')}}",
+                  data:formData,
+                  success: function(response){
+                      console.log(response)
+                      if (response.success) {
+                          Swal.fire({
+                              target: document.getElementById('modal-reminder-whatsapp'),
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'success',
+                              timer: 1000,
+                              timerProgressBar: true,
+                              willClose: () => {
+
+                                  location.reload();
+                              }
+                          })
+                      } else {
+                          Swal.fire({
+                              title: 'Pemberitahuan',
+                              text: response.message,
+                              icon: 'error'
+                          })
+                      }
+                  },
+                  error:function(error){
+                      Swal.fire({
+                          title: 'Pemberitahuan',
+                          text: error,
+                          icon: 'error'
+                      })
+                  }
+              });
+          }
+      });
+  });
+
+$('body').on('click', '#btn-reminder-save', function() {
+  Swal.fire({
+          target: document.getElementById('modal-reminder-whatsapp'),
+          title: 'Konfirmasi',
+          text: 'Apakah anda ingin menyimpan pengaturan reminder?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: 'primary',
+          cancelButtonColor: 'warning',
+          confirmButtonText: 'Simpan'
+      }).then(function (result) {
+         if (result.isConfirmed) {
+          let id = $('#training_id').val();
+          let reminderMessage = $('#pesan-reminder').val();
+          let reminderDays = $('#reminder-days').val();
+          
+          let formData = {
+              "id":id,
+              "message": reminderMessage,
+              "days": reminderDays,
+              "_token": "{{ csrf_token() }}"
+          };
+
+          $.ajax({
+                type: "POST",
+                url: "{{route('sdt-training.saveNotification')}}",
+                data:formData,
+                success: function(response){
+                    $('#modal-reminder-whatsapp').modal('hide');  
+                    if (response.success) {
+                        Swal.fire({
+                            // target: document.getElementById('modal-reminder-whatsapp'),
+                            title: 'Pemberitahuan',
+                            text: response.message,
+                            icon: 'success',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            willClose: () => {
+                              // location.reload();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                          // target: document.getElementById('modal-reminder-whatsapp'),
+                            title: 'Pemberitahuan',
+                            text: response.message,
+                            icon: 'error'
+                        })
+                    }
+                },
+                error:function(error){
+                    Swal.fire({
+                        target: document.getElementById('modal-reminder-whatsapp'),
+                        title: 'Pemberitahuan',
+                        text: error,
+                        icon: 'error'
+                    })
+                }
+            });
+         }
+      });
+  });
+
+  $('body').on('click', '#btn-add-reminder-penerima', function() {
+  Swal.fire({
+          target: document.getElementById('modal-add-reminder'),
+          title: 'Konfirmasi',
+          text: 'Apakah anda ingin menyimpan penerima reminder?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: 'primary',
+          cancelButtonColor: 'warning',
+          confirmButtonText: 'Simpan'
+      }).then(function (result) {
+         if (result.isConfirmed) {
+          let id = $('#training_id').val();
+          let nama = $('#reminder-add-nama').val();
+          let wa = $('#reminder-add-wa').val();
+          
+          let formData = {
+              "id":id,
+              "nama": nama,
+              "wa": wa,
+              "_token": "{{ csrf_token() }}"
+          };
+
+          $.ajax({
+                type: "POST",
+                url: "{{route('sdt-training.saveNotificationPenerima')}}",
+                data:formData,
+                success: function(response){
+                    if (response.success) {
+                        Swal.fire({
+                            target: document.getElementById('modal-add-reminder'),
+                            title: 'Pemberitahuan',
+                            text: response.message,
+                            icon: 'success',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            willClose: () => {
+                             $('#modal-add-reminder').modal('hide');  
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                          target: document.getElementById('modal-add-reminder'),
+                            title: 'Pemberitahuan',
+                            text: response.message,
+                            icon: 'error'
+                        })
+                    }
+                },
+                error:function(error){
+                    Swal.fire({
+                        target: document.getElementById('modal-add-reminder'),
+                        title: 'Pemberitahuan',
+                        text: error,
+                        icon: 'error'
+                    })
+                }
+            });
+         }
+      });
+  });
+
   $('body').on('click', '.btn-delete-peserta', function() {
       let id = $(this).data('id');
       Swal.fire({
@@ -802,6 +993,81 @@
     $('#modal-pesan-undangan').modal('show');  
   });
 
+  $('body').on('click', '#btn-reminder-penerima ', function() {
+    $('#modal-reminder-whatsapp').modal('hide');  
+    $('#reminder-add-nama').val('');
+    $('#reminder-add-wa').val('');
+    $('#modal-add-reminder').modal('show');  
+  });
+
+
+  // $('#btn-reminder-whatsapp').on('click',function(){
+  //   $('#modal-reminder-whatsapp').modal('show');  
+  // });
+  function reminderWhatsapp() {
+      let formData = {
+          "training_id":$('#training_id').val(),
+          "_token": "{{ csrf_token() }}"
+      };
+        
+      $.ajax({
+          type: "GET",
+          url: "{{route('sdt-training.dataNotification')}}",
+          data:formData,
+          success: function(response){
+              console.log(response);
+              $("#pesan-reminder").val(response.data_training.notification_message);
+              $("#reminder-days").val(response.data_training.notification_reminder_before_day);
+              $("#reminder-status").val(response.data_training.notification_reminder_status);
+              $("#table-data-reminder").dataTable().fnDestroy();
+              var table = $('#table-data-reminder').DataTable({
+                scrollX: true,
+                'searching' : false,
+                "iDisplayLength": 25,
+                'processing': true,
+                'language': {
+                'loadingRecords': '&nbsp;',
+                'processing': 'Loading...',
+                "bDestroy": true
+            },
+                ajax: {
+                    url: "{{ route('sdt-training.dataNotificationTable') }}",
+                    data: function (d) {
+                        d.training_id = $('#training_id').val();
+                    },
+                },      
+                "order":[
+                    [0,'desc']
+                ],
+                columns:[{
+                    data : 'nama',
+                    name : 'nama',
+                    className:'text-left'
+                },{
+                    data : 'no_wa',
+                    name : 'no_wa',
+                    className:'text-left'
+                },{
+                    data : 'aksi',
+                    name : 'aksi',
+                    width: "10%",
+                    orderable: false,
+                    searchable: false,
+                }],
+                "language": datatableLang
+            });
+            $('#modal-reminder-whatsapp').modal('show');    
+          },
+          error:function(error){
+              Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: error,
+                  icon: 'error'
+              })
+          }
+      }); 
+  }
+
   // $('#btn-add-gallery').on('click',function(){
   //   $('#modal-gallery').modal('show');  
   // });
@@ -880,6 +1146,62 @@
                 });
             }
         });
+    });
+
+    $('#btn-add-client-save').on('click',function(){
+      $('#modal-client').modal('hide');
+      let id = $('#training_id').val();
+      let client_id = $('#client_id').val();
+    
+      if(client_id == ''){
+        Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: "Mohon untuk memilih data client yang akan di tambahkan",
+                  icon: 'error'
+              })
+      }else{
+        let formData = {
+            "id":id,
+            "client_id":client_id,
+            "_token": "{{ csrf_token() }}"
+        };
+
+        let table ='#table-data-client';
+        $.ajax({
+            type: "POST",
+            url: "{{route('sdt-training.add-client')}}",
+            data:formData,
+            success: function(response){
+                // console.log(response);
+                // alert(response)
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                          location.reload();
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Pemberitahuan',
+                        text: response.message,
+                        icon: 'error'
+                    })
+                }
+            },
+            error:function(error){
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: error,
+                    icon: 'error'
+                })
+            }
+        });
+      }
     });
 
     $('#btn-add-client-save').on('click',function(){
@@ -1211,6 +1533,43 @@
   </div>
 </div>
 
+<div class="modal fade" id="modal-add-reminder" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-0">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Tambah Penerima Penerima</p></h4>
+        </div>
+        
+        <div class="row mb-3">    
+            <label class="col-sm-4 col-form-label text-sm-end">Nama</label>
+            <div class="col-sm-8">
+              <div class="position-relative">
+                <input type="text" id="reminder-add-nama" name="reminder-add-nama" class="form-control"></input>
+              </div>
+            </div>
+        </div>  
+
+        <div class="row mb-3">    
+            <label class="col-sm-4 col-form-label text-sm-end">Whatsapp</label>
+            <div class="col-sm-8">
+              <div class="position-relative" >
+                <input type="text" id="reminder-add-wa" name="reminder-add-wa" class="form-control"></input>
+              </div>
+            </div>
+        </div>  
+
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-add-reminder-penerima" class="btn btn-primary">Add Reminder</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="modal-pesan-undangan" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
     <div class="modal-content p-3 p-md-5">
@@ -1233,6 +1592,69 @@
       <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
         <button id="btn-add-pesan-undangan-save" class="btn btn-primary">Save</button>
+        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-reminder-whatsapp" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-3">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-4">
+          <h4 class="mb-2">Reminder Whatsapp : <p id="nama"></p></h4>
+        </div>
+        <br>
+        
+        <div class="row mb-3">    
+            <label class="col-sm-4 col-form-label text-sm-end">Dikirim Sebelum (Hari)</label>
+            <div class="col-sm-8">
+              <div class="position-relative">
+                <input type="number" id="reminder-days" name="reminder-days" class="form-control"></input>
+              </div>
+            </div>
+        </div>  
+
+        <div class="row mb-3">    
+            <label class="col-sm-4 col-form-label text-sm-end">Status</label>
+            <div class="col-sm-8">
+              <div class="position-relative" >
+                <input readonly type="text" id="reminder-status" name="reminder-status" class="reminder-status form-control"></input>
+              </div>
+            </div>
+        </div>  
+
+        <div class="row mb-3">    
+            <label class="col-sm-4 col-form-label text-sm-end">Reminder</label>
+            <div class="col-sm-8">
+              <div class="position-relative">
+                <textarea style="height: 100% !important;" rows="12" cols="50" class="form-control h-px-100 @if ($errors->any())   @endif" name="pesan-reminder" id="pesan-reminder" placeholder=""></textarea>
+              </div>
+            </div>
+        </div>  
+
+        <div class="table-responsive overflow-hidden">
+          <table id="table-data-reminder" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+              <thead>
+              <!-- no, nik, nama, no whatsapp, aksi -->
+                  <tr>
+                      <th class="text-left">Nama</th>
+                      <th class="text-left">No Whatsapp</th>
+                      <th class="text-center">Aksi</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {{-- data table ajax --}}
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="btn-reminder-save" class="btn btn-primary">Save Notif</button>
+        <button id="btn-reminder-penerima" class="btn btn-success">Tambah Penerima</button>
         <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
       </div>
     </div>
