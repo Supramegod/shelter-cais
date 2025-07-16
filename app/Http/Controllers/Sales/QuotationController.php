@@ -742,8 +742,9 @@ class QuotationController extends Controller
                                                 ->select('sl_quotation_detail.*','sl_quotation_site.provinsi as provinsi','sl_quotation_site.kota as kota')
                                                 ->where('sl_quotation_detail.quotation_id',$request->id)
                                                 ->whereNull('sl_quotation_detail.deleted_at')
+                                                ->orderBy('sl_quotation_detail.quotation_site_id','asc')
                                                 ->get();
-            $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->get();
+            $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id',$request->id)->whereNull('deleted_at')->orderBy('id','asc')->get();
             $topList = DB::table('m_top')->whereNull('deleted_at')->orderBy('nama','asc')->get();
 
             $province = DB::connection('mysqlhris')->table('m_province')->get();
@@ -916,6 +917,9 @@ class QuotationController extends Controller
                 foreach ($data->detail as $key => $value) {
                     $data->totalHc += $value->jumlah_hc;
                 }
+
+                // Urutkan $quotation->quotation_detail berdasarkan quotation_site_id
+                $quotation->quotation_detail = $quotation->quotation_detail->sortBy('quotation_site_id')->values();
             }
             $isEdit = false;
 
@@ -1060,6 +1064,7 @@ class QuotationController extends Controller
                 }
             }
 
+            $quotation->quotation_detail = $quotation->quotation_detail->sortBy('quotation_site_id')->values();
 
             return view('sales.quotation.view',compact('pesanNotif','canCreateSpk','quotationTujuan','quotation','salaryRuleQ','listPic','daftarTunjangan','listChemical','listDevices','listOhc','listKaporlap','listJenisChemical','listJenisDevices','listJenisOhc','listJenisKaporlap','now','leads','aplikasiPendukung'));
         } catch (\Exception $e) {
@@ -4183,6 +4188,7 @@ $objectTotal = (object) ['jenis_barang_id' => 100,
                     }
                 }
             }
+            $quotation->quotation_detail = $quotation->quotation_detail->sortBy('quotation_site_id')->values();
             $listKerjasama = DB::table('sl_quotation_kerjasama')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
             // dd($quotation->is_aktif);
             if ($quotation->is_aktif == 1) {

@@ -395,20 +395,20 @@ class QuotationService
                 return $kbd->nominal_upah+$totalTunjangan+$kbd->tunjangan_hari_raya+$kbd->kompensasi+$kbd->tunjangan_holiday+$kbd->lembur+$kbd->nominal_takaful+$kbd->bpjs_ketenagakerjaan+$kbd->bpjs_kesehatan+$kbd->personil_kaporlap+$kbd->personil_devices+$kbd->personil_chemical+$kbd->personil_ohc+$kbd->bunga_bank+$kbd->insentif;
     }
 
-    private function calculateTaxes(&$kbd, $quotation)
-    {
-        // PPN dan PPh default
-        $kbd->ppn = 0;
-        $kbd->pph = 0;
+    // private function calculateTaxes(&$kbd, $quotation)
+    // {
+    //     // PPN dan PPh default
+    //     $kbd->ppn = 0;
+    //     $kbd->pph = 0;
 
-        if ($quotation->ppn_pph_dipotong == "Management Fee") {
-            $kbd->ppn = $kbd->management_fee * 11/12*12/100;
-            $kbd->pph = $kbd->management_fee * -2 / 100;
-        } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
-            $kbd->ppn = $kbd->grand_total * 11/12*12/100;
-            $kbd->pph = $kbd->grand_total * -2 / 100;
-        }
-    }
+    //     if ($quotation->ppn_pph_dipotong == "Management Fee") {
+    //         $kbd->ppn = $kbd->management_fee * 11/12*12/100;
+    //         $kbd->pph = $kbd->management_fee * -2 / 100;
+    //     } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
+    //         $kbd->ppn = $kbd->grand_total * 11/12*12/100;
+    //         $kbd->pph = $kbd->grand_total * -2 / 100;
+    //     }
+    // }
 
     private function calculateKaporlap($kbd, $value, $provisi,$hpp,$coss)
     {
@@ -551,9 +551,24 @@ class QuotationService
         }
 
         $quotation->grand_total_sebelum_pajak_coss = $quotation->total_sebelum_management_fee_coss + $quotation->nominal_management_fee_coss;
-        $quotation->dpp_coss = 11/12 * $quotation->nominal_management_fee_coss;
-        $quotation->ppn_coss = $quotation->dpp_coss*12/100;
-        $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
+        $quotation->dpp_coss = 0;
+        $quotation->ppn_coss = 0;
+        $quotation->pph_coss = 0;
+
+        if ($quotation->ppn_pph_dipotong == "Management Fee") {
+            $quotation->dpp_coss = 11/12 * $quotation->nominal_management_fee_coss;
+            $quotation->ppn_coss = $quotation->dpp_coss *12/100;
+            $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
+
+        } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
+            $quotation->dpp_coss = 11/12 * $quotation->grand_total_sebelum_pajak_coss;
+            $quotation->ppn_coss = $quotation->dpp_coss *12/100;
+            $quotation->pph_coss = $quotation->grand_total_sebelum_pajak_coss * -2 / 100;
+        }
+
+        // $quotation->dpp_coss = 11/12 * $quotation->nominal_management_fee_coss;
+        // $quotation->ppn_coss = $quotation->dpp_coss*12/100;
+        // $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
         if($quotation->is_ppn == 1){
             $quotation->total_invoice_coss = $quotation->grand_total_sebelum_pajak_coss + $quotation->ppn_coss + $quotation->pph_coss;
         }else{
@@ -613,9 +628,24 @@ class QuotationService
         }
 
         $quotation->grand_total_sebelum_pajak = $quotation->total_sebelum_management_fee + $quotation->nominal_management_fee;
-        $quotation->dpp = 11/12 * $quotation->nominal_management_fee;
-        $quotation->ppn = $quotation->dpp *12/100;
-        $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
+        $quotation->dpp = 0;
+        $quotation->ppn = 0;
+        $quotation->pph = 0;
+
+        if ($quotation->ppn_pph_dipotong == "Management Fee") {
+            $quotation->dpp = 11/12 * $quotation->nominal_management_fee;
+            $quotation->ppn = $quotation->dpp *12/100;
+            $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
+
+        } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
+            $quotation->dpp = 11/12 * $quotation->grand_total_sebelum_pajak;
+            $quotation->ppn = $quotation->dpp *12/100;
+            $quotation->pph = $quotation->grand_total_sebelum_pajak * -2 / 100;
+        }
+
+        // $quotation->dpp = 11/12 * $quotation->nominal_management_fee;
+        // $quotation->ppn = $quotation->dpp *12/100;
+        // $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
         if($quotation->is_ppn == 1){
             $quotation->total_invoice = $quotation->grand_total_sebelum_pajak + $quotation->ppn + $quotation->pph;
         }else{
