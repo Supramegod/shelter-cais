@@ -818,7 +818,7 @@ class QuotationController extends Controller
                 foreach ($listKaporlap as $key => $kaporlap) {
                     foreach ($quotation->quotation_detail as $kKd => $vKd) {
                         $kaporlap->{'jumlah_'.$vKd->id} = 0;
-                        if($quotation->step == 7){
+                        if($quotation->revisi == 0){
                             $qtyDefault = DB::table('m_barang_default_qty')->whereNull('deleted_at')->where('layanan_id',$quotation->kebutuhan_id)->where('barang_id',$kaporlap->id)->first();
                             if($qtyDefault != null){
                                 $kaporlap->{'jumlah_'.$vKd->id} = $qtyDefault->qty_default;
@@ -845,7 +845,7 @@ class QuotationController extends Controller
 
                 foreach ($listDevices as $key => $devices) {
                     $devices->jumlah = 0;
-                    if($quotation->step == 8){
+                    if($quotation->revisi == 0){
                         $qtyDefault = DB::table('m_barang_default_qty')->whereNull('deleted_at')->where('layanan_id',$quotation->kebutuhan_id)->where('barang_id',$devices->id)->first();
                         if($qtyDefault != null){
                             $devices->jumlah = $qtyDefault->qty_default;
@@ -3058,6 +3058,54 @@ if($quotation->note_harga_jual == null){
             DB::table('sl_quotation_detail')->where('quotation_detail',$request->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
+            ]);
+
+            DB::table('sl_quotation_kaporlap')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_chemical')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_devices')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_ohc')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_detail_tunjangan')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_detail_hpp')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_detail_coss')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_pic')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_training')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+            DB::table('sl_quotation_kerjasama')->where('quotation_id',$request->id)->update([
+                'deleted_at' => $current_date_time,
+                'deleted_by' => Auth::user()->full_name
+            ]);
+
+
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data berhasil dihapus'
             ]);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
