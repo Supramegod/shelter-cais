@@ -14,16 +14,23 @@ RUN apt-get update && apt-get install -y \
 
 # Install ekstensi GD dan mysqli
 #RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ docker-php-ext-install gd mysqli
-RUN apt-get update && apt-get install -y \
-    libicu-dev \
-    libonig-dev \
-    && docker-php-ext-configure intl \
-    && docker-php-ext-install intl \
-    && docker-php-ext-install mbstring \
-    && docker-php-ext-install mysqli \
-    && docker-php-ext-install zip xml
+#RUN apt-get update && apt-get install -y \
+#    libicu-dev \
+#    libonig-dev \
+#    && docker-php-ext-configure intl \
+#    && docker-php-ext-install intl \
+#    && docker-php-ext-install mbstring \
+#    && docker-php-ext-install mysqli \
+#    && docker-php-ext-install zip xml
 
-RUN docker-php-ext-enable intl mbstring
+    # Install dependencies
+RUN apt-get update && apt-get install -y \
+    unzip git curl libzip-dev libxml2-dev libonig-dev libicu-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip xml mbstring intl pdo_mysql
+
+#RUN docker-php-ext-enable intl mbstring
 
 # Aktifkan mod_rewrite untuk Apache
 RUN a2enmod rewrite
@@ -43,7 +50,9 @@ COPY composer.json composer.lock ./
 # Jalankan composer update di sini
 #RUN composer update
 
-RUN composer install --no-dev --optimize-autoloader
+#RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
 
 RUN mkdir /var/www/html/public
 
