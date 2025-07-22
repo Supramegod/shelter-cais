@@ -12,12 +12,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Install PHP dependencies
-RUN composer install
-
 # Install ekstensi GD dan mysqli
 #RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ docker-php-ext-install gd mysqli
 RUN apt-get update && apt-get install -y \
@@ -36,6 +30,12 @@ RUN a2enmod rewrite
 
 # Copy kode CodeIgniter ke dalam container
 COPY . /var/www/html/
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install PHP dependencies
+RUN composer install
 
 RUN mkdir /var/www/html/public
 
