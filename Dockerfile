@@ -35,7 +35,10 @@ COPY . /var/www/html/
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies
-RUN composer install
+#RUN composer install
+
+# Jalankan composer update di sini
+RUN composer update
 
 RUN mkdir /var/www/html/public
 
