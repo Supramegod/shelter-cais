@@ -1,6 +1,6 @@
 # Menggunakan image PHP 8.1 sebagai base image
 #FROM php:8.1-apache
-FROM php:7.3-apache
+FROM php:8.2-apache
 
 # Install dependensi dan ekstensi PHP yang dibutuhkan untuk CodeIgniter
 RUN apt-get update && apt-get install -y \
@@ -31,7 +31,7 @@ RUN a2enmod rewrite
 # Copy kode CodeIgniter ke dalam container
 COPY . /var/www/html/
 
-RUN mkdir /var/www/html/files
+RUN mkdir /var/www/html/public
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
