@@ -37,6 +37,8 @@ RUN mkdir /var/www/html/files
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
+RUN git config --global --add safe.directory /home/data/project/cais
+
 # Set environment variables if needed
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
