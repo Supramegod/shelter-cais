@@ -23,16 +23,16 @@ services:
    #image: hris-dev:latest
    container_name: cais-dev
    ports:
-     - "8080:80"
+     - "8082:80"
    volumes:
-     - .:/cais:/var/www/html
+     - .:/var/www/html
      - /home/data/project/cais/files:/var/www/html/files
-#   depends_on:
-#     - db
-#   networks:
-#     - shelter-network
+   entrypoint: >
+      bash -c "git config --global --add safe.directory /var/www/html && apache2-foreground"
+   networks:
+      - shelter-network
 
 networks:
-  default:
-    external:
-      name: shelter-network
+  shelter-network:
+    external: true
+#      name: shelter-network
