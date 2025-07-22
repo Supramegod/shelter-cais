@@ -28,6 +28,12 @@ RUN docker-php-ext-enable intl mbstring
 # Aktifkan mod_rewrite untuk Apache
 RUN a2enmod rewrite
 
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install PHP dependencies
+RUN composer install
+
 # Copy kode CodeIgniter ke dalam container
 COPY . /var/www/html/
 
