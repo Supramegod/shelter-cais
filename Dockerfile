@@ -43,7 +43,7 @@ COPY composer.json composer.lock ./
 # Jalankan composer update di sini
 #RUN composer update
 
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --no-dev --optimize-autoloader
 
 RUN mkdir /var/www/html/public
 
