@@ -10,7 +10,7 @@ deploy_to_vps:
     - chmod 600 id_rsa
   script:
     - ssh -o StrictHostKeyChecking=no -i id_rsa $SSH_USER@$SSH_HOST '
-        cd /home/data/project/hris-shelter &&
+        cd /home/data/project/cais &&
         git pull origin dev &&
         docker compose down &&
         docker compose up -d --build
