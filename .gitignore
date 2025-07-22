@@ -10,7 +10,6 @@
 /meeting
 /note
 /note_update
-.env
 .env.backup
 .env.production
 .phpactor.json
