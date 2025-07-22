@@ -19,6 +19,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install
 
 # Set permission (jika dibutuhkan)
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R deploy:deploy /var/www/html
 
 EXPOSE 80
