@@ -27,6 +27,7 @@ services:
    volumes:
      - .:/var/www/html
      - /home/data/project/cais/public:/var/www/html/public
+     - ./.env:/var/www/html/.env
 #   entrypoint: >
 #      bash -c "git config --global --add safe.directory /var/www/html && apache2-foreground"
    networks:
