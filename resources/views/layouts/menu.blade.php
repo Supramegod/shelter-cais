@@ -64,6 +64,12 @@
                         <div>Dashboard SDT Training</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-training-gada'))) active @endif">
+                    <a href="{{route('dashboard-training-gada')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Dashboard Training Gada</div>
+                    </a>
+                </li>
             </ul>
         </li>
         @endif
@@ -169,7 +175,29 @@
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,36,57,58,59]))
+        @if(in_array(Auth::user()->role_id,[2]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-account-multiple"></i>
+                <div data-i18n="Traning Gada">Training Gada</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(Request::url() === route('training-gada')) active @endif">
+                    <a href="{{route('training-gada')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Data Registrasi">Data Registrasi</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(Request::url() === route('training-gada-pembayaran')) active @endif">
+                    <a href="{{route('training-gada-pembayaran')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Site">Data Pembayaran</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2]))
         <!-- MASTER DATA -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -188,6 +216,7 @@
                     </a>
                 </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('training'))) active @endif">
+                <li class="menu-item @if(Request::url() == route('training')) active @endif">
                     <a href="{{route('training')}}" class="menu-link">
                         <div data-i18n="Training">Training</div>
                     </a>
@@ -204,6 +233,24 @@
                 <li class="menu-item @if(str_contains(Request::url(), route('barang'))) active @endif">
                     <a href="{{route('barang')}}" class="menu-link">
                         <div data-i18n="Semua Barang">Semua Barang</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(Request::url() === route('training-gada-harga')) active @endif">
+                    <a href="{{route('training-gada-harga')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Gada">Training Gada</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(Request::url() === route('training-gada-jadwal')) active @endif">
+                    <a href="{{route('training-gada-jadwal')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Gada Jadwal">Training Gada Jadwal</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                    <a href="javascript:void(0)" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div data-i18n="Training Materi">Training SDT</div>
                     </a>
                 </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('barang.kaporlap'))) active @endif">

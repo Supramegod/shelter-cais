@@ -1,0 +1,188 @@
+@extends('layouts.master')
+@section('title','Jadwal Training Gada')
+@section('pageStyle')
+<style>
+    .dt-buttons {width: 100%;}
+</style>
+@endsection
+@section('content')
+<!-- Content -->
+<div class="container-fluid flex-grow-1 container-p-y">
+    <!-- Row -->
+    <div class="row row-sm mt-2">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header d-flex" style="padding-bottom: 0px !important;">
+                    <div class="col-md-6 text-left col-12 my-auto">
+                        <h3 class="page-title">Jadwal Training Gada</h3>
+                        <ol class="breadcrumb" style="background-color:white !important;padding:0 !important">
+							<li class="breadcrumb-item"><a href="javascript:void(0);">Master</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Jadwal Training Gada</li>
+						</ol>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive overflow-hidden table-data">
+                        <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">Jenis Training</th>
+                                    <th class="text-left">Hari</th>
+                                    <th class="text-left">Tanggal</th>
+                                    <th class="text-left">Keterangan</th>
+                                    <th class="text-left">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- data table ajax --}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Row -->
+    <!--/ Responsive Datatable -->
+</div>
+<!--/ Content -->
+
+@endsection
+
+@section('pageScript')
+    <script>
+        @if(session()->has('success'))  
+            Swal.fire({
+                title: 'Pemberitahuan',
+                html: '{{session()->get('success')}}',
+                icon: 'success',
+                customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+                },
+                buttonsStyling: false
+            });
+        @endif
+        @if(session()->has('error'))  
+            Swal.fire({
+                title: 'Pemberitahuan',
+                html: '{{session()->has('error')}}',
+                icon: 'warning',
+                customClass: {
+                confirmButton: 'btn btn-warning waves-effect waves-light'
+                },
+                buttonsStyling: false
+            });
+        @endif
+
+            let dt_filter_table = $('.dt-column-search');
+
+            var table = $('#table-data').DataTable({
+                scrollX: true,
+                "iDisplayLength": 25,
+                'processing': true,
+        'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': 'Loading...'
+        },
+                ajax: {
+                    url: "{{ route('training-gada-jadwal.list') }}",
+                    data: function (d) {
+                        
+                    },
+                },   
+                "order":[
+                    [0,'desc']
+                ],
+                columns:[{
+                    data : 'jenis_training',
+                    name : 'jenis_training',
+                    className:'dt-body-left'
+                },{
+                    data : 'hari',
+                    name : 'hari',
+                    className:'dt-body-left'
+                },{
+                    data : 'tanggal',
+                    name : 'tanggal',
+                    className:'dt-body-left'
+                },{
+                    data : 'keterangan',
+                    name : 'keterangan',
+                    className:'dt-body-left'
+                },{
+                    data : 'aksi',
+                    name : 'aksi',
+                    className:'text-center'
+                }],
+                "language": datatableLang,
+                dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+                buttons: [
+                    {
+                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah jadwal Training</span>',
+                    className: 'create-new btn btn-label-primary waves-effect waves-light',
+                    action: function (e, dt, node, config)
+                        {
+                            //This will send the page to the location specified
+                            window.location.href = '{{route("training-gada-jadwal.add")}}';
+                        }
+                    }
+                ],
+            });
+
+            $('body').on('click', '.btn-delete', function() {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah anda ingin hapus data ini ?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: 'primary',
+                cancelButtonColor: 'warning',
+                confirmButtonText: 'Hapus'
+            }).then(function (result) {
+                console.log(result)
+                if (result.isConfirmed) {
+                    let formData = {
+                        "id":id,
+                        "_token": "{{ csrf_token() }}"
+                    };
+
+                    let table ='#table-data';
+                    $.ajax({
+                        type: "POST",
+                        url: "{{route('training-gada-jadwal.delete')}}",
+                        data:formData,
+                        success: function(response){
+                            console.log(response)
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Pemberitahuan',
+                                    text: response.message,
+                                    icon: 'success',
+                                    timer: 1000,
+                                    timerProgressBar: true,
+                                    willClose: () => {
+                                        $(table).DataTable().ajax.reload();
+                                    }
+                                })
+                            } else {
+                                Swal.fire({
+                                    title: 'Pemberitahuan',
+                                    text: response.message,
+                                    icon: 'error'
+                                })
+                            }
+                        },
+                        error:function(error){
+                            Swal.fire({
+                                title: 'Pemberitahuan',
+                                text: error,
+                                icon: 'error'
+                            })
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+@endsection
