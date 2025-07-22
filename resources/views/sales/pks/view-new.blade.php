@@ -1,15 +1,15 @@
 @extends('layouts.master')
-@section('title','View Monitoring Kontrak')
+@section('title','View Kontrak')
 @section('content')
 <style>
     .tab {
         display: inline-block;
         margin-left: 3em;
     }
+
 </style>
 <div class="container-fluid flex-grow-1 container-p-y" style="margin-top: 4rem !important;">
     <div class="row gy-4 mb-5">
-        <!-- Congratulations card -->
         <div class="col-xl-12">
             <div class="card h-100 mt-3">
                 <div class="card-header d-flex w-100" style="justify-content: space-between;">
@@ -56,104 +56,16 @@
                         </button>
                     </div>
                     <div class="row">
-                        <!-- Informasi Leads / Customer -->
-                        <div class="col-md-4 mb-3" id="left-panel">
-                            <div class="row mb-5">
-                                <table class="table table-bordered table-striped">
-                                    <thead class="thead-light" style="background-color: #007bff;">
-                                        <tr>
-                                            <th colspan="2" style="color:white !important">Informasi Kontrak</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Kontrak</td>
-                                            <td><b>{{$pks->nomor}}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Perusahaan</td>
-                                            <td>{{$leads->nama_perusahaan}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Layanan</td>
-                                            <td>{{$pks->layanan}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tanggal Kontrak</td>
-                                            <td>{{$pks->mulai_kontrak}} s/d {{$pks->kontrak_selesai}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Berakhir dalam</td>
-                                            <td>{{$pks->berakhir_dalam}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Site</td>
-                                            <td>{{$pks->nama_site}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Sales</td>
-                                            <td>{{$pks->sales}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>CRM</td>
-                                            <td>{!! $pks->crm1 ?? '' !!}{!! $pks->crm2 ?? '' !!}{!! $pks->crm3 ?? '' !!}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>SPV RO</td>
-                                            <td>{!! $pks->spv_ro ?? '' !!}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>RO</td>
-                                            <td>{!! $pks->ro1 ?? '' !!}{!! $pks->ro2 ?? '' !!}{!! $pks->ro3 ?? '' !!}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quotation</td>
-                                            <td><b>{{ $quotation ? $quotation->nomor : '' }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>SPK</td>
-                                            <td><b>{{ $spk ? $spk->nomor : '' }}</b></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="row mb-5">
-                                <table class="table table-bordered table-striped">
-                                    <thead class="thead-light" style="background-color: #28a745;">
-                                        <tr>
-                                            <th colspan="2" style="color:white !important">Informasi Leads / Customer</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Nomor</td>
-                                            <td><b>{{$leads->nomor}}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Nama</td>
-                                            <td>{{$leads->nama_perusahaan}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Telepon</td>
-                                            <td>{{$leads->telp_perusahaan}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Alamat</td>
-                                            <td>{{$leads->alamat}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jenis Perusahaan</td>
-                                            <td>{{$pks->jenis_perusahaan}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
                         <!-- Aktifitas Leads -->
-                        <div class="offset-md-1 col-md-7 mb-3" id="right-panel">
+                        <div class="mb-3" id="right-panel">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="activities-tab" data-bs-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="true">
+                                    <a class="nav-link active" id="informasi-dasar-tab" data-bs-toggle="tab" href="#informasi-dasar" role="tab" aria-controls="informasi-dasar" aria-selected="true">
+                                        <i class="mdi mdi-information-outline"></i> &nbsp; Informasi Dasar
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="activities-tab" data-bs-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="true">
                                         <i class="mdi mdi-calendar-check"></i> &nbsp; Aktifitas
                                     </a>
                                 </li>
@@ -173,16 +85,241 @@
                                     <a class="nav-link" id="issues-tab" data-bs-toggle="tab" href="#issues" role="tab" aria-controls="issues" aria-selected="false">
                                         <i class="mdi mdi-alert-circle"></i> &nbsp; Issue</a>
                                 </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="perjanjian-tab" data-bs-toggle="tab" href="#perjanjian" role="tab" aria-controls="perjanjian" aria-selected="false">
+                                        <i class="mdi mdi-file-document-outline"></i> &nbsp; Perjanjian</a>
+                                </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                                <div class="tab-pane fade show active" id="informasi-dasar" role="tabpanel" aria-labelledby="informasi-dasar-tab">
+                                     <!-- Informasi Leads / Customer -->
+                                    <!-- <div class="col-md-4 mb-3" id="left-panel">
+                                        <div class="row mb-5">
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-light" style="background-color: #007bff;">
+                                                    <tr>
+                                                        <th colspan="2" style="color:white !important">Informasi Kontrak</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Kontrak</td>
+                                                        <td><b>{{$pks->nomor}}</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Perusahaan</td>
+                                                        <td>{{$leads->nama_perusahaan}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Layanan</td>
+                                                        <td>{{$pks->layanan}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tanggal Kontrak</td>
+                                                        <td>{{$pks->mulai_kontrak}} s/d {{$pks->kontrak_selesai}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Berakhir dalam</td>
+                                                        <td>{{$pks->berakhir_dalam}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Site</td>
+                                                        <td>{{$pks->nama_site}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Sales</td>
+                                                        <td>{{$pks->sales}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>CRM</td>
+                                                        <td>{!! $pks->crm1 ?? '' !!}{!! $pks->crm2 ?? '' !!}{!! $pks->crm3 ?? '' !!}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>SPV RO</td>
+                                                        <td>{!! $pks->spv_ro ?? '' !!}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>RO</td>
+                                                        <td>{!! $pks->ro1 ?? '' !!}{!! $pks->ro2 ?? '' !!}{!! $pks->ro3 ?? '' !!}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Quotation</td>
+                                                        <td><b>{{ $quotation ? $quotation->nomor : '' }}</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>SPK</td>
+                                                        <td><b>{{ $spk ? $spk->nomor : '' }}</b></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row mb-5">
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-light" style="background-color: #28a745;">
+                                                    <tr>
+                                                        <th colspan="2" style="color:white !important">Informasi Leads / Customer</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Nomor</td>
+                                                        <td><b>{{$leads->nomor}}</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Nama</td>
+                                                        <td>{{$leads->nama_perusahaan}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Telepon</td>
+                                                        <td>{{$leads->telp_perusahaan}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Alamat</td>
+                                                        <td>{{$leads->alamat}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Jenis Perusahaan</td>
+                                                        <td>{{$pks->jenis_perusahaan}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div> -->
+
+                                    <h6>1. Informasi Leads / Customer</h6>
+                                    <div class="row mb-3">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Nomor</td>
+                                                        <td colspan="3">: <a href="#"><b>{{$leads->nomor ?? '-'}}</b></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Nama Perusahaan</td>
+                                                        <td>: {{$leads->nama_perusahaan}}</td>
+                                                        <td>Bidang Perusahaan</td>
+                                                        <td>: {{$leads->bidang_perusahaan}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>PMA</td>
+                                                        <td>: {{$leads->pma ?? '-'}}</td>
+                                                        <td>Negara</td>
+                                                        <td>: {{$leads->negara ?? '-'}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Provinsi</td>
+                                                        <td>: {{$leads->provinsi ?? '-'}}</td>
+                                                        <td>Kota</td>
+                                                        <td>: {{$leads->kota ?? '-'}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Kecamatan</td>
+                                                        <td>: {{$leads->kecamatan ?? '-'}}</td>
+                                                        <td>Kelurahan</td>
+                                                        <td>: {{$leads->kelurahan ?? '-'}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Alamat</td>
+                                                        <td colspan="3">: {{$leads->alamat ?? '-'}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <h6>2. Informasi Quotation</h6>
+                                    <div class="row mb-3">
+                                        <div class="table-responsive overflow-hidden table-quotation">
+                                            <table id="table-quotation" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">No.</th>
+                                                        <th class="text-center">Nomor</th>
+                                                        <th class="text-center">Kebutuhan</th>
+                                                        <th class="text-center">Jenis Kontrak</th>
+                                                        <th class="text-center">Checklist</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($listQuotation as $index => $quotation)
+                                                    <tr>
+                                                        <td>{{$index + 1}}</td>
+                                                        <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
+                                                        <td>{{$quotation->kebutuhan}}</td>
+                                                        <td>{{$quotation->jenis_kontrak}}</td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center gap-2 mt-2">
+                                                                <a href="{{ route('pks.isi-checklist', ['id' => $quotation->id, 'pks_id' => $pks->id]) }}" class="btn btn-primary" title="Isi Checklist">
+                                                                    <i class="mdi mdi-pencil"></i>
+                                                                </a>
+                                                                @if($quotation->materai !=null)
+                                                                <a onclick="window.open('{{route('quotation.cetak-checklist', ['id' => $quotation->id, 'pks_id' => $pks->id])}}','name','width=600,height=400')" rel="noopener noreferrer" href="javascript:void(0)" class="btn btn-warning" title="Cetak Checklist">
+                                                                    <i class="mdi mdi-printer"></i>
+                                                                </a>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <h6>3. Informasi SPK</h6>
+                                    <div class="row mb-3">
+                                        <div class="table-responsive overflow-hidden table-spk">
+                                            <table id="table-spk" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">No.</th>
+                                                        <th class="text-center">Nomor</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($listSpk as $index => $spk)
+                                                    <tr>
+                                                        <td>{{$index + 1}}</td>
+                                                        <td><b><a href="{{route('spk.view',[$spk->id])}}">{{$spk->nomor}}</a></b></td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <h6>4. Informasi Site</h6>
+                                    <div class="row mb-3">
+                                        <div class="table-responsive overflow-hidden table-site">
+                                            <table id="table-site" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">No.</th>
+                                                        <th class="text-center">Nama Site</th>
+                                                        <th class="text-center">Kota</th>
+                                                        <th class="text-center">Penempatan</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody-site">
+                                                    @foreach($data->site as $index => $site)
+                                                    <tr>
+                                                        <td>{{$index + 1}}</td>
+                                                        <td>{{$site->nama_site}}</td>
+                                                        <td>{{$site->kota}}</td>
+                                                        <td>{{$site->penempatan}}</td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                                     <div class="d-flex justify-content-end mb-3">
                                         <a href="{{ route('customer-activity.add-activity-kontrak', $pks->id) }}" class="btn btn-primary">
                                             <i class="mdi mdi-plus"></i> Tambah Aktifitas
                                         </a>
                                     </div>
                                     <ul class="timeline">
-                                        @foreach($data as $activity)
+                                        @foreach($activityList as $activity)
                                             <li class="timeline-item">
                                                 <span class="timeline-point timeline-point-primary"></span>
                                                 <div class="timeline-event card card-border-shadow-primary mb-3 ">
@@ -303,6 +440,34 @@
                                         @endforeach
                                     </ul>
                                 </div>
+                                <div class="tab-pane fade" id="perjanjian" role="tabpanel" aria-labelledby="perjanjian-tab">
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <a href="#" target="_blank" class="btn btn-success">
+                                            <i class="mdi mdi-printer"></i> Cetak Dokumen
+                                        </a>
+                                    </div>
+                                    <ul class="timeline">
+                                        @foreach($perjanjian as $key => $value)
+                                            <li class="timeline-item">
+                                                <span class="timeline-point timeline-point-info"></span>
+                                                <div class="timeline-event card card-border-shadow-info mb-3">
+                                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <strong>Pasal {{$value->pasal}}</strong>
+                                                            <span class="mx-2">|</span>
+                                                            <span>{{$value->judul}}</span>
+                                                        </div>
+                                                        <a href="{{ route('pks.edit-perjanjian', $value->id) }}" class="btn btn-warning btn-sm">
+                                                            <i class="mdi mdi-pencil"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        {!! $value->raw_text !!}
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                             </div>
                         </div>
                     </div>

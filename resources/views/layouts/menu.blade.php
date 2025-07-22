@@ -23,6 +23,12 @@
                 </li>
                 @endif
                 @if(in_array(Auth::user()->role_id,[2]))
+                <li class="menu-item @if(str_contains(Request::url(), route('dashboard-manager-crm'))) active @endif">
+                    <a href="{{route('dashboard-manager-crm')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                        <div>Dashboard Manager CRM</div>
+                    </a>
+                </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('dashboard-general'))) active @endif">
                     <a href="{{route('dashboard-general')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>

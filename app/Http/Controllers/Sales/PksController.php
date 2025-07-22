@@ -2675,4 +2675,161 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         }
     }
 
+    public function viewNew (Request $request,$pksId){
+        try {
+            $pks = DB::table('sl_pks')->where('id',$pksId)->first();
+
+            $data = DB::table('sl_pks')->whereNull('deleted_at')->where('id',$pksId)->first();
+            $leads = DB::table('sl_leads')->where('id',$data->leads_id)->first();
+            // $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$data->spk_id)->first();
+            // $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->first();
+
+            $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
+            $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
+            $status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$data->status_pks_id)->first();
+            $data->status = $status ? $status->nama : "";
+            $perjanjian = DB::table('sl_pks_perjanjian')->whereNull('deleted_at')->where('pks_id',$pksId)->whereNull('deleted_at')->get();
+            $data->site = DB::table('sl_site')->whereNull('deleted_at')->where('pks_id',$pksId)->get();
+
+            $activityList = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('pks_id',$pksId)->where('is_activity',1)->orderBy('created_at','desc')->get();
+            foreach ($activityList as $key => $value) {
+            $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
+            $value->stgl_activity = Carbon::createFromFormat('Y-m-d',$value->tgl_activity)->isoFormat('D MMMM Y');
+            }
+
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
+            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('id',$pks->jenis_perusahaan_id)->first();
+            if($jenisPerusahaan !=null){
+            $pks->jenis_perusahaan = $jenisPerusahaan->nama;
+            }else{
+            $pks->jenis_perusahaan = "";
+            }
+
+            $quotationData = DB::table('sl_quotation')->where('id',$pks->quotation_id)->first();
+            if($quotationData != null){
+            $quotationData->detail = DB::table('sl_quotation_detail')->where('quotation_id',$quotationData->id)->get();
+            $quotationData->site = DB::table('sl_site')->where('quotation_id',$quotationData->id)->get();
+            }
+
+            $pks->berakhir_dalam = $this->hitungBerakhirKontrak($pks->kontrak_akhir);
+
+            $pks->mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
+
+            $spk =  DB::table('sl_spk')->where('id',$pks->spk_id)->first();
+
+            $issues = DB::table('sl_issue')->where('pks_id',$pksId)->whereNull('deleted_at')->get();
+            foreach ($issues as $key => $value) {
+            $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$value->created_at)->isoFormat('D MMMM Y HH:mm');
+            }
+
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
+            $sales = DB::table($db2.'.m_user')->where('id',$pks->sales_id)->first();
+            $pks->sales = "";
+            if($sales !=null){
+            $pks->sales = $sales->full_name;
+            }
+            $crm1 = DB::table($db2.'.m_user')->where('id',$pks->crm_id_1)->first();
+            if($crm1 !=null){
+            $pks->crm1 = $crm1->full_name."</br>";
+            }
+            $crm2 = DB::table($db2.'.m_user')->where('id',$pks->crm_id_2)->first();
+            if($crm2 !=null){
+            $pks->crm2 = $crm2->full_name."</br>";
+            }
+            $crm3 = DB::table($db2.'.m_user')->where('id',$pks->crm_id_3)->first();
+            if($crm3 !=null){
+            $pks->crm3 = $crm3->full_name."</br>";
+            }
+            $spvRo = DB::table($db2.'.m_user')->where('id',$pks->spv_ro_id)->first();
+            if($spvRo !=null){
+            $pks->spv_ro = $spvRo->full_name."</br>";
+            }
+            $ro1 = DB::table($db2.'.m_user')->where('id',$pks->ro_id_1)->first();
+            if($ro1 !=null){
+            $pks->ro1 = $ro1->full_name."</br>";
+            }
+            $ro2 = DB::table($db2.'.m_user')->where('id',$pks->ro_id_2)->first();
+            if($ro2 !=null){
+            $pks->ro2 = $ro2->full_name."</br>";
+            }
+            $ro3 = DB::table($db2.'.m_user')->where('id',$pks->ro_id_3)->first();
+            if($ro3 !=null){
+            $pks->ro3 = $ro3->full_name."</br>";
+            }
+
+            // hpp coss dan gpm
+            $daftarTunjangan = [];
+            $calcQuotation = null;
+            if($quotationData != null){
+            if($quotationData->step == 100){
+                $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotationData->id");
+                $quotationService = new QuotationService();
+                $calcQuotation = $quotationService->calculateQuotation($quotationData);
+            }
+            }
+
+            $perjanjian = DB::table('sl_pks_perjanjian')->whereNull('deleted_at')->where('pks_id',$pksId)->whereNull('deleted_at')->get();
+
+            $listQuotation = [];
+            $listSpk = [];
+
+            // Fix: $data is a collection, not an object, so $data->site will not work.
+            // Instead, get all sites for this PKS.
+            $siteList = DB::table('sl_site')->where('pks_id', $pksId)->whereNull('deleted_at')->get();
+
+            foreach ($siteList as $key => $value) {
+            $quotationSite = DB::table('sl_quotation')->where('id',$value->quotation_id)->first();
+            $spkSite = DB::table('sl_spk')->where('id',$value->spk_id)->first();
+            if ($quotationSite && !in_array($quotationSite->id, array_column($listQuotation, 'id'))) {
+                $listQuotation[] = $quotationSite;
+            }
+            if ($spkSite && !in_array($spkSite->id, array_column($listSpk, 'id'))) {
+                $listSpk[] = $spkSite;
+            }
+            }
+
+            // isIsiChecklist dan isLowongan
+            $isIsiChecklist = true;
+            foreach ($listQuotation as $key => $value) {
+            if($value->materai==null){
+                $isIsiChecklist = false;
+            }
+            }
+
+            $isLowongan = false;
+            foreach ($siteList as $key => $value) {
+            $siteHris = DB::connection('mysqlhris')->table('m_site')->where('site_id',$value->id)->where('is_active',1)->first();
+            if($siteHris){
+                $vacancy = DB::connection('mysqlhris')->table('m_vacancy')->where('site_id',$siteHris->id)->where('is_active',1)->first();
+                if($vacancy){
+                $isLowongan = true;
+                }
+            }
+            }
+
+            return view('sales.pks.view-new',compact(
+            'daftarTunjangan',
+            'issues',
+            'data',
+            'leads',
+            'quotationData',
+            'spk',
+            'pks',
+            'perjanjian',
+            'calcQuotation',
+            'listQuotation',
+            'listSpk',
+            'siteList',
+            'isIsiChecklist',
+            'isLowongan',
+            'activityList'
+            ));
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
 }
