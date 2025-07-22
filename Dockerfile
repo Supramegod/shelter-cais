@@ -34,6 +34,9 @@ COPY . /var/www/html/
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Copy composer files first (better cache)
+COPY composer.json composer.lock ./
+
 # Install PHP dependencies
 #RUN composer install
 
