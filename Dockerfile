@@ -38,7 +38,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 #RUN composer install
 
 # Jalankan composer update di sini
-RUN composer update
+#RUN composer update
+
+RUN composer install --optimize-autoloader --no-dev
 
 RUN mkdir /var/www/html/public
 
@@ -53,6 +55,8 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 # Set direktori kerja
 WORKDIR /var/www/html/
+
+RUN composer install --optimize-autoloader --no-dev
 
 # Expose port 80
 EXPOSE 80
