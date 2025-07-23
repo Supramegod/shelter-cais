@@ -52,7 +52,8 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+     'url' => env('APP_URL', 'https://cais.development-shelter.online'),
+#    'url' => 'https://cais.development-shelter.online',
 
     /*
     |--------------------------------------------------------------------------

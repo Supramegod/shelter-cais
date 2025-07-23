@@ -1,6 +1,6 @@
 # Menggunakan image PHP 8.1 sebagai base image
 #FROM php:8.1-apache
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 # Install dependensi dan ekstensi PHP yang dibutuhkan untuk CodeIgniter
 RUN apt-get update && apt-get install -y \
@@ -38,6 +38,15 @@ RUN a2enmod rewrite
 # Copy kode CodeIgniter ke dalam container
 COPY . /var/www/html/
 
+RUN rm -f bootstrap/cache/config.php bootstrap/cache/services.php
+
+# Tandai direktori sebagai "safe" untuk Git
+RUN git config --global --add safe.directory /var/www/html
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -57,8 +66,8 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 RUN mkdir /var/www/html/public
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+#RUN chown -R www-data:www-data /var/www/html \
+#    && chmod -R 755 /var/www/html
 
 #RUN git config --global --add safe.directory /home/data/project/cais
 
