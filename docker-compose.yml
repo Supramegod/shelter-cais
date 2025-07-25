@@ -16,12 +16,12 @@ services:
  #        name: shelter-network
 
 
- cais-dev:
+ cais-prod:
    build:
      context: .
      dockerfile: Dockerfile
    #image: hris-dev:latest
-   container_name: cais-dev
+   container_name: cais-prod
    ports:
      - "8082:80"
    volumes:
