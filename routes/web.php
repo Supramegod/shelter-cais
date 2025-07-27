@@ -58,6 +58,8 @@ use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
 
+use App\Http\Controllers\Dashboard\DashboardManagerCrmController;
+
 Route::controller(AuthController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/', 'dashboard')->name('home');
@@ -102,13 +104,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
         Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
-        Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
         Route::get('/dashboard/training-gada', 'dashboardTrainingGada')->name('dashboard-training-gada');
 
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
         Route::get('/dashboard/aktifkan/list', 'getListDashboardAktifkanData')->name('dashboard-aktifkan.list');
-        Route::get('/dashboard/pks-siap-aktif/list', 'listPksSiapAktif')->name('dashboard-pks-siap-aktif.list');
 
         // ajax modal
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-hari-ini', 'listAktifitasSalesHariIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-hari-ini');
@@ -128,7 +128,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-telesales/tabel/laporan-bulanan-telesales', 'laporanBulananTelesales')->name('dashboard.aktifitas-telesales.tabel.laporan-bulanan-telesales');
 
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-bulanan-detail', 'listAktifitasSalesBulananDetail')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-bulanan-detail');
+    });
 
+    Route::controller(DashboardManagerCrmController::class)->group(function() {
+        Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
+        Route::get('/dashboard/pks-siap-aktif/list', 'listPksSiapAktif')->name('dashboard-pks-siap-aktif.list');
     });
 
     Route::controller(LeadsController::class)->group(function() {

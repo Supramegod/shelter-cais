@@ -1716,184 +1716,186 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
                     //     'updated_by' => Auth::user()->id
                     // ]);
                 }
+
+                // masukkan COSS ke tabel
+                $totalNominal = 0;
+                $totalNominalCoss = 0;
+                $ppn = 0;
+                $ppnCoss = 0;
+                $totalBiaya = 0;
+                $totalBiayaCoss = 0;
+                $margin = 0;
+                $marginCoss = 0;
+                $gpm = 0;
+                $gpmCoss = 0;
+                $quotationService = new QuotationService();
+                $calcQuotation = $quotationService->calculateQuotation($quotation);
+                foreach ($calcQuotation->quotation_detail as $kd => $kbd) {
+                    // Ambil sl_quotation_detail_hpp berdasarkan quotation_detail_id lalu update
+                    DB::table('sl_quotation_detail_hpp')
+                        ->where('quotation_detail_id', $kbd->id)
+                        ->whereNull('deleted_at')
+                        ->update([
+                            'position_id' => $kbd->position_id,
+                            'leads_id' =>  $leads->id,
+                            'jumlah_hc' => $calcQuotation->jumlah_hc,
+                            'gaji_pokok' => $calcQuotation->nominal_upah,
+                            'total_tunjangan' => $kbd->total_tunjangan,
+                            'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
+                            'kompensasi' => $kbd->kompensasi,
+                            'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
+                            'lembur' => $kbd->lembur,
+                            'bpjs_jkk' => $kbd->bpjs_jkk,
+                            'bpjs_jkm' => $kbd->bpjs_jkm,
+                            'bpjs_jht' => $kbd->bpjs_jht,
+                            'bpjs_jp' => $kbd->bpjs_jp,
+                            'bpjs_ks' => $kbd->bpjs_kes,
+                            'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
+                            'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
+                            'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
+                            'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
+                            'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
+                            'provisi_seragam' =>  $kbd->personil_kaporlap,
+                            'provisi_peralatan' => $kbd->personil_devices ,
+                            'provisi_chemical' => $kbd->personil_chemical,
+                            'total_biaya_per_personil' => $kbd->total_personil,
+                            'total_biaya_all_personil' => $kbd->sub_total_personil,
+                            'management_fee' => $calcQuotation->nominal_management_fee,
+                            'persen_management_fee' => $calcQuotation->persentase,
+                            'provisi_ohc' => $kbd->personil_ohc,
+                            'grand_total' => $calcQuotation->grand_total_sebelum_pajak,
+                            'ppn' => $calcQuotation->ppn,
+                            'pph' => $calcQuotation->pph,
+                            'total_invoice' => $calcQuotation->total_invoice,
+                            'pembulatan' => $calcQuotation->pembulatan,
+                            'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
+                            'updated_at' => $current_date_time,
+                            'updated_by' => Auth::user()->full_name
+                        ]);
+                    // DB::table("sl_quotation_detail_hpp")->insert([
+                    //     'quotation_id' => $quotation->id,
+                    //     'quotation_detail_id' => $kbd->id,
+
+                    // ]);
+
+                    DB::table('sl_quotation_detail_coss')
+                        ->where('quotation_detail_id', $kbd->id)
+                        ->whereNull('deleted_at')
+                        ->update([
+                            'position_id' => $kbd->position_id,
+                            'leads_id' =>  $leads->id,
+                            'jumlah_hc' => $calcQuotation->jumlah_hc,
+                            'gaji_pokok' => $calcQuotation->nominal_upah,
+                            'total_tunjangan' => $kbd->total_tunjangan,
+                            'total_base_manpower' => $kbd->total_base_manpower,
+                            'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
+                            'kompensasi' => $kbd->kompensasi,
+                            'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
+                            'lembur' => $kbd->lembur,
+                            'bpjs_jkk' => $kbd->bpjs_jkk,
+                            'bpjs_jkm' => $kbd->bpjs_jkm,
+                            'bpjs_jht' => $kbd->bpjs_jht,
+                            'bpjs_jp' => $kbd->bpjs_jp,
+                            'bpjs_ks' => $kbd->bpjs_kes,
+                            'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
+                            'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
+                            'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
+                            'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
+                            'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
+                            'provisi_seragam' =>  $kbd->personil_kaporlap,
+                            'provisi_peralatan' => $kbd->personil_devices,
+                            'provisi_chemical' => $kbd->personil_chemical,
+                            'total_exclude_base_manpower' => $kbd->total_exclude_base_manpower,
+                            'bunga_bank' => $kbd->bunga_bank,
+                            'insentif' => $kbd->insentif,
+                            'management_fee' => $calcQuotation->nominal_management_fee_coss,
+                            'persen_bunga_bank' => $calcQuotation->persen_bunga_bank,
+                            'persen_insentif' => $calcQuotation->persen_insentif,
+                            'persen_management_fee' => $calcQuotation->persentase,
+                            'grand_total' => $calcQuotation->grand_total_sebelum_pajak_coss,
+                            'ppn' => $calcQuotation->ppn_coss,
+                            'pph' => $calcQuotation->pph_coss,
+                            'total_invoice' => $calcQuotation->total_invoice_coss,
+                            'pembulatan' => $calcQuotation->pembulatan_coss,
+                            'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
+                            'updated_at' => $current_date_time,
+                            'updated_by' => Auth::user()->full_name
+                        ]);
+                    // DB::table("sl_quotation_detail_coss")->insert([
+                    //     'quotation_id' => $quotation->id,
+                    //     'quotation_detail_id' => $kbd->id,
+                    //     'position_id' => $kbd->position_id,
+                    //     'leads_id' =>  $leads->id,
+                    //     'jumlah_hc' => $calcQuotation->jumlah_hc,
+                    //     'gaji_pokok' => $calcQuotation->nominal_upah,
+                    //     'total_tunjangan' => $kbd->total_tunjangan,
+                    //     'total_base_manpower' => $kbd->total_base_manpower,
+                    //     'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
+                    //     'kompensasi' => $kbd->kompensasi,
+                    //     'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
+                    //     'lembur' => $kbd->lembur,
+                    //     'bpjs_jkk' => $kbd->bpjs_jkk,
+                    //     'bpjs_jkm' => $kbd->bpjs_jkm,
+                    //     'bpjs_jht' => $kbd->bpjs_jht,
+                    //     'bpjs_jp' => $kbd->bpjs_jp,
+                    //     'bpjs_ks' => $kbd->bpjs_kes,
+                    //     'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
+                    //     'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
+                    //     'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
+                    //     'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
+                    //     'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
+                    //     'provisi_seragam' =>  $kbd->personil_kaporlap,
+                    //     'provisi_peralatan' => $kbd->personil_devices ,
+                    //     'provisi_chemical' => $kbd->personil_chemical,
+                    //     'total_exclude_base_manpower' => $kbd->total_exclude_base_manpower,
+                    //     'bunga_bank' => $kbd->bunga_bank,
+                    //     'insentif' => $kbd->insentif,
+                    //     'management_fee' => $calcQuotation->nominal_management_fee_coss,
+                    //     'persen_bunga_bank' => $calcQuotation->persen_bunga_bank,
+                    //     'persen_insentif' => $calcQuotation->persen_insentif,
+                    //     'persen_management_fee' => $calcQuotation->persentase,
+                    //     'grand_total' => $calcQuotation->grand_total_sebelum_pajak_coss,
+                    //     'ppn' => $calcQuotation->ppn_coss,
+                    //     'pph' => $calcQuotation->pph_coss,
+                    //     'total_invoice' => $calcQuotation->total_invoice_coss,
+                    //     'pembulatan' => $calcQuotation->pembulatan_coss,
+                    //     'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
+                    //     'created_at' => $current_date_time,
+                    //     'created_by' => Auth::user()->full_name
+                    // ]);
+
+                    $totalNominal += $calcQuotation->total_invoice;
+                    $totalNominalCoss += $calcQuotation->total_invoice_coss;
+                    $ppn += $calcQuotation->ppn;
+                    $ppnCoss += $calcQuotation->ppn_coss;
+                    $totalBiaya += $kbd->sub_total_personil;
+                    $totalBiayaCoss += $kbd->sub_total_personil;
+                    $margin = $totalNominal-$ppn-$totalBiaya;
+                    $marginCoss = $totalNominalCoss-$ppnCoss-$totalBiayaCoss;
+                    $gpm = ($margin/$totalBiaya)*100;
+                    $gpmCoss = ($marginCoss/$totalBiayaCoss)*100;
+                }
+                DB::table("sl_quotation_margin")->insert([
+                    'quotation_id' => $quotation->id,
+                    'leads_id' =>  $leads->id,
+                    'nominal_hpp' => $totalNominal,
+                    'nominal_harga_pokok' => $totalNominalCoss,
+                    'ppn_hpp' => $ppn,
+                    'ppn_harga_pokok' => $ppnCoss,
+                    'total_biaya_hpp' => $totalBiaya,
+                    'total_biaya_harga_pokok' => $totalBiayaCoss,
+                    'margin_hpp' => $margin,
+                    'margin_harga_pokok' => $marginCoss,
+                    'gpm_hpp' => $gpm,
+                    'gpm_harga_pokok' => $gpmCoss,
+                    'created_at' => $current_date_time,
+                    'created_by' => Auth::user()->full_name
+                ]);
+
+                // SINGKRON KE ACCURATE
+
+
             }
-
-            // masukkan COSS ke tabel
-            $totalNominal = 0;
-            $totalNominalCoss = 0;
-            $ppn = 0;
-            $ppnCoss = 0;
-            $totalBiaya = 0;
-            $totalBiayaCoss = 0;
-            $margin = 0;
-            $marginCoss = 0;
-            $gpm = 0;
-            $gpmCoss = 0;
-            $quotationService = new QuotationService();
-            $calcQuotation = $quotationService->calculateQuotation($quotation);
-            foreach ($calcQuotation->quotation_detail as $kd => $kbd) {
-                // Ambil sl_quotation_detail_hpp berdasarkan quotation_detail_id lalu update
-                DB::table('sl_quotation_detail_hpp')
-                    ->where('quotation_detail_id', $kbd->id)
-                    ->whereNull('deleted_at')
-                    ->update([
-                        'position_id' => $kbd->position_id,
-                        'leads_id' =>  $leads->id,
-                        'jumlah_hc' => $calcQuotation->jumlah_hc,
-                        'gaji_pokok' => $calcQuotation->nominal_upah,
-                        'total_tunjangan' => $kbd->total_tunjangan,
-                        'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
-                        'kompensasi' => $kbd->kompensasi,
-                        'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
-                        'lembur' => $kbd->lembur,
-                        'bpjs_jkk' => $kbd->bpjs_jkk,
-                        'bpjs_jkm' => $kbd->bpjs_jkm,
-                        'bpjs_jht' => $kbd->bpjs_jht,
-                        'bpjs_jp' => $kbd->bpjs_jp,
-                        'bpjs_ks' => $kbd->bpjs_kes,
-                        'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
-                        'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
-                        'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
-                        'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
-                        'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
-                        'provisi_seragam' =>  $kbd->personil_kaporlap,
-                        'provisi_peralatan' => $kbd->personil_devices ,
-                        'provisi_chemical' => $kbd->personil_chemical,
-                        'total_biaya_per_personil' => $kbd->total_personil,
-                        'total_biaya_all_personil' => $kbd->sub_total_personil,
-                        'management_fee' => $calcQuotation->nominal_management_fee,
-                        'persen_management_fee' => $calcQuotation->persentase,
-                        'provisi_ohc' => $kbd->personil_ohc,
-                        'grand_total' => $calcQuotation->grand_total_sebelum_pajak,
-                        'ppn' => $calcQuotation->ppn,
-                        'pph' => $calcQuotation->pph,
-                        'total_invoice' => $calcQuotation->total_invoice,
-                        'pembulatan' => $calcQuotation->pembulatan,
-                        'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
-                        'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->full_name
-                    ]);
-                // DB::table("sl_quotation_detail_hpp")->insert([
-                //     'quotation_id' => $quotation->id,
-                //     'quotation_detail_id' => $kbd->id,
-
-                // ]);
-
-                DB::table('sl_quotation_detail_coss')
-                    ->where('quotation_detail_id', $kbd->id)
-                    ->whereNull('deleted_at')
-                    ->update([
-                        'position_id' => $kbd->position_id,
-                        'leads_id' =>  $leads->id,
-                        'jumlah_hc' => $calcQuotation->jumlah_hc,
-                        'gaji_pokok' => $calcQuotation->nominal_upah,
-                        'total_tunjangan' => $kbd->total_tunjangan,
-                        'total_base_manpower' => $kbd->total_base_manpower,
-                        'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
-                        'kompensasi' => $kbd->kompensasi,
-                        'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
-                        'lembur' => $kbd->lembur,
-                        'bpjs_jkk' => $kbd->bpjs_jkk,
-                        'bpjs_jkm' => $kbd->bpjs_jkm,
-                        'bpjs_jht' => $kbd->bpjs_jht,
-                        'bpjs_jp' => $kbd->bpjs_jp,
-                        'bpjs_ks' => $kbd->bpjs_kes,
-                        'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
-                        'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
-                        'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
-                        'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
-                        'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
-                        'provisi_seragam' =>  $kbd->personil_kaporlap,
-                        'provisi_peralatan' => $kbd->personil_devices,
-                        'provisi_chemical' => $kbd->personil_chemical,
-                        'total_exclude_base_manpower' => $kbd->total_exclude_base_manpower,
-                        'bunga_bank' => $kbd->bunga_bank,
-                        'insentif' => $kbd->insentif,
-                        'management_fee' => $calcQuotation->nominal_management_fee_coss,
-                        'persen_bunga_bank' => $calcQuotation->persen_bunga_bank,
-                        'persen_insentif' => $calcQuotation->persen_insentif,
-                        'persen_management_fee' => $calcQuotation->persentase,
-                        'grand_total' => $calcQuotation->grand_total_sebelum_pajak_coss,
-                        'ppn' => $calcQuotation->ppn_coss,
-                        'pph' => $calcQuotation->pph_coss,
-                        'total_invoice' => $calcQuotation->total_invoice_coss,
-                        'pembulatan' => $calcQuotation->pembulatan_coss,
-                        'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
-                        'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->full_name
-                    ]);
-                // DB::table("sl_quotation_detail_coss")->insert([
-                //     'quotation_id' => $quotation->id,
-                //     'quotation_detail_id' => $kbd->id,
-                //     'position_id' => $kbd->position_id,
-                //     'leads_id' =>  $leads->id,
-                //     'jumlah_hc' => $calcQuotation->jumlah_hc,
-                //     'gaji_pokok' => $calcQuotation->nominal_upah,
-                //     'total_tunjangan' => $kbd->total_tunjangan,
-                //     'total_base_manpower' => $kbd->total_base_manpower,
-                //     'tunjangan_hari_raya' => $kbd->tunjangan_hari_raya,
-                //     'kompensasi' => $kbd->kompensasi,
-                //     'tunjangan_hari_libur_nasional' => $kbd->tunjangan_holiday,
-                //     'lembur' => $kbd->lembur,
-                //     'bpjs_jkk' => $kbd->bpjs_jkk,
-                //     'bpjs_jkm' => $kbd->bpjs_jkm,
-                //     'bpjs_jht' => $kbd->bpjs_jht,
-                //     'bpjs_jp' => $kbd->bpjs_jp,
-                //     'bpjs_ks' => $kbd->bpjs_kes,
-                //     'persen_bpjs_jkk' =>  $kbd->persen_bpjs_jkk,
-                //     'persen_bpjs_jkm' =>  $kbd->persen_bpjs_jkm,
-                //     'persen_bpjs_jht' =>  $kbd->persen_bpjs_jht,
-                //     'persen_bpjs_jp' =>  $kbd->persen_bpjs_jp,
-                //     'persen_bpjs_ks' =>  $kbd->persen_bpjs_kes,
-                //     'provisi_seragam' =>  $kbd->personil_kaporlap,
-                //     'provisi_peralatan' => $kbd->personil_devices ,
-                //     'provisi_chemical' => $kbd->personil_chemical,
-                //     'total_exclude_base_manpower' => $kbd->total_exclude_base_manpower,
-                //     'bunga_bank' => $kbd->bunga_bank,
-                //     'insentif' => $kbd->insentif,
-                //     'management_fee' => $calcQuotation->nominal_management_fee_coss,
-                //     'persen_bunga_bank' => $calcQuotation->persen_bunga_bank,
-                //     'persen_insentif' => $calcQuotation->persen_insentif,
-                //     'persen_management_fee' => $calcQuotation->persentase,
-                //     'grand_total' => $calcQuotation->grand_total_sebelum_pajak_coss,
-                //     'ppn' => $calcQuotation->ppn_coss,
-                //     'pph' => $calcQuotation->pph_coss,
-                //     'total_invoice' => $calcQuotation->total_invoice_coss,
-                //     'pembulatan' => $calcQuotation->pembulatan_coss,
-                //     'is_pembulatan' => ($calcQuotation->penagihan == 'Tanpa Pembulatan') ? 0 : 1,
-                //     'created_at' => $current_date_time,
-                //     'created_by' => Auth::user()->full_name
-                // ]);
-
-                $totalNominal += $calcQuotation->total_invoice;
-                $totalNominalCoss += $calcQuotation->total_invoice_coss;
-                $ppn += $calcQuotation->ppn;
-                $ppnCoss += $calcQuotation->ppn_coss;
-                $totalBiaya += $kbd->sub_total_personil;
-                $totalBiayaCoss += $kbd->sub_total_personil;
-                $margin = $totalNominal-$ppn-$totalBiaya;
-                $marginCoss = $totalNominalCoss-$ppnCoss-$totalBiayaCoss;
-                $gpm = ($margin/$totalBiaya)*100;
-                $gpmCoss = ($marginCoss/$totalBiayaCoss)*100;
-            }
-            DB::table("sl_quotation_margin")->insert([
-                'quotation_id' => $quotation->id,
-                'leads_id' =>  $leads->id,
-                'nominal_hpp' => $totalNominal,
-                'nominal_harga_pokok' => $totalNominalCoss,
-                'ppn_hpp' => $ppn,
-                'ppn_harga_pokok' => $ppnCoss,
-                'total_biaya_hpp' => $totalBiaya,
-                'total_biaya_harga_pokok' => $totalBiayaCoss,
-                'margin_hpp' => $margin,
-                'margin_harga_pokok' => $marginCoss,
-                'gpm_hpp' => $gpm,
-                'gpm_harga_pokok' => $gpmCoss,
-                'created_at' => $current_date_time,
-                'created_by' => Auth::user()->full_name
-            ]);
-
-            // SINGKRON KE ACCURATE
 
             // Masukkan ke activity
             //insert ke activity sebagai activity pertama

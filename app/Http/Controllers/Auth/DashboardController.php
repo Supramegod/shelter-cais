@@ -192,7 +192,7 @@ class DashboardController extends Controller
                 'data' => $data->jumlah_data
             ];
         }
-        
+
 
         // dd($leadsGroupedByKebutuhan);
 
@@ -1452,43 +1452,6 @@ class DashboardController extends Controller
                return "";
             })
             ->rawColumns(['aksi'])
-            ->make(true);
-    }
-
-    public function dashboardManagerCrm(Request $request)
-    {
-        return view('home.dashboard-manager-crm');
-    }
-    public function listPksSiapAktif(Request $request){
-        $listPksAktif = \DB::table('sl_site')
-            ->join('sl_pks', 'sl_site.pks_id', '=', 'sl_pks.id')
-            ->whereNull('sl_site.deleted_at')
-            ->whereNull('sl_pks.deleted_at')
-            ->where('sl_pks.status_pks_id', 6)
-            ->whereNotNull('sl_site.quotation_id')
-            ->whereNotIn('sl_site.id', function($query) {
-            $query->select('site_id')
-                ->from('shelter3_hris.m_site')
-                ->whereNotNull('site_id')
-                ->where('is_active', 1);
-            })
-            ->select(
-            'sl_site.id',
-            'sl_pks.id as pks_id',
-            'sl_site.nomor',
-            'sl_site.nama_site',
-            'sl_site.provinsi',
-            'sl_site.kota',
-            'sl_site.kebutuhan',
-            'sl_pks.nomor as nomor_pks'
-            )
-            ->get();
-
-        return DataTables::of($listPksAktif)
-            ->addColumn('check', function ($data) {
-            return '<input type="checkbox" class="check-site" value="'.$data->id.'">';
-            })
-            ->rawColumns(['check'])
             ->make(true);
     }
 }
