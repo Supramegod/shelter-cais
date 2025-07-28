@@ -177,6 +177,12 @@ class DashboardManagerCrmController extends Controller
             ->whereIn('sl_pks.status_pks_id', [7])
             ->where('sl_pks.kontrak_akhir', '<', Carbon::now())
             ->get();
+
+        foreach ($listKontrakSiapTerminated as $key => $value) {
+            $value->aksi =
+                '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a> ' .
+                '<a href="'.route('putus-kontrak.add-putus-kontrak', $value->id).'" class="btn btn-danger btn-sm"><i class="mdi mdi-close"></i> Putus Kontrak</a>';
+        }
         $countKontrakSiapTerminated = $listKontrakSiapTerminated->count();
 
          $listKontrakKurangDari1Bulan = DB::table('sl_pks')
@@ -200,6 +206,12 @@ class DashboardManagerCrmController extends Controller
             ->where('sl_pks.kontrak_akhir', '<=', Carbon::now()->addMonth())
             ->get();
 
+        foreach ($listKontrakKurangDari1Bulan as $key => $value) {
+            $value->aksi =
+                '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a> ' .
+                '<a href="'.route('putus-kontrak.add-putus-kontrak', $value->id).'" class="btn btn-danger btn-sm"><i class="mdi mdi-close"></i> Putus Kontrak</a>';
+        }
+
         $listKontrakKurangDari3Bulan = DB::table('sl_pks')
             ->select(
             'sl_pks.id',
@@ -221,7 +233,13 @@ class DashboardManagerCrmController extends Controller
             ->where('sl_pks.kontrak_akhir', '<=', Carbon::now()->addMonths(3))
             ->get();
 
-            $listKontrakAktif = DB::table('sl_pks')
+        foreach ($listKontrakKurangDari3Bulan as $key => $value) {
+            $value->aksi =
+                '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a> ' .
+                '<a href="'.route('putus-kontrak.add-putus-kontrak', $value->id).'" class="btn btn-danger btn-sm"><i class="mdi mdi-close"></i> Putus Kontrak</a>';
+        }
+
+        $listKontrakAktif = DB::table('sl_pks')
             ->select(
             'sl_pks.id',
             'sl_pks.nomor',
@@ -240,6 +258,12 @@ class DashboardManagerCrmController extends Controller
             ->whereIn('sl_pks.status_pks_id', [7])
             ->where('sl_pks.kontrak_akhir', '>=', Carbon::now()->addMonths(3))
             ->get();
+
+        foreach ($listKontrakAktif as $key => $value) {
+            $value->aksi =
+                '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a> ' .
+                '<a href="'.route('putus-kontrak.add-putus-kontrak', $value->id).'" class="btn btn-danger btn-sm"><i class="mdi mdi-close"></i> Putus Kontrak</a>';
+        }
 
         $countKontrakSiapTerminated = $listKontrakSiapTerminated->count();
         $countKontrakKurangDari1Bulan = $listKontrakKurangDari1Bulan->count();

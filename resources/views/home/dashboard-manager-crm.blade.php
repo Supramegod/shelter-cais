@@ -437,6 +437,7 @@ function openNormalDataTableSection(id, title, element,container) {
                     <table id="table-siap-terminate" class="table table-bordered table-striped" style="width:100%">
                     <thead>
                         <tr>
+                        <th>Aksi</th>
                         <th>Nomor</th>
                         <th>Nama Perusahaan</th>
                         <th>Cabang</th>
@@ -461,6 +462,7 @@ function openNormalDataTableSection(id, title, element,container) {
             $('#table-siap-terminate').DataTable({
                 data: data,
                 columns: [
+                    { data: 'aksi', className: 'text-center nowrap' },
                     { data: 'nomor', className: 'text-center nowrap' },
                     { data: 'nama_perusahaan', className: 'text-center nowrap' },
                     { data: 'cabang', className: 'text-center nowrap' },
@@ -493,6 +495,7 @@ function openNormalDataTableSection(id, title, element,container) {
                 <table id="table-berakhir-1-bulan" class="table table-bordered table-striped" style="width:100%">
                 <thead>
                 <tr>
+                <th>Aksi</th>
                 <th>Nomor</th>
                 <th>Nama Perusahaan</th>
                 <th>Cabang</th>
@@ -517,6 +520,7 @@ function openNormalDataTableSection(id, title, element,container) {
             $('#table-berakhir-1-bulan').DataTable({
             data: data,
             columns: [
+                { data: 'aksi', className: 'text-center nowrap' },
                 { data: 'nomor', className: 'text-center nowrap' },
                 { data: 'nama_perusahaan', className: 'text-center nowrap' },
                 { data: 'cabang', className: 'text-center nowrap' },
@@ -549,6 +553,7 @@ function openNormalDataTableSection(id, title, element,container) {
                 <table id="table-berakhir-3-bulan" class="table table-bordered table-striped" style="width:100%">
                 <thead>
                 <tr>
+                <th>Aksi</th>
                 <th>Nomor</th>
                 <th>Nama Perusahaan</th>
                 <th>Cabang</th>
@@ -573,6 +578,7 @@ function openNormalDataTableSection(id, title, element,container) {
             $('#table-berakhir-3-bulan').DataTable({
             data: data,
             columns: [
+                { data: 'aksi', className: 'text-center nowrap' },
                 { data: 'nomor', className: 'text-center nowrap' },
                 { data: 'nama_perusahaan', className: 'text-center nowrap' },
                 { data: 'cabang', className: 'text-center nowrap' },
@@ -605,6 +611,7 @@ function openNormalDataTableSection(id, title, element,container) {
                 <table id="table-kontrak-aktif" class="table table-bordered table-striped" style="width:100%">
                 <thead>
                 <tr>
+                <th>Aksi</th>
                 <th>Nomor</th>
                 <th>Nama Perusahaan</th>
                 <th>Cabang</th>
@@ -629,6 +636,7 @@ function openNormalDataTableSection(id, title, element,container) {
             $('#table-kontrak-aktif').DataTable({
             data: data,
             columns: [
+                { data: 'aksi', className: 'text-center nowrap' },
                 { data: 'nomor', className: 'text-center nowrap' },
                 { data: 'nama_perusahaan', className: 'text-center nowrap' },
                 { data: 'cabang', className: 'text-center nowrap' },
