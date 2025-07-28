@@ -2681,17 +2681,17 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
         try {
             $pks = DB::table('sl_pks')->where('id',$pksId)->first();
 
-            $data = DB::table('sl_pks')->whereNull('deleted_at')->where('id',$pksId)->first();
-            $leads = DB::table('sl_leads')->where('id',$data->leads_id)->first();
+            $pks = DB::table('sl_pks')->whereNull('deleted_at')->where('id',$pksId)->first();
+            $leads = DB::table('sl_leads')->where('id',$pks->leads_id)->first();
             // $spk = DB::table('sl_spk')->whereNull('deleted_at')->where('id',$data->spk_id)->first();
             // $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$spk->quotation_id)->first();
 
-            $data->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$data->tgl_pks)->isoFormat('D MMMM Y');
-            $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->isoFormat('D MMMM Y');
-            $status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$data->status_pks_id)->first();
-            $data->status = $status ? $status->nama : "";
+            $pks->stgl_pks = Carbon::createFromFormat('Y-m-d H:i:s',$pks->tgl_pks)->isoFormat('D MMMM Y');
+            $pks->screated_at = Carbon::createFromFormat('Y-m-d H:i:s',$pks->created_at)->isoFormat('D MMMM Y');
+            $status = DB::table('m_status_pks')->whereNull('deleted_at')->where('id',$pks->status_pks_id)->first();
+            $pks->status = $status ? $status->nama : "";
             $perjanjian = DB::table('sl_pks_perjanjian')->whereNull('deleted_at')->where('pks_id',$pksId)->whereNull('deleted_at')->get();
-            $data->site = DB::table('sl_site')->whereNull('deleted_at')->where('pks_id',$pksId)->get();
+            $pks->site = DB::table('sl_site')->whereNull('deleted_at')->where('pks_id',$pksId)->get();
 
             $activityList = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('pks_id',$pksId)->where('is_activity',1)->orderBy('created_at','desc')->get();
             foreach ($activityList as $key => $value) {
@@ -2776,7 +2776,6 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $listQuotation = [];
             $listSpk = [];
 
-            // Fix: $data is a collection, not an object, so $data->site will not work.
             // Instead, get all sites for this PKS.
             $siteList = DB::table('sl_site')->where('pks_id', $pksId)->whereNull('deleted_at')->get();
 
@@ -2784,6 +2783,9 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             $quotationSite = DB::table('sl_quotation')->where('id',$value->quotation_id)->first();
             $spkSite = DB::table('sl_spk')->where('id',$value->spk_id)->first();
             if ($quotationSite && !in_array($quotationSite->id, array_column($listQuotation, 'id'))) {
+                $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotationSite->id");
+                $quotationService = new QuotationService();
+                $calcQuotation = $quotationService->calculateQuotation($quotationSite);
                 $listQuotation[] = $quotationSite;
             }
             if ($spkSite && !in_array($spkSite->id, array_column($listSpk, 'id'))) {
@@ -2813,7 +2815,6 @@ font-family:&quot;Arial&quot;,sans-serif;mso-ansi-language:IN"><o:p></o:p></span
             return view('sales.pks.view-new',compact(
             'daftarTunjangan',
             'issues',
-            'data',
             'leads',
             'quotationData',
             'spk',

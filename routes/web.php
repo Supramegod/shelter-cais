@@ -253,7 +253,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/pks/list-terhapus', 'listTerhapus')->name('pks.list-terhapus'); // ajax
         Route::get('/sales/pks/available-spk', 'availableSpk')->name('pks.available-spk'); // ajax
         Route::post('/sales/pks/save', 'save')->name('pks.save');
-        Route::get('/sales/pks/view/{id}', 'view')->name('pks.view');
+        Route::get('/sales/pks/view/{id}', 'viewNew')->name('pks.view');
+        Route::get('/sales/pks/view-new/{id}', 'viewNew')->name('pks.view-new');
         Route::post('/sales/pks/upload-pks', 'uploadPks')->name('pks.upload-pks');
 
         Route::post('/sales/pks/approve', 'approve')->name('pks.approve');

@@ -45,6 +45,11 @@ class DashboardManagerCrmController extends Controller
             ->whereIn('sl_pks.status_pks_id', [1,5,6])
             ->whereRaw('(SELECT COUNT(*) FROM sl_site WHERE deleted_at IS NULL AND pks_id = sl_pks.id AND quotation_id IS NOT NULL) = 0')
             ->get();
+
+            foreach ($listKontrakBelumAdaQuotation as $key => $value) {
+                $value->aksi = '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a>';
+            }
+
         $countKontrakBelumAdaQuotation = $listKontrakBelumAdaQuotation->count();
 
         $listKontrakBelumAktif = DB::table('sl_pks')
@@ -66,6 +71,10 @@ class DashboardManagerCrmController extends Controller
             ->whereIn('sl_pks.status_pks_id', [1,5,6])
             ->whereNotIn('sl_pks.id', $listKontrakBelumAdaQuotation->pluck('id')->toArray())
             ->get();
+
+        foreach ($listKontrakBelumAktif as $key => $value) {
+            $value->aksi = '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a>';
+        }
 
         $listKontrakBelumIsiChecklist = [];
         foreach ($listKontrakBelumAktif as $key => $value) {
@@ -112,6 +121,9 @@ class DashboardManagerCrmController extends Controller
             ->whereNotIn('sl_pks.id', array_map(function($item) { return $item->id; }, $listKontrakBelumIsiChecklist))
             ->whereNull('sl_pks.link_pks_disetujui')
             ->get();
+        foreach ($listKontrakBelumUploadPks as $key => $value) {
+            $value->aksi = '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a>';
+        }
         $countKontrakBelumUploadPks = $listKontrakBelumUploadPks->count();
 
         $listKontrakSiapDiaktifkan = DB::table('sl_pks')
@@ -135,7 +147,104 @@ class DashboardManagerCrmController extends Controller
             ->whereNotIn('sl_pks.id', array_map(function($item) { return $item->id; }, $listKontrakBelumIsiChecklist))
             ->whereNotIn('sl_pks.id', $listKontrakBelumUploadPks->pluck('id')->toArray())
             ->get();
+        foreach ($listKontrakSiapDiaktifkan as $key => $value) {
+            $value->aksi = '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a>';
+        }
         $countKontrakSiapDiaktifkan = $listKontrakSiapDiaktifkan->count();
+
+
+        $countKontrakSiapTerminated = 0;
+        $countKontrakKurangDari1Bulan = 0;
+        $countKontrakKurangDari3Bulan = 0;
+        $countKontrakAktif = 0;
+
+        $listKontrakSiapTerminated = DB::table('sl_pks')
+            ->select(
+            'sl_pks.id',
+            'sl_pks.nomor',
+            'sl_pks.nama_perusahaan',
+            DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+            'sl_pks.alamat_perusahaan',
+            'sl_pks.layanan',
+            'sl_pks.bidang_usaha',
+            'sl_pks.jenis_perusahaan',
+            'sl_pks.provinsi',
+            'sl_pks.kota',
+            'sl_pks.kategori_sesuai_hc',
+            'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereIn('sl_pks.status_pks_id', [7])
+            ->where('sl_pks.kontrak_akhir', '<', Carbon::now())
+            ->get();
+        $countKontrakSiapTerminated = $listKontrakSiapTerminated->count();
+
+         $listKontrakKurangDari1Bulan = DB::table('sl_pks')
+            ->select(
+            'sl_pks.id',
+            'sl_pks.nomor',
+            'sl_pks.nama_perusahaan',
+            DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+            'sl_pks.alamat_perusahaan',
+            'sl_pks.layanan',
+            'sl_pks.bidang_usaha',
+            'sl_pks.jenis_perusahaan',
+            'sl_pks.provinsi',
+            'sl_pks.kota',
+            'sl_pks.kategori_sesuai_hc',
+            'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereIn('sl_pks.status_pks_id', [7])
+            ->where('sl_pks.kontrak_akhir', '>=', Carbon::now())
+            ->where('sl_pks.kontrak_akhir', '<=', Carbon::now()->addMonth())
+            ->get();
+
+        $listKontrakKurangDari3Bulan = DB::table('sl_pks')
+            ->select(
+            'sl_pks.id',
+            'sl_pks.nomor',
+            'sl_pks.nama_perusahaan',
+            DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+            'sl_pks.alamat_perusahaan',
+            'sl_pks.layanan',
+            'sl_pks.bidang_usaha',
+            'sl_pks.jenis_perusahaan',
+            'sl_pks.provinsi',
+            'sl_pks.kota',
+            'sl_pks.kategori_sesuai_hc',
+            'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereIn('sl_pks.status_pks_id', [7])
+            ->where('sl_pks.kontrak_akhir', '>=', Carbon::now())
+            ->where('sl_pks.kontrak_akhir', '<=', Carbon::now()->addMonths(3))
+            ->get();
+
+            $listKontrakAktif = DB::table('sl_pks')
+            ->select(
+            'sl_pks.id',
+            'sl_pks.nomor',
+            'sl_pks.nama_perusahaan',
+            DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+            'sl_pks.alamat_perusahaan',
+            'sl_pks.layanan',
+            'sl_pks.bidang_usaha',
+            'sl_pks.jenis_perusahaan',
+            'sl_pks.provinsi',
+            'sl_pks.kota',
+            'sl_pks.kategori_sesuai_hc',
+            'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereIn('sl_pks.status_pks_id', [7])
+            ->where('sl_pks.kontrak_akhir', '>=', Carbon::now()->addMonths(3))
+            ->get();
+
+        $countKontrakSiapTerminated = $listKontrakSiapTerminated->count();
+        $countKontrakKurangDari1Bulan = $listKontrakKurangDari1Bulan->count();
+        $countKontrakKurangDari3Bulan = $listKontrakKurangDari3Bulan->count();
+        $countKontrakAktif = $listKontrakAktif->count();
 
 
         return view('home.dashboard-manager-crm',compact(
@@ -146,7 +255,15 @@ class DashboardManagerCrmController extends Controller
             'listKontrakBelumAdaQuotation',
             'listKontrakBelumIsiChecklist',
             'listKontrakBelumUploadPks',
-            'listKontrakSiapDiaktifkan'
+            'listKontrakSiapDiaktifkan',
+            'listKontrakSiapTerminated',
+            'countKontrakSiapTerminated',
+            'listKontrakKurangDari1Bulan',
+            'countKontrakKurangDari1Bulan',
+            'listKontrakKurangDari3Bulan',
+            'countKontrakKurangDari3Bulan',
+            'listKontrakAktif',
+            'countKontrakAktif'
         ));
     }
     public function listPksSiapAktif(Request $request){

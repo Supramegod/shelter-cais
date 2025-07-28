@@ -107,7 +107,7 @@
     <div class="row">
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card card-border-shadow-danger h-100 card-highlightable"
-             onclick="openNormalDataTableSection('siap-terminate', 'KONTRAK SIAP DI TERMINATE', this)">
+             onclick="openNormalDataTableSection('siap-terminate', 'KONTRAK SIAP DI TERMINATE', this, 'container-detail-2')">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
                 <div class="avatar me-2">
@@ -115,7 +115,7 @@
                     <i class="mdi mdi-close-circle-outline mdi-20px"></i>
                     </span>
                 </div>
-                <h4 class="ms-1 mb-0 display-6">0</h4>
+                <h4 class="ms-1 mb-0 display-6">{{$countKontrakSiapTerminated}}</h4>
                 </div>
                 <p class="mb-0 text-heading">Kontrak Siap Di Terminate</p>
             </div>
@@ -123,7 +123,7 @@
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card card-border-shadow-warning h-100 card-highlightable"
-             onclick="openNormalDataTableSection('berakhir-1-bulan', 'KONTRAK BERAKHIR DALAM 1 BULAN', this)">
+             onclick="openNormalDataTableSection('berakhir-1-bulan', 'KONTRAK BERAKHIR DALAM 1 BULAN', this, 'container-detail-2')">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
                 <div class="avatar me-2">
@@ -131,7 +131,7 @@
                     <i class="mdi mdi-calendar-alert mdi-20px"></i>
                     </span>
                 </div>
-                <h4 class="ms-1 mb-0 display-6">0</h4>
+                <h4 class="ms-1 mb-0 display-6">{{$countKontrakKurangDari1Bulan}}</h4>
                 </div>
                 <p class="mb-0 text-heading">Kontrak Berakhir Dalam 1 Bulan</p>
             </div>
@@ -139,7 +139,7 @@
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card card-border-shadow-secondary h-100 card-highlightable"
-             onclick="openNormalDataTableSection('berakhir-3-bulan', 'KONTRAK BERAKHIR DALAM 3 BULAN', this)">
+             onclick="openNormalDataTableSection('berakhir-3-bulan', 'KONTRAK BERAKHIR DALAM 3 BULAN', this, 'container-detail-2')">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
                 <div class="avatar me-2">
@@ -147,7 +147,7 @@
                     <i class="mdi mdi-calendar-clock mdi-20px"></i>
                     </span>
                 </div>
-                <h4 class="ms-1 mb-0 display-6">0</h4>
+                <h4 class="ms-1 mb-0 display-6">{{$countKontrakKurangDari3Bulan}}</h4>
                 </div>
                 <p class="mb-0 text-heading">Kontrak Berakhir Dalam 3 Bulan</p>
             </div>
@@ -155,7 +155,7 @@
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card card-border-shadow-success h-100 card-highlightable"
-             onclick="openNormalDataTableSection('berjalan', 'KONTRAK BERJALAN', this)">
+             onclick="openNormalDataTableSection('berjalan', 'KONTRAK BERJALAN', this, 'container-detail-2')">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2 pb-1">
                 <div class="avatar me-2">
@@ -163,13 +163,14 @@
                     <i class="mdi mdi-play-circle-outline mdi-20px"></i>
                     </span>
                 </div>
-                <h4 class="ms-1 mb-0 display-6">0</h4>
+                <h4 class="ms-1 mb-0 display-6">{{$countKontrakAktif}}</h4>
                 </div>
                 <p class="mb-0 text-heading">Kontrak Berjalan</p>
             </div>
             </div>
         </div>
     </div>
+    <div id="container-detail-2" class="my-4"></div>
 
 </div>
 @endsection
@@ -204,6 +205,7 @@ function openNormalDataTableSection(id, title, element,container) {
                     <table id="table-belum-quotation" class="table table-bordered table-striped" style="width:100%">
                     <thead>
                         <tr>
+                        <th>Aksi</th>
                         <th>Nomor</th>
                         <th>Nama Perusahaan</th>
                         <th>Cabang</th>
@@ -228,6 +230,7 @@ function openNormalDataTableSection(id, title, element,container) {
             $('#table-belum-quotation').DataTable({
             data: data,
             columns: [
+                { data: 'aksi', className: 'text-center nowrap' },
                 { data: 'nomor', className: 'text-center nowrap' },
                 { data: 'nama_perusahaan', className: 'text-center nowrap' },
                 { data: 'cabang', className: 'text-center nowrap' },
@@ -260,6 +263,7 @@ function openNormalDataTableSection(id, title, element,container) {
                     <table id="table-belum-checklist" class="table table-bordered table-striped" style="width:100%">
                     <thead>
                         <tr>
+                        <th>Aksi</th>
                         <th>Nomor</th>
                         <th>Nama Perusahaan</th>
                         <th>Cabang</th>
@@ -284,6 +288,7 @@ function openNormalDataTableSection(id, title, element,container) {
             $('#table-belum-checklist').DataTable({
             data: data,
             columns: [
+                { data: 'aksi', className: 'text-center nowrap' },
                 { data: 'nomor', className: 'text-center nowrap' },
                 { data: 'nama_perusahaan', className: 'text-center nowrap' },
                 { data: 'cabang', className: 'text-center nowrap' },
@@ -316,6 +321,7 @@ function openNormalDataTableSection(id, title, element,container) {
                     <table id="table-belum-upload-pks" class="table table-bordered table-striped" style="width:100%">
                     <thead>
                         <tr>
+                        <th>Aksi</th>
                         <th>Nomor</th>
                         <th>Nama Perusahaan</th>
                         <th>Cabang</th>
@@ -340,6 +346,7 @@ function openNormalDataTableSection(id, title, element,container) {
             $('#table-belum-upload-pks').DataTable({
             data: data,
             columns: [
+                { data: 'aksi', className: 'text-center nowrap' },
                 { data: 'nomor', className: 'text-center nowrap' },
                 { data: 'nama_perusahaan', className: 'text-center nowrap' },
                 { data: 'cabang', className: 'text-center nowrap' },
@@ -372,6 +379,7 @@ function openNormalDataTableSection(id, title, element,container) {
                     <table id="table-siap-diaktifkan" class="table table-bordered table-striped" style="width:100%">
                     <thead>
                         <tr>
+                        <th>Aksi</th>
                         <th>Nomor</th>
                         <th>Nama Perusahaan</th>
                         <th>Cabang</th>
@@ -394,6 +402,231 @@ function openNormalDataTableSection(id, title, element,container) {
             $(`#${container}`).html(tableHtml);
 
             $('#table-siap-diaktifkan').DataTable({
+            data: data,
+            columns: [
+                { data: 'aksi', className: 'text-center nowrap' },
+                { data: 'nomor', className: 'text-center nowrap' },
+                { data: 'nama_perusahaan', className: 'text-center nowrap' },
+                { data: 'cabang', className: 'text-center nowrap' },
+                { data: 'alamat_perusahaan', className: 'text-center nowrap' },
+                { data: 'layanan', className: 'text-center nowrap' },
+                { data: 'bidang_usaha', className: 'text-center nowrap' },
+                { data: 'jenis_perusahaan', className: 'text-center nowrap' },
+                { data: 'provinsi', className: 'text-center nowrap' },
+                { data: 'kota', className: 'text-center nowrap' },
+                { data: 'kategori_sesuai_hc', className: 'text-center nowrap' },
+                { data: 'created_by', className: 'text-center nowrap' }
+            ],
+            scrollX: true,
+            iDisplayLength: 10,
+            processing: true,
+            language: {
+                loadingRecords: '&nbsp;',
+                processing: 'Loading...'
+            }
+            });
+        } else if (id === 'siap-terminate') {
+            let data = @json($listKontrakSiapTerminated);
+            let tableHtml = `
+            <div class="card">
+                <div class="card-header">
+                <h5 class="mb-0">${title}</h5>
+                </div>
+                <div class="card-body">
+                <div class="table-responsive">
+                    <table id="table-siap-terminate" class="table table-bordered table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                        <th>Nomor</th>
+                        <th>Nama Perusahaan</th>
+                        <th>Cabang</th>
+                        <th>Alamat</th>
+                        <th>Layanan</th>
+                        <th>Bidang Usaha</th>
+                        <th>Jenis Perusahaan</th>
+                        <th>Provinsi</th>
+                        <th>Kota</th>
+                        <th>Kategori HC</th>
+                        <th>Created By</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+            `;
+            $(`#${container}`).html(tableHtml);
+
+            $('#table-siap-terminate').DataTable({
+                data: data,
+                columns: [
+                    { data: 'nomor', className: 'text-center nowrap' },
+                    { data: 'nama_perusahaan', className: 'text-center nowrap' },
+                    { data: 'cabang', className: 'text-center nowrap' },
+                    { data: 'alamat_perusahaan', className: 'text-center nowrap' },
+                    { data: 'layanan', className: 'text-center nowrap' },
+                    { data: 'bidang_usaha', className: 'text-center nowrap' },
+                    { data: 'jenis_perusahaan', className: 'text-center nowrap' },
+                    { data: 'provinsi', className: 'text-center nowrap' },
+                    { data: 'kota', className: 'text-center nowrap' },
+                    { data: 'kategori_sesuai_hc', className: 'text-center nowrap' },
+                    { data: 'created_by', className: 'text-center nowrap' }
+                ],
+                scrollX: true,
+                iDisplayLength: 10,
+                processing: true,
+                language: {
+                    loadingRecords: '&nbsp;',
+                    processing: 'Loading...'
+                }
+            });
+        } else if (id === 'berakhir-1-bulan') {
+            let data = @json($listKontrakKurangDari1Bulan);
+            let tableHtml = `
+            <div class="card">
+            <div class="card-header">
+            <h5 class="mb-0">${title}</h5>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive">
+                <table id="table-berakhir-1-bulan" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                <tr>
+                <th>Nomor</th>
+                <th>Nama Perusahaan</th>
+                <th>Cabang</th>
+                <th>Alamat</th>
+                <th>Layanan</th>
+                <th>Bidang Usaha</th>
+                <th>Jenis Perusahaan</th>
+                <th>Provinsi</th>
+                <th>Kota</th>
+                <th>Kategori HC</th>
+                <th>Created By</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+            </div>
+            `;
+            $(`#${container}`).html(tableHtml);
+
+            $('#table-berakhir-1-bulan').DataTable({
+            data: data,
+            columns: [
+                { data: 'nomor', className: 'text-center nowrap' },
+                { data: 'nama_perusahaan', className: 'text-center nowrap' },
+                { data: 'cabang', className: 'text-center nowrap' },
+                { data: 'alamat_perusahaan', className: 'text-center nowrap' },
+                { data: 'layanan', className: 'text-center nowrap' },
+                { data: 'bidang_usaha', className: 'text-center nowrap' },
+                { data: 'jenis_perusahaan', className: 'text-center nowrap' },
+                { data: 'provinsi', className: 'text-center nowrap' },
+                { data: 'kota', className: 'text-center nowrap' },
+                { data: 'kategori_sesuai_hc', className: 'text-center nowrap' },
+                { data: 'created_by', className: 'text-center nowrap' }
+            ],
+            scrollX: true,
+            iDisplayLength: 10,
+            processing: true,
+            language: {
+                loadingRecords: '&nbsp;',
+                processing: 'Loading...'
+            }
+            });
+        } else if (id === 'berakhir-3-bulan') {
+            let data = @json($listKontrakKurangDari3Bulan);
+            let tableHtml = `
+            <div class="card">
+            <div class="card-header">
+            <h5 class="mb-0">${title}</h5>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive">
+                <table id="table-berakhir-3-bulan" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                <tr>
+                <th>Nomor</th>
+                <th>Nama Perusahaan</th>
+                <th>Cabang</th>
+                <th>Alamat</th>
+                <th>Layanan</th>
+                <th>Bidang Usaha</th>
+                <th>Jenis Perusahaan</th>
+                <th>Provinsi</th>
+                <th>Kota</th>
+                <th>Kategori HC</th>
+                <th>Created By</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+            </div>
+            `;
+            $(`#${container}`).html(tableHtml);
+
+            $('#table-berakhir-3-bulan').DataTable({
+            data: data,
+            columns: [
+                { data: 'nomor', className: 'text-center nowrap' },
+                { data: 'nama_perusahaan', className: 'text-center nowrap' },
+                { data: 'cabang', className: 'text-center nowrap' },
+                { data: 'alamat_perusahaan', className: 'text-center nowrap' },
+                { data: 'layanan', className: 'text-center nowrap' },
+                { data: 'bidang_usaha', className: 'text-center nowrap' },
+                { data: 'jenis_perusahaan', className: 'text-center nowrap' },
+                { data: 'provinsi', className: 'text-center nowrap' },
+                { data: 'kota', className: 'text-center nowrap' },
+                { data: 'kategori_sesuai_hc', className: 'text-center nowrap' },
+                { data: 'created_by', className: 'text-center nowrap' }
+            ],
+            scrollX: true,
+            iDisplayLength: 10,
+            processing: true,
+            language: {
+                loadingRecords: '&nbsp;',
+                processing: 'Loading...'
+            }
+            });
+        } else if (id === 'berjalan') {
+            let data = @json($listKontrakAktif);
+            let tableHtml = `
+            <div class="card">
+            <div class="card-header">
+            <h5 class="mb-0">${title}</h5>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive">
+                <table id="table-kontrak-aktif" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                <tr>
+                <th>Nomor</th>
+                <th>Nama Perusahaan</th>
+                <th>Cabang</th>
+                <th>Alamat</th>
+                <th>Layanan</th>
+                <th>Bidang Usaha</th>
+                <th>Jenis Perusahaan</th>
+                <th>Provinsi</th>
+                <th>Kota</th>
+                <th>Kategori HC</th>
+                <th>Created By</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+            </div>
+            `;
+            $(`#${container}`).html(tableHtml);
+
+            $('#table-kontrak-aktif').DataTable({
             data: data,
             columns: [
                 { data: 'nomor', className: 'text-center nowrap' },
