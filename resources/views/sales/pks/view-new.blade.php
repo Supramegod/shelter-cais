@@ -16,45 +16,68 @@
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <div>
                             <h4 class="card-title mb-1">Detail Kontrak</h4>
-                            @if($pks->quotation_id == null)
+                            @if(count($listQuotation) == 0)
                             <span class="text-danger">
                                 <strong>Belum ada Quotation.</strong>
                             </span>
-                            @elseif($quotation->step < 100)
-                            <span class="text-warning">
-                                <strong>Quotation belum Lengkap.</strong>
-                            </span>
+                            @else
+                            @foreach($listQuotation as $quotation)
+                                @if($quotation->step < 100)
+                                    <span class="text-warning">
+                                        <strong>Quotation {{$quotation->nomor}} belum Lengkap.</strong>
+                                    </span>
+                                @endif
+                            @endforeach
                             @endif
                         </div>
                         <div>
-                            @if($pks->quotation_id == null)
+                            @if(count($listQuotation) == 0)
                             <a href="{{ route('lengkapi-quotation.add', $pks->id) }}" class="btn btn-primary">
                                 <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lengkapi Quotation
                             </a>
                             <a href="{{ route('quotation-sandbox.add', $pks->id) }}" class="btn btn-danger">
                                 <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Quotation Sandbox
                             </a>
-                            @elseif($quotation->step < 100)
-                                @if($quotation->is_sandbox==0)
-                                <a href="{{ route('lengkapi-quotation.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-primary">
-                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation
-                                </a>
+                            @else
+                                @if($pks->status_pks_id == 6 && in_array(Auth::user()->role_id, [56, 2]))
+                                    <a href="javascript:void(0)" class="btn btn-info waves-effect waves-light" id="aktifkan-site" data-id="{{$pks->id}}">
+                                        <span class="me-1">Aktifkan Site</span>
+                                        <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
+                                    </a>
+                                @elseif($pks->status_pks_id == 7)
+                                    <a href="javascript:void(0)" class="btn btn-success waves-effect waves-light">
+                                        <span class="me-1">Site Aktif</span>
+                                        <i class="mdi mdi-check"></i>
+                                    </a>
+                                @endif
+                                @if(!$isLowongan)
+                                    <a href="javascript:void(0)" class="btn btn-warning waves-effect waves-light" id="buat-lowongan" data-id="{{$pks->id}}">
+                                        <span class="me-1">Buat Lowongan</span>
+                                        <i class="mdi mdi-arrow-right scaleX-n1-rtl"></i>
+                                    </a>
                                 @else
-                                <a href="{{ route('quotation-sandbox.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-danger">
-                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation Sandbox
+                                    <a href="javascript:void(0)" class="btn btn-success waves-effect waves-light">
+                                        <span class="me-1">Lowongan Terbentuk</span>
+                                        <i class="mdi mdi-check"></i>
+                                    </a>
+                                @endif
+                                @if($pks->status_pks_id != 7)
+                                    <a href="javascript:void(0)" id="btn-ajukan-ulang" class="btn btn-danger waves-effect waves-light">
+                                        <span class="me-1">Ajukan Ulang Quotation</span>
+                                        <i class="mdi mdi-reload scaleX-n1-rtl"></i>
+                                    </a>
                                 @endif
                             @endif
-
                             <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between mb-3">
+                    <!-- <div class="d-flex justify-content-between mb-3">
                         <button id="btn-toggle" class="btn btn-info btn-sm" onclick="toggleLeftPanel()">
                             <i class="mdi mdi-eye-off"></i>&nbsp; Hide Detail Kontrak
                         </button>
-                    </div>
+                    </div> -->
                     <div class="row">
                         <!-- Aktifitas Leads -->
                         <div class="mb-3" id="right-panel">
@@ -144,11 +167,11 @@
                                                     </tr>
                                                     <tr>
                                                         <td>Quotation</td>
-                                                        <td><b>{{ $quotation ? $quotation->nomor : '' }}</b></td>
+                                                        <td><b>-</b></td>
                                                     </tr>
                                                     <tr>
                                                         <td>SPK</td>
-                                                        <td><b>{{ $spk ? $spk->nomor : '' }}</b></td>
+                                                        <td><b>-</b></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -299,7 +322,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tbody-site">
-                                                    @foreach($data->site as $index => $site)
+                                                    @foreach($pks->site as $index => $site)
                                                     <tr>
                                                         <td>{{$index + 1}}</td>
                                                         <td>{{$site->nama_site}}</td>
@@ -363,49 +386,55 @@
                                     </ul>
                                 </div>
                                 <div class="tab-pane fade" id="hpp" role="tabpanel" aria-labelledby="hpp-tab">
-                                    @if($quotation != null)
-                                    @if($quotation->step >= 100)
-                                        @include('sales.quotation.includes.hpp')
-                                    @else
+                                    @foreach($listQuotation as $index => $quotation)
+                                        @if($quotation != null)
+                                        @if($quotation->step >= 100)
+                                            @include('sales.quotation.includes.hpp')
+                                        @else
+                                            <div class="alert alert-warning" role="alert">
+                                                <strong>Quotation Belum Lengkap.</strong>
+                                            </div>
+                                        @endif
+                                        @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Quotation Belum Lengkap.</strong>
+                                            <strong>Data HPP tidak ditemukan.</strong>
                                         </div>
-                                    @endif
-                                    @else
-                                    <div class="alert alert-warning" role="alert">
-                                        <strong>Data HPP tidak ditemukan.</strong>
-                                    </div>
-                                    @endif
+                                        @endif
+                                    @endforeach
                                 </div>
                                 <div class="tab-pane fade" id="coss" role="tabpanel" aria-labelledby="coss-tab">
-                                @if($quotation != null)
-                                    @if($quotation->step >= 100)
-                                        @include('sales.quotation.includes.coss')
-                                    @else
+                                    @foreach($listQuotation as $index => $quotation)
+                                        @if($quotation != null)
+                                        @if($quotation->step >= 100)
+                                            @include('sales.quotation.includes.coss')
+                                        @else
+                                            <div class="alert alert-warning" role="alert">
+                                                <strong>Harga Jual Belum Lengkap.</strong>
+                                            </div>
+                                        @endif
+                                        @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Harga Jual Belum Lengkap.</strong>
+                                            <strong>Data Harga Jual tidak ditemukan.</strong>
                                         </div>
-                                    @endif
-                                    @else
-                                    <div class="alert alert-warning" role="alert">
-                                        <strong>Data Harga Jual tidak ditemukan.</strong>
-                                    </div>
-                                    @endif
+                                        @endif
+                                    @endforeach
                                 </div>
                                 <div class="tab-pane fade" id="gpm" role="tabpanel" aria-labelledby="gpm-tab">
-                                    @if($quotation != null)
-                                    @if($quotation->step >= 100)
-                                        @include('sales.quotation.includes.gpm')
-                                    @else
+                                    @foreach($listQuotation as $index => $quotation)
+                                        @if($quotation != null)
+                                        @if($quotation->step >= 100)
+                                            @include('sales.quotation.includes.gpm')
+                                        @else
+                                            <div class="alert alert-warning" role="alert">
+                                                <strong>Quotation Belum Lengkap.</strong>
+                                            </div>
+                                        @endif
+                                        @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Quotation Belum Lengkap.</strong>
+                                            <strong>Data GPM tidak ditemukan.</strong>
                                         </div>
-                                    @endif
-                                    @else
-                                    <div class="alert alert-warning" role="alert">
-                                        <strong>Data GPM tidak ditemukan.</strong>
-                                    </div>
-                                    @endif
+                                        @endif
+                                    @endforeach
                                 </div>
                                 <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">
                                     <div class="d-flex justify-content-end mb-3">
@@ -624,5 +653,366 @@
             right.classList.add('col-12');
         }
     }
+</script>
+
+<script>
+  $('#btn-ajukan-ulang').on('click',function () {
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: `Apakah Anda ingin mengajukan quotation ulang untuk PKS nomor {{$pks->nomor}} ?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Ajukan Ulang',
+      cancelButtonText: 'Batal',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Memunculkan prompt untuk mengisi alasan
+        Swal.fire({
+          title: 'Masukkan Alasan',
+          input: 'textarea',
+          inputPlaceholder: 'Tuliskan alasan pengajuan ulang...',
+          inputAttributes: {
+            'aria-label': 'Tuliskan alasan pengajuan ulang'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Ajukan',
+          cancelButtonText: 'Batal',
+          reverseButtons: true,
+          preConfirm: (alasan) => {
+            if (!alasan) {
+              Swal.showValidationMessage('Alasan tidak boleh kosong');
+              return false;
+            }
+            return alasan;
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Logika untuk memproses pengajuan ulang
+            let alasan = result.value;
+            Swal.fire({
+              title: 'Berhasil!',
+              text: 'Quotation diajukan ulang.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+            // Bangun URL dengan alasan
+            let baseUrl = "{{ route('pks.ajukan-ulang-quotation', ['pks' => ':pks']) }}";
+            let url = baseUrl.replace(':pks', {{$pks->id}});
+            // Tambahkan alasan sebagai parameter URL
+            url += `?alasan=${encodeURIComponent(alasan)}`;
+
+            location.href = url;
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire({
+              title: 'Dibatalkan',
+              text: 'Pengajuan ulang dibatalkan.',
+              icon: 'info',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          }
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire({
+          title: 'Dibatalkan',
+          text: 'Pengajuan ulang dibatalkan.',
+          icon: 'info',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    });
+  });
+
+
+  $('#btn-upload-pks').on('click', function() {
+        @if(!$isIsiChecklist)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Checklist Belum Lengkap',
+            text: 'Silakan isi checklist pada quotation terlebih dahulu sebelum Upload PKS.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+        @endif
+        // Menampilkan SweetAlert dengan form upload
+        Swal.fire({
+            title: 'Upload File',
+            html: `
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <input style="width:80%" type="file" id="file" name="file" class="swal2-input" accept="application/pdf">
+                </form>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Upload',
+            preConfirm: () => {
+                const fileInput = document.getElementById('file');
+
+                // Validasi jika file tidak dipilih
+                if (!fileInput.files.length) {
+                    Swal.showValidationMessage('Silakan pilih file terlebih dahulu');
+                    return false;
+                }
+
+                const file = fileInput.files[0];
+                const maxSize = 4 * 1024 * 1024; // 4MB dalam byte
+
+                // Validasi ukuran file
+                if (file.size > maxSize) {
+                    Swal.showValidationMessage('Ukuran file terlalu besar! Maksimum 4MB.');
+                    return false;
+                }
+
+                return file; // Mengembalikan file yang dipilih
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ambil file dari form SweetAlert
+                var file = result.value;
+                var formData = new FormData();
+                formData.append('file', file);
+                formData.append('id',{{$pks->id}});
+                formData.append('_token', '{{ csrf_token() }}'); // Pastikan ada CSRF token
+
+                // Kirim file menggunakan AJAX
+                $.ajax({
+                    url: '{{route("pks.upload-pks")}}',  // URL untuk upload di Laravel
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,  // Jangan menetapkan tipe konten
+                    processData: false,  // Jangan memproses data yang dikirim
+                    success: function(response) {
+                        Swal.fire('Berhasil!', 'File berhasil diupload', 'success');
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat upload', 'error');
+                    }
+                });
+            }
+        });
+    });
+
+    $('body').on('click', '#approve-pks', function() {
+        @if(!$isIsiChecklist)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Checklist Belum Lengkap',
+            text: 'Silakan isi checklist pada quotation terlebih dahulu sebelum approve PKS.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+        @endif
+    Swal.fire({
+      icon: "question",
+      title: "Apakah anda yakin ingin menyetujui data ini ?",
+      showCancelButton: true,
+      confirmButtonText: "Approve",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        let formData = {
+          "id":$(this).data('id'),
+          "ot":$(this).data('ot'),
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+          type: "POST",
+          url: "{{route('pks.approve')}}",
+          data:formData,
+          success: function(response){
+            let timerInterval;
+            Swal.fire({
+              title: "Pemberitahuan",
+              html: "Data berhasil disetujui.",
+              icon: "success",
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                timerInterval = setInterval(() => {
+                  timer.textContent = `${Swal.getTimerLeft()}`;
+                }, 100);
+              },
+              willClose: () => {
+                clearInterval(timerInterval);
+              }
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                location.reload();
+              }
+            });
+          },
+          error:function(error){
+            console.log(error);
+          }
+        });
+      }
+    });
+  });
+
+$('body').on('click', '#buat-lowongan', function() {
+    @if($pks->status_pks_id != 7)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Site Belum Aktif',
+            text: 'Silakan aktifkan site terlebih dahulu sebelum membuat lowongan.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+    @endif
+    Swal.fire({
+        icon: "question",
+        title: "Apakah anda yakin ingin membuat lowongan untuk PKS ini?",
+        showCancelButton: true,
+        confirmButtonText: "Buat Lowongan",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Now loading',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            var formData = {
+                id: $(this).data('id'),
+                _token: "{{ csrf_token() }}"
+            };
+            $.ajax({
+                type: "POST",
+                url: "{{ route('pks.buat-lowongan') }}",
+                data: formData,
+                success: function(response) {
+                    Swal.fire({
+                        title: "Pemberitahuan",
+                        html: "Lowongan berhasil dibuat.",
+                        icon: "success",
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function(xhr, status, errorThrown) {
+                    console.log("AJAX ERROR:", xhr.status, errorThrown);
+                    Swal.fire({
+                        title: "Terjadi Kesalahan",
+                        html: "Terjadi kesalahan saat membuat lowongan. Status: " + xhr.status,
+                        icon: "error",
+                    });
+                }
+            });
+        }
+    });
+});
+  $('body').on('click', '#aktifkan-site', function() {
+    @if(!$isIsiChecklist)
+        Swal.fire({
+            icon: 'warning',
+            title: 'Checklist Belum Lengkap',
+            text: 'Silakan isi checklist pada quotation terlebih dahulu sebelum mengaktifkan site.',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        });
+        return false;
+    @endif
+    Swal.fire({
+      icon: "question",
+      title: "Apakah anda yakin ingin mengaktifkan data ini ?",
+      showCancelButton: true,
+      confirmButtonText: "Aktifkan",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Now loading',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        });
+
+        let formData = {
+          "id":$(this).data('id'),
+          "_token": "{{ csrf_token() }}"
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "{{route('pks.aktifkan-site')}}",
+            data: formData,
+            success: function(response) {
+                if (response.status == 'error') {
+                Swal.fire({
+                    title: "Pemberitahuan",
+                    html: response.message,
+                    icon: "error",
+                });
+                return;
+                }
+
+                let timerInterval;
+                Swal.fire({
+                title: "Pemberitahuan",
+                html: "Data berhasil diaktifkan.",
+                icon: "success",
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                    const timer = Swal.getPopup().querySelector("b");
+                    timerInterval = setInterval(() => {
+                    timer.textContent = `${Swal.getTimerLeft()}`;
+                    }, 100);
+                },
+                willClose: () => {
+                    clearInterval(timerInterval);
+                }
+                }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    location.reload();
+                }
+                });
+            },
+            error: function(xhr, status, errorThrown) {
+                console.log("AJAX ERROR:", xhr.status, errorThrown);
+                Swal.fire({
+                title: "Terjadi Kesalahan",
+                html: "Terjadi kesalahan saat memproses permintaan. Status: " + xhr.status,
+                icon: "error",
+                });
+            }
+            });
+      }
+    });
+  });
 </script>
 @endsection

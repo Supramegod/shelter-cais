@@ -555,15 +555,34 @@ class QuotationService
         $quotation->ppn_coss = 0;
         $quotation->pph_coss = 0;
 
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $coss = DB::table('sl_quotation_detail_coss')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
+
+            if($coss->ppn != null){
+                $quotation->ppn_coss += $coss->ppn;
+            }
+            if($coss->pph != null){
+                $quotation->pph_coss += $coss->pph;
+            }
+        }
+
         if ($quotation->ppn_pph_dipotong == "Management Fee") {
             $quotation->dpp_coss = 11/12 * $quotation->nominal_management_fee_coss;
-            $quotation->ppn_coss = $quotation->dpp_coss *12/100;
-            $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
+            if($quotation->ppn_coss == 0){
+                $quotation->ppn_coss = $quotation->dpp_coss *12/100;
+            }
+            if($quotation->pph_coss == 0){
+                $quotation->pph_coss = $quotation->nominal_management_fee_coss * -2 / 100;
+            }
 
         } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
             $quotation->dpp_coss = 11/12 * $quotation->grand_total_sebelum_pajak_coss;
-            $quotation->ppn_coss = $quotation->dpp_coss *12/100;
-            $quotation->pph_coss = $quotation->grand_total_sebelum_pajak_coss * -2 / 100;
+            if($quotation->ppn_coss == 0){
+                $quotation->ppn_coss = $quotation->dpp_coss *12/100;
+            }
+            if($quotation->pph_coss == 0){
+                $quotation->pph_coss = $quotation->grand_total_sebelum_pajak_coss * -2 / 100;
+            }
         }
 
         // $quotation->dpp_coss = 11/12 * $quotation->nominal_management_fee_coss;
@@ -632,15 +651,33 @@ class QuotationService
         $quotation->ppn = 0;
         $quotation->pph = 0;
 
+        foreach ($quotation->quotation_detail as $key => $kbd) {
+            $hpp = DB::table('sl_quotation_detail_hpp')->whereNull('deleted_at')->where('quotation_detail_id', $kbd->id)->first();
+
+            if($hpp->ppn != null){
+                $quotation->ppn += $hpp->ppn;
+            }
+            if($hpp->pph != null){
+                $quotation->pph += $hpp->pph;
+            }
+        }
+
         if ($quotation->ppn_pph_dipotong == "Management Fee") {
             $quotation->dpp = 11/12 * $quotation->nominal_management_fee;
-            $quotation->ppn = $quotation->dpp *12/100;
-            $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
-
+            if($quotation->ppn == 0){
+                $quotation->ppn = $quotation->dpp *12/100;
+            }
+            if($quotation->pph == 0){
+                $quotation->pph = $quotation->nominal_management_fee * -2 / 100;
+            }
         } elseif ($quotation->ppn_pph_dipotong == "Total Invoice") {
             $quotation->dpp = 11/12 * $quotation->grand_total_sebelum_pajak;
-            $quotation->ppn = $quotation->dpp *12/100;
-            $quotation->pph = $quotation->grand_total_sebelum_pajak * -2 / 100;
+            if($quotation->ppn == 0){
+                $quotation->ppn = $quotation->dpp *12/100;
+            }
+            if($quotation->pph == 0){
+                $quotation->pph = $quotation->grand_total_sebelum_pajak * -2 / 100;
+            }
         }
 
         // $quotation->dpp = 11/12 * $quotation->nominal_management_fee;
