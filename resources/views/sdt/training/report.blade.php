@@ -8,22 +8,22 @@
     <!-- <style> -->
         
         <!-- Core CSS -->
-        <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/core.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" />
         <link rel="stylesheet" href="{{ public_path('assets/vendor/css/rtl/core.css') }}" />
         <!-- @import url('{{ public_path('assets/vendor/css/rtl/core.css') }}'); -->
-        <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/theme-default.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
         <link rel="stylesheet" href="{{ public_path('assets/vendor/css/rtl/theme-default.css') }}" />
         <!-- @import url('{{ public_path('assets/vendor/css/rtl/theme-default.css') }}'); -->
-        <link rel="stylesheet" href="{{ asset('public/assets/css/demo.css') }}" /> 
+        <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" /> 
         <link rel="stylesheet" href="{{ public_path('assets/css/demo.css') }}" /> 
         <!-- @import url('{{ public_path('assets/css/demo.css') }}'); -->
-        <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/front-page.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/front-page.css') }}" />
         <link rel="stylesheet" href="{{ public_path('assets/vendor/css/pages/front-page.css') }}" />
         <!-- @import url('{{ public_path('assets/vendor/css/pages/front-page.css') }}'); -->
 
         <!-- Vendors CSS -->
         <link rel="stylesheet" href="{{ public_path('assets/vendor/libs/nouislider/nouislider.css') }}" /> 
-        <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/nouislider/nouislider.css') }}" /> 
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/nouislider/nouislider.css') }}" /> 
         <!-- @import url('{{ public_path('assets/vendor/libs/nouislider/nouislider.css') }}'); -->
         <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" />
         

@@ -163,6 +163,29 @@
             </ul>
         </li>
         @endif
+        @if(in_array(Auth::user()->role_id,[2]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-package-variant-closed"></i>
+                <div data-i18n="Purchase">Purchase</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{route('purchase-request')}}" class="menu-link">
+                      
+                        <div data-i18n="Purchase Request">Purchase Request</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{route('purchase-order')}}" class="menu-link">
+                      
+                        <div data-i18n="Purchase Order">Purchase Order</div>
+                    </a>
+                </li>
+                
+            </ul>
+        </li>
+        @endif
         @if(in_array(Auth::user()->role_id,[2,36,57,58,59]))
         <!-- MASTER DATA -->
         <li class="menu-item">
@@ -181,11 +204,19 @@
                         <div data-i18n="Kebutuhan">Kebutuhan</div>
                     </a>
                 </li>
+                
                 <li class="menu-item @if(str_contains(Request::url(), route('training'))) active @endif">
                     <a href="{{route('training')}}" class="menu-link">
                         <div data-i18n="Training">Training</div>
                     </a>
                 </li>
+                @if(in_array( Auth::user()->role_id,[2]))
+                <li class="menu-item @if(str_contains(Request::url(), route('position'))) active @endif">
+                    <a href="{{route('position')}}" class="menu-link">
+                        <div data-i18n="Position">Position</div>
+                    </a>
+                </li>
+                @endif
             </ul>
         </li>
         <!-- BARANG -->
