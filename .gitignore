@@ -11,6 +11,7 @@
 /note
 /note_update
 .env
+.htaccess
 .env.backup
 .env.production
 .phpactor.json

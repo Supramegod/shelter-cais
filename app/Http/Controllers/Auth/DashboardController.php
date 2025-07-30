@@ -1185,6 +1185,7 @@ class DashboardController extends Controller
         $tahun = $request->tahun;
         $branch_id = $request->branch_id;
 
+        // \DB::enableQueryLog(); // Enable query log
         $data = DB::table('sl_customer_activity')
             ->join('sl_leads', 'sl_customer_activity.leads_id', '=', 'sl_leads.id')
             ->leftjoin($db2.'.m_user', 'sl_customer_activity.user_id', '=', $db2.'.m_user.id')
@@ -1193,22 +1194,22 @@ class DashboardController extends Controller
                 $db2.'.m_user.id as user_id',
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w1_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w1_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w1_visit'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w1_quot'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w1_spk'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w2_appt'),
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 1) as w1_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 1) as w1_spk'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w2_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w2_visit'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w2_quot'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w2_spk'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w3_appt'),
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 2) as w2_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 2) as w2_spk'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w3_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w3_visit'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w3_quot'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w3_spk'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as w4_appt'),
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 3) as w3_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 3) as w3_spk'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w4_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w4_visit'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as w4_quot'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as w4_spk')
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 4) as w4_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 4) as w4_spk')
             )
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
@@ -1221,7 +1222,7 @@ class DashboardController extends Controller
             $data = $data->where($db2.'.m_branch.id', $branch_id);
         }
         $data = $data->get();
-
+        // dd(\DB::getQueryLog()); // Show results of log
         foreach ($data as $key => $value) {
             $value->nomor = $key+1;
         }
@@ -1254,19 +1255,19 @@ class DashboardController extends Controller
                 $db2.'.m_branch.name as cabang',
                 DB::raw('SUM(
         CASE
-            WHEN sl_customer_activity.tipe != "Visit" AND (
+            WHEN ( sl_customer_activity.tipe = "Visit" or
                  sl_customer_activity.notes LIKE "%visit%"
                  OR sl_customer_activity.notes LIKE "%appointment%"
 								 OR sl_customer_activity.notes LIKE "%meeting%"
-								 OR sl_customer_activity.notes LIKE "%zooom%"
+								 OR sl_customer_activity.notes LIKE "%zoom%"
              )
             THEN 1
             ELSE 0
         END
     ) AS jumlah_appt'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as jumlah_visit'),
-                DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as jumlah_quot'),
-                DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as jumlah_spk'),
+                DB::raw('(select count(*) from sl_quotation where sl_quotation.deleted_at is null and sl_quotation.created_by = '.$db2.'.m_user.full_name and MONTH(sl_quotation.created_at) = '.$bulan.' and YEAR(sl_quotation.created_at) = '.$tahun.') as jumlah_quot'),
+                DB::raw('(select count(*) from sl_spk where sl_spk.deleted_at is null and sl_spk.created_by = '.$db2.'.m_user.full_name and MONTH(sl_spk.created_at) = '.$bulan.' and YEAR(sl_spk.created_at) = '.$tahun.') as jumlah_spk'),
             )
 
             ->whereMonth('sl_customer_activity.created_at', $bulan)
@@ -1288,7 +1289,7 @@ class DashboardController extends Controller
             ->select(
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
-                DB::raw('SUM(CASE WHEN sl_customer_activity.tipe != "Visit" and sl_customer_activity.notes like "%visit%" THEN 1 ELSE 0 END) as jumlah_appt'),
+                DB::raw('SUM(CASE WHEN (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as jumlah_appt'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as jumlah_visit'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as jumlah_quot'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%spk%terbentuk%" THEN 1 ELSE 0 END) as jumlah_spk'),
@@ -1355,10 +1356,10 @@ class DashboardController extends Controller
             ->select(
                 $db2.'.m_user.full_name as nama_sales',
                 $db2.'.m_branch.name as cabang',
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w1_appt'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w2_appt'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w3_appt'),
-                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%") THEN 1 ELSE 0 END) as w4_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%" or sl_customer_activity.notes LIKE "%zoom%") THEN 1 ELSE 0 END) as w1_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%" or sl_customer_activity.notes LIKE "%zoom%") THEN 1 ELSE 0 END) as w2_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%" or sl_customer_activity.notes LIKE "%zoom%") THEN 1 ELSE 0 END) as w3_appt'),
+                DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%" or sl_customer_activity.notes LIKE "%zoom%") THEN 1 ELSE 0 END) as w4_appt'),
             )
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
@@ -1399,8 +1400,8 @@ class DashboardController extends Controller
             WHEN sl_customer_activity.tipe != "Visit" AND (
                  sl_customer_activity.notes LIKE "%visit%"
                  OR sl_customer_activity.notes LIKE "%appointment%"
-								 OR sl_customer_activity.notes LIKE "%meeting%"
-								 OR sl_customer_activity.notes LIKE "%zoom%"
+                OR sl_customer_activity.notes LIKE "%meeting%"
+                OR sl_customer_activity.notes LIKE "%zoom%"
              )
             THEN 1
             ELSE 0
