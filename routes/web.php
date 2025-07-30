@@ -57,6 +57,8 @@ use App\Http\Controllers\Gada\TrainingGadaPembayaranController;
 use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
+use App\Http\Controllers\Master\PositionController;
+use App\Http\Controllers\Sales\PurchaseController;
 
 use App\Http\Controllers\Dashboard\DashboardManagerCrmController;
 
@@ -440,8 +442,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/cetak-devices/{id}', 'cetakDevices')->name('quotation.cetak-devices');
         Route::get('/sales/quotation/cetak-chemical/{id}', 'cetakChemical')->name('quotation.cetak-chemical');
 
+
+
         // EXPORT
         Route::get('/sales/quotation/export/detail-coss/{id}/{jenis}', 'exportDetailCoss')->name('quotation.export.detail-coss');
+
     });
 
 
@@ -653,6 +658,19 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/training/list', 'list')->name('training.list'); // ajax
     });
+     Route::controller(PositionController::class)->group(function() {
+        Route::get('/master/position', 'index')->name('position');
+        Route::get('/master/position/list', 'list')->name('position.list');
+        Route::get('/master/position/add', 'add')->name('position.add');
+        Route::get('/master/position/view/{id}', 'view')->name('position.view');
+        Route::get('/master/position/requirement-list', 'requirementList')->name('requirement.list');
+        Route::post('/master/position/save', 'save')->name('position.save');
+        Route::post('/master/position/add-requirement', 'addRequirement')->name('requirement.add');
+        Route::post('/master/position/requirement-edit', 'requirementEdit')->name('requirement.edit');
+        Route::post('/master/position/requirement-delete', 'requirementDelete')->name('requirement.delete');
+        Route::post('/master/position/edit/{id}', 'edit')->name('position.edit');
+        Route::post('/master/position/delete/{id}', 'delete')->name('position.delete');
+     });
 
     Route::controller(UmpController::class)->group(function() {
         Route::get('/master/ump', 'index')->name('ump');
@@ -804,6 +822,20 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');
     });
 
+    Route::controller(PurchaseController::class)->group(function() {
+         Route::get('/purchase/purchase-request', 'purchaseRequestIndex')->name('purchase-request');
+         Route::get('/purchase/purchase-request/list', 'purchaseRequestList')->name('purchase-request.list');
+         Route::get('/purchase/purchase-request/view/{id}', 'purchaseRequestView')->name('purchase-request.view');
+         Route::post('/purchase/purchase-request/save', 'purchaseRequestSave')->name('purchase-request.save');
+         Route::get('/purchase/purchase-order', 'purchaseOrderIndex')->name('purchase-order');
+         Route::get('/purchase/purchase-order/add', 'purchaseOrderAdd')->name('purchase-order.add');
+         Route::post('/purchase/purchase-order/save', 'purchaseOrderSave')->name('purchase-order.save');
+         Route::get('/purchase/purchase-order/list', 'purchaseOrderList')->name('purchase-order.list');
+         Route::get('/purchase/purchase-order/no-company', 'cariNomorRequest')->name('purchase-order.no-company');
+         Route::get('/purchase/purchase-order/list-request', 'getRequestList')->name('purchase-order.listRequest');
+         Route::get('/purchase-order/pdf/{id}', 'cetakOrderPdf')->name('purchase_order.pdf');
+         Route::get('/purchase/purchase-order/view/{id}', 'purchaseOrderView')->name('purchase-order.view');
+    });
     Route::controller(TrainingSiteController::class)->group(function() {
         Route::get('/sdt/training-site', 'index')->name('training-site');
         // Route::get('/master/training-client/add', 'add')->name('training-client.add');
