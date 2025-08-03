@@ -72,7 +72,7 @@
 @endsection
 
 @section('pageScript')
-<script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+<script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
 <script>
       const purpleColor = '#836AF9',
         yellowColor = '#ffe800',

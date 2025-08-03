@@ -39,5 +39,5 @@
         @endif
     });
 </script>
-<script src="{{ asset('assets/js/dashboards-crm.js') }}"></script>
+<script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
 @endsection

@@ -18,7 +18,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icons/favicon-shelter.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('public/assets/img/icons/favicon-shelter.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,31 +28,31 @@
       rel="stylesheet" />
 
     <!-- Icons -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/materialdesignicons.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/fonts/materialdesignicons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/fonts/flag-icons.css') }}" />
 
     <!-- Menu waves for no-customizer fix -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/node-waves/node-waves.css') }}" />
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/front-page.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/theme-default.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/front-page.css') }}" />
 
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/nouislider/nouislider.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/swiper/swiper.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/nouislider/nouislider.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/swiper/swiper.css') }}" />
 
     <!-- Page CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/front-page-landing.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/front-page-landing.css') }}" />
     <!-- Helpers -->
     <link href="
 https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
 " rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/helpers.js') }}"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('js/front-config.js') }}"></script>
@@ -60,8 +60,8 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
   </head>
 
   <body>
-  <script src="{{ asset('assets/vendor/js/dropdown-hover.js') }}"></script>
-    <script src="{{ asset('assets/vendor/js/mega-dropdown.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/js/dropdown-hover.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/mega-dropdown.js') }}"></script>
 
     <!-- Navbar: Start -->
     <nav class="layout-navbar container-fluid shadow-none py-0" style="background-color:#121240 !important;display: flex;height: 80px !important;justify-content: center;align-items: center;">
@@ -71,7 +71,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
             <a href="https://shelterindonesia.id" class="app-brand-link gap-2">
             <span class="app-brand-logo demo">
               <!-- <span class="text-uppercase" style="font-size:3rem">UNDANGAN</span> -->
-                <img src="{{asset('assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
+                <img src="{{ asset('public/assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
             </span>
             </a>
         </div>
@@ -88,13 +88,13 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
             aria-label="Toggle navigation">
             <i class="tf-icons mdi mdi-close"></i>
           </button>
-          
+
         </div>
         <div class="landing-menu-overlay d-lg-none"></div>
         <!-- Menu wrapper: End -->
         <!-- Toolbar: Start -->
         <ul class="navbar-nav flex-row align-items-center ms-auto">
-          
+
           <!-- navbar button: End -->
         </ul>
         <!-- Toolbar: End -->
@@ -112,7 +112,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
             <form class="card-body overflow-hidden" action="{{route('invite-save')}}" method="POST">
                 @csrf
                 <img
-                    src="{{ asset('assets/img/front-pages/icons/bg-left-icon-light.png') }}"
+                    src="{{ asset('public/assets/img/front-pages/icons/bg-left-icon-light.png') }}"
                     alt="section icon"
                     class="position-absolute top-0 start-0"
                     data-speed="1" />
@@ -122,34 +122,34 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                 <div class="row gy-4">
                     <div class="col-lg-7">
                       <div class="card h-100">
-                          <div class="rounded text-white card-body p-5" style="background-color:#121240">  
+                          <div class="rounded text-white card-body p-5" style="background-color:#121240">
                             <h2 class="fw-medium mb-1 text-white mt-2 text-center align-items-center justify-content-center"><span class="fw-bold">{{$data->materi}}</span></h2>
                             <br><br>
-                            <div class="row">    
+                            <div class="row">
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Tipe</span></h2>
                               <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->tipe}}</span></h2>
                             </div>
-                            <div class="row">    
+                            <div class="row">
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Tempat</span></h2>
                               <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->tempat}}</span></h2>
                             </div>
-                            <div class="row">    
+                            <div class="row">
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Waktu Mulai</span></h2>
                               <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->waktu_mulai}}</span></h2>
                             </div>
-                            <div class="row">    
+                            <div class="row">
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Waktu Selesai</span></h2>
                               <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->waktu_selesai}}</span></h2>
                             </div>
-                            <div class="row">    
+                            <div class="row">
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Client</span></h2>
                               <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->client}}</span></h2>
                             </div>
-                            <div class="row">    
+                            <div class="row">
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Trainer</span></h2>
                               <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->trainer}}</span></h2>
                             </div>
-                            <div class="row">    
+                            <div class="row">
                               <h4 class="fw-medium col-sm-4 text-white mt-2"><span class="fw-bold">Lokasi</span></h2>
                               <h4 class="fw-medium col-sm-8 text-white mt-2"><span class="fw-bold">{{$data->alamat}}</span></h2>
                             </div>
@@ -184,7 +184,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                                 <button type="button" class="btn btn-primary" id="btn-cari-nik">Cari</button>
                                 </div>
                               </div>
-                              
+
                             </div>
                             <div class="row mb-3">
                               <label class="col-sm-3 col-form-label text-sm-end">Nama</label>
@@ -220,10 +220,10 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                               <label class="col-sm-3 col-form-label text-sm-end">Jabatan</label>
                               <div class="col-sm-9">
                                 <div class="position-relative">
-                                <input hidden type="text" class="form-control" id="training_id" name="training_id" placeholder="Training id" value="{{$data->id}}"/>  
-                                <input hidden type="text" class="form-control" readonly id="employee_id" name="employee_id" placeholder="Employee id" />  
-                                <input hidden type="text" class="form-control" readonly id="site_id" name="site_id" placeholder="Site ID" />  
-                                <input hidden type="text" class="form-control" readonly id="jabatan_id" name="jabatan_id" placeholder="Jabatan ID" />  
+                                <input hidden type="text" class="form-control" id="training_id" name="training_id" placeholder="Training id" value="{{$data->id}}"/>
+                                <input hidden type="text" class="form-control" readonly id="employee_id" name="employee_id" placeholder="Employee id" />
+                                <input hidden type="text" class="form-control" readonly id="site_id" name="site_id" placeholder="Site ID" />
+                                <input hidden type="text" class="form-control" readonly id="jabatan_id" name="jabatan_id" placeholder="Jabatan ID" />
                                 <input type="text" class="form-control" id="jabatan" name="jabatan" placeholder="Posisi" />
                                 </div>
                               </div>
@@ -242,7 +242,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
                                   @endif
                                   </div>
                                 </div>
-                            
+
                             </div>
                         </div>
                     </div>
@@ -267,7 +267,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
             <div class="col-lg-5">
             <a href="https://shelterindonesia.id" class="app-brand-link gap-2 mb-3">
             <span class="app-brand-logo demo">
-                <img src="{{asset('assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
+                <img src="{{ asset('public/assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
             </span>
             </a>
               <p class="footer-text footer-logo-description mb-4">
@@ -337,23 +337,23 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
 
     <!-- Core JS -->
     <!-- build:js assets/assets/vendor/js/core.js -->
-     
-    <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/node-waves/node-waves.js') }}"></script>
+
+    <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/node-waves/node-waves.js') }}"></script>
 
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="{{ asset('assets/vendor/libs/nouislider/nouislider.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/swiper/swiper.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/nouislider/nouislider.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/swiper/swiper.js') }}"></script>
     <script async src="https://www.google.com/recaptcha/api.js">
 
     <!-- Main JS -->
-    <script src="{{ asset('assets/js/front-main.js') }}"></script>
+    <script src="{{ asset('public/assets/js/front-main.js') }}"></script>
 
     <!-- Page JS -->
-    <script src="{{ asset('assets/js/front-page-landing.js') }}"></script>
+    <script src="{{ asset('public/assets/js/front-page-landing.js') }}"></script>
   </body>
 </html>
 
@@ -414,7 +414,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
         }
     });
   });
-  @if(session()->has('success'))  
+  @if(session()->has('success'))
     Swal.fire({
         title: 'Pemberitahuan',
         html: '{{session()->get('success')}}',
@@ -425,7 +425,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
         buttonsStyling: false
     });
 @endif
-@if(session()->has('error'))  
+@if(session()->has('error'))
     Swal.fire({
         title: 'Pemberitahuan',
         html: '{{session()->get('error')}}',
@@ -435,5 +435,5 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
         },
         buttonsStyling: false
     });
-@endif  
+@endif
 </script>

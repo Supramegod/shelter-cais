@@ -259,7 +259,7 @@
 @endsection
 
 @section('pageScript')
-<script src="{{ asset('assets/js/dashboards-crm.js') }}"></script>
+<script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
 
 @if(in_array(Auth::user()->role_id,[56]))
 <script>
@@ -294,7 +294,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],
@@ -380,7 +380,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],
@@ -454,7 +454,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],
@@ -529,7 +529,7 @@
             $('td', row).css('background-color', '#27ae6040');
             // $('td', row).css('color', '#fff');
         }
-    },     
+    },
     "order":[
         [0,'desc']
     ],

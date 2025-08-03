@@ -162,7 +162,7 @@
                 <i class="mdi mdi-dots-vertical"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heat-chart-dd">
-                
+
               </div>
             </div>
           </div>
@@ -235,7 +235,7 @@
 @endsection
 
 @section('pageScript')
-<script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+<script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
 
     <script>
           const purpleColor = '#836AF9',
@@ -272,9 +272,9 @@
     let arr = [];
     let jumlahLeads = element.jumlah_leads;
     let resultLeads = Object.keys(jumlahLeads).map((key) => [key, jumlahLeads[key]]);
-    
-    resultLeads.forEach(eld => {      
-      arr.push(eld[1].leads);  
+
+    resultLeads.forEach(eld => {
+      arr.push(eld[1].leads);
     });
 
     let objData = {
@@ -379,7 +379,7 @@
     arrLabelPolar.push(element.platform);
     arrDataPolarChart.push(element.jumlah_leads);
   });
-  
+
   const polarChart = document.getElementById('polarChart');
   if (polarChart) {
     const polarChartVar = new Chart(polarChart, {
@@ -495,8 +495,8 @@
   });
   console.log(labelDoug);
   console.log(dataDoug);
-  
-  
+
+
   const doughnutChartKebutuhan = document.getElementById('doughnutChartKebutuhan');
   if (doughnutChartKebutuhan) {
     const doughnutChartKebutuhanVar = new Chart(doughnutChartKebutuhan, {

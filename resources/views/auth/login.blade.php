@@ -18,7 +18,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icons/favicon-shelter.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('public/assets/img/icons/favicon-shelter.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,31 +28,31 @@
       rel="stylesheet" />
 
     <!-- Icons -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/materialdesignicons.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/fonts/materialdesignicons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/fonts/flag-icons.css') }}" />
 
     <!-- Menu waves for no-customizer fix -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/node-waves/node-waves.css') }}" />
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/theme-default.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/css/demo.css') }}" />
 
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/typeahead-js/typeahead.css') }}" />
     <!-- Vendor -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/@form-validation/form-validation.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/@form-validation/form-validation.css') }}" />
 
     <!-- Page CSS -->
     <!-- Page -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/page-auth.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/page-auth.css') }}" />
 
     <!-- Helpers -->
-    <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
-    <script src="{{ asset('assets/js/config.js') }}"></script>
-    
+    <script src="{{ asset('public/assets/vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('public/assets/js/config.js') }}"></script>
+
     <style>
 
     </style>
@@ -70,7 +70,7 @@
             <div class="app-brand justify-content-center mt-5">
               <a href="{{route('home')}}" class="app-brand-link gap-2">
                 <span style="display:flex;justify-content:center">
-                  <img alt="logo" class="img-fluid img" src="{{asset('assets/img/icons/icon-shelter.png')}}" style="width:50%">
+                  <img alt="logo" class="img-fluid img" src="{{ asset('public/assets/img/icons/icon-shelter.png')}}" style="width:50%">
                 </span>
               </a>
             </div>
@@ -88,7 +88,7 @@
                     id="username"
                     name="username"
                     placeholder="Masukkan Username"
-                    autofocus />  
+                    autofocus />
                   <label for="username">Username</label>
                   @if($errors->has('username'))
                       <div class="invalid-feedback">{{ $errors->first('username') }}</div>
@@ -98,8 +98,8 @@
                   <div class="form-password-toggle">
                     <div class="input-group input-group-merge is-invalid" id="ct-password">
                       <div class="form-floating form-floating-outline">
-                        <input type="password" id="password" 
-                        class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else   @endif @endif" 
+                        <input type="password" id="password"
+                        class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else   @endif @endif"
                         data-container="ct-password" name="password" placeholder="············">
                         <label for="password">Password</label>
                       </div>
@@ -137,25 +137,25 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/hammer/hammer.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-    <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/menu.js') }}"></script>
 
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="{{ asset('assets/vendor/libs/@form-validation/popular.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/@form-validation/bootstrap5.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/@form-validation/auto-focus.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/@form-validation/popular.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/@form-validation/bootstrap5.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/@form-validation/auto-focus.js') }}"></script>
 
     <!-- Main JS -->
-    <script src="{{ asset('assets/js/main.js') }}"></script>
+    <script src="{{ asset('public/assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
 
@@ -174,7 +174,7 @@
       backgroundColor: 0x000056,
       color: 0xffffff
     })
-    
+
     @if(session('message'))
       alert({{ session('message') }});
     @endif

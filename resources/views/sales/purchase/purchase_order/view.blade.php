@@ -43,7 +43,7 @@
         .info-table,
         .info-table tr,
         .info-table td {
-            
+
             border: none;
             font-size: 20px;
 
@@ -66,7 +66,7 @@
 
 <body>
     <div style="width: 100%;  text-align: center; margin-bottom: 15px;">
-        <img src="{{ asset('assets/img/icons/icon-shelter.png') }}" alt="Logo"
+        <img src="{{ asset('public/assets/img/icons/icon-shelter.png') }}" alt="Logo"
             style="height: 20px; margin-bottom: 5px;">
         <div class=" kop text-center">
             <h2 style="margin: 0; font-size: 20px;">PT. SHELTER Nusantara</h2>
@@ -82,7 +82,7 @@
 
         <table class="info-table ms-5 text-start" style="width: 100%;">
             <tr>
-                
+
                 <td style=" width: 50%; text-align: top;">
                     <table>
                         <tr>
@@ -100,7 +100,7 @@
                     </table>
                 </td>
 
-                
+
                 <td style="width: 50%;">
                     <table>
                         <tr>
@@ -115,7 +115,7 @@
                 </td>
             </tr>
         </table>
-        
+
             <h3 class="mb-1">Daftar Barang {{ $data->jenis_barang }}</h3>
             @foreach ($listJenisBarang as $jenisItem)
                 <div class="table-container mb-5 d-flex justify-content-center">
@@ -130,8 +130,8 @@
                                 <th>Jumlah</th>
                                 <th>Satuan</th>
                                 <th>Merk barang</th>
-                                
-                                
+
+
 
                             </tr>
                         </thead>
@@ -144,7 +144,7 @@
                                         <td class="text-center">{{ $item->qty }}</td>
                                         <td class="text-center">{{ $item->satuan }}</td>
                                         <td class="text-center">{{ $item->merk }}</td>
-                                        
+
                                     </tr>
                                 @endif
                             @endforeach
@@ -153,8 +153,8 @@
                     </table>
                 </div>
             @endforeach
-            
-            
+
+
             <div class="signature-box mt-5" style="width: 200px; ">
                 <p>Dicetak oleh</p>
                 {{ $data->created_by }}

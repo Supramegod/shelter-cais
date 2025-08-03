@@ -3,7 +3,7 @@
     <div class="navbar-brand app-brand demo d-none d-xl-flex py-0 me-4">
         <a href="{{route('home')}}" class="app-brand-link gap-2">
         <span class="app-brand-logo demo">
-            <img src="{{asset('assets/img/icons/icon-shelter.png')}}" style="width:200px" alt="Logo" />
+            <img src="{{ asset('public/assets/img/icons/icon-shelter.png')}}" style="width:200px" alt="Logo" />
         </span>
         </a>
 
@@ -202,7 +202,7 @@
                                 <div class="d-flex gap-2">
                                 <div class="flex-shrink-0">
                                     <div class="avatar me-1">
-                                    <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
+                                    <img src="{{ asset('public/assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </div>
                                 <div class="d-flex flex-column flex-grow-1 overflow-hidden w-px-200">
@@ -232,7 +232,7 @@
         <li class="nav-item navbar-dropdown dropdown-user dropdown">
             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
             <div class="avatar avatar-online">
-                <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
+                <img src="{{ asset('public/assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
             </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -241,7 +241,7 @@
                 <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
                     <div class="avatar avatar-online">
-                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
+                        <img src="{{ asset('public/assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
                     </div>
                     </div>
                     <div class="flex-grow-1">

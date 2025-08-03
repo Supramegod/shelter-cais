@@ -7,7 +7,7 @@
         <div class="col-xl-12">
             <div class="card h-100">
                 <div class="card-header d-flex w-100" style="justify-content: space-between;">
-                    <h4 class="card-title mb-1 d-flex flex-wrap">Track Aktifitas 
+                    <h4 class="card-title mb-1 d-flex flex-wrap">Track Aktifitas
                         @if($tipe=='Leads')
                             Leads / Customer
                         @elseif($tipe=='Quotation')
@@ -84,5 +84,5 @@
 @endsection
 
 @section('pageScript')
-<script src="{{ asset('assets/js/dashboards-crm.js') }}"></script>
+<script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
 @endsection
