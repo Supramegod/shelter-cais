@@ -906,4 +906,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/whatsapp/message', 'message')->name('whatsapp.message');
         Route::post('/whatsapp/sendMessage', 'sendMessage')->name('whatsapp.sendMessage');
     });
+
+    Route::get('/search', [DashboardController::class, 'search'])->name('dashboard.search');
 });

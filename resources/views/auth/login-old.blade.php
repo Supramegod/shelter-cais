@@ -54,10 +54,7 @@
     <script src="{{ asset('public/assets/js/config.js') }}"></script>
 
     <style>
-        body {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('{{ asset('public/assets/img/backgrounds/background-login.jpg') }}') no-repeat center center fixed;
-            background-size: cover;
-        }
+
     </style>
   </head>
 
@@ -116,13 +113,15 @@
                 <div class="mb-3 d-flex justify-content-between">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="remember-me" />
-                    <label class="form-check-label" for="remember-me"> Remember me </label>
+                    <label class="form-check-label" for="remember-me"> ingat saya </label>
                   </div>
                 </div>
                 <div class="mb-3">
                   <button class="btn btn-primary d-grid w-100" type="submit">Log in</button>
                 </div>
               </form>
+              <div class="my-5">
+              </div>
 
               <div class="d-flex justify-content-center gap-2">
                 &nbsp;
@@ -159,7 +158,23 @@
     <script src="{{ asset('public/assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
     <script>
+    VANTA.NET({
+      el: ".position-relative",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      backgroundColor: 0x000056,
+      color: 0xffffff
+    })
+
     @if(session('message'))
       alert({{ session('message') }});
     @endif
