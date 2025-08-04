@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Helper\QuotationService;
 use App\Http\Controllers\Sales\CustomerActivityController;
 use App\Exports\QuotationDetailHargaJualExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class QuotationController extends Controller

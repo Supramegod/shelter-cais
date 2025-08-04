@@ -569,11 +569,17 @@
                   </a> -->
                 </div>
                 @endif
-                    <div class="col-12 d-flex justify-content-between">
+                    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
                         <div></div>
                         <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'Kaporlap']) }}" class="btn btn-success btn-next w-20">
                             <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Kaporlap</span>
                         </a>
+                        <button
+                          id="btn-print"
+                          data-url="{{ route('print.gr.kaporlap', ['quotation_id' => $quotation->id]) }}"
+                          class="btn btn-primary">
+                          <i class="fa fa-print"></i> Print GR
+                      </button>
                     </div>
                 </div>
                 <div class="row">
@@ -742,12 +748,20 @@
                     </a> -->
                   </div>
                 @endif
-                    <div class="col-12 d-flex justify-content-between">
+                    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
                         <div></div>
                         <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'Chemical']) }}" class="btn btn-success btn-next w-20">
                             <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Chemical</span>
                         </a>
+                        <button
+                          id="btn-print"
+                          data-url="{{ route('print.gr', ['quotation_id' => $quotation->id]) }}"
+                          class="btn btn-primary">
+                          <i class="fa fa-print"></i> Print GR
+                      </button>
+
                     </div>
+                  </div>
                 </div>
                 <div class="row">
                   <div class="table-responsive text-nowrap">
@@ -1241,6 +1255,22 @@
         }],
         "language": datatableLang,
       });
+ $('#btn-print').on('click', function () {
+    const url = $(this).data('url');
+
+    // Tampilkan loading
+    $(this).prop('disabled', true);
+    $(this).html('<i class="fa fa-spinner fa-spin"></i> Generating PDF...');
+
+    // Buka PDF di tab baru
+    window.open(url, '_blank');
+
+    // Reset tombol setelah 3 detik
+    setTimeout(() => {
+        $(this).prop('disabled', false);
+        $(this).html('<i class="fa fa-print"></i> Print GR');
+    }, 3000);
+});
 
       $('#btn-input-requirement-{{$detail->id}}').on('click', function() {
         Swal.fire({
