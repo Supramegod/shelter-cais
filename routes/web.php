@@ -426,7 +426,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/cetak-hpp/{id}', 'cetakHpp')->name('quotation.cetak-hpp');
         Route::get('/sales/quotation/cetak-coss/{id}', 'cetakCoss')->name('quotation.cetak-coss');
         Route::get('/sales/quotation/cetak-gpm/{id}', 'cetakGpm')->name('quotation.cetak-gpm');
-        Route::get('/sales/quotation/cetak-quotation/{id}', 'cetakQuotation')->name('quotation.cetak-quotation');
+        Route::get('/sales/quotation/cetak-quotation/{id}/{mode?}', 'cetakQuotation')->name('quotation.cetak-quotation');
         Route::get('/sales/quotation/cetak-kaporlap/{id}', 'cetakKaporlap')->name('quotation.cetak-kaporlap');
         Route::get('/sales/quotation/cetak-devices/{id}', 'cetakDevices')->name('quotation.cetak-devices');
         Route::get('/sales/quotation/cetak-chemical/{id}', 'cetakChemical')->name('quotation.cetak-chemical');
@@ -765,8 +765,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
     Route::controller(PurchaseController::class)->group(function() {
-         Route::get('/purchase/purchase-request', 'purchaseRequestIndex')->name('purchase-request');
+        Route::get('/purchase/purchase-request', 'purchaseRequestIndex')->name('purchase-request');
+        Route::get('/purchase/purchase-request/add', 'purchaseRequestAdd')->name('purchase-request.add');
          Route::get('/purchase/purchase-request/list', 'purchaseRequestList')->name('purchase-request.list');
+         Route::get('/purchase/purchase-request/list-barang', 'getListBarang')->name('purchase-request.list-barang');
+         Route::get('/purchase/purchase-request/listPKS', 'cariNomorPKS')->name('purchase-request.list-PKS');
+         Route::get('/purchase-request/print/{id}', 'printRequestPdf')->name('purchase-request.print');
          Route::get('/purchase/purchase-request/view/{id}', 'purchaseRequestView')->name('purchase-request.view');
          Route::post('/purchase/purchase-request/save', 'purchaseRequestSave')->name('purchase-request.save');
          Route::get('/purchase/purchase-order', 'purchaseOrderIndex')->name('purchase-order');

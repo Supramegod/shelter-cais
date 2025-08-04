@@ -4150,7 +4150,7 @@ ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
         return $quotationAsal;
     }
 
-    public function cetakQuotation(Request $request, $id)
+    public function cetakQuotation(Request $request, $id, $mode)
     {
         try {
             $now = Carbon::now()->isoFormat('DD MMMM Y');
@@ -4266,7 +4266,10 @@ ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
             $listKerjasama = DB::table('sl_quotation_kerjasama')->where('quotation_id', $quotation->id)->whereNull('deleted_at')->get();
             // dd($quotation->is_aktif);
             if ($quotation->is_aktif == 1) {
-                return view('sales.quotation.cetakan.quotation', compact('quotation', 'listKerjasama', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'listChemical', 'listDevices', 'listOhc', 'listKaporlap', 'listJenisChemical', 'listJenisDevices', 'listJenisOhc', 'listJenisKaporlap', 'now', 'leads', 'aplikasiPendukung'));
+                if($mode == 'all')
+                return view('sales.quotation.cetakan.quotation_all', compact('quotation', 'listKerjasama', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'listChemical', 'listDevices', 'listOhc', 'listKaporlap', 'listJenisChemical', 'listJenisDevices', 'listJenisOhc', 'listJenisKaporlap', 'now', 'leads', 'aplikasiPendukung'));
+            else if($mode == 'per-site')
+                return view('sales.quotation.cetakan.quotation_site', compact('quotation', 'listKerjasama', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'listChemical', 'listDevices', 'listOhc', 'listKaporlap', 'listJenisChemical', 'listJenisDevices', 'listJenisOhc', 'listJenisKaporlap', 'now', 'leads', 'aplikasiPendukung'));
             } else {
                 return view('sales.quotation.cetakan.quotation-draft', compact('quotation', 'listKerjasama', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'listChemical', 'listDevices', 'listOhc', 'listKaporlap', 'listJenisChemical', 'listJenisDevices', 'listJenisOhc', 'listJenisKaporlap', 'now', 'leads', 'aplikasiPendukung'));
             }

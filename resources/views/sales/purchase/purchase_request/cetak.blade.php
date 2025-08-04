@@ -4,24 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Request - {{ $data->tipe_barang }} - {{ $leads->nama_perusahaan }}</title>
+    <title>Purchase Order - {{ $data->jenis_barang }} - {{ $data->perusahaan }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        a {
-            pointer-events: none;
-            color: inherit;
-            text-decoration: none;
-        }
-
-        * {
-            -webkit-user-select: none;
-            /* Blok seleksi teks di iOS */
-            user-select: none;
-            -webkit-touch-callout: none;
-            /* Blok tap lama di iOS */
-        }
-
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 15px;
@@ -88,11 +74,11 @@
             </divcla>
         </div>
         <hr style="border: 1px solid black; margin-bottom: 10px;">
-        <h2 class="text-center">PURCHASE REQUISITION </h2>
+        <h2 class="text-center">PURCHASE REQUEST </h2>
 
 
 
-        <table class="info-table" style="width: 100%;">
+<table class="info-table" style="width: 100%;">
             <tr>
                 <!-- Kolom kiri -->
                 <td style=" width: 50%;">
@@ -121,105 +107,59 @@
                         </tr>
                         <tr>
                             <td><strong>Cabang</strong></td>
-                            <td>: {{ $data->wilayah->name }}</td>
+                            <td>: {{ $data->wilayah }}</td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
+        
+            <h3 class="mb-1">Daftar Barang {{ $data->jenis_barang  }}</h3>
+            @foreach ($listJenisBarang as $jenisItem)
+    @php
+        
+        $filteredBarang = $listBarang->where('jenis_barang', $jenisItem->jenis_barang);
+    @endphp
 
-
-        <h3 class="mb-1">Daftar Barang {{ $data->tipe_barang }}</h3>
-        @foreach ($listJenisBarang as $jenisItem)
-            <div class="table-container mb-5">
-                <table class="table table-barang">
-                    <thead>
-                        <tr class="table-primary text-center">
-                            <th colspan="6">{{ $jenisItem->jenis_barang }}</th>
+    @if ($filteredBarang->count() > 0)
+        <div class="table-container mb-5">
+            <table class="table table-barang">
+                <thead>
+                    <tr class="table-primary text-center">
+                        <th colspan="5">{{ $jenisItem->jenis_barang }}</th>
+                    </tr>
+                    <tr class="table-primary text-center">
+                        <th>Kode Barang</th>
+                        <th>Nama Barang</th>
+                        <th>Jumlah</th>
+                        <th>Satuan</th>
+                        <th>Merk Barang</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($filteredBarang as $item)
+                        <tr>
+                            <td class="text-center">000{{ $loop->iteration }}</td>
+                            <td>{{ $item->nama_barang }}</td>
+                            <td class="text-center">{{ $item->qty }}</td>
+                            <td class="text-center">{{ $item->satuan }}</td>
+                            <td class="text-center">{{ $item->merk }}</td>
+                            
                         </tr>
-                        <tr class="table-primary text-center">
-                            <th>Kode Barang</th>
-                            <th>Nama barang</th>
-                            <th>Jumlah</th>
-                            <th>Satuan</th>
-                            <th>Merk Barang</th>
-                            <th>Proyek</th>
-
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($listBarang as $item)
-                            @if ($item->jenis_barang == $jenisItem->jenis_barang)
-                                <tr>
-                                    <td class="text-center">000{{ $loop->iteration }}</td>
-                                    <td>{{ $item->nama }}</td>
-                                    <td class="text-center">{{ $item->jumlah }}</td>
-                                    <td class="text-center">{{ $item->satuan }}</td>
-                                    <td class="text-center">{{ $item->merk }}</td>
-                                    <td class="text-center">{{ $leads->nama_perusahaan }}</td>
-
-                                </tr>
-                            @endif
-                        @endforeach
-
-                    </tbody>
-                </table>
-            </div>
-        @endforeach
-
-
-        <div class="signature-box mt-5" style="width: 200px; ">
-            <p>Dicetak oleh</p>
-            {{ $data->pencetak }}
-
+                    @endforeach
+                </tbody>
+            </table>
         </div>
+    @endif
+@endforeach
+<div class="signature-box mt-5" style="width: 200px; ">
+                <p>Dicetak oleh</p>
+                {{ $data->pencetak }}
+
+            </div>
 
 </body>
-<script>
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
 
-    // Cegah refresh (F5 atau Ctrl+R)
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
-            e.preventDefault();
-        }
-    });
-
-    // Nonaktifkan semua link
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('a');
-        if (target) {
-            e.preventDefault();
-            return false;
-        }
-    });
-    // Blok touch gesture dua jari atau pinch
-    document.addEventListener('gesturestart', function(e) {
-        e.preventDefault();
-    });
-    // Blok klik kanan (mouse) dan tap lama (touchscreen)
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
-
-    // Cegah tap lama (long press)
-    document.addEventListener('touchstart', function(e) {
-        if (e.touches.length > 1) {
-            e.preventDefault(); // dua jari
-        }
-    }, {
-        passive: false
-    });
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('a');
-        if (target) {
-            e.preventDefault();
-            return false;
-        }
-    });
-</script>
 
 </html>
