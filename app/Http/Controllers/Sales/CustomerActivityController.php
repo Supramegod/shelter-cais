@@ -985,6 +985,31 @@ class CustomerActivityController extends Controller
         }
     }
 
+    public function addPicKontrak($id)
+    {
+        try {
+            $pks = DB::table('sl_pks')->where('id', $id)->first();
+            if ($pks == null) {
+                abort(404);
+            }
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $nowd = Carbon::now()->toDateString();
+
+            $pks->s_mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->s_kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
+
+            $pks->status_kontrak = "";
+            if ($pks->status_pks_id != null) {
+                $pks->status_kontrak = DB::table('m_status_pks')->where('id', $pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+            }
+
+            return view('sales.customer-activity.add-pic-pks', compact('now', 'nowd', 'pks'));
+        } catch (\Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
     public function saveActivityRoKontrak(Request $request)
     {
         try {

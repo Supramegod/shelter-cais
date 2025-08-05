@@ -203,6 +203,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/customer-activity/add', 'add')->name('customer-activity.add');
         Route::get('/sales/customer-activity/add-activity-kontrak/{id}', 'addActivityKontrak')->name('customer-activity.add-activity-kontrak');
         Route::get('/sales/customer-activity/add-ro-kontrak/{id}', 'addRoKontrak')->name('customer-activity.add-ro-kontrak');
+        Route::get('/sales/customer-activity/add-pic-kontrak/{id}', 'addPicKontrak')->name('customer-activity.add-pic-kontrak');
         Route::get('/sales/customer-activity/add-crm-kontrak/{id}', 'addCrmKontrak')->name('customer-activity.add-crm-kontrak');
         Route::get('/sales/customer-activity/add-status-kontrak/{id}', 'addStatusKontrak')->name('customer-activity.add-status-kontrak');
         Route::get('/sales/customer-activity/view/{id}', 'view')->name('customer-activity.view');

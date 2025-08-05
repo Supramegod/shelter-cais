@@ -1,7 +1,7 @@
 <aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0">
     <div class="container-fluid d-flex h-100">
     <ul class="menu-inner">
-        <li class="menu-item @if(Request::url() === route('home')||Request::url() === route('dashboard')) active @endif">
+        <li class="menu-item @if(Request::url() === route('home')||Request::url() === route('dashboard') || str_contains(Request::url(), route('dashboard'))) active @endif">
             <a href="{{route('home')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
             <div data-i18n="Dashboards">Home</div>
