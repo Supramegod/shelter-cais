@@ -54,6 +54,9 @@ class PurchaseController extends Controller
             }
 
             $data = $data->get();
+            foreach ($data as $key => $value) {
+                $value->tanggal = Carbon::createFromFormat('Y-m-d',$value->tanggal)->isoFormat('D MMMM Y');
+            }
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -104,6 +107,7 @@ class PurchaseController extends Controller
                 ->where('purchase_request_id', $id)
                 ->distinct()
                 ->get();
+            $data->tanggal_cetak = Carbon::parse($data->tanggal_cetak)->translatedFormat('d F Y');
             return view('sales.purchase.purchase_request.view', compact('data', 'dataBarang', 'jenisBarang'));
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), request());
@@ -251,6 +255,10 @@ class PurchaseController extends Controller
             }
 
             $data = $data->get();
+            foreach ($data as $key => $value) {
+                $value->tanggal = Carbon::createFromFormat('Y-m-d',$value->tanggal)->isoFormat('D MMMM Y');
+            }
+            
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -295,6 +303,7 @@ class PurchaseController extends Controller
                 ->where('purchase_order_id', $id)
                 ->distinct()
                 ->get();
+                $data->tanggal_cetak = Carbon::createFromFormat('Y-m-d',$data->tanggal_cetak)->isoFormat('D MMMM Y');
 
             return view('sales.purchase.purchase_order.view', compact('data', 'listBarang', 'listJenisBarang'));
         } catch (\Exception $e) {
@@ -376,7 +385,7 @@ class PurchaseController extends Controller
 
         $data = (object)[
             'nomor' => $dataRequest->kode_pr,
-            'tanggal' => Carbon::parse($dataRequest->tanggal_cetak)->translatedFormat('d F Y'),
+            'tanggal' => $dataRequest->tanggal_cetak,
             'wilayah' => $dataRequest->wilayah,
             'sales' => $dataRequest->sales,
             'perusahaan' => $dataRequest->perusahaan,

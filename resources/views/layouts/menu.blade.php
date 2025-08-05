@@ -166,7 +166,7 @@
         @if(in_array(Auth::user()->role_id,[2]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-package-variant-closed"></i>
+                <i class="menu-icon tf-icons mdi mdi-package-variant-closed-plus"></i>
                 <div data-i18n="Purchase">Purchase</div>
             </a>
             <ul class="menu-sub">
@@ -253,6 +253,12 @@
                 </li>
             </ul>
         </li>
+         <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
+                    <a href="{{route('jenis-barang')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-view-list-outline"></i>
+                        <div data-i18n="Jenis Barang">Jenis Barang</div>
+                    </a>
+                </li>
         <!-- TRAINING SDT -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
