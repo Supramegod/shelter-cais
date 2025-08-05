@@ -102,13 +102,14 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-12 d-flex flex-row-reverse">
+                                <div class="col-12 d-flex flex-row-reverse gap-3">
                                     <button id="btn-submit" type="submit" class="btn btn-primary btn-next w-20"
                                         style="color:white">
                                         <span class="align-middle d-sm-inline-block d-none me-sm-1">Buat Purchase
                                             Order</span>
                                         <i class="mdi mdi-arrow-right"></i>
                                     </button>
+                                     <a href="{{ route('purchase-order') }}" class="btn btn-secondary waves-effect">Kembali</a>
                                 </div>
                             </div>
                     </div>
@@ -170,6 +171,27 @@
                     '.listRequest-checkbox')
                 .length);
         });
+          @if (session()->has('success'))
+
+            Swal.fire({
+                title: 'Pemberitahuan',
+                html: '{{ session()->get('success') }}<br><br>Kode Purchase Order: <strong>{{ session('kode_po') }}</strong>',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Cetak',
+                cancelButtonText: 'Tutup',
+                customClass: {
+                    confirmButton: 'btn btn-success me-2',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    window.open("{{ route('purchase-order.print', ['id' => session('id')]) }}", "_blank");
+                }
+            });
+        @endif
         $('#btn-modal-nomor').on('click', function() {
             if ($('#company').val() === "") {
                 Swal.fire("Pilih perusahaan terlebih dahulu", "", "warning");

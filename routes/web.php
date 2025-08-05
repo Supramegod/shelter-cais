@@ -779,7 +779,7 @@ Route::group(['middleware' => ['auth']], function () {
          Route::get('/purchase/purchase-order/list', 'purchaseOrderList')->name('purchase-order.list');
          Route::get('/purchase/purchase-order/no-company', 'cariNomorRequest')->name('purchase-order.no-company');
          Route::get('/purchase/purchase-order/list-request', 'getRequestList')->name('purchase-order.listRequest');
-         Route::get('/purchase-order/pdf/{id}', 'cetakOrderPdf')->name('purchase_order.pdf');
+         Route::get('/purchase-order/print/{id}', 'cetakOrderPdf')->name('purchase-order.print');
          Route::get('/purchase/purchase-order/view/{id}', 'purchaseOrderView')->name('purchase-order.view');
     });
     Route::controller(TrainingSiteController::class)->group(function() {

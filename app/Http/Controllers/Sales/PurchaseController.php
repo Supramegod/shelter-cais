@@ -112,7 +112,7 @@ class PurchaseController extends Controller
     }
     public function purchaseRequestSave(Request $request)
     {
-        // try {
+        try {
         set_time_limit(120);
         $quotation = DB::table('sl_quotation')->join('sl_pks', 'sl_quotation.id', '=', 'sl_pks.quotation_id')->where('sl_pks.id', $request->id_pks)->select('sl_quotation.*')->first();
 
@@ -125,7 +125,7 @@ class PurchaseController extends Controller
 
         $insertedId = DB::table('sl_purchase_request')->insertGetId([
             'kode_pr' => $request->kode_pr,
-            'tanggal_cetak' => Carbon::now()->toDateTimeString(),
+            'tanggal_cetak' => Carbon::now()->isoFormat('YYYY-MM-DD'),
             'sales' =>  $quotation->created_by,
             'wilayah' => $wilayah->name,
             'perusahaan' => $request->nama_perusahaan,
@@ -189,85 +189,12 @@ class PurchaseController extends Controller
             'kode_pr' => $pr->kode_pr,
             'id' => $pr->id,
         ]);
-        // } catch (\Exception $e) {
-        //     SystemController::saveError($e, Auth::user(), request());
-        //     abort(500);
-        // }
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), request());
+            abort(500);
+        }
     }
-    // public function purchaseRequestSave(Request $request)
-    // {
-    //     try {
-    //         if (!$request->isMethod('post')) {
-    //             abort(405);
-    //         }
-    //         $id = $request->input('quotation_id');
-    //         $jenis = $request->input('jenis');
-    //         $db2 = DB::connection('mysqlhris')->getDatabaseName();
-    //         $quotation = DB::table('sl_quotation')->where('id', $id)->first();
-    //         $leads = DB::table('sl_leads')->where('id', $quotation->leads_id)->first();
-    //         $wilayah = DB::table('sl_leads')
-    //             ->leftJoin($db2 . '.m_branch', 'sl_leads.branch_id', '=', $db2 . '.m_branch.id')
-    //             ->where('sl_leads.id', $leads->id)
-    //             ->first();
-    //         if ($jenis == "Kaporlap") {
-    //             $listBarang = DB::table('sl_quotation_kaporlap')->join('m_barang', 'm_barang.id', '=', 'sl_quotation_kaporlap.barang_id')->where('jumlah', '>', 0)->where('quotation_id', $id)->select('sl_quotation_kaporlap.*', 'm_barang.merk', 'm_barang.satuan')->whereNull('sl_quotation_kaporlap.deleted_at')->get();
-    //             $listJenisBarang = DB::select("select distinct jenis_barang from sl_quotation_kaporlap where deleted_at is null and jumlah>0 and quotation_id = " . $id);
-    //         } else if ($jenis == "Chemical") {
-    //             $listBarang = DB::table('sl_quotation_chemical')->join('m_barang', 'm_barang.id', '=', 'sl_quotation_chemical.barang_id')->where('quotation_id', $id)->where('jumlah', '>', 0)->select('sl_quotation_chemical.*', 'm_barang.merk', 'm_barang.satuan')->whereNull('sl_quotation_chemical.deleted_at')->get();
-    //             $listJenisBarang = DB::select("select distinct jenis_barang from sl_quotation_chemical where deleted_at is null and jumlah > 0 and quotation_id = " . $id);
-    //         } else if ($jenis == "Devices") {
-    //             $listBarang = $listDevices = DB::table('sl_quotation_devices')->join('m_barang', 'm_barang.id', '=', 'sl_quotation_devices.barang_id')->where('quotation_id', $id)->select('sl_quotation_devices.*', 'm_barang.merk', 'm_barang.satuan')->where('jumlah', '>', 0)->whereNull('sl_quotation_devices.deleted_at')->get();
-    //             $listJenisBarang = DB::select("select distinct jenis_barang from sl_quotation_devices where deleted_at is null and jumlah>0 and quotation_id = " . $id);
-    //         }
 
-    //         $data = (object)[
-    //             'nomor' => $this->cetakNomorDokumen('PR'),
-    //             'tipe_barang' => $jenis,
-    //             'tanggal' => Carbon::now()->toDateTimeString(),
-    //             'wilayah' => $wilayah,
-    //             'perusahaan' => $leads->nama_perusahaan,
-    //             'sales' => $quotation->created_by,
-    //             'pencetak' => Auth::user()->full_name,
-
-    //         ];
-    //         $insertedId = DB::table('sl_purchase_request')->insertGetId([
-    //             'kode_pr' => $data->nomor,
-    //             'tanggal_cetak' => $data->tanggal,
-    //             'sales' => $quotation->created_by,
-    //             'wilayah' => $wilayah->name,
-    //             'perusahaan' => $leads->nama_perusahaan,
-    //             'quotation_id' => $id,
-    //             'jenis_barang' => $jenis,
-    //             'created_at' => Carbon::now()->toDateTimeString(),
-    //             'created_by' => Auth::user()->full_name
-    //         ]);
-
-    //         $dataInsert = [];
-    //         foreach ($listBarang as $item) {
-    //             $dataInsert[] = [
-    //                 'purchase_request_id' => $insertedId,
-    //                 'barang_id' => $item->barang_id,
-    //                 'nama_barang' => $item->nama,
-    //                 'qty' => $item->jumlah,
-    //                 'satuan' => $item->satuan,
-    //                 'merk' => $item->merk,
-    //                 'jenis_barang' => $item->jenis_barang,
-    //                 'created_at' => Carbon::now()->toDateTimeString(),
-    //                 'created_by' => Auth::user()->full_name
-    //             ];
-    //         }
-
-    //         DB::table('sl_purchase_request_d')->insert($dataInsert);
-
-    //         $nomor = str_replace(['/', '\\'], '-', $data->nomor);
-    //         $pdf = Pdf::loadView('sales.purchase.purchase_request.cetak', compact('data', 'listBarang', 'listJenisBarang', 'leads'))->setPaper('A4', 'portrait');
-    //         return $pdf->stream('Purchase-Request-Nomor-' . $nomor . '.pdf');
-    //     } catch (\Exception $e) {
-    //         dd($e);
-    //         SystemController::saveError($e, Auth::user(), $request);
-    //         abort(500);
-    //     }
-    // }
     public function cariNomorRequest(Request $request)
     {
         try {
@@ -340,7 +267,7 @@ class PurchaseController extends Controller
     public function purchaseOrderAdd(Request $request)
     {
         try {
-            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $now = Carbon::now()->isoFormat('YYYY-MM-DD');
             $data = DB::table('sl_purchase_request')->get();
             $company = DB::table('sl_purchase_request')
                 ->select('perusahaan')
@@ -377,10 +304,8 @@ class PurchaseController extends Controller
     }
     public function purchaseOrdersave(Request $request)
     {
-        // try {
+        try {
         set_time_limit(120);
-
-
         $dataRequest = DB::table('sl_purchase_request')
             ->where('id', $request->purchase_request_id)
             ->first();
@@ -388,7 +313,7 @@ class PurchaseController extends Controller
         $insertedId = DB::table('sl_purchase_order')->insertGetId([
             'kode_po' => $this->cetakNomorDokumen('PO'),
             'kode_pr' => $dataRequest->kode_pr ?? '',
-            'tanggal_cetak' => Carbon::now()->toDateTimeString(),
+            'tanggal_cetak' => Carbon::now()->isoFormat('YYYY-MM-DD'),
             'sales' => $dataRequest->sales ?? '',
             'wilayah' => $dataRequest->wilayah ?? '',
             'perusahaan' => $dataRequest->perusahaan ?? 'Logistik',
@@ -422,20 +347,20 @@ class PurchaseController extends Controller
             ];
         }
         DB::table('sl_purchase_order_d')->insert($listBarangPO);
-        $pr = DB::table('sl_purchase_request')
+        $po = DB::table('sl_purchase_order')
             ->where('id', $insertedId)
-            ->select('id', 'kode_pr')
-            ->get();
+            ->select('id', 'kode_po')
+            ->first();
         return redirect()->back()->with([
             'success' => 'Data Berhasil Disimpan',
-            'kode_pr' => $pr->kode_pr,
-            'id' => $pr->id,
+            'kode_po' => $po->kode_po,
+            'id' => $po->id,
         ]);
 
-        // } catch (\Exception $e) {
-        //     SystemController::saveError($e, Auth::user(), request());
-        //     abort(500);
-        // }
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), request());
+            abort(500);
+        }
     }
     public function printRequestPdf($id)
     {
@@ -451,7 +376,7 @@ class PurchaseController extends Controller
 
         $data = (object)[
             'nomor' => $dataRequest->kode_pr,
-            'tanggal' => $dataRequest->tanggal_cetak,
+            'tanggal' => Carbon::parse($dataRequest->tanggal_cetak)->translatedFormat('d F Y'),
             'wilayah' => $dataRequest->wilayah,
             'sales' => $dataRequest->sales,
             'perusahaan' => $dataRequest->perusahaan,
