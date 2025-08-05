@@ -243,15 +243,15 @@ class SupplierController extends Controller
     }
     public function listGr(Request $request)
     {
-        $data = DB::table('sl_good_receipts')
-            ->whereNull('sl_good_receipts.deleted_at')
+        $data = DB::table('sl_good_receipt')
+            ->whereNull('sl_good_receipt.deleted_at')
             ->select(
-                'sl_good_receipts.id',
-                'sl_good_receipts.nomor_gr',
-                'sl_good_receipts.tanggal_cetak',
-                'sl_good_receipts.kategori_barang',
-                'sl_good_receipts.created_by',
-                'sl_good_receipts.updated_at'
+                'sl_good_receipt.id',
+                'sl_good_receipt.nomor_gr',
+                'sl_good_receipt.tanggal_cetak',
+                'sl_good_receipt.kategori_barang',
+                'sl_good_receipt.created_by',
+                'sl_good_receipt.updated_at'
             )
             ->get(); // Pindahkan get() ke sini
 
@@ -514,7 +514,7 @@ class SupplierController extends Controller
         $month = date('m', strtotime($requestpo->created_at));
         $year = date('Y', strtotime($requestpo->created_at));
 
-        $countPerMonth = DB::table('sl_good_receipts')
+        $countPerMonth = DB::table('sl_good_receipt')
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
             ->whereNull('deleted_at')
@@ -529,7 +529,7 @@ class SupplierController extends Controller
         $nomor_surat = 'GR-' . date('ym', strtotime($requestpo->created_at)) . '-' . str_pad($countPerMonth, 4, '0', STR_PAD_LEFT);
 
         // Simpan header GR
-        $insertedId = DB::table('sl_good_receipts')->insertGetId([
+        $insertedId = DB::table('sl_good_receipt')->insertGetId([
             'nomor_gr' => $nomor_surat,
             'tanggal_cetak' => Carbon::now()->toDateTimeString(),
             'kategori_barang' => $requestpo->jenis_barang,
@@ -550,12 +550,12 @@ class SupplierController extends Controller
                 'satuan' => $item->satuan,
                 'merk' => $item->merk,
                 'kategori_barang' => $item->jenis_barang,
-                'create_at' => Carbon::now()->toDateTimeString(),
-                'create_by' => Auth::user()->full_name
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'created_by' => Auth::user()->full_name
             ];
         }
 
-        DB::table('sl_receiving_notes_d')->insert($dataInsert);
+        DB::table('sl_good_receipt_d')->insert($dataInsert);
 
         // 3. Siapkan data untuk cetak dengan qty yang diinput user
         $printItems = [];
@@ -607,8 +607,6 @@ class SupplierController extends Controller
                 ->where('quotation_id', $requestpr->quotation_id)
                 ->first();
         }
-
-
         if (!$requestpr) {
             abort(404, 'Purchase Request not found');
         }
@@ -838,7 +836,7 @@ class SupplierController extends Controller
 
     public function viewGr($id)
     {
-        $requestpo = DB::table('sl_good_receipts')
+        $requestpo = DB::table('sl_good_receipt')
             ->where('id', $id) // pakai id dari URL
             ->whereNull('deleted_at')
             ->first();
@@ -851,13 +849,13 @@ class SupplierController extends Controller
         $month = date('m', strtotime($requestpo->created_at));
         $year = date('Y', strtotime($requestpo->created_at));
 
-        $countPerMonth = DB::table('sl_good_receipts')
+        $countPerMonth = DB::table('sl_good_receipt')
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
             ->whereNull('deleted_at')
             ->count();
 
-        $listChemical = DB::table('sl_good_receipts_d')
+        $listChemical = DB::table('sl_good_receipt_d')
             ->where('good_receipt_id', $requestpo->id)
             ->get()
             ->groupBy('kategori_barang');

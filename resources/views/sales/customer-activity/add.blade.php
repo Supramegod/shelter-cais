@@ -26,13 +26,18 @@
               <input type="hidden" id="email_leads" name="email_leads" value="{{old('email_leads')}}" class="form-control">
               <input type="hidden" id="email_sales" name="email_sales" value="{{old('email_sales')}}" class="form-control">
               <input type="hidden" id="email_branch_manager" name="email_branch_manager" value="{{old('email_branch_manager')}}" class="form-control">
+              <input type="hidden" id="leads" name="leads" value="{{old('leads')}}">
               <div class="input-group">
-                <input type="text" id="leads" name="leads" value="{{old('leads')}}" class="form-control @if ($errors->any()) @if($errors->has('leads')) is-invalid @else   @endif @endif" readonly>
-                <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
-                @if($errors->has('leads'))
-                  <div class="invalid-feedback">{{$errors->first('leads')}}</div>
-                @endif
+                <div class="form-control bg-light d-flex align-items-center" style="border-right: 0;">
+                  <span id="leads-display" class="text-muted">Pilih leads/customer</span>
+                </div>
+                <button class="btn btn-outline-secondary" type="button" id="btn-modal-cari-leads">
+                  <i class="mdi mdi-magnify"></i>
+                </button>
               </div>
+              @if($errors->has('leads'))
+                <div class="text-danger small mt-1">{{$errors->first('leads')}}</div>
+              @endif
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Tanggal Activity <span class="text-danger">*</span></label>
             <div class="col-sm-4">
@@ -42,34 +47,55 @@
                 @endif
             </div>
           </div>
+          
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Wilayah</label>
             <div class="col-sm-4">
-              <input type="text" id="branch" name="branch" value="{{old('branch')}}" class="form-control" readonly>
+              <div class="form-control bg-light d-flex align-items-center">
+                <span id="branch-display" class="text-dark">-</span>
+              </div>
+              <input type="hidden" id="branch" name="branch" value="{{old('branch')}}">
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan</label>
             <div class="col-sm-4">
-              <input type="text" id="kebutuhan" name="kebutuhan" value="{{old('kebutuhan')}}" class="form-control" readonly>
+              <div class="form-control bg-light d-flex align-items-center">
+                <span id="kebutuhan-display" class="text-dark">-</span>
+              </div>
+              <input type="hidden" id="kebutuhan" name="kebutuhan" value="{{old('kebutuhan')}}">
             </div>
           </div>
+          
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Tim Sales</label>
             <div class="col-sm-4">
-              <input type="text" id="tim_sales_name" name="tim_sales_name" value="{{old('tim_sales_name')}}" class="form-control" readonly>
+              <div class="form-control bg-light d-flex align-items-center">
+                <span id="tim-sales-display" class="text-dark">-</span>
+              </div>
+              <input type="hidden" id="tim_sales_name" name="tim_sales_name" value="{{old('tim_sales_name')}}">
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">Sales</label>
             <div class="col-sm-4">
-              <input type="text" id="sales_name" name="sales_name" value="{{old('sales_name')}}" class="form-control" readonly>
+              <div class="form-control bg-light d-flex align-items-center">
+                <span id="sales-display" class="text-dark">-</span>
+              </div>
+              <input type="hidden" id="sales_name" name="sales_name" value="{{old('sales_name')}}">
             </div>
           </div>
+          
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">CRM</label>
             <div class="col-sm-4">
-              <input type="text" id="crm_name" name="crm_name" value="{{old('crm_name')}}" class="form-control" readonly>
+              <div class="form-control bg-light d-flex align-items-center">
+                <span id="crm-display" class="text-dark">-</span>
+              </div>
+              <input type="hidden" id="crm_name" name="crm_name" value="{{old('crm_name')}}">
             </div>
             <label class="col-sm-2 col-form-label text-sm-end">RO</label>
             <div class="col-sm-4">
-              <input type="text" id="ro_name" name="ro_name" value="{{old('ro_name')}}" class="form-control" readonly>
+              <div class="form-control bg-light d-flex align-items-center">
+                <span id="ro-display" class="text-dark">-</span>
+              </div>
+              <input type="hidden" id="ro_name" name="ro_name" value="{{old('ro_name')}}">
             </div>
           </div>
           @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
@@ -107,100 +133,44 @@
           <h6>2. Customer Activity</h6>
           <input type="hidden" name="tipe" value="" />
           <div class="row mb-3">
-            <div class="offset-sm-2 col-sm-2">
-              @if(in_array(Auth::user()->role_id,[2,30,31,33]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-sales" value="Pilih Sales">
-                <label class="form-check-label" for="pilih-sales">
-                  Pilih Sales
-                </label>
-              </div>
-              @endif
-              @if(in_array(Auth::user()->role_id,[30]))
-              <!-- <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="ubah-status" value="Ubah Status">
-                <label class="form-check-label" for="ubah-status">
-                  Ubah Status
-                </label>
-              </div> -->
-              @endif
-              @if(in_array(Auth::user()->role_id,[2,54,55,8,52,10,53]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-ro" value="Pilih RO">
-                <label class="form-check-label" for="pilih-ro">
-                  Pilih RO
-                </label>
-              </div>
-              @endif
-              @if(in_array(Auth::user()->role_id,[55,52,10,53]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="pilih-crm" value="Pilih CRM">
-                <label class="form-check-label" for="pilih-crm">
-                  Pilih CRM
-                </label>
-              </div>
-              @endif
-              @if(in_array(Auth::user()->role_id,[29,30,31,32,33]))
-              <!-- <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="ubah-status" value="Ubah Status">
-                <label class="form-check-label" for="ubah-status">
-                  Ubah Status
-                </label>
-              </div> -->
-              @endif
-              @if(in_array(Auth::user()->role_id,[2,30,29,31,33,4,5,6,8,52,10,53]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="telepon" value="Telepon">
-                <label class="form-check-label" for="telepon">
-                  Telepon
-                </label>
-              </div>
-              @endif
-              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="online-meeting" value="Online Meeting">
-                <label class="form-check-label" for="online-meeting">
-                  Online Meeting
-                </label>
-              </div>
-              @endif
-              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="email" value="Email">
-                <label class="form-check-label" for="email">
-                  Email
-                </label>
-              </div>
-              @endif
-              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="kirim-berkas" value="Kirim Berkas">
-                <label class="form-check-label" for="kirim-berkas">
-                  Kirim Berkas
-                </label>
-              </div>
-              @endif
-              @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
-              <div class="form-check">
-                <input class="form-check-input tipe" type="radio" name="tipe" id="visit" value="Visit">
-                <label class="form-check-label" for="visit">
-                  Visit
-                </label>
-              </div>
-              @endif
+            <label class="col-sm-2 col-form-label text-sm-end">Pilih Activity <span class="text-danger">*</span></label>
+            <div class="col-sm-10">
+              <select id="tipe-select" name="tipe" class="form-select @if ($errors->any()) @if($errors->has('tipe')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                <option value="">- Pilih Activity -</option>
+                @if(in_array(Auth::user()->role_id,[2,30,31,33]))
+                <option value="Pilih Sales" @if(old('tipe') == 'Pilih Sales') selected @endif>Pilih Sales</option>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,54,55,8,52,10,53]))
+                <option value="Pilih RO" @if(old('tipe') == 'Pilih RO') selected @endif>Pilih RO</option>
+                @endif
+                @if(in_array(Auth::user()->role_id,[55,52,10,53]))
+                <option value="Pilih CRM" @if(old('tipe') == 'Pilih CRM') selected @endif>Pilih CRM</option>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,30,29,31,33,4,5,6,8,52,10,53]))
+                <option value="Telepon" @if(old('tipe') == 'Telepon') selected @endif>Telepon</option>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
+                <option value="Online Meeting" @if(old('tipe') == 'Online Meeting') selected @endif>Online Meeting</option>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
+                <option value="Email" @if(old('tipe') == 'Email') selected @endif>Email</option>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
+                <option value="Kirim Berkas" @if(old('tipe') == 'Kirim Berkas') selected @endif>Kirim Berkas</option>
+                @endif
+                @if(in_array(Auth::user()->role_id,[2,29,31,33,4,5,6,8,52,10,53]))
+                <option value="Visit" @if(old('tipe') == 'Visit') selected @endif>Visit</option>
+                @endif
+              </select>
               @if($errors->has('tipe'))
-                <span class="text-danger">{{$errors->first('tipe')}}</span>
+                <div class="invalid-feedback">{{$errors->first('tipe')}}</div>
               @endif
             </div>
-            <div class="col-sm-8">
-              <!-- <div class="d-status-leads">
-                <div class="row">
-
-                </div>
-              </div> -->
+            <div class="row mb-3" id="activity-form-container" style="display: none;">
+            <div class="col-sm-12">
               <div class="d-tim-sales">
                 <div class="row">
-                  <label class="col-sm-2 col-form-label text-sm-end @if(in_array(Auth::user()->role_id,[31])) d-none @endif">Tim Sales <span class="text-danger">*</span></label>
+                  <label class="col-sm-3 col-form-label text-sm-end @if(in_array(Auth::user()->role_id,[31])) d-none @endif">Tim Sales <span class="text-danger">*</span></label>
                   <div class="col-sm-4 @if(in_array(Auth::user()->role_id,[31])) d-none @endif">
                     <div class="position-relative">
                       <select id="tim_sales_id" name="tim_sales_id" class="form-select @if ($errors->any()) @if($errors->has('tim_sales_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
@@ -215,7 +185,7 @@
                     </div>
                   </div>
                   <label class="col-sm-2 col-form-label text-sm-end">Sales <span class="text-danger">*</span></label>
-                  <div class="@if(in_array(Auth::user()->role_id,[31])) col-sm-10 @else col-sm-4 @endif">
+                  <div class="@if(in_array(Auth::user()->role_id,[31])) col-sm-10 @else col-sm-3 @endif">
                     <input type="hidden" name="sales_d" id="sales_d">
                     <select id="tim_sales_d_id" name="tim_sales_d_id" class="form-select @if ($errors->any()) @if($errors->has('tim_sales_d_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
@@ -228,8 +198,8 @@
               </div>
               <div class="d-ro">
                 <div class="row">
-                  <label class="col-sm-2 col-form-label text-sm-end">Supervisor</label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">Supervisor</label>
+                  <div class="col-sm-9">
                     <select id="spv_ro" name="spv_ro" class="form-select @if ($errors->any()) @endif" data-allow-clear="true" tabindex="-1">
                       <option value="">- Pilih data -</option>
                       @foreach($spvRoList as $value)
@@ -239,8 +209,8 @@
                   </div>
                 </div>
                 <div class="row mt-3">
-                  <label class="col-sm-2 col-form-label text-sm-end">RO</label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">RO</label>
+                  <div class="col-sm-9">
                     <div class="row">
                       <div class="col-md-8">
                       <select id="ro" name="ro" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
@@ -257,24 +227,26 @@
                   </div>
                 </div>
                 <div class="row mt-3">
-                  <table class="table table-bordered" style="">
-                    <thead class="table-light">
-                      <tr>
-                        <th>#</th>
-                        <th>Nama RO</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody id="itemTable">
-                      <!-- Data akan ditambahkan di sini -->
-                    </tbody>
-                  </table>
+                  <div class="col-sm-12">
+                    <table class="table table-bordered" style="">
+                      <thead class="table-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Nama RO</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="itemTable">
+                        <!-- Data akan ditambahkan di sini -->
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
               <div class="d-crm">
                 <div class="row mt-3">
-                  <label class="col-sm-2 col-form-label text-sm-end">CRM</label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">CRM</label>
+                  <div class="col-sm-9">
                     <div class="row">
                       <div class="col-md-8">
                       <select id="crm" name="crm" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
@@ -291,24 +263,26 @@
                   </div>
                 </div>
                 <div class="row mt-3">
-                  <table class="table table-bordered" style="">
-                    <thead class="table-light">
-                      <tr>
-                        <th>#</th>
-                        <th>Nama CRM</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody id="itemTableCrm">
-                      <!-- Data akan ditambahkan di sini -->
-                    </tbody>
-                  </table>
+                  <div class="col-sm-12">
+                    <table class="table table-bordered" style="">
+                      <thead class="table-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Nama CRM</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="itemTableCrm">
+                        <!-- Data akan ditambahkan di sini -->
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
               <div class="d-telepon">
                 <div class="row">
-                  <label class="col-sm-2 col-form-label text-sm-end">Tanggal <span class="text-danger">*</span></label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">Tanggal <span class="text-danger">*</span></label>
+                  <div class="col-sm-9">
                     <input type="date" id="tgl_realisasi_telepon" name="tgl_realisasi_telepon" value="{{old('tgl_realisasi_telepon')}}" class="form-control @if ($errors->any()) @if($errors->has('tgl_realisasi_telepon')) is-invalid @else   @endif @endif">
                     @if($errors->has('tgl_realisasi_telepon'))
                       <div class="invalid-feedback">{{$errors->first('tgl_realisasi_telepon')}}</div>
@@ -316,7 +290,7 @@
                   </div>
                 </div>
                 <div class="row mt-3">
-                  <label class="col-sm-2 col-form-label text-sm-end">Start <span class="text-danger">*</span></label>
+                  <label class="col-sm-3 col-form-label text-sm-end">Start <span class="text-danger">*</span></label>
                   <div class="col-sm-4">
                     <input type="time" id="start" name="start" onchange="hitungDurasi();" value="{{old('start')}}" class="form-control @if ($errors->any()) @if($errors->has('start')) is-invalid @else   @endif @endif">
                     @if($errors->has('start'))
@@ -324,7 +298,7 @@
                     @endif
                   </div>
                   <label class="col-sm-2 col-form-label text-sm-end">End <span class="text-danger">*</span></label>
-                  <div class="col-sm-4">
+                  <div class="col-sm-3">
                   <input type="time" id="end" name="end" onchange="hitungDurasi();" value="{{old('end')}}" class="form-control @if ($errors->any()) @if($errors->has('end')) is-invalid @else   @endif @endif">
                     @if($errors->has('end'))
                       <div class="invalid-feedback">{{$errors->first('end')}}</div>
@@ -332,7 +306,7 @@
                   </div>
                 </div>
                 <div class="row mt-3">
-                  <label class="col-sm-2 col-form-label text-sm-end">Durasi</label>
+                  <label class="col-sm-3 col-form-label text-sm-end">Durasi</label>
                   <div class="col-sm-4">
                     <input type="text" id="durasi" name="durasi" value="{{old('durasi')}}" class="form-control @if ($errors->any()) @if($errors->has('durasi')) is-invalid @else   @endif @endif" readonly>
                       @if($errors->has('durasi'))
@@ -343,8 +317,8 @@
               </div>
               <div class="d-visit">
                 <div class="row l-jenis-visit mb-3">
-                  <label class="col-sm-2 col-form-label text-sm-end">Jenis Visit <span class="text-danger">*</span></label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">Jenis Visit <span class="text-danger">*</span></label>
+                  <div class="col-sm-9">
                     <div class="position-relative">
                       <select id="jenis_visit" name="jenis_visit" class="form-select @if ($errors->any()) @if($errors->has('jenis_visit')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
@@ -359,7 +333,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <label class="col-sm-2 col-form-label text-sm-end">Tanggal <span class="text-danger">*</span></label>
+                  <label class="col-sm-3 col-form-label text-sm-end">Tanggal <span class="text-danger">*</span></label>
                   <div class="col-sm-4">
                     <input type="date" id="tgl_realisasi" name="tgl_realisasi" value="{{old('tgl_realisasi')}}" class="form-control @if ($errors->any()) @if($errors->has('tgl_realisasi')) is-invalid @else   @endif @endif">
                     @if($errors->has('tgl_realisasi'))
@@ -367,7 +341,7 @@
                     @endif
                   </div>
                   <label class="col-sm-2 col-form-label text-sm-end d-visit l-jam-realisasi">Jam <span class="text-danger">*</span></label>
-                  <div class="col-sm-4 d-visit l-jam-realisasi">
+                  <div class="col-sm-3 d-visit l-jam-realisasi">
                     <input type="time" id="jam_realisasi"  name="jam_realisasi" value="{{old('jam_realisasi')}}" class="form-control @if ($errors->any()) @if($errors->has('jam_realisasi')) is-invalid @else   @endif @endif">
                     @if($errors->has('jam_realisasi'))
                       <div class="invalid-feedback">{{$errors->first('jam_realisasi')}}</div>
@@ -375,8 +349,8 @@
                   </div>
                 </div>
                 <div class="row l-notulen mt-3">
-                  <label class="col-sm-2 col-form-label text-sm-end">Notulen / Berita Acara <span class="text-danger">*</span></label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">Notulen / Berita Acara <span class="text-danger">*</span></label>
+                  <div class="col-sm-9">
                     <div class="form-floating form-floating-outline">
                       <textarea class="form-control h-px-100 @if ($errors->any()) @if($errors->has('notulen')) is-invalid @else   @endif @endif" name="notulen" id="notulen" placeholder="">{{old('notulen')}}</textarea>
                       @if($errors->has('notulen'))
@@ -386,8 +360,8 @@
                   </div>
                 </div>
                 <div class="row mt-3 l-email">
-                  <label class="col-sm-2 col-form-label text-sm-end">Email Penerima<span class="text-danger">*</span></label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">Email Penerima<span class="text-danger">*</span></label>
+                  <div class="col-sm-9">
                     <input type="text" id="email" name="email" value="{{old('email')}}" class="form-control @if ($errors->any()) @if($errors->has('email')) is-invalid @else   @endif @endif">
                       @if($errors->has('email'))
                         <div class="invalid-feedback">{{$errors->first('email')}}</div>
@@ -395,8 +369,8 @@
                   </div>
                 </div>
                 <div class="row mt-3 l-penerima">
-                  <label class="col-sm-2 col-form-label text-sm-end">Penerima Berkas <span class="text-danger">*</span></label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">Penerima Berkas <span class="text-danger">*</span></label>
+                  <div class="col-sm-9">
                     <input type="text" id="penerima" name="penerima" value="{{old('penerima')}}" class="form-control @if ($errors->any()) @if($errors->has('penerima')) is-invalid @else   @endif @endif">
                       @if($errors->has('penerima'))
                         <div class="invalid-feedback">{{$errors->first('penerima')}}</div>
@@ -404,8 +378,8 @@
                   </div>
                 </div>
                 <div class="row l-jenis-visit mt-3 mb-3">
-                  <label class="col-sm-2 col-form-label text-sm-end">Kirim Email</label>
-                  <div class="col-sm-10">
+                  <label class="col-sm-3 col-form-label text-sm-end">Kirim Email</label>
+                  <div class="col-sm-9">
                     <div class="position-relative">
                       <button type="button" class="btn btn-primary" id="btn-send-email" onclick="sendEmail()">
                         <span class="tf-icons mdi mdi-email-send-outline me-1"></span> Kirim Email
@@ -415,57 +389,51 @@
                 </div>
               </div>
               <div class="row mt-3 l-keterangan" style="display:none">
-                <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
-                <div class="col-sm-10">
+                <label class="col-sm-3 col-form-label text-sm-end">Keterangan</label>
+                <div class="col-sm-9">
                   <div class="form-floating form-floating-outline mb-4">
                     <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="notes_tipe" id="notes_tipe" placeholder="">{{old('notes_tipe')}}</textarea>
                   </div>
                 </div>
               </div>
             </div>
+            </div>
           </div>
           <hr class="my-4 mx-4">
           <h6>3. Berkas Pendukung</h6>
           <div class="row mb-3">
             <div class="col-sm-12">
-              <table class="table table-hover" id="tabelUpload">
-                <thead>
-                    <tr class="d-flex">
-                    <th scope="col" class="col-4">Nama File</th>
-                    <th scope="col" class="col-8">File</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="d-flex">
-                        <td class="col-4">
-                          <input type="text" placeholder="-" id="nama-file-1" name="namafiles[]" class="form-control"/>
-                        </td>
-                        <td class="col-8">
-                          <input type="file" id="file-1" name="files[]" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="d-flex">
-                        <td class="col-4">
-                          <input type="text" placeholder="-" id="nama-file-2" name="namafiles[]" class="form-control"/>
-                        </td>
-                        <td class="col-8">
-                        <input type="file" id="file-2" name="files[]" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="d-flex">
-                        <td class="col-4">
-                          <input type="text" placeholder="-" id="nama-file-3" name="namafiles[]" class="form-control"/>
-                        </td>
-                        <td class="col-8">
-                          <input type="file" id="file-3" name="files[]" class="form-control">
-                        </td>
-                    </tr>
-                </tbody>
-                </table>
-                  <!-- <center>
-                      <a class="btn w-40 btn-info mt-2" style="color:white" id="addRowUpload" ><span class="mdi mdi-plus"></span>&nbsp; Tambah File </a>
-                      </center> -->
-              </table>
+              <div class="card border-dashed border-2" id="dropzone-card">
+                <div class="card-body text-center py-5" id="dropzone-area">
+                  <div id="drop-area">
+                    <i class="mdi mdi-cloud-upload-outline text-muted mb-3" style="font-size: 48px;"></i>
+                    <h5 class="text-muted mb-2">Drop files here or click to browse</h5>
+                    <p class="text-muted small mb-3">Maximum 3 files • PDF, DOC, DOCX, JPG, PNG (Max 10MB each)</p>
+                    <button type="button" class="btn btn-outline-primary" id="browse-files">
+                      <i class="mdi mdi-folder-open-outline me-2"></i>Browse Files
+                    </button>
+                    <input type="file" id="file-input" name="files[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;" max="3">
+                  </div>
+                  
+                  <div id="file-preview" class="mt-4" style="display: none;">
+                    <div class="row" id="file-list">
+                      <!-- Files will be displayed here -->
+                    </div>
+                  </div>
+                  
+                  <div id="upload-progress" style="display: none;">
+                    <div class="progress mb-3">
+                      <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-muted small">Uploading files...</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Hidden inputs for file names -->
+              <div id="hidden-inputs">
+                <!-- Hidden inputs will be generated here -->
+              </div>
             </div>
           </div>
           <hr class="my-4 mx-4">
@@ -606,9 +574,30 @@
     }else{
       $('#durasi').val("");
     }
-
   }
+
+  // Function to update display fields
+  function updateDisplayFields() {
+    $('#branch-display').text($('#branch').val() || '-');
+    $('#kebutuhan-display').text($('#kebutuhan').val() || '-');
+    $('#tim-sales-display').text($('#tim_sales_name').val() || '-');
+    $('#sales-display').text($('#sales_name').val() || '-');
+    $('#crm-display').text($('#crm_name').val() || '-');
+    $('#ro-display').text($('#ro_name').val() || '-');
+    
+    // Update leads display with better formatting
+    const leadsValue = $('#leads').val();
+    if (leadsValue && leadsValue !== '') {
+      $('#leads-display').text(leadsValue).removeClass('text-muted').addClass('text-dark fw-medium');
+    } else {
+      $('#leads-display').text('Pilih leads/customer').removeClass('text-dark fw-medium').addClass('text-muted');
+    }
+  }
+
   $(document).ready(function(){
+    // Initialize display fields
+    updateDisplayFields();
+
     @if(old('tim_sales_id')!=null && old('tim_sales_id')!= "")
       $('#tim_sales_d_id').find('option').remove();
       $('#tim_sales_d_id').append('<option value="">- Pilih data -</option>');
@@ -639,7 +628,6 @@
     @endif
 
     $('#tim_sales_id').on('change', function() {
-
       $('#tim_sales_d_id').find('option').remove();
       $('#tim_sales_d_id').append('<option value="">- Pilih data -</option>');
 
@@ -667,7 +655,6 @@
     @if(old('tipe') == null)
       $('.d-visit').hide();
       $('.d-telepon').hide();
-      // $('.d-status-leads').hide();
       $('.d-tim-sales').hide();
       $('.d-ro').hide();
       $('.d-crm').hide();
@@ -746,6 +733,8 @@
       $('#sales_name').val("{{$leads->salesName}}");
       $('#email_sales').val("{{$leads->salesEmail}}");
       $('#email_branch_manager').val("{{$leads->branchManagerEmail}}");
+      $('#crm_name').val("{{$leads->crm}}");
+      $('#ro_name').val("{{$leads->ro}}");
 
       $('#sales_d').val("");
 
@@ -757,6 +746,7 @@
       @endif
 
       $('#btn-lihat-leads').removeClass('d-none');
+      updateDisplayFields();
     @endif
 
     $('#table-data').on('click', 'tbody tr', function() {
@@ -786,12 +776,58 @@
       }
 
       $('#btn-lihat-leads').removeClass('d-none');
-    })
+      updateDisplayFields();
+    });
 
+    // Handle dropdown change for activity type
+    $('#tipe-select').on('change', function() {
+      var selectedValue = $(this).val();
+      // Tampilkan container form activity jika ada pilihan
+      if(selectedValue) {
+        $('#activity-form-container').show();
+      } else {
+        $('#activity-form-container').hide();
+      }
+      
+      // Hide all sections first
+      $('.d-telepon').hide();
+      $('.d-visit').hide();
+      $('.l-penerima').hide();
+      $('.l-jenis-visit').hide();
+      $('.l-notulen').hide();
+      $('.l-keterangan').show();
+      $('.l-email').hide();
+      $('.d-tim-sales').hide();
+      $('.d-ro').hide();
+      $('.d-crm').hide();
+
+      // Show relevant sections based on selection
+      if(selectedValue === 'Telepon' || selectedValue === 'Online Meeting') {
+        $('.d-telepon').show();
+      } else if(selectedValue === 'Visit') {
+        $('.d-visit').show();
+        $('.l-jenis-visit').show();
+        $('.l-notulen').show();
+        $('.l-keterangan').hide();
+      } else if(selectedValue === 'Email') {
+        $('.d-visit').show();
+        $('.l-jam-realisasi').hide();
+        $('.l-email').show();
+      } else if(selectedValue === 'Kirim Berkas') {
+        $('.d-visit').show();
+        $('.l-penerima').show();
+      } else if(selectedValue === 'Pilih Sales') {
+        $('.d-tim-sales').show();
+      } else if(selectedValue === 'Pilih RO') {
+        $('.d-ro').show();
+      } else if(selectedValue === 'Pilih CRM') {
+        $('.d-crm').show();
+      } else {
+        $('.l-keterangan').hide();
+      }
     });
 
     @if(old('tipe') != null)
-      // $('.d-status-leads').hide();
       $('.d-tim-sales').hide();
       $('.d-ro').hide();
       $('.d-crm').hide();
@@ -804,90 +840,8 @@
       $('.l-keterangan').show();
 
       var tipe = "{{old('tipe')}}";
-      if(tipe=="Telepon"){
-        $('#telepon').prop("checked", true);
-        $('.d-telepon').show();
-      } else if(tipe=="Online Meeting"){
-        $('#online-meeting').prop("checked", true);
-        $('.d-telepon').show();
-      } else if(tipe=="Visit"){
-        $('#visit').prop("checked", true);
-        $('.d-visit').show();
-        $('.l-jenis-visit').show();
-        $('.l-notulen').show();
-        $('.l-keterangan').hide();
-      } else if(tipe=="Email"){
-        $('#email').prop("checked", true);
-        $('.d-visit').show();
-        $('.l-email').show();
-        $('.l-jam-realisasi').hide();
-      } else if(tipe=="Kirim Berkas"){
-        $('#kirim-berkas').prop("checked", true);
-        $('.d-visit').show();
-        $('.l-penerima').show();
-      }
-      // else if(tipe=="Ubah Status"){
-      //   $('#ubah-status').prop("checked", true);
-      //   $('.d-status-leads').show();
-      // }
-      else if(tipe=="Pilih Sales"){
-        $('#pilih-sales').prop("checked", true);
-        $('.d-tim-sales').show();
-      }else if(tipe=="Pilih RO"){
-        $('#pilih-ro').prop("checked", true);
-        $('.d-ro').show();
-      }else if(tipe=="Pilih CRM"){
-        $('#pilih-crm').prop("checked", true);
-        $('.d-crm').show();
-      }else{
-        $('.l-keterangan').hide();
-      }
+      $('#tipe-select').val(tipe).trigger('change');
     @endif
-
-  $('.tipe').click(function() {
-    $('.d-telepon').hide();
-    $('.d-visit').hide();
-    $('.l-penerima').hide();
-    $('.l-jenis-visit').hide();
-    $('.l-notulen').hide();
-    $('.l-keterangan').show();
-    $('.l-email').hide();
-    // $('.d-status-leads').hide();
-    $('.d-tim-sales').hide();
-    $('.d-ro').hide();
-    $('.d-crm').hide();
-
-    if($('#telepon').is(':checked')) {
-      $('.d-telepon').show();
-    } else if($('#online-meeting').is(':checked')) {
-      $('.d-telepon').show();
-    } else if($('#offline-meeting').is(':checked')) {
-      $('.d-visit').show();
-    } else if($('#visit').is(':checked')) {
-      $('.d-visit').show();
-      $('.l-jenis-visit').show();
-      $('.l-notulen').show();
-      $('.l-keterangan').hide();
-    } else if($('#email').is(':checked')) {
-      $('.d-visit').show();
-      $('.l-jam-realisasi').hide();
-      $('.l-email').show();
-    } else if($('#kirim-berkas').is(':checked')) {
-      $('.d-visit').show();
-      $('.l-penerima').show();
-    }
-    // else if($('#ubah-status').is(':checked')) {
-    //   $('.d-status-leads').show();
-    // }
-    else if($('#pilih-sales').is(':checked')) {
-      $('.d-tim-sales').show();
-    }else if($('#pilih-ro').is(':checked')) {
-      $('.d-ro').show();
-    }else if($('#pilih-crm').is(':checked')) {
-      $('.d-crm').show();
-    }else{
-        $('.l-keterangan').hide();
-      }
   });
 
 </script>
@@ -1009,7 +963,7 @@
       // Event untuk tombol hapus
       row.querySelector('.delete-button-crm').addEventListener('click', () => {
         row.remove();
-        itemCount--;
+        itemCountCrm--;
         updateTableIndicesCrm();
       });
     } else {
@@ -1037,7 +991,7 @@
     let msg = "";
     let obj = $("form").serializeObject();
 
-    if($('#pilih-ro').is(':checked')) {
+    if($('#tipe-select').val() === 'Pilih RO') {
       if($('#spv_ro').val()==""||$('#spv_ro').val()==null){
         msg +="Belum memilih SPV </br>";
       }else{
@@ -1047,7 +1001,7 @@
         }
       }
     }
-    if($('#pilih-crm').is(':checked')) {
+    if($('#tipe-select').val() === 'Pilih CRM') {
       const rowCountCrm = itemTableCrm.querySelectorAll('tr').length;
         if (rowCountCrm==null || rowCountCrm == 0) {
           msg +="Belum memilih CRM </br>";
@@ -1064,6 +1018,204 @@
       });
     }
   });
+</script>
+
+<script>
+// File Upload Drag & Drop Functionality
+$(document).ready(function() {
+  let selectedFiles = [];
+  const maxFiles = 3;
+  const maxFileSize = 10 * 1024 * 1024; // 10MB
+  const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/jpg', 'image/png'];
+
+  // Drag and drop events
+  $('#dropzone-area').on({
+    'dragover': function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).addClass('border-primary bg-light');
+    },
+    'dragleave': function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).removeClass('border-primary bg-light');
+    },
+    'drop': function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).removeClass('border-primary bg-light');
+      
+      const files = e.originalEvent.dataTransfer.files;
+      handleFiles(files);
+    }
+  });
+
+  // Browse files button
+  $('#browse-files').on('click', function() {
+    $('#file-input').click();
+  });
+
+  // File input change
+  $('#file-input').on('change', function() {
+    const files = this.files;
+    handleFiles(files);
+  });
+
+  function handleFiles(files) {
+    if (files.length === 0) return;
+
+    // Check if adding these files would exceed the limit
+    if (selectedFiles.length + files.length > maxFiles) {
+      Swal.fire({
+        title: 'Peringatan',
+        text: `Maksimal ${maxFiles} file yang diizinkan`,
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    Array.from(files).forEach(file => {
+      // Validate file type
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({
+          title: 'File Tidak Valid',
+          text: `File ${file.name} tidak didukung. Hanya PDF, DOC, DOCX, JPG, PNG yang diizinkan.`,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      // Validate file size
+      if (file.size > maxFileSize) {
+        Swal.fire({
+          title: 'File Terlalu Besar',
+          text: `File ${file.name} melebihi batas 10MB`,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      // Check for duplicate files
+      if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+        Swal.fire({
+          title: 'File Duplikat',
+          text: `File ${file.name} sudah dipilih`,
+          icon: 'warning',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      selectedFiles.push(file);
+    });
+
+    updateFilePreview();
+    updateFormData();
+  }
+
+  function updateFilePreview() {
+    const fileList = $('#file-list');
+    fileList.empty();
+
+    if (selectedFiles.length === 0) {
+      $('#file-preview').hide();
+      $('#drop-area').show();
+      return;
+    }
+
+    $('#drop-area').hide();
+    $('#file-preview').show();
+
+    selectedFiles.forEach((file, index) => {
+      const fileIcon = getFileIcon(file.type);
+      const fileSize = formatFileSize(file.size);
+      
+      const fileCard = `
+        <div class="col-md-4 mb-3">
+          <div class="card h-100">
+            <div class="card-body text-center position-relative">
+              <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2" onclick="removeFile(${index})">
+                <i class="mdi mdi-close"></i>
+              </button>
+              <i class="${fileIcon} text-primary mb-2" style="font-size: 32px;"></i>
+              <h6 class="card-title text-truncate" title="${file.name}">${file.name}</h6>
+              <p class="card-text small text-muted">${fileSize}</p>
+              <input type="text" class="form-control form-control-sm mt-2" placeholder="Nama file (opsional)" 
+                     id="filename-${index}" name="namafiles[]" value="${file.name.replace(/\.[^/.]+$/, '')}">
+            </div>
+          </div>
+        </div>
+      `;
+      
+      fileList.append(fileCard);
+    });
+
+    // Add upload more button if less than max files
+    if (selectedFiles.length < maxFiles) {
+      const addMoreCard = `
+        <div class="col-md-4 mb-3">
+          <div class="card h-100 border-dashed">
+            <div class="card-body text-center d-flex flex-column justify-content-center">
+              <i class="mdi mdi-plus text-muted mb-2" style="font-size: 32px;"></i>
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="$('#file-input').click()">
+                Add More Files
+              </button>
+              <small class="text-muted mt-2">${selectedFiles.length}/${maxFiles} files</small>
+            </div>
+          </div>
+        </div>
+      `;
+      fileList.append(addMoreCard);
+    }
+  }
+
+  function updateFormData() {
+    // Create a new DataTransfer object
+    const dt = new DataTransfer();
+    
+    // Add all selected files to the DataTransfer object
+    selectedFiles.forEach(file => {
+      dt.items.add(file);
+    });
+    
+    // Update the file input
+    document.getElementById('file-input').files = dt.files;
+  }
+
+  function getFileIcon(fileType) {
+    switch(fileType) {
+      case 'application/pdf':
+        return 'mdi mdi-file-pdf-box';
+      case 'application/msword':
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        return 'mdi mdi-file-word-box';
+      case 'image/jpeg':
+      case 'image/jpg':
+      case 'image/png':
+        return 'mdi mdi-file-image-box';
+      default:
+        return 'mdi mdi-file-document-box';
+    }
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // Global function to remove file
+  window.removeFile = function(index) {
+    selectedFiles.splice(index, 1);
+    updateFilePreview();
+    updateFormData();
+  };
+});
 </script>
 
 <script>

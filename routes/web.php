@@ -207,6 +207,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/customer-activity/delete', 'delete')->name('customer-activity.delete');
 
         Route::get('/sales/customer-activity/track/{leadsId}', 'trackActivity')->name('customer-activity.track');
+        Route::get('/sales/customer-activity/ajax', 'ajaxFeedPaginated')->name('customer-activity.ajaxFeedPaginated');
 
         Route::get('/sales/customer-activity/list', 'list')->name('customer-activity.list'); // ajax
         Route::get('/sales/customer-activity/member-tim-sales', 'memberTimSales')->name('customer-activity.member-tim-sales'); // ajax
