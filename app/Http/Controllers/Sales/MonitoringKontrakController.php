@@ -236,7 +236,7 @@ class MonitoringKontrakController extends Controller
                     <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
                 </a>';
             } else {
-                $aksiIcon = '<a href="'.route('monitoring-kontrak.view', $data->id).'" class="text-body">
+                $aksiIcon = '<a href="'.route('pks.view-new', $data->id).'" class="text-body">
                     <i class="mdi mdi-magnify mdi-20px mx-1"></i>
                 </a>';
                 $aksiIcon .= '<a href="'.route('customer-activity.add-activity-kontrak', $data->id).'" class="text-body">

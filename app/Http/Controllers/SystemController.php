@@ -11,6 +11,12 @@ class SystemController extends Controller
     public function userLoginData () {
         $user = Auth::user();
         $userData = DB::connection('mysqlhris')->table('m_user')->where('id',$user->id)->first();
+        $timSalesD = DB::table('m_tim_sales_d')
+            ->where('user_id', $user->id)
+            ->whereNull('deleted_at')
+            ->first();
+        $userData->tim_sales_id = $timSalesD->tim_sales_id ?? null;
+        $userData->tim_sales_d_id = $timSalesD->id ?? null;
         return $userData;
     }
 
@@ -26,6 +32,6 @@ class SystemController extends Controller
             ]);
         } catch (\Throwable $th) {
             //throw $th;
-        }    
+        }
     }
 }

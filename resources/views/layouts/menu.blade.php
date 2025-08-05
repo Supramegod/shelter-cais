@@ -1,7 +1,7 @@
 <aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0">
     <div class="container-fluid d-flex h-100">
     <ul class="menu-inner">
-        <li class="menu-item @if(Request::url() === route('home')||Request::url() === route('dashboard')) active @endif">
+        <li class="menu-item @if(Request::url() === route('home')||Request::url() === route('dashboard') || str_contains(Request::url(), route('dashboard'))) active @endif">
             <a href="{{route('home')}}" class="menu-link">
             <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
             <div data-i18n="Dashboards">Home</div>
@@ -198,6 +198,29 @@
         </li>
         @endif
         @if(in_array(Auth::user()->role_id,[2]))
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-package-variant-closed"></i>
+                <div data-i18n="Purchase">Purchase</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(Request::url() === route('purchase-request')) active @endif">
+                    <a href="{{route('purchase-request')}}" class="menu-link">
+
+                        <div data-i18n="Purchase Request">Purchase Request</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(Request::url() === route('purchase-order')) active @endif">
+                    <a href="{{route('purchase-order')}}" class="menu-link">
+
+                        <div data-i18n="Purchase Order">Purchase Order</div>
+                    </a>
+                </li>
+
+            </ul>
+        </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,36,57,58,59]))
         <!-- MASTER DATA -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -205,6 +228,11 @@
                 <div data-i18n="Master Data">Master Data</div>
             </a>
             <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('perusahaan'))) active @endif">
+                    <a href="{{route('perusahaan')}}" class="menu-link">
+                        <div data-i18n="Jenis Perusahaan">Jenis Perusahaan</div>
+                    </a>
+                </li>
                 <li class="menu-item @if(str_contains(Request::url(), route('tim-sales'))) active @endif">
                     <a href="{{route('tim-sales')}}" class="menu-link">
                         <div data-i18n="Tim Sales">Tim Sales</div>
@@ -215,12 +243,20 @@
                         <div data-i18n="Kebutuhan">Kebutuhan</div>
                     </a>
                 </li>
+
                 <li class="menu-item @if(str_contains(Request::url(), route('training'))) active @endif">
                 <li class="menu-item @if(Request::url() == route('training')) active @endif">
                     <a href="{{route('training')}}" class="menu-link">
                         <div data-i18n="Training">Training</div>
                     </a>
                 </li>
+                @if(in_array( Auth::user()->role_id,[2]))
+                <li class="menu-item @if(str_contains(Request::url(), route('position'))) active @endif">
+                    <a href="{{route('position')}}" class="menu-link">
+                        <div data-i18n="Position">Position</div>
+                    </a>
+                </li>
+                @endif
             </ul>
         </li>
         <!-- BARANG -->

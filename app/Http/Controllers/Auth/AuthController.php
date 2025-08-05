@@ -127,6 +127,10 @@ class AuthController extends Controller
                     $userData->tim_sales_d_id = $dataSalesD->id;
                 }
             }
+
+            if($userData->role_id == 56 || $userData->role_id == 55){
+                return redirect()->route('dashboard-manager-crm');
+            }
             return view('home.dashboard',compact('userData'));
         }
 
