@@ -5,6 +5,7 @@ use App\Http\Middleware\VerifyFastApiKey;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\DashboardController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Fitur\ContactController;
 use App\Http\Controllers\Fitur\SdtTrainingInviteController;
 
@@ -834,6 +835,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/setting/entitas/list', 'list')->name('entitas.list'); // ajax
 
     });
+     Route::controller(ProfileController::class)->group(function() {
+        Route::get('/profile', 'index')->name('profile');
+        Route::get('/profile/list-activity', 'listActivity')->name('profile.activities');
+     });
 
     // LOG
     //NOTIFIKASI

@@ -253,6 +253,7 @@
                 </li>
             </ul>
         </li>
+        <!-- TR -->
          <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
                     <a href="{{route('jenis-barang')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-view-list-outline"></i>
