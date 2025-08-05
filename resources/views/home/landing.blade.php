@@ -71,7 +71,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
             <div class="navbar-brand app-brand demo d-xl-flex py-0 ml-1">
             <a href="https://shelterindonesia.id" class="app-brand-link gap-2">
             <span class="app-brand-logo demo">
-                <img src="{{asset('public/assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
+                <img src="{{ asset('public/assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
             </span>
             </a>
         </div>
@@ -88,13 +88,13 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
             aria-label="Toggle navigation">
             <i class="tf-icons mdi mdi-close"></i>
           </button>
-          
+
         </div>
         <div class="landing-menu-overlay d-lg-none"></div>
         <!-- Menu wrapper: End -->
         <!-- Toolbar: Start -->
         <ul class="navbar-nav flex-row align-items-center ms-auto">
-          
+
           <!-- navbar button: End -->
         </ul>
         <!-- Toolbar: End -->
@@ -117,7 +117,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
                     class="position-absolute top-0 start-0"
                     data-speed="1" />
                 <h6 class="text-center fw-semibold d-flex justify-content-center align-items-center mb-5">
-                    
+
                     <span class="text-uppercase" style="font-size:3rem">KONTAK</span>
                 </h6>
                 <div class="row gy-4">
@@ -210,7 +210,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
     <footer class="landing-footer">
       <div class="footer-top position-relative overflow-hidden" style="background-color:#121240 !important">
         <img
-          src="../../assets/public/assets/img/front-pages/backgrounds/footer-bg.png"
+          src="../../assets/assets/img/front-pages/backgrounds/footer-bg.png"
           alt="footer bg"
           class="footer-bg banner-bg-img" />
         <div class="container position-relative">
@@ -218,7 +218,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
             <div class="col-lg-5">
             <a href="https://shelterindonesia.id" class="app-brand-link gap-2 mb-3">
             <span class="app-brand-logo demo">
-                <img src="{{asset('public/assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
+                <img src="{{ asset('public/assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
             </span>
             </a>
               <p class="footer-text footer-logo-description mb-4">
@@ -287,8 +287,8 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
     <!-- Footer: End -->
 
     <!-- Core JS -->
-    <!-- build:js assets/public/assets/vendor/js/core.js -->
-     
+    <!-- build:js assets/assets/vendor/js/core.js -->
+
     <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/libs/node-waves/node-waves.js') }}"></script>
@@ -309,7 +309,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
 </html>
 
 <script>
-@if(session()->has('success'))  
+@if(session()->has('success'))
     Swal.fire({
         title: 'Pemberitahuan',
         html: '{{session()->get('success')}}',
@@ -320,7 +320,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
         buttonsStyling: false
     });
 @endif
-@if(session()->has('error'))  
+@if(session()->has('error'))
     Swal.fire({
         title: 'Pemberitahuan',
         html: '{{session()->get('error')}}',
@@ -330,5 +330,5 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
         },
         buttonsStyling: false
     });
-@endif  
+@endif
 </script>

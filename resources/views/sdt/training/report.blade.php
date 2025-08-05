@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <title></title> -->
-    
+
     <!-- <style> -->
-        
+
         <!-- Core CSS -->
         <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/core.css') }}" />
         <link rel="stylesheet" href="{{ public_path('assets/vendor/css/rtl/core.css') }}" />
@@ -14,25 +14,25 @@
         <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/theme-default.css') }}" />
         <link rel="stylesheet" href="{{ public_path('assets/vendor/css/rtl/theme-default.css') }}" />
         <!-- @import url('{{ public_path('assets/vendor/css/rtl/theme-default.css') }}'); -->
-        <link rel="stylesheet" href="{{ asset('public/assets/css/demo.css') }}" /> 
-        <link rel="stylesheet" href="{{ public_path('assets/css/demo.css') }}" /> 
+        <link rel="stylesheet" href="{{ asset('public/assets/css/demo.css') }}" />
+        <link rel="stylesheet" href="{{ public_path('assets/css/demo.css') }}" />
         <!-- @import url('{{ public_path('assets/css/demo.css') }}'); -->
         <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/front-page.css') }}" />
         <link rel="stylesheet" href="{{ public_path('assets/vendor/css/pages/front-page.css') }}" />
         <!-- @import url('{{ public_path('assets/vendor/css/pages/front-page.css') }}'); -->
 
         <!-- Vendors CSS -->
-        <link rel="stylesheet" href="{{ public_path('assets/vendor/libs/nouislider/nouislider.css') }}" /> 
-        <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/nouislider/nouislider.css') }}" /> 
+        <link rel="stylesheet" href="{{ public_path('assets/vendor/libs/nouislider/nouislider.css') }}" />
+        <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/nouislider/nouislider.css') }}" />
         <!-- @import url('{{ public_path('assets/vendor/libs/nouislider/nouislider.css') }}'); -->
         <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" />
-        
+
         <!-- @import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js'); -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
          <!-- Additional embedded styles  -->
     <!-- </style> -->
-    
+
 </head>
 <body>
     <div class="container-fluid flex-grow-1 container-p-y">
@@ -40,7 +40,7 @@
         <div class="row row-sm mt-12">
         <h1 style="text-align: center; color:#121240">LAPORAN TRAINING</h1>
          <br><br><br>
-        
+
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-body pt-4">
@@ -56,7 +56,7 @@
                                                     <td>
                                                         {{$data->laman}}
                                                     </td>
-                                                </tr>    
+                                                </tr>
                                                 <tr>
                                                     <th scope="row" style="width: 40%"><strong>Tipe :</strong></th>
                                                     <td>
@@ -83,7 +83,7 @@
                                                 </tr> -->
                                             </tbody>
                                         </table>
-                                    </div> 
+                                    </div>
                                 </td>
                                 <td style="width: 60%; padding:0%;">
                                     <div class="table-responsive" >
@@ -94,7 +94,7 @@
                                                     <td>
                                                         {{$data->area}}
                                                     </td>
-                                                </tr>    
+                                                </tr>
                                                 <tr>
                                                     <th scope="row" style="width: 30%"><strong>Materi:</strong></th>
                                                     <td>
@@ -158,7 +158,7 @@
                 </div>
             </div>
         <!-- </div> -->
-        
+
         <!-- <div class="row row-sm mt-12"> -->
             <div class="col-md-12">
                 <div class="card">
@@ -231,13 +231,13 @@
                     <div class="card-body pt-4">
                         <div class="">
                             <h6>Galeri</h6>
-                            
+
                             @foreach($listImage as $value)
                             <figure>
                                 <img src="{{ public_path('/uploads/sdt-training/image/').$value->file_name }}" alt="" style="width: 200px; height: 150px;">
                                 <figcaption>{{$value->keterangan}}</figcaption>
                             </figure>
-                                
+
                             @endforeach
                         </div>
                     </div>
@@ -256,8 +256,8 @@
     $(document).ready(function() {
         alert('sjsjsj');
     });
-    // let table = new DataTable('#table-data-trainer');    
-    
+    // let table = new DataTable('#table-data-trainer');
+
     // var table = $('#table-data-trainer').DataTable({
     //   scrollX: true,
     //   "iDisplayLength": 25,
@@ -265,6 +265,6 @@
     //   'language': {
     //   'loadingRecords': '&nbsp;',
     //   'processing': 'Loading...'
-    // }}); 
+    // }});
 <script>
 @endsection

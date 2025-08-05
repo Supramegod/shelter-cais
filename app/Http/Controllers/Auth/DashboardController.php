@@ -1455,4 +1455,96 @@ class DashboardController extends Controller
             ->rawColumns(['aksi'])
             ->make(true);
     }
+
+    public function search(Request $request)
+    {
+        $results = [
+            'leads' => [],
+            'quotation' => [],
+            'spk' => [],
+            'kontrak' => [],
+        ];
+
+        // Ambil data dari sl_leads
+        $leadsData = DB::table('sl_leads')
+            ->select('id', 'nama_perusahaan', 'created_at')
+            ->whereNull('deleted_at')
+            ->whereNotNull('nama_perusahaan')
+            ->get();
+
+        foreach ($leadsData as $lead) {
+            $results['leads'][] = [
+                'name' => $lead->nama_perusahaan,
+                'subtitle' => 'Leads',
+                'meta' => \Carbon\Carbon::parse($lead->created_at)->format('d M Y'),
+                'src' => asset('public/assets/img/icons/leads.png'),
+                'url' => route('leads.view', $lead->id),
+            ];
+        }
+        // Ambil data dari sl_quotation
+        $quotationData = DB::table('sl_quotation')
+            ->leftJoin('sl_leads', 'sl_quotation.leads_id', '=', 'sl_leads.id')
+            ->select(
+                'sl_quotation.id',
+                'sl_quotation.nomor',
+                'sl_quotation.tgl_quotation',
+                'sl_leads.nama_perusahaan'
+            )
+            ->whereNull('sl_quotation.deleted_at')
+            ->get();
+        foreach ($quotationData as $quotation) {
+            $results['quotation'][] = [
+                'name' => $quotation->nomor,
+                'subtitle' => $quotation->nama_perusahaan,
+                'meta' => \Carbon\Carbon::parse($quotation->tgl_quotation)->format('d M Y'),
+                'src' => asset('public/assets/img/icons/quotation.png'),
+                'url' => route('quotation.view', $quotation->id),
+            ];
+        }
+        // Ambil data dari sl_spk
+        $spkData = DB::table('sl_spk')
+            ->leftJoin('sl_leads', 'sl_spk.leads_id', '=', 'sl_leads.id')
+            ->select(
+                'sl_spk.id',
+                'sl_spk.nomor',
+                'sl_spk.tgl_spk',
+                'sl_leads.nama_perusahaan'
+            )
+            ->whereNull('sl_spk.deleted_at')
+            ->get();
+
+        foreach ($spkData as $spk) {
+            $results['spk'][] = [
+                'name' => $spk->nomor,
+                'subtitle' => $spk->nama_perusahaan,
+                'meta' => \Carbon\Carbon::parse($spk->tgl_spk)->format('d M Y'),
+                'src' => asset('public/assets/img/icons/spk.png'),
+                'url' => route('spk.view', $spk->id),
+            ];
+        }
+
+        // Ambil data dari sl_pks
+        $pksData = DB::table('sl_pks')
+            ->leftJoin('sl_leads', 'sl_pks.leads_id', '=', 'sl_leads.id')
+            ->select(
+                'sl_pks.id',
+                'sl_pks.nomor',
+                'sl_pks.tgl_pks',
+                'sl_leads.nama_perusahaan'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereNotIn('sl_pks.status_pks_id', [100])
+            ->get();
+
+        foreach ($pksData as $pks) {
+            $results['kontrak'][] = [
+                'name' => $pks->nomor,
+                'subtitle' => $pks->nama_perusahaan,
+                'meta' => \Carbon\Carbon::parse($pks->tgl_pks)->format('d M Y'),
+                'src' => asset('public/assets/img/icons/pks.png'),
+                'url' => route('pks.view', $pks->id),
+            ];
+        }
+        return response()->json($results);
+    }
 }

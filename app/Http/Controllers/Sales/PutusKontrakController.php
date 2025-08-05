@@ -101,6 +101,7 @@ class PutusKontrakController extends Controller
             $data = DB::table('sl_pks')
                 ->select('id', 'nomor', 'nama_perusahaan', 'nama_site', 'nama_proyek')
                 ->whereNull('deleted_at')
+                ->whereIn('status_pks_id', [7]) // status pks yang aktif
                 ->whereNotIn('id', function ($query) {
                     $query->select('pks_id')
                         ->from('sl_putus_kontrak')
@@ -156,6 +157,16 @@ class PutusKontrakController extends Controller
                 'created_at' => Carbon::now(),
                 'created_by' => Auth::user()->full_name ?? null,
             ]);
+
+            // update pks status
+            DB::table('sl_pks')
+                ->where('id', $pks->id)
+                ->update([
+                    'status_pks_id' => 100,
+                    'updated_at' => Carbon::now(),
+                    'updated_by' => Auth::user()->full_name ?? null,
+                ]);
+
 
             return redirect()->route('putus-kontrak')->with('success', 'Data berhasil disimpan');
         } catch (\Exception $e) {

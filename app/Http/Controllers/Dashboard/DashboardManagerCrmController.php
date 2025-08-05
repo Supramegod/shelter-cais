@@ -270,6 +270,121 @@ class DashboardManagerCrmController extends Controller
         $countKontrakKurangDari3Bulan = $listKontrakKurangDari3Bulan->count();
         $countKontrakAktif = $listKontrakAktif->count();
 
+        $listBelumAdaCrm = DB::table('sl_pks')
+            ->select(
+                'sl_pks.id',
+                'sl_pks.nomor',
+                'sl_pks.nama_perusahaan',
+                DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+                'sl_pks.alamat_perusahaan',
+                'sl_pks.layanan',
+                'sl_pks.bidang_usaha',
+                'sl_pks.jenis_perusahaan',
+                'sl_pks.provinsi',
+                'sl_pks.kota',
+                'sl_pks.kategori_sesuai_hc',
+                'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereNull('sl_pks.crm_id')
+            ->whereNull('sl_pks.crm_id_1')
+            ->whereNull('sl_pks.crm_id_2')
+            ->whereNull('sl_pks.crm_id_3')
+            ->get();
+        foreach ($listBelumAdaCrm as $key => $value) {
+            $value->aksi = '<a href="'.route('customer-activity.add-crm-kontrak', $value->id).'" class="btn btn-success btn-sm"><i class="mdi mdi-account-plus"></i> Tambah CRM</a> ';
+        }
+        $countBelumAdaCrm = $listBelumAdaCrm->count();
+
+        $listBelumAdaRo = DB::table('sl_pks')
+            ->select(
+                'sl_pks.id',
+                'sl_pks.nomor',
+                'sl_pks.nama_perusahaan',
+                DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+                'sl_pks.alamat_perusahaan',
+                'sl_pks.layanan',
+                'sl_pks.bidang_usaha',
+                'sl_pks.jenis_perusahaan',
+                'sl_pks.provinsi',
+                'sl_pks.kota',
+                'sl_pks.kategori_sesuai_hc',
+                'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereNull('sl_pks.ro_id')
+            ->whereNull('sl_pks.ro_id_1')
+            ->whereNull('sl_pks.ro_id_2')
+            ->whereNull('sl_pks.ro_id_3')
+            ->get();
+        foreach ($listBelumAdaRo as $key => $value) {
+            $value->aksi = '<a href="'.route('customer-activity.add-ro-kontrak', $value->id).'" class="btn btn-success btn-sm"><i class="mdi mdi-account-plus"></i> Tambah RO</a> ';
+        }
+        $countBelumAdaRo = $listBelumAdaRo->count();
+
+        $listBelumAdaPicCustomer = DB::table('sl_pks')
+            ->select(
+                'sl_pks.id',
+                'sl_pks.nomor',
+                'sl_pks.nama_perusahaan',
+                DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+                'sl_pks.alamat_perusahaan',
+                'sl_pks.layanan',
+                'sl_pks.bidang_usaha',
+                'sl_pks.jenis_perusahaan',
+                'sl_pks.provinsi',
+                'sl_pks.kota',
+                'sl_pks.kategori_sesuai_hc',
+                'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->whereNull('sl_pks.pic_1')
+            ->whereNull('sl_pks.pic_2')
+            ->whereNull('sl_pks.pic_3')
+            ->get();
+        foreach ($listBelumAdaPicCustomer as $key => $value) {
+            $value->aksi = '<a href="'.route('customer-activity.add-pic-kontrak', $value->id).'" class="btn btn-success btn-sm"><i class="mdi mdi-account-plus"></i> Tambah PIC</a>';
+        }
+        $countBelumAdaPicCustomer = $listBelumAdaPicCustomer->count();
+
+        $listPicLengkap = DB::table('sl_pks')
+            ->select(
+                'sl_pks.id',
+                'sl_pks.nomor',
+                'sl_pks.nama_perusahaan',
+                DB::raw('(SELECT `name` FROM shelter3_hris.m_branch WHERE id = sl_pks.branch_id) as cabang'),
+                'sl_pks.alamat_perusahaan',
+                'sl_pks.layanan',
+                'sl_pks.bidang_usaha',
+                'sl_pks.jenis_perusahaan',
+                'sl_pks.provinsi',
+                'sl_pks.kota',
+                'sl_pks.kategori_sesuai_hc',
+                'sl_pks.created_by'
+            )
+            ->whereNull('sl_pks.deleted_at')
+            ->where(function($query) {
+                $query->whereNotNull('sl_pks.crm_id')
+                    ->orWhereNotNull('sl_pks.crm_id_1')
+                    ->orWhereNotNull('sl_pks.crm_id_2')
+                    ->orWhereNotNull('sl_pks.crm_id_3');
+            })
+            ->where(function($query) {
+                $query->whereNotNull('sl_pks.ro_id')
+                    ->orWhereNotNull('sl_pks.ro_id_1')
+                    ->orWhereNotNull('sl_pks.ro_id_2')
+                    ->orWhereNotNull('sl_pks.ro_id_3');
+            })
+            ->where(function($query) {
+                $query->whereNotNull('sl_pks.pic_1')
+                    ->orWhereNotNull('sl_pks.pic_2')
+                    ->orWhereNotNull('sl_pks.pic_3');
+            })
+            ->get();
+        foreach ($listPicLengkap as $key => $value) {
+            $value->aksi = '<a href="'.route('pks.view-new', $value->id).'" class="btn btn-primary btn-sm"><i class="mdi mdi-eye"></i> Lihat</a>';
+        }
+        $countPicLengkap = $listPicLengkap->count();
 
         return view('home.dashboard-manager-crm',compact(
             'countKontrakBelumAdaQuotation',
@@ -287,7 +402,15 @@ class DashboardManagerCrmController extends Controller
             'listKontrakKurangDari3Bulan',
             'countKontrakKurangDari3Bulan',
             'listKontrakAktif',
-            'countKontrakAktif'
+            'countKontrakAktif',
+            'listBelumAdaCrm',
+            'countBelumAdaCrm',
+            'listBelumAdaRo',
+            'countBelumAdaRo',
+            'listBelumAdaPicCustomer',
+            'countBelumAdaPicCustomer',
+            'listPicLengkap',
+            'countPicLengkap'
         ));
     }
     public function listPksSiapAktif(Request $request){
