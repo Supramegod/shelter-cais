@@ -1,0 +1,4 @@
+Note Update 02-06-2025
+1. CAIS-173 Optimasi Query Leads
+2. CAIS-184 Penambahan PMA / PMDN Benua dan Negara di Leads
+3. 

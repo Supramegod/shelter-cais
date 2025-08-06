@@ -1,0 +1,10 @@
+NOTE UPDATE 11-06-2025
+1. Fitur tanggal SPK dan tanggal PKS
+2. Fitur SPK bisa memilih salah 1 atau lebih quotation site
+3. Fitur PKS bisa memilih  salah 1 atau lebih spk site
+4. perubahan di backend untuk siap ke accurate dan HRIS
+5. perbaikan view SPK
+6. perbaikan List dan view PKS
+7. Penambahan PMA / PMDN Benua dan Negara di leads
+8. Optimasi Query leads
+9. Penambahan Kategori Berdasarkan HC di PKS

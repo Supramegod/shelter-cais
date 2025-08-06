@@ -1,0 +1,7 @@
+Note Update : 22-05-2025
+1. Penambahan Cetakan Draft Quotation apabila is aktif = 0
+2. Penambahan modul putus kontrak
+3. perbaikan quotation baru untuk CRM ( kasus bu murtiningsih )
+4. penambahan fitur Manual edit persen bpjs tk dan ks
+5. hanya menampilkan tombol cari leads di tambah quotation
+6. Perubahan apabila masih SPK dan belum PKS maka Quotation bisa diajukan ulang
