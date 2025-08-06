@@ -41,7 +41,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <!-- <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
                                             <select class="form-select" id="company" name="company">
@@ -66,16 +66,17 @@
                                             <label for="kebutuhan">Kebutuhan</label>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="is_aktif" name="is_aktif">
+                                            <select class="form-select" id="status" name="status">
                                                 <option value="">- Semua Status -</option>
-                                                <option value="0" @if($request->is_aktif=='0') selected @endif>Perlu Approval</option>
-                                                <option value="1" @if($request->is_aktif=='1') selected @endif>PKS Aktif</option>
+                                                @foreach($statusList as $dataStatus)
+                                                <option value="{{$dataStatus->id}}" @if($status==$dataStatus->id) selected @endif>{{$dataStatus->nama}}</option>
+                                                @endforeach
                                             </select>
-                                            <label for="is_aktif">Status Data</label>
+                                            <label for="status">Status Data</label>
                                         </div>
                                     </div>
                                 </div>
@@ -92,21 +93,44 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th></th>
-                                    <th class="text-center">No PKS</th>
-                                    <th class="text-center">No SPK</th>
+                                    <th class="text-center">Aksi</th>
                                     <th class="text-center">Tanggal</th>
-                                    <th class="text-center">Leads/Customer</th>
-                                    <th class="text-center">Kebutuhan</th>
+                                    <th class="text-center">Status Berlaku</th>
+                                    <th class="text-center">No PKS</th>
+                                    <th class="text-center">Perusahaan</th>
+                                    <th class="text-center">Awal Kontrak</th>
+                                    <th class="text-center">Akhir Kontrak</th>
+                                    <th class="text-center">Berakhir Dalam</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Created By</th>
-                                    <th class="text-center">Aksi</th>
+                                    <th class="text-center">Created At</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{-- data table ajax --}}
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-3">
+                        <strong>Keterangan Status:</strong>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#f39c1240;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Menunggu upload PKS</span>
+                            </li>
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#3498db40;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Menunggu diaktifkan oleh Manager CRM</span>
+                            </li>
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#e74c3c40;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Kontrak Terminated</span>
+                            </li>
+                            <li>
+                                <span style="display:inline-block;width:16px;height:16px;background-color:#adb5bd40;border-radius:3px;margin-right:8px;vertical-align:middle;"></span>
+                                <span style="vertical-align:middle;">Status tidak ditemukan</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -120,44 +144,12 @@
 
 @section('pageScript')
     <script>
-        @if(isset($success) || session()->has('success'))  
-            Swal.fire({
-                title: 'Pemberitahuan',
-                html: '{{$success}} {{session()->get('success')}}',
-                icon: 'success',
-                customClass: {
-                confirmButton: 'btn btn-primary waves-effect waves-light'
-                },
-                buttonsStyling: false
-            });
-        @endif
-        @if(isset($error) || session()->has('error'))  
-            Swal.fire({
-                title: 'Pemberitahuan',
-                html: '{{$error}} {{session()->has('error')}}',
-                icon: 'warning',
-                customClass: {
-                confirmButton: 'btn btn-warning waves-effect waves-light'
-                },
-                buttonsStyling: false
-            });
-        @endif
-            let dt_filter_table = $('.dt-column-search');
-
-            // Formatting function for row details - modify as you need
-            function format(d) {
-                return (
-                    '<dl>' +
-                    '<dt>Status Leads Saat Ini :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">trial</dd>' +
-                    '</dl>'
-                );
-            }
-
+        $(document).ready(function () {
             var table = $('#table-data').DataTable({
                 scrollX: true,
-                "iDisplayLength": 25,
                 'processing': true,
+                serverSide: true,
+                'pageLength': 25,
                 'language': {
                     'loadingRecords': '&nbsp;',
                     'processing': 'Loading...'
@@ -167,65 +159,92 @@
                     data: function (d) {
                         d.tgl_dari = $('#tgl_dari').val();
                         d.tgl_sampai = $('#tgl_sampai').val();
-                        d.branch = $('#branch').find(":selected").val();
-                        d.company = $('#company').find(":selected").val();
-                        d.kebutuhan = $('#kebutuhan').find(":selected").val();
-                        d.is_aktif = $('#is_aktif').find(":selected").val();
+                        d.status = $('#status').find(":selected").val();
                     },
                 },
                 "createdRow": function( row, data, dataIndex){
-                    if(data.status_pks_id==1 || data.status_pks_id==2 || data.status_pks_id==3 || data.status_pks_id== 4 || data.status_pks_id==5){
-                        $('td', row).css('background-color', '#f39c1240');
+                    if (data.status_pks_id == 5) {
+                        $('td', row).css('background-color', '#f39c1240'); // kuning
+                    } else if (data.status_pks_id == 6) {
+                        $('td', row).css('background-color', '#3498db40'); // biru
+                    } else if (data.status_pks_id == 8) {
+                        $('td', row).css('background-color', '#9b59b640'); // ungu
+                    } else if (data.status_pks_id == 100) {
+                        $('td', row).css('background-color', '#e74c3c40'); // merah
+                    } else if (data.status_pks_id === null) {
+                        $('td', row).css('background-color', '#adb5bd40'); // abu-abu
                     }
-                },     
+                    // if(data.status_pks_id==1 || data.status_pks_id==2 || data.status_pks_id==3 || data.status_pks_id== 4 || data.status_pks_id==5){
+                    //     $('td', row).css('background-color', '#f39c1240');
+                    // }
+                },
                 "order":[
                     [0,'desc']
                 ],
-                columns:[{
-                    data : 'id',
-                    name : 'id',
-                    visible: false,
+                columns:[
+                {
+                    data: 'id',
+                    name: 'id',
+                    className: 'text-center'
+                },
+                {
+                    data: 'aksi',
+                    name: 'aksi',
+                    className: 'text-center',
+                    orderable: false,
                     searchable: false
-                },{
-                    className: 'dt-control',
-                    orderable: false,
-                    data: null,
-                    defaultContent: ''
-                },{
-                    data : 'nomor',
-                    name : 'nomor',
-                    className:'text-center'
-                },{
-                    data : 'nomor_spk',
-                    name : 'nomor_spk',
-                    className:'text-center'
-                },{
-                    data : 'tgl_pks',
-                    name : 'tgl_pks',
-                    className:'text-center'
-                },{
-                    data : 'nama_perusahaan',
-                    name : 'nama_perusahaan',
-                    className:'text-center'
-                },{
-                    data : 'kebutuhan',
-                    name : 'kebutuhan',
-                    className:'text-center'
-                },{
-                    data : 'status',
-                    name : 'status',
-                    className:'text-center'
-                },{
-                    data : 'created_by',
-                    name : 'created_by',
-                    className:'text-center'
-                },{
-                    data : 'aksi',
-                    name : 'aksi',
-                    width: "10%",
-                    orderable: false,
-                    searchable: false,
-                }],
+                },
+                {
+                    data: 'tanggal',
+                    name: 'tanggal',
+                    className: 'text-center'
+                },
+                {
+                    data: 'status_berlaku',
+                    name: 'status_berlaku',
+                    className: 'text-center'
+                },
+                {
+                    data: 'no_pks',
+                    name: 'no_pks',
+                    className: 'text-center'
+                },
+                {
+                    data: 'nama_perusahaan',
+                    name: 'nama_perusahaan',
+                    className: 'text-center'
+                },
+                {
+                    data: 's_mulai_kontrak',
+                    name: 's_mulai_kontrak',
+                    className: 'text-center'
+                },
+                {
+                    data: 's_kontrak_selesai',
+                    name: 's_kontrak_selesai',
+                    className: 'text-center'
+                },
+                {
+                    data: 'berakhir_dalam',
+                    name: 'berakhir_dalam',
+                    className: 'text-center'
+                },
+                {
+                    data: 'status',
+                    name: 'status',
+                    className: 'text-center'
+                },
+                {
+                    data: 'created_by',
+                    name: 'created_by',
+                    className: 'text-center'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at',
+                    className: 'text-center'
+                }
+                ],
                 "language": datatableLang,
                 dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
                 buttons: [
@@ -271,13 +290,13 @@
                         className: 'dropdown-item',
                         orientation: 'landscape',
                         customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                         exportOptions: {
                             columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                             orientation: 'landscape',
                             customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                             // prevent avatar to be display
                             format: {
@@ -310,20 +329,6 @@
                     }
                 ],
             });
-
-            // Add event listener for opening and closing details
-            table.on('click', 'td.dt-control', function (e) {
-                let tr = e.target.closest('tr');
-                let row = table.row(tr);
-            
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                }
-                else {
-                    // Open this row
-                    row.child(format(row.data())).show();
-                }
-            });
-    </script>
+        });
+</script>
 @endsection

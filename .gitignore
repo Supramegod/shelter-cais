@@ -7,7 +7,11 @@
 /public/pks
 /storage/*.key
 /vendor
+/meeting
+/note
+/note_update
 .env
+.htaccess
 .env.backup
 .env.production
 .phpactor.json
@@ -20,6 +24,7 @@ npm-debug.log
 yarn-error.log
 cais.zip
 public.zip
+
 /.fleet
 /.idea
 /.vscode

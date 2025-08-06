@@ -44,38 +44,13 @@
                                 <div class="col-md-2">
                                     <div class="input-group input-group-merge mb-4">
                                         <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="company" name="company">
-                                                <option value="">- Semua Entitas -</option>
-                                                @foreach($company as $data)
-                                                <option value="{{$data->id}}" @if($request->company==$data->id) selected @endif>{{$data->code}}  | {{$data->name}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="company">Entitas</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="kebutuhan" name="kebutuhan">
-                                                <option value="">- Semua Kebutuhan -</option>
-                                                @foreach($kebutuhan as $data)
-                                                <option value="{{$data->id}}" @if($request->company==$data->id) selected @endif>{{$data->nama}}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="kebutuhan">Kebutuhan</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="input-group input-group-merge mb-4">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="form-select" id="is_aktif" name="is_aktif">
+                                            <select class="form-select" id="status" name="status">
                                                 <option value="">- Semua Status -</option>
-                                                <option value="0" @if($request->is_aktif=='0') selected @endif>Perlu Approval</option>
-                                                <option value="1" @if($request->is_aktif=='1') selected @endif>SPK Aktif</option>
+                                                @foreach($statusList as $dataStatus)
+                                                <option value="{{$dataStatus->id}}" @if($status==$dataStatus->id) selected @endif>{{$dataStatus->nama}}</option>
+                                                @endforeach
                                             </select>
-                                            <label for="is_aktif">Status Data</label>
+                                            <label for="status">Status Data</label>
                                         </div>
                                     </div>
                                 </div>
@@ -92,13 +67,10 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th></th>
                                     <th class="text-center">No SPK</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Leads/Customer</th>
                                     <th class="text-center">Site</th>
-                                    <th class="text-center">Kebutuhan</th>
-                                    <th class="text-center">Nomor Quotation</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Created By</th>
                                     <th class="text-center">Aksi</th>
@@ -121,7 +93,7 @@
 
 @section('pageScript')
     <script>
-        @if(isset($success) || session()->has('success'))  
+        @if(isset($success) || session()->has('success'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$success}} {{session()->get('success')}}',
@@ -132,7 +104,7 @@
                 buttonsStyling: false
             });
         @endif
-        @if(isset($error) || session()->has('error'))  
+        @if(isset($error) || session()->has('error'))
             Swal.fire({
                 title: 'Pemberitahuan',
                 html: '{{$error}} {{session()->has('error')}}',
@@ -145,15 +117,15 @@
         @endif
             let dt_filter_table = $('.dt-column-search');
 
-            // Formatting function for row details - modify as you need
-            function format(d) {
-                return (
-                    '<dl>' +
-                    '<dt>Status Leads Saat Ini :</dt>' +
-                    '<dd style="font-weight:bold;color:#000056">trial</dd>' +
-                    '</dl>'
-                );
-            }
+            // // Formatting function for row details - modify as you need
+            // function format(d) {
+            //     return (
+            //         '<dl>' +
+            //         '<dt>Status Leads Saat Ini :</dt>' +
+            //         '<dd style="font-weight:bold;color:#000056">trial</dd>' +
+            //         '</dl>'
+            //     );
+            // }
 
             var table = $('#table-data').DataTable({
                 scrollX: true,
@@ -168,17 +140,14 @@
                     data: function (d) {
                         d.tgl_dari = $('#tgl_dari').val();
                         d.tgl_sampai = $('#tgl_sampai').val();
-                        d.branch = $('#branch').find(":selected").val();
-                        d.company = $('#company').find(":selected").val();
-                        d.kebutuhan = $('#kebutuhan').find(":selected").val();
-                        d.is_aktif = $('#is_aktif').find(":selected").val();
+                        d.status = $('#status').find(":selected").val();
                     },
                 },
                 "createdRow": function( row, data, dataIndex){
                     if(data.status_spk_id==1){
                         $('td', row).css('background-color', '#f39c1240');
                     }
-                },     
+                },
                 "order":[
                     [0,'desc']
                 ],
@@ -187,12 +156,14 @@
                     name : 'id',
                     visible: false,
                     searchable: false
-                },{
-                    className: 'dt-control',
-                    orderable: false,
-                    data: null,
-                    defaultContent: ''
-                },{
+                },
+                // {
+                //     className: 'dt-control',
+                //     orderable: false,
+                //     data: null,
+                //     defaultContent: ''
+                // },
+                {
                     data : 'nomor',
                     name : 'nomor',
                     className:'text-center'
@@ -207,14 +178,6 @@
                 },{
                     data : 'nama_site',
                     name : 'nama_site',
-                    className:'text-center'
-                },{
-                    data : 'kebutuhan',
-                    name : 'kebutuhan',
-                    className:'text-center'
-                },{
-                    data : 'nomor_quotation',
-                    name : 'nomor_quotation',
                     className:'text-center'
                 },{
                     data : 'status',
@@ -276,13 +239,13 @@
                         className: 'dropdown-item',
                         orientation: 'landscape',
                         customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                         exportOptions: {
                             columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                             orientation: 'landscape',
                             customize: function(doc) {
-                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                                doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                             },
                             // prevent avatar to be display
                             format: {
@@ -317,18 +280,18 @@
             });
 
             // Add event listener for opening and closing details
-            table.on('click', 'td.dt-control', function (e) {
-                let tr = e.target.closest('tr');
-                let row = table.row(tr);
-            
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                }
-                else {
-                    // Open this row
-                    row.child(format(row.data())).show();
-                }
-            });
+            // table.on('click', 'td.dt-control', function (e) {
+            //     let tr = e.target.closest('tr');
+            //     let row = table.row(tr);
+
+            //     if (row.child.isShown()) {
+            //         // This row is already open - close it
+            //         row.child.hide();
+            //     }
+            //     else {
+            //         // Open this row
+            //         row.child(format(row.data())).show();
+            //     }
+            // });
     </script>
 @endsection

@@ -67,7 +67,7 @@ class TrainingController extends Controller
                 'max' => 'Masukkan :attribute maksimal :max',
                 'required' => ':attribute harus di isi',
             ]);
-    
+
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
             }else{

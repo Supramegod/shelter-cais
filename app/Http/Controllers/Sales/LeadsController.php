@@ -72,14 +72,17 @@ class LeadsController extends Controller
             $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
             $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
             $platform = DB::table('m_platform')->whereNull('deleted_at')->where('id','<>',11)->get();
             $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
+            $benua = DB::table('m_benua')->get();
+            $negaraDefault = DB::table('m_negara')->where('id_benua',2)->get();
             $kota = [];
             $kecamatan = [];
             $kelurahan = [];
 
-            return view('sales.leads.add',compact('provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan'));
+            return view('sales.leads.add',compact('benua','negaraDefault','provinsi','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','now','kota','kecamatan','kelurahan','bidangPerusahaan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -97,6 +100,7 @@ class LeadsController extends Controller
             $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active',1)->get();
             $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
             $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+            $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
             $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
             $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
 
@@ -110,8 +114,9 @@ class LeadsController extends Controller
             $kota = DB::connection('mysqlhris')->table('m_city')->where('id',$data->kota_id)->get();
             $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('id',$data->kecamatan_id)->get();
             $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('id',$data->kelurahan_id)->get();
-
-            return view('sales.leads.view',compact('activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan'));
+            $benua = DB::table('m_benua')->get();
+            $negaraDefault = DB::table('m_negara')->where('id_benua', $data->benua_id != null ? $data->benua_id : 2)->get();
+            return view('sales.leads.view',compact('benua','negaraDefault','activity','data','branch','jabatanPic','jenisPerusahaan','kebutuhan','platform','provinsi','kota','kecamatan','kelurahan','bidangPerusahaan'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e,Auth::user(),$request);
@@ -132,7 +137,7 @@ class LeadsController extends Controller
                         ->leftJoin('m_tim_sales_d','sl_leads.tim_sales_d_id','=','m_tim_sales_d.id')
                         ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
                         ->whereNull('sl_leads.deleted_at')
-                        ->whereNull('sl_leads.customer_id');
+                        ->where('status_leads_id','!=',102);
 
             if(!empty($request->tgl_dari)){
                 $data = $data->where('sl_leads.tgl_leads','>=',$request->tgl_dari);
@@ -316,13 +321,19 @@ class LeadsController extends Controller
                 $kota = DB::table($db2.'.m_city')->where('id',$request->kota)->first();
                 $kecamatan = DB::table($db2.'.m_district')->where('id',$request->kecamatan)->first();
                 $kelurahan = DB::table($db2.'.m_village')->where('id',$request->kelurahan)->first();
-
+                $benua = DB::table('m_benua')->where('id_benua',$request->benua)->first();
+                $negara = DB::table('m_negara')->where('id_negara',$request->negara)->first();
+                $jenisPerusahaan = DB::table('m_jenis_perusahaan')->where('id',$request->jenis_perusahaan)->first();
+                $bidangPerusahaan = DB::table('m_bidang_perusahaan')->where('id',$request->bidang_perusahaan)->first();
                 $msgSave = '';
                 if(!empty($request->id)){
                     DB::table('sl_leads')->where('id',$request->id)->update([
                         'nama_perusahaan' => $request->nama_perusahaan,
                         'telp_perusahaan' => $request->telp_perusahaan,
                         'jenis_perusahaan_id' => $request->jenis_perusahaan,
+                        'jenis_perusahaan' => $jenisPerusahaan ? $jenisPerusahaan->nama : null,
+                        'bidang_perusahaan_id' => $request->bidang_perusahaan,
+                        'bidang_perusahaan' => $bidangPerusahaan ? $bidangPerusahaan->nama : null,
                         'branch_id' => $request->branch,
                         'platform_id' => $request->platform,
                         'kebutuhan_id' => $request->kebutuhan,
@@ -341,6 +352,10 @@ class LeadsController extends Controller
                         'kecamatan' => $kecamatan ? $kecamatan->name : null,
                         'kelurahan_id' => $request->kelurahan,
                         'kelurahan' => $kelurahan ? $kelurahan->name : null,
+                        'benua_id' => $request->benua,
+                        'benua' => $benua ? $benua->nama_benua : null,
+                        'negara_id' => $request->negara,
+                        'negara' => $negara ? $negara->nama_negara : null,
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
                     ]);
@@ -399,6 +414,10 @@ class LeadsController extends Controller
                         'kecamatan' => $kecamatan ? $kecamatan->name : null,
                         'kelurahan_id' => $request->kelurahan,
                         'kelurahan' => $kelurahan ? $kelurahan->name : null,
+                        'benua_id' => $request->benua,
+                        'benua' => $benua ? $benua->nama_benua : null,
+                        'negara_id' => $request->negara,
+                        'negara' => $negara ? $negara->nama_negara : null,
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
@@ -869,10 +888,10 @@ class LeadsController extends Controller
                 }
             }
             //divisi RO
-            else if(in_array(Auth::user()->role_id,[4,5,6,8])){
-                if(in_array(Auth::user()->role_id,[4,5])){
+            else if(in_array(Auth::user()->role_id,[6,8])){
+                if(in_array(Auth::user()->role_id,[999])){
                     $data = $data->where('sl_leads.ro_id',Auth::user()->id);
-                }else if(in_array(Auth::user()->role_id,[6,8])){
+                }else if(in_array(Auth::user()->role_id,[4,5,6,8])){
 
                 }
             }
@@ -1095,4 +1114,31 @@ class LeadsController extends Controller
             ->make(true);
     }
 
+    public function getNegara($benuaId)
+    {
+        $negara = DB::table('m_negara')->where('id_benua', $benuaId)->get();
+        return response()->json($negara);
+    }
+
+    public function generateNullKode()
+    {
+        try {
+            $leads = DB::table('sl_leads')->whereNull('nomor')->whereNull('deleted_at')->get();
+            $nomor = "";
+            foreach ($leads as $key => $lead) {
+                if($key==0){
+                    $nomor = $this->generateNomor();
+                }else{
+                    $nomor = $this->generateNomorLanjutan($nomor);
+                }
+                DB::table('sl_leads')->where('id', $lead->id)->update([
+                    'nomor' => $nomor
+                ]);
+            }
+            return response()->json(['status' => 'success', 'message' => 'Nomor berhasil digenerate untuk semua leads yang belum memiliki nomor.']);
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), request());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
 }

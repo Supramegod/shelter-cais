@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="card-body pt-4">
-                    <form action="{{route('site')}}" method="GET">
+                    <!-- <form action="{{route('site')}}" method="GET">
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-2">
@@ -87,17 +87,19 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </form> -->
                     <div class="table-responsive overflow-hidden table-data">
                         <table id="table-data" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
+                                    <th class="text-center">SPK</th>
+                                    <th class="text-center">Kontrak</th>
                                     <th class="text-center">Nama Perusahaan</th>
                                     <th class="text-center">Nama Site</th>
                                     <th class="text-center">Provinsi</th>
+                                    <th class="text-center">Kota</th>
                                     <th class="text-center">Penempatan</th>
-                                    <th class="text-center">Sales</th>
                                     <th class="text-center">Created At</th>
                                     <th class="text-center">Created By</th>
                                     <th class="text-center">Aksi</th>
@@ -120,7 +122,7 @@
 
 @section('pageScript')
 <script>
-    @if(isset($success) || session()->has('success'))  
+    @if(isset($success) || session()->has('success'))
         Swal.fire({
             title: 'Pemberitahuan',
             html: '{{$success}} {{session()->get('success')}}',
@@ -131,7 +133,7 @@
             buttonsStyling: false
         });
     @endif
-    @if(isset($error) || session()->has('error'))  
+    @if(isset($error) || session()->has('error'))
         Swal.fire({
             title: 'Pemberitahuan',
             html: '{{$error}} {{session()->has('error')}}',
@@ -155,17 +157,17 @@
             ajax: {
                 url: "{{ route('site.list') }}",
                 data: function (d) {
-                    d.tgl_dari = $('#tgl_dari').val();
-                    d.tgl_sampai = $('#tgl_sampai').val();
-                    d.branch = $('#branch').find(":selected").val();
-                    d.platform = $('#platform').find(":selected").val();
-                    d.status = $('#status').find(":selected").val();
+                    // d.tgl_dari = $('#tgl_dari').val();
+                    // d.tgl_sampai = $('#tgl_sampai').val();
+                    // d.branch = $('#branch').find(":selected").val();
+                    // d.platform = $('#platform').find(":selected").val();
+                    // d.status = $('#status').find(":selected").val();
                 },
             },
             "createdRow": function( row, data, dataIndex){
                 $('td', row).css('background-color', data.warna_background);
                 $('td', row).css('color', data.warna_font);
-            },      
+            },
             "order":[
                 [0,'desc']
             ],
@@ -174,6 +176,14 @@
                 name : 'id',
                 visible: false,
                 searchable: false
+            },{
+                data : 'spk',
+                name : 'spk',
+                className:'text-center'
+            },{
+                data : 'kontrak',
+                name : 'kontrak',
+                className:'text-center'
             },{
                 data : 'nama_perusahaan',
                 name : 'nama_perusahaan',
@@ -187,12 +197,12 @@
                 name : 'provinsi',
                 className:'text-center'
             },{
-                data : 'penempatan',
-                name : 'penempatan',
+                data : 'kota',
+                name : 'kota',
                 className:'text-center'
             },{
-                data : 'sales',
-                name : 'sales',
+                data : 'penempatan',
+                name : 'penempatan',
                 className:'text-center'
             },{
                 data : 'created_at',
@@ -254,13 +264,13 @@
                     className: 'dropdown-item',
                     orientation: 'landscape',
                     customize: function(doc) {
-                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                         },
                     exportOptions: {
                         columns: [1,2,3, 4, 5, 6, 7,8,9,10,11],
                         orientation: 'landscape',
                         customize: function(doc) {
-                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10 
+                            doc.defaultStyle.fontSize = 9; //<-- set fontsize to 16 instead of 10
                         },
                         // prevent avatar to be display
                         format: {

@@ -125,9 +125,11 @@ class MonitoringKontrakController extends Controller
             // hpp coss dan gpm
             $daftarTunjangan = [];
             if($quotation != null){
-                $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
-                $quotationService = new QuotationService();
-                $calcQuotation = $quotationService->calculateQuotation($quotation);
+                if($quotation->step == 100){
+                    $daftarTunjangan = DB::select("SELECT DISTINCT nama_tunjangan as nama FROM `sl_quotation_detail_tunjangan` WHERE deleted_at is null and quotation_id = $quotation->id");
+                    $quotationService = new QuotationService();
+                    $calcQuotation = $quotationService->calculateQuotation($quotation);
+                }
             }
 
             return view('sales.monitoring-kontrak.view',compact('daftarTunjangan','issues','data','leads','quotation','spk','pks'));
@@ -151,6 +153,14 @@ class MonitoringKontrakController extends Controller
             ->select('pks_id', DB::raw('COUNT(*) as total_issue'))
             ->whereNull('deleted_at')
             ->groupBy('pks_id');
+        $siteSub = DB::table('sl_site')
+            ->select('pks_id', DB::raw("GROUP_CONCAT(nama_site SEPARATOR ',</br> ') as site"))
+            ->whereNull('deleted_at')
+            ->groupBy('pks_id');
+        // $siteSub = DB::table('sl_site')
+        //     ->select('pks_id', DB::raw('COUNT(*) as total_site'))
+        //     ->whereNull('deleted_at')
+        //     ->groupBy('pks_id');
 
         $query = DB::table('sl_pks')
             ->leftJoin($db2.'.m_user as sales', 'sales.id', '=', 'sl_pks.sales_id')
@@ -164,20 +174,30 @@ class MonitoringKontrakController extends Controller
             ->leftJoin('m_status_pks', 'sl_pks.status_pks_id', '=', 'm_status_pks.id')
             ->leftJoinSub($activitySub, 'activity', 'activity.pks_id', '=', 'sl_pks.id')
             ->leftJoinSub($issueSub, 'issue', 'issue.pks_id', '=', 'sl_pks.id')
+            ->leftJoinSub($siteSub, 'site', 'site.pks_id', '=', 'sl_pks.id')
+            // ->leftJoinSub($siteSub, 'site', 'site.pks_id', '=', 'sl_pks.id')
             ->whereNull('sl_pks.deleted_at')
             ->select(
-                'sl_pks.kontrak_awal','sl_pks.kontrak_akhir','sl_pks.nomor','sl_pks.id','sl_pks.leads_id','sl_pks.site_id','sl_pks.spk_id','sl_pks.quotation_id','sl_pks.tgl_pks','sl_pks.status_pks_id','sl_pks.created_at','sl_pks.created_by','sl_pks.nama_site','sl_pks.kebutuhan',
+                'sl_pks.nama_perusahaan','sl_pks.kontrak_awal','sl_pks.kontrak_akhir','sl_pks.nomor','sl_pks.id','sl_pks.leads_id','sl_pks.site_id','sl_pks.spk_id','sl_pks.quotation_id','sl_pks.tgl_pks','sl_pks.status_pks_id','sl_pks.created_at','sl_pks.created_by','sl_pks.nama_site','sl_pks.kebutuhan',
                 'm_status_pks.nama as status',
                 DB::raw('CONCAT_WS("<br />", crm1.full_name, crm2.full_name, crm3.full_name) as crm'),
                 DB::raw('CONCAT_WS("<br />", rospv.full_name, ro1.full_name, ro2.full_name, ro3.full_name) as ro'),
                 'sales.full_name as sales',
+                'site.site',
                 DB::raw('IFNULL(activity.total_activity, 0) as aktifitas'),
-                DB::raw('IFNULL(issue.total_issue, 0) as issue')
+                DB::raw('IFNULL(issue.total_issue, 0) as issue'),
+
+                // DB::raw("(SELECT GROUP_CONCAT(nama_site SEPARATOR ',</br> ') FROM sl_site WHERE deleted_at IS NULL AND pks_id = sl_pks.id) as site")
+
+                // DB::raw('IFNULL(site.total_site, 0) as site')
             );
 
         return DataTables::of($query)
         ->filterColumn('sales', function($query, $keyword) {
             $query->where('sales.full_name', 'like', "%{$keyword}%");
+        })
+        ->filterColumn('site', function($query, $keyword) {
+            $query->where('site.site', 'like', "%{$keyword}%");
         })
         ->filterColumn('status', function($query, $keyword) {
             $query->where('m_status_pks.nama', 'like', "%{$keyword}%");
@@ -216,7 +236,7 @@ class MonitoringKontrakController extends Controller
                     <i class="mdi mdi-calendar-plus mdi-20px mx-1"></i>
                 </a>';
             } else {
-                $aksiIcon = '<a href="'.route('monitoring-kontrak.view', $data->id).'" class="text-body">
+                $aksiIcon = '<a href="'.route('pks.view-new', $data->id).'" class="text-body">
                     <i class="mdi mdi-magnify mdi-20px mx-1"></i>
                 </a>';
                 $aksiIcon .= '<a href="'.route('customer-activity.add-activity-kontrak', $data->id).'" class="text-body">
@@ -279,6 +299,20 @@ class MonitoringKontrakController extends Controller
                 return '#27ae6040';
             }
         })
+        ->addColumn('quotation', function ($data) {
+            if ($data->quotation_id != null) {
+                return '<a href="'.route('quotation.view', $data->quotation_id).'" class="text-body">
+                            <i class="mdi mdi-magnify mdi-20px mx-1"></i>
+                        </a>';
+            } else {
+                return '<i class="mdi mdi-close-circle mdi-20px text-danger mx-1"></i>';
+                // if($data->site ==null || $data->site ==""){
+                //     return '<i class="mdi mdi-close-circle mdi-20px text-danger mx-1"></i>';
+                // }else{
+                //     return '<i class="mdi mdi-check-circle mdi-20px text-success mx-1"></i>';
+                // }
+            }
+        })
         ->addColumn('warna_font', function ($data) {
             $selisih = $this->selisihKontrakBerakhir($data->kontrak_akhir);
             if($selisih<=0){
@@ -300,6 +334,9 @@ class MonitoringKontrakController extends Controller
         ->editColumn('issue', function ($data) {
             return '<button class="btn btn-sm btn-secondary" onclick="openNormalDataTableModal(`'.route('customer-activity.modal.list-issue',['pks_id' => $data->id]).'`,`DATA ISSUE PADA KONTRAK '.$data->nomor.'`)">'.$data->issue.'</button>';
         })
+        // ->editColumn('site', function ($data) {
+        //     return '<button class="btn btn-sm btn-success" onclick="openNormalDataTableModal(`'.route('monitoring-kontrak.modal.list-site',['pks_id' => $data->id]).'`,`DATA SITE PADA KONTRAK '.$data->nomor.'`)">'.$data->site.'</button>';
+        // })
         ->addColumn('progress',function ($data) {
             $progress = 0;
             $bgColor = "";
@@ -349,7 +386,7 @@ class MonitoringKontrakController extends Controller
                 return '<span class="badge rounded-pill bg-label-success text-capitalized">Lebih dari 3 Bulan</span>';
             }
         })
-        ->rawColumns(['aksi','nomor','nama_site','aktifitas','crm','ro','sales','progress','status_berlaku','issue'])
+        ->rawColumns(['quotation','aksi','nomor','nama_site','aktifitas','crm','ro','sales','progress','status_berlaku','issue','site'])
         ->make(true);
     }
 
@@ -389,7 +426,7 @@ class MonitoringKontrakController extends Controller
         ->editColumn('nomor_quotation', function ($data) {
             return '<a href="#" style="font-weight:bold;color:#000056">'.$data->nomor_quotation.'</a>';
         })
-        ->rawColumns(['nomor','nama_site','nomor_spk','nomor_quotation'])
+        ->rawColumns(['quotation','nomor','nama_site','nomor_spk','nomor_quotation','site'])
         ->make(true);
     }
 
@@ -992,6 +1029,31 @@ class MonitoringKontrakController extends Controller
             DB::rollBack();
             SystemController::saveError($e, Auth::user(), request());
             return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menghapus aktivitas.']);
+        }
+    }
+
+    public function listSite(Request $request) {
+        try {
+            $data = [];
+            if (!empty($request->pks_id)) {
+                    $data = DB::table('sl_site')->select('sl_site.id','sl_site.nomor','sl_site.nama_site','sl_site.penempatan','sl_site.provinsi','sl_site.kota','sl_site.nama_proyek')
+                            ->whereNull('sl_site.deleted_at')
+                            ->where('sl_site.pks_id', $request->pks_id)
+                            ->get();
+            }
+
+            return DataTables::of($data)
+            ->addColumn('aksi', function ($data) {
+                return '<div class="justify-content-center d-flex">
+                                    <a href="#" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                        </div>';
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+        } catch (\Exception $e) {
+            dd($e);
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
         }
     }
 }

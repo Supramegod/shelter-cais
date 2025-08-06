@@ -196,7 +196,9 @@
                     <option value="15" @if($quotation->jumlah_hari_invoice=='15') selected @endif>15</option>
                     <option value="21" @if($quotation->jumlah_hari_invoice=='21') selected @endif>21</option>
                     <option value="30" @if($quotation->jumlah_hari_invoice=='30') selected @endif>30</option>
+                    <option value="45" @if($quotation->jumlah_hari_invoice=='45') selected @endif>45</option>
                     <option value="60" @if($quotation->jumlah_hari_invoice=='60') selected @endif>60</option>
+                    <option value="75" @if($quotation->jumlah_hari_invoice=='75') selected @endif>75</option>
                     <option value="90" @if($quotation->jumlah_hari_invoice=='90') selected @endif>90</option>
                     </select>
                     @if($errors->has('jumlah_hari_invoice'))
@@ -284,6 +286,14 @@
                           <div class="form-check mt-3">
                             <input class="form-check-input" type="checkbox" value="Cuti Tahunan" name="cuti[]" id="cuti-tahunan" @if(str_contains($quotation->cuti,'Cuti Tahunan')) checked @endif>
                             <label class="form-check-label" for="cuti-tahunan"> Cuti Tahunan</label>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="Cuti Roster" name="cuti[]" id="cuti-roster" @if(str_contains($quotation->cuti,'Cuti Roster')) checked @endif>
+                            <label class="form-check-label" for="cuti-roster"> Cuti Roster</label>
                           </div>
                         </td>
                       </tr>

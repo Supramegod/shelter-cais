@@ -330,7 +330,7 @@ Hormat kami,
                 @endforeach
                 </tr>
                 <tr class="">
-                    <td style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari sub total biaya</span> ( {{$quotation->persentase}} % )</td>
+                    <td style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari {{$quotation->management_fee}}</span></td>
                     <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->nominal_management_fee_coss,2,",",".")}}</td>
                 </tr>
                 <tr class="table-success">

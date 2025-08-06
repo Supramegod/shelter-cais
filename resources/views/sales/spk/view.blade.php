@@ -25,15 +25,7 @@
                 <tbody>
                   <tr>
                     <td>Nama Perusahaan</td>
-                    <td>: {{$quotation->nama_perusahaan}}</td>
-                    <td>Kebutuhan</td>
-                    <td>: {{$quotation->kebutuhan}}</td>
-                  </tr>
-                  <tr>
-                    <td>Entitas</td>
-                    <td>: {{$quotation->company}}</td>
-                    <td>Jumlah Site</td>
-                    <td>: {{$quotation->jumlah_site}}</td>
+                    <td>: {{$data->nama_perusahaan}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -48,14 +40,43 @@
                     <th>No.</th>
                     <th>Nomor</th>
                     <th>Kebutuhan</th>
+                    <th>Jenis Kontrak</th>
                   </tr>
                 </thead>
-                <tbody id="tbody-quotation">
+                <tbody>
+                    @foreach($listQuotation as $index => $quotation)
+                    <tr>
+                        <td>{{$index + 1}}</td>
+                        <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
+                        <td>{{$quotation->kebutuhan}}</td>
+                        <td>{{$quotation->jenis_kontrak}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <h6>3. Informasi Site</h6>
+          <div class="row mb-3">
+            <div class="table-responsive overflow-hidden table-site">
+              <table id="table-site" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
+                <thead>
                   <tr>
-                    <td>1</td>
-                    <td><b><a href="{{route('quotation.view',[$quotation->id])}}">{{$quotation->nomor}}</a></b></td>
-                    <td>{{$quotation->kebutuhan}}</td>
+                    <th>No.</th>
+                    <th>Nama Site</th>
+                    <th>Kota</th>
+                    <th>Penempatan</th>
                   </tr>
+                </thead>
+                <tbody id="tbody-site">
+                    @foreach($data->site as $index => $site)
+                    <tr>
+                        <td>{{$index + 1}}</td>
+                        <td>{{$site->nama_site}}</td>
+                        <td>{{$site->kota}}</td>
+                        <td>{{$site->penempatan}}</td>
+                    </tr>
+                    @endforeach
                 </tbody>
               </table>
             </div>
@@ -239,6 +260,14 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Uploading...',
+                    text: 'Mohon tunggu, file sedang diupload.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
                 // Ambil file dari form SweetAlert
                 var file = result.value;
                 var formData = new FormData();

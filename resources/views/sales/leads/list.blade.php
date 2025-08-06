@@ -171,8 +171,9 @@
 
     var table = $('#table-data').DataTable({
         scrollX: true,
-        "iDisplayLength": 25,
         'processing': true,
+        serverSide: true,
+        'pageLength': 25,
     'language': {
         'loadingRecords': '&nbsp;',
         'processing': 'Loading...'

@@ -52,7 +52,7 @@
     <!-- Helpers -->
     <script src="{{ asset('public/assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('public/assets/js/config.js') }}"></script>
-    
+
     <style>
 
     </style>
@@ -70,7 +70,7 @@
             <div class="app-brand justify-content-center mt-5">
               <a href="{{route('home')}}" class="app-brand-link gap-2">
                 <span style="display:flex;justify-content:center">
-                  <img alt="logo" class="img-fluid img" src="{{asset('public/assets/img/icons/icon-shelter.png')}}" style="width:50%">
+                  <img alt="logo" class="img-fluid img" src="{{ asset('public/assets/img/icons/icon-shelter.png')}}" style="width:50%">
                 </span>
               </a>
             </div>
@@ -88,7 +88,7 @@
                     id="username"
                     name="username"
                     placeholder="Masukkan Username"
-                    autofocus />  
+                    autofocus />
                   <label for="username">Username</label>
                   @if($errors->has('username'))
                       <div class="invalid-feedback">{{ $errors->first('username') }}</div>
@@ -98,8 +98,8 @@
                   <div class="form-password-toggle">
                     <div class="input-group input-group-merge is-invalid" id="ct-password">
                       <div class="form-floating form-floating-outline">
-                        <input type="password" id="password" 
-                        class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else   @endif @endif" 
+                        <input type="password" id="password"
+                        class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else   @endif @endif"
                         data-container="ct-password" name="password" placeholder="············">
                         <label for="password">Password</label>
                       </div>
@@ -174,7 +174,7 @@
       backgroundColor: 0x000056,
       color: 0xffffff
     })
-    
+
     @if(session('message'))
       alert({{ session('message') }});
     @endif

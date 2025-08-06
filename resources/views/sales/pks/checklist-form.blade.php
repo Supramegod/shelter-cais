@@ -12,13 +12,15 @@
         @csrf
         <input type="hidden" name="id" value="{{$quotation->id}}">
         <input type="hidden" name="pks_id" value="{{$pks->id}}">
-        <input type="hidden" name="quotation_id" value="{{$pks->quotation_id}}">
+        <input type="hidden" name="quotation_id" value="{{$quotation->id}}">
         <!-- Account Details -->
         <div id="account-details-1" class="content active">
           <div class="content-header mb-5 text-center">
             <h6 class="mb-3">FORM CHECKLIST NEW SITE , SYARAT DAN KETENTUAN KERJA SAMA</h6>
             <h6>Leads/Customer : {{$quotation->nama_perusahaan}}</h6>
-            <h6>Site : {{$quotation->nama_site}} - {{$quotation->kebutuhan}}</h6>
+            @foreach($site as $index => $sdata)
+                <h6>Site {{ $index + 1 }} : {{$sdata->nama_site}} - {{$sdata->kebutuhan}}</h6>
+            @endforeach
           </div>
           <div class="row mt-5">
             <div class="table-responsive overflow-hidden">
@@ -121,8 +123,8 @@
                     <tr>
                       <td>Hari Kerja dan Jam Kerja</td>
                       <td>{{$quotation->shift_kerja}}</td>
-                      <td>{{$quotation->jam_kerja}}</td>
-                      <td>{{$quotation->mulai_kerja}} s/d {{$quotation->selesai_kerja}}</td>
+                      <td colspan="2">{{$quotation->jam_kerja}}</td>
+                      <!-- <td>{{$quotation->mulai_kerja}} s/d {{$quotation->selesai_kerja}}</td> -->
                     </tr>
                     <tr>
                       <td>System Kerja</td>
@@ -156,7 +158,7 @@
                       @if($quotation->thr=="Tidak Ada")
                       <b>Tidak Ada</b>
                       @else
-                        <b>{{$quotation->thr}}</b> terpisah H-45 hari raya base on upah pokok
+                        <b>{{$quotation->thr}}</b> terpisah H-{{$ruleThr->hari_penagihan_invoice}} hari raya base on upah pokok
                         <table class="table table-bordered" style="width:100%">
                           <tr>
                             <td class="text-center"><b>No.</b></td>
@@ -166,17 +168,17 @@
                           <tr>
                             <td class="text-center">1</td>
                             <td>Penagihan Invoice THR </td>
-                            <td>ditagihkan H-45</td>
+                            <td>ditagihkan H-{{$ruleThr->hari_penagihan_invoice}}</td>
                           </tr>
                           <tr>
                             <td class="text-center">2</td>
                             <td>Pembayaran Invoice THR</td>
-                            <td>Maksimal h-14 hari raya</td>
+                            <td>Maksimal h-{{$ruleThr->hari_pembayaran_invoice}} hari raya</td>
                           </tr>
                           <tr>
                             <td class="text-center">3</td>
                             <td>Rilis THR</td>
-                            <td>Maksimal h-7 Hari Raya</td>
+                            <td>Maksimal h-{{$ruleThr->hari_rilis_thr}} Hari Raya</td>
                           </tr>
                         </table>
                       </td>

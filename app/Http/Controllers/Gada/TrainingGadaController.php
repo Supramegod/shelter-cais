@@ -30,7 +30,7 @@ class TrainingGadaController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
@@ -63,13 +63,13 @@ class TrainingGadaController extends Controller
             ->select('*', DB::raw("DATE_FORMAT(payment_date,'%d-%m-%Y') as tanggal_bayar"))
             ->first();
 
-        $data = ['title' => 'Tanda Terima', 'name' => $dataGada->nama, 'nominal' => number_format($dataTransaksi->harga), 'terbilang' => $this->terbilang($dataTransaksi->harga), 
+        $data = ['title' => 'Tanda Terima', 'name' => $dataGada->nama, 'nominal' => number_format($dataTransaksi->harga), 'terbilang' => $this->terbilang($dataTransaksi->harga),
             'jenis_pelatihan' => $dataGada->jenis_pelatihan, 'transaksi_id' => $dataTransaksi->id, 'tanggal' => $dataTransaksi->tanggal_bayar];
         $pdf = Pdf::loadView('sdt.gada.invoice', $data);
         return $pdf->stream('invoice.pdf');
     }
 
-    
+
     public function terbilang($nilai) {
         $nilai = abs($nilai);
         $huruf = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
@@ -106,10 +106,10 @@ class TrainingGadaController extends Controller
             $data = DB::table('training_gada_calon as data')
             ->leftjoin('training_gada_bukti_bayar as bukti','bukti.training_id', '=', 'data.id')
             ->where('data.is_active', 1)
-            ->select('data.*', DB::raw("IF(data.status = 1, 'New Register', IF(data.status = 2, 'Leads', IF(data.status = 3, 'Cold Prospect', IF(data.status = 4, 'Hot Prospect', 'Peserta')))) as status_name"), 
+            ->select('data.*', DB::raw("IF(data.status = 1, 'New Register', IF(data.status = 2, 'Leads', IF(data.status = 3, 'Cold Prospect', IF(data.status = 4, 'Hot Prospect', 'Peserta')))) as status_name"),
                 DB::raw("DATE_FORMAT(data.last_sent_notif_register,'%d-%m-%Y %H:%i') as last_sent"), 'bukti.path')
             ->orderBy('data.id', 'DESC')
-            ->get();          
+            ->get();
             return DataTables::of($data)
             ->editColumn('status_name', function ($data) {
                 if($data->status == 1 || $data->status == 2 || $data->status == 3 || $data->status == 1){
@@ -169,7 +169,7 @@ class TrainingGadaController extends Controller
             ->where('is_active', 1)
             ->where('calon_id', $pendaftarId)
             ->select('status_name', 'keterangan', DB::raw("DATE_FORMAT(created_date,'%d-%m-%Y %H:%i') as created_date"))
-            ->get();          
+            ->get();
 
             return DataTables::of($data)->make(true);
         } catch (\Exception $e) {
@@ -275,7 +275,7 @@ class TrainingGadaController extends Controller
             ->where('is_active', 1)
             ->where('training_gada_calon_id', $request->pendaftar_id)
             ->orderBy('id', 'ASC')->first();
-            
+
             return response()->json([
                 'success'   => false,
                 'data'      => $dataRegistrasi,
@@ -294,7 +294,7 @@ class TrainingGadaController extends Controller
             // ->where('id', $request->pendaftar_id)
             // ->select('jenis_pelatihan')
             // ->orderBy('id', 'ASC')->first();
-            
+
             // $jenisGada = strtolower(str_replace('GADA', '', $dataRegistrasi->jenis_pelatihan));
             // $jenisGada = str_replace(' ', '', $jenisGada);
 
@@ -325,8 +325,8 @@ class TrainingGadaController extends Controller
             // dd($request->id.' '.$request->status_id.' '.$request->keterangan);
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
-            
-            // 1. New 
+
+            // 1. New
             // 2. Leads
             // 3. Cold Prospect (interview manual by WA)
             // 4. Hot Prospect (dikirim link lanjutan)
@@ -344,7 +344,7 @@ class TrainingGadaController extends Controller
             } else if($request->status_id == 5){
                 $statusName = 'Peserta';
             }
-            
+
             DB::table('training_gada_calon')->where('id', $request->id)->update([
                 'status' => $request->status_id,
                 'keterangan' => $request-> keterangan
@@ -360,7 +360,7 @@ class TrainingGadaController extends Controller
                 'user_name' => Auth::user()->full_name,
                 'is_active' => 1
             ]);
-            
+
             $msgSave = 'Status berhasil diubah ';
             DB::commit();
             // return redirect()->back()->with('success', $msgSave);

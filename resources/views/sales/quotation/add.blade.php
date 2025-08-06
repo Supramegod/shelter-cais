@@ -29,12 +29,17 @@
                 <input type="hidden" id="leads_id" name="leads_id" value="@if($leads!=null) {{$leads->id}} @endif" class="form-control">
                 <input type="hidden" id="quotation_id" name="quotation_id" class="form-control">
                 <div class="input-group">
-                  <input type="text" id="leads" name="leads" value="@if($leads!=null) {{$leads->nama_perusahaan}} @endif" class="form-control" readonly>
                   <button class="btn btn-info waves-effect" type="button" id="btn-modal-cari-leads"><span class="tf-icons mdi mdi-magnify me-1"></span>&nbsp; Cari Leads</button>
                 </div>
               </div>
             </div>
             <div class="d-none" id="show_isian">
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label text-sm-end">Nama Leads <span class="text-danger">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" id="leads" name="leads" value="@if($leads!=null) {{$leads->nama_perusahaan}} @endif" class="form-control" readonly>
+                    </div>
+                </div>
               <div class="row mb-3">
                 <label class="col-sm-2 col-form-label text-sm-end">Perusahaan  <span class="text-danger fw-bold">*</span></label>
                 <div class="col-sm-10">
@@ -173,7 +178,7 @@
                   </div>
 
                   <div class="row mt-4">
-                  <div class="offset-sm-2 col-sm-10 d-flex">
+                  <div class="col-sm-12 d-flex">
                     <table class="table table-bordered mt-4">
                       <thead>
                           <tr>

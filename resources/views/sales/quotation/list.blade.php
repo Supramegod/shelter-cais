@@ -365,7 +365,7 @@
                         }
                     ]
                     },
-                    @if(in_array(Auth::user()->role_id,[29,31,33]))
+                    @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,56]))
                     // {
                     // text: '<i class="mdi mdi-content-copy mr-1"></i> <span class="d-none d-sm-inline-block">Copy Quotation</span>',
                     // className: 'create-new btn btn-label-warning waves-effect waves-light',
@@ -383,30 +383,30 @@
                             }
                     },
                     @elseif(in_array(Auth::user()->role_id,[54,55,56]))
-                    {
-                    extend: 'collection',
-                    className: 'btn btn-label-primary dropdown-toggle waves-effect waves-light',
-                    text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Quotation</span>',
-                    buttons: [
-                        {
-                        text: '<i class="mdi mdi-file-document-outline me-1" ></i>Adendum',
-                        className: 'dropdown-item',
-                        action: function (e, dt, node, config)
-                            {
-                                //This will send the page to the location specified
-                                window.location.href = "{{route('quotation.add',['tipe'=>'Adendum'])}}";
-                            }
-                        },{
-                        text: '<i class="mdi mdi-file-document-outline me-1" ></i>Quotation Lanjutan',
-                        className: 'dropdown-item',
-                        action: function (e, dt, node, config)
-                            {
-                                //This will send the page to the location specified
-                                window.location.href = "{{route('quotation.add',['tipe'=>'Quotation Lanjutan'])}}";
-                            }
-                        }
-                    ]
-                    },
+                    // {
+                    // extend: 'collection',
+                    // className: 'btn btn-label-primary dropdown-toggle waves-effect waves-light',
+                    // text: '<i class="mdi mdi-export-variant me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Quotation</span>',
+                    // buttons: [
+                    //     {
+                    //     text: '<i class="mdi mdi-file-document-outline me-1" ></i>Adendum',
+                    //     className: 'dropdown-item',
+                    //     action: function (e, dt, node, config)
+                    //         {
+                    //             //This will send the page to the location specified
+                    //             window.location.href = "{{route('quotation.add',['tipe'=>'Adendum'])}}";
+                    //         }
+                    //     },{
+                    //     text: '<i class="mdi mdi-file-document-outline me-1" ></i>Quotation Lanjutan',
+                    //     className: 'dropdown-item',
+                    //     action: function (e, dt, node, config)
+                    //         {
+                    //             //This will send the page to the location specified
+                    //             window.location.href = "{{route('quotation.add',['tipe'=>'Quotation Lanjutan'])}}";
+                    //         }
+                    //     }
+                    // ]
+                    // },
                     @endif
                 ],
             });

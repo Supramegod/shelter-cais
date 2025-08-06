@@ -6,7 +6,6 @@
         display: inline-block;
         margin-left: 3em;
     }
-
 </style>
 <div class="container-fluid flex-grow-1 container-p-y" style="margin-top: 4rem !important;">
     <div class="row gy-4 mb-5">
@@ -32,10 +31,18 @@
                             <a href="{{ route('lengkapi-quotation.add', $pks->id) }}" class="btn btn-primary">
                                 <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lengkapi Quotation
                             </a>
-                            @elseif($quotation->step < 100)
-                            <a href="{{ route('lengkapi-quotation.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-primary">
-                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation
+                            <a href="{{ route('quotation-sandbox.add', $pks->id) }}" class="btn btn-danger">
+                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Quotation Sandbox
                             </a>
+                            @elseif($quotation->step < 100)
+                                @if($quotation->is_sandbox==0)
+                                <a href="{{ route('lengkapi-quotation.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-primary">
+                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation
+                                </a>
+                                @else
+                                <a href="{{ route('quotation-sandbox.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-danger">
+                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation Sandbox
+                                @endif
                             @endif
 
                             <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
@@ -220,29 +227,47 @@
                                 </div>
                                 <div class="tab-pane fade" id="hpp" role="tabpanel" aria-labelledby="hpp-tab">
                                     @if($quotation != null)
+                                    @if($quotation->step >= 100)
                                         @include('sales.quotation.includes.hpp')
-                                        @else
+                                    @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Data HPP tidak ditemukan.</strong>
+                                            <strong>Quotation Belum Lengkap.</strong>
                                         </div>
+                                    @endif
+                                    @else
+                                    <div class="alert alert-warning" role="alert">
+                                        <strong>Data HPP tidak ditemukan.</strong>
+                                    </div>
                                     @endif
                                 </div>
                                 <div class="tab-pane fade" id="coss" role="tabpanel" aria-labelledby="coss-tab">
-                                    @if($quotation != null)
+                                @if($quotation != null)
+                                    @if($quotation->step >= 100)
                                         @include('sales.quotation.includes.coss')
-                                        @else
+                                    @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Data Harga Jual tidak ditemukan.</strong>
+                                            <strong>Harga Jual Belum Lengkap.</strong>
                                         </div>
+                                    @endif
+                                    @else
+                                    <div class="alert alert-warning" role="alert">
+                                        <strong>Data Harga Jual tidak ditemukan.</strong>
+                                    </div>
                                     @endif
                                 </div>
                                 <div class="tab-pane fade" id="gpm" role="tabpanel" aria-labelledby="gpm-tab">
                                     @if($quotation != null)
+                                    @if($quotation->step >= 100)
                                         @include('sales.quotation.includes.gpm')
-                                        @else
+                                    @else
                                         <div class="alert alert-warning" role="alert">
-                                            <strong>Data GPM tidak ditemukan.</strong>
+                                            <strong>Quotation Belum Lengkap.</strong>
                                         </div>
+                                    @endif
+                                    @else
+                                    <div class="alert alert-warning" role="alert">
+                                        <strong>Data GPM tidak ditemukan.</strong>
+                                    </div>
                                     @endif
                                 </div>
                                 <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">

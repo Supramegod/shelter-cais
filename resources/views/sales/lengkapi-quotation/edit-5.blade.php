@@ -26,13 +26,24 @@
               </div>
               <div class="row mb-3">
                 <div class="row mb-3 mt-3">
-                  <div class="col-sm-12">
-                    <label class="form-label" for="jenis-perusahaan">Jenis Perusahaan</label>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="jenis-perusahaan">Jenis Perusahaan (Berdasarkan BPJS)</label>
                     <div class="input-group">
                       <select id="jenis-perusahaan" name="jenis-perusahaan" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih data -</option>
                         @foreach($jenisPerusahaan as $data)
                         <option value="{{$data->id}}" data-resiko="{{$data->resiko}}" @if($quotation->jenis_perusahaan_id == $data->id) selected @endif>{{$data->nama}}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="bidang-perusahaan">Kategori Perusahaan</label>
+                    <div class="input-group">
+                      <select id="bidang-perusahaan" name="bidang-perusahaan" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih data -</option>
+                        @foreach($bidangPerusahaan as $data)
+                        <option value="{{$data->id}}" @if($quotation->bidang_perusahaan_id == $data->id) selected @endif>{{$data->nama}}</option>
                         @endforeach
                       </select>
                     </div>
@@ -68,7 +79,7 @@
                           @foreach($quotation->quotation_detail as $index => $detail)
                           <tr class="text-center align-middle">
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $detail->jabatan_kebutuhan }}</td>
+                            <td>{{ $detail->jabatan_kebutuhan }} @if($quotation->jumlah_site=="Multi Site") - {{ $detail->kota }} @endif</td>
                             <td><input class="check-bpjs" type="checkbox" name="jkk[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jkk=='1' ) checked @endif></td>
                             <td><input class="check-bpjs" type="checkbox" name="jkm[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jkm=='1') checked @endif></td>
                             <td><input class="check-bpjs" type="checkbox" name="jht[{{ $detail->id }}]" @if($detail->penjamin_kesehatan==null || $detail->is_bpjs_jht=='1') checked @endif></td>

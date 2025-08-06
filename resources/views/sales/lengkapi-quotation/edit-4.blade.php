@@ -45,8 +45,8 @@
                       <label class="form-check-label custom-option-content" for="umk">
                         <span class="custom-option-body">
                           <span class="custom-option-title">UMK</span>
-                          <span class="label-provinsi">{{$quotation->quotation_site[0]->kota}}</span><br>
-                          <span class="label-provinsi">{{number_format($quotation->quotation_site[0]->umk,2,",",".")}}</span>
+                          <span class="label-provinsi">@foreach($quotation->quotation_site as $site) @if(!$loop->first) | @endif {{$site->kota}} @endforeach</span><br>
+                          <span class="label-provinsi">@foreach($quotation->quotation_site as $site) @if(!$loop->first) | @endif  {{number_format($site->umk,0,",",".")}} @endforeach</span>
                         </span>
                         <input name="upah" class="form-check-input" type="radio" value="UMK" id="umk" @if($quotation->upah == 'UMK') checked @endif>
                       </label>
@@ -222,20 +222,25 @@
                       </select>
                   </div>
                   <div class="col-sm-2 ada_lembur">
+                    <label class="form-label" for="lembur_ditagihkan">Provisi/Ditagihkan</label>
+                      <select id="lembur_ditagihkan" name="lembur_ditagihkan" class="form-select" data-allow-clear="true" tabindex="-1">
+                        <option value="">- Pilih Jenis -</option>
+                        <option value="Ditagihkan" @if($quotation->lembur_ditagihkan=="Ditagihkan") selected @endif>Ditagihkan</option>
+                        <option value="Ditagihkan Terpisah" @if($quotation->lembur_ditagihkan=="Ditagihkan Terpisah") selected @endif>Ditagihkan Terpisah</option>
+                      </select>
+                  </div>
+                  <div class="col-sm-2 ada_lembur">
                     <label class="form-label" for="lembur">Normatif / Flat</label>
                       <select id="lembur" name="lembur" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="" @if($quotation->lembur==null || $quotation->lembur=="" ) selected @endif>- Pilih data -</option>
-                        @if($quotation->jam_kerja !="12 Jam Kerja")
-                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>
-                        @endif
                         <option value="Flat" @if($quotation->lembur=="Flat") selected @endif>Flat</option>
+                        <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option>
+                        @if($quotation->jam_kerja !="12 Jam Kerja")
+                        <!-- <option value="Normatif" @if($quotation->lembur=="Normatif") selected @endif>Normatif</option> -->
+                        @endif
                       </select>
                   </div>
-                  <div class="col-sm-3 ada_lembur d-nominal-lembur">
-                    <label class="form-label" for="nominal_lembur">Nominal Lembur</label>
-                    <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_lembur}}" name="nominal_lembur" id="nominal_lembur">
-                  </div>
-                  <div class="col-sm-3 ada_lembur d-nominal-lembur">
+                  <div class="col-sm-2 ada_lembur d-nominal-lembur">
                     <label class="form-label" for="jenis_bayar_lembur">Jenis Bayar</label>
                       <select id="jenis_bayar_lembur" name="jenis_bayar_lembur" class="form-select" data-allow-clear="true" tabindex="-1">
                         <option value="">- Pilih Jenis -</option>
@@ -244,13 +249,14 @@
                         <option value="Per Bulan" @if($quotation->jenis_bayar_lembur=="Per Bulan") selected @endif>Per Bulan</option>
                       </select>
                   </div>
-                  <div class="col-sm-2 ada_lembur">
-                    <label class="form-label" for="lembur_ditagihkan">Provisi/Ditagihkan</label>
-                      <select id="lembur_ditagihkan" name="lembur_ditagihkan" class="form-select" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih Jenis -</option>
-                        <option value="Ditagihkan" @if($quotation->lembur_ditagihkan=="Ditagihkan") selected @endif>Ditagihkan</option>
-                        <option value="Ditagihkan Terpisah" @if($quotation->lembur_ditagihkan=="Ditagihkan Terpisah") selected @endif>Ditagihkan Terpisah</option>
-                      </select>
+                  <div class="col-sm-2 ada_lembur d-nominal-lembur">
+                    <label class="form-label" for="nominal_lembur">Nominal Lembur</label>
+                    <input type="text" class="form-control mask-nominal" value="{{$quotation->nominal_lembur}}" name="nominal_lembur" id="nominal_lembur">
+                  </div>
+
+                <div class="col-sm-2 d-lembur-per-jam">
+                    <label class="form-label" for="jam_per_bulan_lembur">Jumlah Jam</label>
+                    <input type="text" class="form-control mask-nominal" value="{{$quotation->jam_per_bulan_lembur}}" name="jam_per_bulan_lembur" id="jam_per_bulan_lembur ">
                   </div>
                 </div>
               </div>
@@ -320,7 +326,7 @@ $('.show-custom').on('click',function(){
             }
             let umk = {{$quotation->quotation_site[0]->umk}};
             if (customUpah < (0.85 * umk)) {
-                msg += "<b>Custom Upah</b> di bawah 85% dari UMK </br>";
+                msg += "<b>Custom Upah</b> Tidak boleh di bawah 85% dari UMK </br>";
             }
         }
     }
@@ -339,6 +345,8 @@ $('.show-custom').on('click',function(){
       if(obj.thr==null || obj.thr==""){
         msg += "<b>THR</b> belum dipilih </br>";
       }
+    }else if('{{$quotation->jenis_kontrak}}'=='Reguler'){
+        msg+= "<b>Jenis Kontrak PKWT</b> harus ada THR</br>"
     }
   }
   if(obj.ada_kompensasi==null || obj.ada_kompensasi==""){
@@ -348,6 +356,8 @@ $('.show-custom').on('click',function(){
       if(obj.kompensasi==null || obj.kompensasi==""){
         msg += "<b>Kompensasi</b> belum dipilih </br>";
       }
+    }else if('{{$quotation->jenis_kontrak}}'=='Reguler'){
+        msg+= "<b>Jenis Kontrak PKWT</b> harus ada Kompensasi</br>"
     }
   }
 
@@ -378,12 +388,16 @@ $('.show-custom').on('click',function(){
         msg += "<b>Tipe Lembur</b> belum dipilih </br>";
       }else{
         if(obj.lembur =="Flat"){
-          if(obj.nominal_lembur==null || obj.nominal_lembur==""){
-            msg += "<b>Nominal Lembur</b> belum diisi </br>";
-          }
-          if(obj.jenis_bayar_lembur==null || obj.jenis_bayar_lembur==""){
-          msg += "<b>Jenis Bayar Lembur</b> belum diisi </br>";
-        }
+            if(obj.nominal_lembur==null || obj.nominal_lembur==""){
+                msg += "<b>Nominal Lembur</b> belum diisi </br>";
+            }
+            if(obj.jenis_bayar_lembur==null || obj.jenis_bayar_lembur==""){
+                msg += "<b>Jenis Bayar Lembur</b> belum diisi </br>";
+            }else if(obj.jenis_bayar_lembur=="Per Jam"){
+                if(obj.jam_per_bulan_lembur == null || obj.jam_per_bulan_lembur == ""){
+                    msg += "<b>Jumlah Jam Lembur</b> belum diisi </br>";
+                }
+            }
         }
         if(obj.lembur_ditagihkan==null || obj.lembur_ditagihkan==""){
           msg += "<b>Provisi/Ditagihkan Lembur</b> belum diisi </br>";
@@ -511,7 +525,6 @@ function lemburFlat(first) {
     $('.d-nominal-lembur').removeClass('d-none');
   }
 }
-
 $('#lembur').on('change', function() {
   lemburFlat(2);
 });
@@ -549,5 +562,19 @@ $('#tunjangan_holiday').on('change', function() {
   tunjanganHolidayFlat(2);
 });
 
+jamLemburPerJam(1);
+function jamLemburPerJam(first) {
+  let selected = $("#jenis_bayar_lembur option:selected").val();
+
+  if (selected!="Per Jam") {
+    $('.d-lembur-per-jam').addClass('d-none');
+  }else{
+    $('.d-lembur-per-jam').removeClass('d-none');
+  }
+}
+
+$('#jenis_bayar_lembur').on('change', function() {
+    jamLemburPerJam(2);
+});
 </script>
 @endsection
