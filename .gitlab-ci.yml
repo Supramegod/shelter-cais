@@ -10,9 +10,10 @@ deploy_to_vps:
     - chmod 600 id_rsa
   script:
     - ssh -o StrictHostKeyChecking=no -i id_rsa $SSH_USER@$SSH_HOST '
-        cd /home/data/project/cais &&
-        git config --global --add safe.directory /home/data/project/cais &&
-        git pull origin prod &&
+        cd /home/data/development/cais &&
+        git config --global --add safe.directory /home/data/development/cais &&
+        git pull origin dev &&
+        docker compose build
         docker compose down &&
         docker compose up -d --build
       '
