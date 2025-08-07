@@ -15,5 +15,5 @@ deploy_to_dev:
         git pull origin dev &&
         docker compose build
         docker compose down &&
-        docker compose up -d --build
+        docker compose up -d
       '
