@@ -1,6 +1,5 @@
 services:
  cais-dev:
-   image: cais-dev:${IMAGE_TAG}
    build:
      context: .
      dockerfile: Dockerfile
