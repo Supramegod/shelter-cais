@@ -1,19 +1,32 @@
 stages:
+  - build
   - deploy
+
+build_dev:
+  stage: build
+  only:
+    - dev
+  before_script:
+    - export TAG=cais-dev.$CI_PIPELINE_IID
+  script:
+    - ssh -o StrictHostKeyChecking=no -i id_rsa $SSH_USER@$SSH_HOST '
+        cd /home/data/development/cais &&
+        git config --global --add safe.directory /home/data/development/cais &&
+        git pull origin dev &&
+        docker compose build
+      '
 
 deploy_dev:
   stage: deploy
   image: alpine:latest
   before_script:
+    - export TAG=cais-dev.$CI_PIPELINE_IID
     - apk add --no-cache openssh git
     - echo "$SSH_PRIVATE_KEY" > id_rsa
     - chmod 600 id_rsa
   script:
     - ssh -o StrictHostKeyChecking=no -i id_rsa $SSH_USER@$SSH_HOST '
         cd /home/data/development/cais &&
-        git config --global --add safe.directory /home/data/development/cais &&
-        git pull origin dev &&
-        docker compose build &&
         docker compose down &&
         docker compose up -d
       '
