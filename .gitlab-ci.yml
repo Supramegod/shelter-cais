@@ -4,7 +4,7 @@ stages:
 
 build_dev:
   stage: build
-  image: alpine:latest
+  image: docker:latest
   only:
     - dev
   before_script:
