@@ -11,7 +11,8 @@ build_dev:
     - apk add --no-cache openssh git
     - echo "$SSH_PRIVATE_KEY" > id_rsa
     - chmod 600 id_rsa
-    - export TAG=cais-dev.$CI_PIPELINE_IID
+  variables:
+    IMAGE_TAG: "cais-dev.${CI_PIPELINE_IID}"
   script:
     - ssh -o StrictHostKeyChecking=no -i id_rsa $SSH_USER@$SSH_HOST '
         cd /home/data/development/cais &&
@@ -27,7 +28,8 @@ deploy_dev:
     - apk add --no-cache openssh git
     - echo "$SSH_PRIVATE_KEY" > id_rsa
     - chmod 600 id_rsa
-    - export TAG=cais-dev.$CI_PIPELINE_IID
+  variables:
+    IMAGE_TAG: "cais-dev.${CI_PIPELINE_IID}"
   script:
     - ssh -o StrictHostKeyChecking=no -i id_rsa $SSH_USER@$SSH_HOST '
         cd /home/data/development/cais &&
