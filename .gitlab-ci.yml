@@ -39,6 +39,7 @@ deploy_dev:
       when: always
     - when: never
 
+
 deploy_prod:
   stage: deploy
   image: alpine:latest
