@@ -192,7 +192,19 @@
                     searchable: false,
                 }
             ],
-
+                "language": datatableLang,
+            dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+            buttons: [
+                 {
+                text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Purchase Request</span>',
+                className: 'create-new btn btn-label-primary waves-effect waves-light',
+                action: function (e, dt, node, config)
+                    {
+                        //This will send the page to the location specified
+                        window.location.href = '{{route("purchase-request.add")}}';
+                    }
+                }
+            ] 
 
 
         });

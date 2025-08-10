@@ -21,6 +21,9 @@ class JenisBarangController extends Controller
     public function list(Request $request){
         try {
             $data = DB::table('m_jenis_barang')->whereNull('deleted_at')->get();
+              foreach ($data as $key => $value) {
+                $value->created_at =  Carbon::parse($value->created_at)->isoFormat('D MMMM Y');
+            }
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">

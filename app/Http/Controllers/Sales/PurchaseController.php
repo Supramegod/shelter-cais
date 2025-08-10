@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
+
+
     public function purchaseRequestIndex(Request $request)
     {
         $data = DB::table('sl_purchase_request')->get();
@@ -52,6 +54,9 @@ class PurchaseController extends Controller
             }
 
             $data = $data->get();
+            foreach ($data as $key => $value) {
+                $value->tanggal = Carbon::createFromFormat('Y-m-d',$value->tanggal)->isoFormat('D MMMM Y');
+            }
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -61,6 +66,29 @@ class PurchaseController extends Controller
                 ->rawColumns(['aksi'])
                 ->make(true);
         } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), $request);
+            abort(500);
+        }
+    }
+    public function purchaseRequestAdd(Request $request)
+    {
+        $kode_pr = $this->cetakNomorDokumen('PR');
+        return view('sales.purchase.purchase_request.add', compact('kode_pr'));
+    }
+    public function cariNomorPKS(Request $request)
+    {
+        try {
+
+            $data = DB::table('sl_pks')
+                ->select('id', 'nomor', 'nama_perusahaan',  DB::raw('DATE(created_at) as created_at'), 'created_by')
+                ->where('status_pks_id', '=', 7)
+                ->whereNull('deleted_at')
+                ->get();
+
+            return DataTables::of($data)
+                ->make(true);
+        } catch (\Exception $e) {
+            dd($e);
             SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
@@ -79,6 +107,7 @@ class PurchaseController extends Controller
                 ->where('purchase_request_id', $id)
                 ->distinct()
                 ->get();
+            $data->tanggal_cetak = Carbon::parse($data->tanggal_cetak)->translatedFormat('d F Y');
             return view('sales.purchase.purchase_request.view', compact('data', 'dataBarang', 'jenisBarang'));
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), request());
@@ -88,77 +117,88 @@ class PurchaseController extends Controller
     public function purchaseRequestSave(Request $request)
     {
         try {
-            if (!$request->isMethod('post')) {
-                abort(405);
-            }
-            $id = $request->input('quotation_id');
-            $jenis = $request->input('jenis');
-            $db2 = DB::connection('mysqlhris')->getDatabaseName();
-            $quotation = DB::table('sl_quotation')->where('id', $id)->first();
-            $leads = DB::table('sl_leads')->where('id', $quotation->leads_id)->first();
-            $wilayah = DB::table('sl_leads')
-                ->leftJoin($db2 . '.m_branch', 'sl_leads.branch_id', '=', $db2 . '.m_branch.id')
-                ->where('sl_leads.id', $leads->id)
-                ->first();
-            if ($jenis == "Kaporlap") {
-                $listBarang = DB::table('sl_quotation_kaporlap')->join('m_barang', 'm_barang.id', '=', 'sl_quotation_kaporlap.barang_id')->where('jumlah', '>', 0)->where('quotation_id', $id)->select('sl_quotation_kaporlap.*', 'm_barang.merk', 'm_barang.satuan')->whereNull('sl_quotation_kaporlap.deleted_at')->get();
-                $listJenisBarang = DB::select("select distinct jenis_barang from sl_quotation_kaporlap where deleted_at is null and jumlah>0 and quotation_id = " . $id);
-            } else if ($jenis == "Chemical") {
-                $listBarang = DB::table('sl_quotation_chemical')->join('m_barang', 'm_barang.id', '=', 'sl_quotation_chemical.barang_id')->where('quotation_id', $id)->where('jumlah', '>', 0)->select('sl_quotation_chemical.*', 'm_barang.merk', 'm_barang.satuan')->whereNull('sl_quotation_chemical.deleted_at')->get();
-                $listJenisBarang = DB::select("select distinct jenis_barang from sl_quotation_chemical where deleted_at is null and jumlah > 0 and quotation_id = " . $id);
-            } else if ($jenis == "Devices") {
-                $listBarang = $listDevices = DB::table('sl_quotation_devices')->join('m_barang', 'm_barang.id', '=', 'sl_quotation_devices.barang_id')->where('quotation_id', $id)->select('sl_quotation_devices.*', 'm_barang.merk', 'm_barang.satuan')->where('jumlah', '>', 0)->whereNull('sl_quotation_devices.deleted_at')->get();
-                $listJenisBarang = DB::select("select distinct jenis_barang from sl_quotation_devices where deleted_at is null and jumlah>0 and quotation_id = " . $id);
-            }
+        set_time_limit(120);
+        $quotation = DB::table('sl_quotation')->join('sl_pks', 'sl_quotation.id', '=', 'sl_pks.quotation_id')->where('sl_pks.id', $request->id_pks)->select('sl_quotation.*')->first();
 
-            $data = (object)[
-                'nomor' => $this->cetakNomorDokumen('PR'),
-                'tipe_barang' => $jenis,
-                'tanggal' => Carbon::now()->toDateTimeString(),
-                'wilayah' => $wilayah,
-                'perusahaan' => $leads->nama_perusahaan,
-                'sales' => $quotation->created_by,
-                'pencetak' => Auth::user()->full_name,
+        $db = DB::connection('mysqlhris')->getDatabaseName();
+        $leads = DB::table('sl_leads')->where('id', $quotation->leads_id)->first();
+        $wilayah = DB::table('sl_leads')
+            ->join($db . '.m_branch as m_branch', 'sl_leads.branch_id', '=', 'm_branch.id')
+            ->where('sl_leads.id', $leads->id)
+            ->first();
 
-            ];
-            $insertedId = DB::table('sl_purchase_request')->insertGetId([
-                'kode_pr' => $data->nomor,
-                'tanggal_cetak' => $data->tanggal,
-                'sales' => $quotation->created_by,
-                'wilayah' => $wilayah->name,
-                'perusahaan' => $leads->nama_perusahaan,
-                'quotation_id' => $id,
-                'jenis_barang' => $jenis,
+        $insertedId = DB::table('sl_purchase_request')->insertGetId([
+            'kode_pr' => $request->kode_pr,
+            'tanggal_cetak' => Carbon::now()->isoFormat('YYYY-MM-DD'),
+            'sales' =>  $quotation->created_by,
+            'wilayah' => $wilayah->name,
+            'perusahaan' => $request->nama_perusahaan,
+            'quotation_id' => $quotation->id,
+            'jenis_barang' => $request->jenis_barang,
+            'created_at' => Carbon::now()->toDateTimeString(),
+            'created_by' => Auth::user()->full_name
+        ]);
+        if ($request->jenis_barang == "Kaporlap") {
+            $dataBarang = DB::table('sl_quotation_kaporlap')
+                ->join('m_barang', 'm_barang.id', '=', 'sl_quotation_kaporlap.barang_id')
+                ->where('sl_quotation_kaporlap.quotation_id', $quotation->id)
+                ->where('sl_quotation_kaporlap.jumlah', '>', 0)
+                ->whereNull('sl_quotation_kaporlap.deleted_at')
+                ->select('sl_quotation_kaporlap.*', 'm_barang.merk', 'm_barang.satuan')
+                ->get();
+        } elseif ($request->jenis_barang == "Chemical") {
+            $dataBarang = DB::table('sl_quotation_chemical')
+                ->join('m_barang', 'm_barang.id', '=', 'sl_quotation_chemical.barang_id')
+                ->where('sl_quotation_chemical.quotation_id', $quotation->id)
+                ->where('sl_quotation_chemical.jumlah', '>', 0)
+                ->whereNull('sl_quotation_chemical.deleted_at')
+                ->select('sl_quotation_chemical.*', 'm_barang.merk', 'm_barang.satuan')
+                ->get();
+        } elseif ($request->jenis_barang == "Devices") {
+            $dataBarang = DB::table('sl_quotation_devices')
+                ->join('m_barang', 'm_barang.id', '=', 'sl_quotation_devices.barang_id')
+                ->where('sl_quotation_devices.quotation_id', $quotation->id)
+                ->where('sl_quotation_devices.jumlah', '>', 0)
+                ->whereNull('sl_quotation_devices.deleted_at')
+                ->select('sl_quotation_devices.*', 'm_barang.merk', 'm_barang.satuan')
+                ->get();
+        }
+        $listBarang = $request->input('listBarang_ids', []);
+        $jumlahPRArray = $request->input('jumlah_pr', []);
+        $listBarangPR = [];
+        foreach ($listBarang as $barangId) {
+
+            $barang = $dataBarang->where('id', $barangId)->first();
+
+            if (!$barang) continue;
+            $listBarangPR[] = [
+                'purchase_request_id' => $insertedId,
+                'barang_id' => $barang->barang_id,
+                'nama_barang' => $barang->nama,
+                'qty' => $jumlahPRArray[$barangId],
+                'satuan' => $barang->satuan,
+                'merk' => $barang->merk,
+                'jenis_barang' => $barang->jenis_barang,
                 'created_at' => Carbon::now()->toDateTimeString(),
-                'created_by' => Auth::user()->full_name
-            ]);
-
-            $dataInsert = [];
-            foreach ($listBarang as $item) {
-                $dataInsert[] = [
-                    'purchase_request_id' => $insertedId,
-                    'barang_id' => $item->barang_id,
-                    'nama_barang' => $item->nama,
-                    'qty' => $item->jumlah,
-                    'satuan' => $item->satuan,
-                    'merk' => $item->merk,
-                    'jenis_barang' => $item->jenis_barang,
-                    'created_at' => Carbon::now()->toDateTimeString(),
-                    'created_by' => Auth::user()->full_name
-                ];
-            }
-
-            DB::table('sl_purchase_request_d')->insert($dataInsert);
-
-            $nomor = str_replace(['/', '\\'], '-', $data->nomor);
-            $pdf = Pdf::loadView('sales.purchase.purchase_request.cetak', compact('data', 'listBarang', 'listJenisBarang', 'leads'))->setPaper('A4', 'portrait');
-            return $pdf->stream('Purchase-Request-Nomor-' . $nomor . '.pdf');
+                'created_by' => Auth::user()->full_name,
+            ];
+        }
+        DB::table('sl_purchase_request_d')->insert($listBarangPR);
+        $pr = DB::table('sl_purchase_request')
+            ->where('id', $insertedId)
+            ->select('id', 'kode_pr')
+            ->first();
+        return redirect()->back()->with([
+            'success' => 'Data Berhasil Disimpan',
+            'kode_pr' => $pr->kode_pr,
+            'id' => $pr->id,
+        ]);
         } catch (\Exception $e) {
-            dd($e);
-            SystemController::saveError($e, Auth::user(), $request);
+            SystemController::saveError($e, Auth::user(), request());
             abort(500);
         }
     }
+
     public function cariNomorRequest(Request $request)
     {
         try {
@@ -215,6 +255,10 @@ class PurchaseController extends Controller
             }
 
             $data = $data->get();
+            foreach ($data as $key => $value) {
+                $value->tanggal = Carbon::createFromFormat('Y-m-d',$value->tanggal)->isoFormat('D MMMM Y');
+            }
+            
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
@@ -231,7 +275,7 @@ class PurchaseController extends Controller
     public function purchaseOrderAdd(Request $request)
     {
         try {
-            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $now = Carbon::now()->isoFormat('YYYY-MM-DD');
             $data = DB::table('sl_purchase_request')->get();
             $company = DB::table('sl_purchase_request')
                 ->select('perusahaan')
@@ -259,6 +303,7 @@ class PurchaseController extends Controller
                 ->where('purchase_order_id', $id)
                 ->distinct()
                 ->get();
+                $data->tanggal_cetak = Carbon::createFromFormat('Y-m-d',$data->tanggal_cetak)->isoFormat('D MMMM Y');
 
             return view('sales.purchase.purchase_order.view', compact('data', 'listBarang', 'listJenisBarang'));
         } catch (\Exception $e) {
@@ -268,10 +313,8 @@ class PurchaseController extends Controller
     }
     public function purchaseOrdersave(Request $request)
     {
-        // try {
+        try {
         set_time_limit(120);
-
-
         $dataRequest = DB::table('sl_purchase_request')
             ->where('id', $request->purchase_request_id)
             ->first();
@@ -279,7 +322,7 @@ class PurchaseController extends Controller
         $insertedId = DB::table('sl_purchase_order')->insertGetId([
             'kode_po' => $this->cetakNomorDokumen('PO'),
             'kode_pr' => $dataRequest->kode_pr ?? '',
-            'tanggal_cetak' => Carbon::now()->toDateTimeString(),
+            'tanggal_cetak' => Carbon::now()->isoFormat('YYYY-MM-DD'),
             'sales' => $dataRequest->sales ?? '',
             'wilayah' => $dataRequest->wilayah ?? '',
             'perusahaan' => $dataRequest->perusahaan ?? 'Logistik',
@@ -313,15 +356,48 @@ class PurchaseController extends Controller
             ];
         }
         DB::table('sl_purchase_order_d')->insert($listBarangPO);
-        $nomor = DB::table('sl_purchase_order')
+        $po = DB::table('sl_purchase_order')
             ->where('id', $insertedId)
-            ->select('kode_po')
+            ->select('id', 'kode_po')
+            ->first();
+        return redirect()->back()->with([
+            'success' => 'Data Berhasil Disimpan',
+            'kode_po' => $po->kode_po,
+            'id' => $po->id,
+        ]);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), request());
+            abort(500);
+        }
+    }
+    public function printRequestPdf($id)
+    {
+        $dataRequest = DB::table('sl_purchase_request')->where('id', $id)->first();
+        $listJenisBarang = DB::table('sl_purchase_request_d')
+            ->select('jenis_barang')
+            ->where('purchase_request_id', $id)
+            ->distinct()
             ->get();
-        return redirect()->route('purchase_order.pdf', ['id' => $insertedId]);
-        // } catch (\Exception $e) {
-        //     SystemController::saveError($e, Auth::user(), request());
-        //     abort(500);
-        // }
+        $listBarang = DB::table('sl_purchase_request_d')
+            ->where('purchase_request_id', $id)
+            ->get();
+
+        $data = (object)[
+            'nomor' => $dataRequest->kode_pr,
+            'tanggal' => $dataRequest->tanggal_cetak,
+            'wilayah' => $dataRequest->wilayah,
+            'sales' => $dataRequest->sales,
+            'perusahaan' => $dataRequest->perusahaan,
+            'pencetak' => $dataRequest->created_by,
+            'jenis_barang' => $dataRequest->jenis_barang,
+        ];
+
+        $nomor = str_replace(['/', '\\'], '-', $data->nomor);
+        $pdf = PDF::loadView('sales.purchase.purchase_request.cetak', compact('dataRequest', 'data', 'listBarang', 'listJenisBarang'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('Purchase-Request-Nomor-' . $nomor . '.pdf');
     }
     public function cetakOrderPdf($id)
     {
@@ -386,25 +462,106 @@ class PurchaseController extends Controller
 
 
         if ($request->kode_pr && $request->perusahaan) {
-
-            $data = DB::table('sl_purchase_request_d')
+            $query = DB::table('sl_purchase_request_d')
                 ->join('sl_purchase_request', 'sl_purchase_request.id', '=', 'sl_purchase_request_d.purchase_request_id')
                 ->join('m_barang', 'm_barang.id', '=', 'sl_purchase_request_d.barang_id')
-                ->select('sl_purchase_request_d.*', 'm_barang.stok_barang')
+                ->select('sl_purchase_request_d.*', 'm_barang.stok_barang', 'sl_purchase_request.quotation_id')
                 ->where('sl_purchase_request.kode_pr', $request->kode_pr)
                 ->where('sl_purchase_request.perusahaan', $request->perusahaan)
                 ->where('sl_purchase_request_d.qty', '>', 0)
-                ->whereNull('sl_purchase_request_d.deleted_at')
-                ->get();
+                ->whereNull('sl_purchase_request_d.deleted_at');
 
-            return $data;
+            if ($request->status && $request->status != 'all') {
+                if ($request->status == 'closed') {
+                    $query->where(function ($sub) {
+                        $sub->WhereExists(function ($subquery) {
+                            $subquery->select(DB::raw(1))
+                                ->from('sl_purchase_request_d')
+                                ->whereColumn('sl_purchase_request_d.purchase_request_id', 'sl_purchase_request.id')
+                                ->where('sl_purchase_request_d.is_open', 0);
+                        });
+                    });
+                } elseif ($request->status == 'open') {
+                    $query->where(function ($sub) {
+                        $sub->WhereExists(function ($subquery) {
+                            $subquery->select(DB::raw(1))
+                                ->from('sl_purchase_request_d')
+                                ->whereColumn('sl_purchase_request_d.purchase_request_id', 'sl_purchase_request.id')
+                                ->where('sl_purchase_request_d.is_open', 1);
+                        });
+                    });
+                }
+            }
+
+            return $query->get();
         } else {
-            $data = DB::table('m_barang')
+            return DB::table('m_barang')
                 ->select('id', 'nama as nama_barang', 'stok_barang', 'satuan', 'merk', 'jenis_barang')
                 ->whereNull('deleted_at')
-
                 ->get();
-            return $data;
         }
+    }
+    public function getListBarang(Request $request)
+    {
+        $quotation = DB::table('sl_pks')->join('sl_quotation', 'sl_quotation.id', '=', 'sl_pks.quotation_id')->where('sl_pks.id', $request->id_pks)->select('sl_quotation.*')->first();
+
+        if ($request->jenis_barang == "Kaporlap") {
+            $query = DB::table('sl_quotation_kaporlap')
+                ->join('m_barang', 'm_barang.id', '=', 'sl_quotation_kaporlap.barang_id')
+                ->where('quotation_id', $quotation->id)
+                ->where('sl_quotation_kaporlap.jumlah', '>', 0)
+                ->whereNull('sl_quotation_kaporlap.deleted_at')
+                ->select('sl_quotation_kaporlap.*', 'm_barang.merk', 'm_barang.satuan');
+        } else if ($request->jenis_barang == "Chemical") {
+            $query = DB::table('sl_quotation_chemical')
+                ->join('m_barang', 'm_barang.id', '=', 'sl_quotation_chemical.barang_id')
+                ->where('quotation_id', $quotation->id)
+                ->where('sl_quotation_chemical.jumlah', '>', 0)
+                ->whereNull('sl_quotation_chemical.deleted_at')
+                ->select('sl_quotation_chemical.*', 'm_barang.merk', 'm_barang.satuan');
+        } else if ($request->jenis_barang == "Devices") {
+            $query = DB::table('sl_quotation_devices')
+                ->join('m_barang', 'm_barang.id', '=', 'sl_quotation_devices.barang_id')
+                ->where('quotation_id', $quotation->id)
+                ->where('sl_quotation_devices.jumlah', '>', 0)
+                ->whereNull('sl_quotation_devices.deleted_at')
+                ->select('sl_quotation_devices.*', 'm_barang.merk', 'm_barang.satuan');
+        }
+
+
+        if ($request->status && $request->status != 'all') {
+            if ($request->status == 'closed') {
+                $query->where(function ($query) use ($quotation) {
+                    $query->whereExists(function ($subquery) use ($quotation) {
+                        $subquery->from('sl_receiving_notes')
+                            ->join('sl_receiving_notes_d', 'sl_receiving_notes_d.receiving_notes_id', '=', 'sl_receiving_notes.id')
+                            ->where('sl_receiving_notes.quotation_id', $quotation->id)
+                            ->where('sl_receiving_notes_d.is_open', 0);
+                    })->orWhereExists(function ($subquery) use ($quotation) {
+                        $subquery->from('sl_purchase_request')
+                            ->join('sl_purchase_request_d', 'sl_purchase_request_d.purchase_request_id', '=', 'sl_purchase_request.id')
+                            ->where('sl_purchase_request.quotation_id', $quotation->id)
+                            ->where('sl_purchase_request_d.is_open', 0);
+                    });
+                });
+            } elseif ($request->status == 'open') {
+
+                $query->where(function ($query) use ($quotation) {
+                    $query->whereNotExists(function ($sub) use ($quotation) {
+                        $sub->from('sl_receiving_notes')
+                            ->join('sl_receiving_notes_d', 'sl_receiving_notes_d.receiving_notes_id', '=', 'sl_receiving_notes.id')
+                            ->where('sl_receiving_notes.quotation_id', $quotation->id);
+                    })
+                        ->orWhereExists(function ($sub) use ($quotation) {
+                            $sub->from('sl_receiving_notes')
+                                ->join('sl_receiving_notes_d', 'sl_receiving_notes_d.receiving_notes_id', '=', 'sl_receiving_notes.id')
+                                ->where('sl_receiving_notes.quotation_id', $quotation->id)
+                                ->where('sl_receiving_notes_d.is_open', 1);
+                        });
+                });
+            }
+        }
+        $data = $query->get();
+        return $data;
     }
 }

@@ -89,7 +89,7 @@
                         </tr>
                         <tr>
                             <td><strong>Tanggal</strong></td>
-                            <td>: {{ \Carbon\Carbon::parse($data->tanggal)->format('d M Y') }}</td>
+                            <td>: {{ \Carbon\Carbon::parse($data->tanggal)->isoFormat('D MMMM Y') }}</td>
                         </tr>
                         <tr>
                             <td><strong>Customer</strong></td>
