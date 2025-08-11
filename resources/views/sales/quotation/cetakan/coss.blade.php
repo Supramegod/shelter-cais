@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HARGA JUAL QUOTATION - {{$leads->nama_perusahaan}}</title>
+    <title>HARGA JUAL QUOTATION - {{ $leads->nama_perusahaan }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -12,17 +13,18 @@
             margin: 0;
             padding: 0;
             line-height: 1.5;
-            color:#002060;
+            color: #002060;
             text-align: justify;
         }
 
         @page {
             size: A4;
-            margin: 0;
+            margin: 0;           
+
         }
 
         .content {
-            page-break-after: always;
+
             margin-left: 20mm;
             margin-right: 20mm;
             margin-bottom: 20mm;
@@ -33,12 +35,14 @@
             width: 100%;
             margin-top: 20px;
         }
-        .bordered th,.bordered td {
+
+        .bordered th,
+        .bordered td {
             border: 1px solid black;
             text-align: left;
-            color:black !important;
-            padding-left:5px;
-            padding-right:5px;
+            color: black !important;
+            padding-left: 5px;
+            padding-right: 5px;
         }
 
         .bordered th {
@@ -50,174 +54,269 @@
                 background-color: #f2f2f2 !important;
                 color: black;
             }
+
             td {
                 background-color: white !important;
             }
+            .watermark-footer {
+                position: fixed;
+                bottom: 15px;
+                left: 0;
+                right: 0;
+                text-align: center;
+                font-size: 10px;
+                color: rgba(0, 0, 0, 0.5);
+            }
+
+
         }
     </style>
-</head>
-<body>
-<div class="content">
-    <div style="margin-top:50px;margin-right:20px;color:black !important;font-size:10pt !important">
-        PENAWARAN HARGA JASA ALIH TENAGA {{strtoupper($quotation->kebutuhan)}}<br>
-        @foreach($quotation->site as $site)
-        {{strtoupper($site->nama_site)}}<br>
-        @endforeach
-        TAHUN {{$quotation->tahun_quotation}}</p>
 
+</head>
+<div class="watermark-footer">
+Dicetak oleh: {{ Auth::user()->full_name }} pada {{ now()->format('d-m-Y H:i:s') }}
+</div>
+<body>
+    <div class="content">
+        <div class="row col-12"style="width:100%">
+            <div class="col-sm-8">
+
+                <div style="margin-top:20px;color:black !important;font-size:10pt !important">
+                    PENAWARAN HARGA JASA ALIH TENAGA {{ strtoupper($quotation->kebutuhan) }}<br>
+                    @foreach ($quotation->site as $site)
+                        {{ strtoupper($site->nama_site) }}<br>
+                    @endforeach
+                    TAHUN {{ $quotation->tahun_quotation }}</p>
+                </div>
+            </div>
+
+            <div class="col-sm-4" style="color:black;font-size:8pt;">
+                <br><br><br>
+                <p style="color: black">Disetujui Oleh:</p>
+                <table class="bordered">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center" class="fw-bold">Atas Nama</th>
+                            <th style="text-align:center" class="fw-bold">Waktu Approval</th>
+
+                    </thead>
+                    <tbody>
+                        @foreach ($approval as $approve)
+                            <tr>
+                                <td style="text-align:start" class="mx-2">{{ $approve->created_by }}</td>
+                                <td style="text-align:center" class="mx-2">{{ \Carbon\Carbon::parse($approve->created_at)->format('d/m/Y H:i:s') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+<div style="margin-top:50px;margin-right:20px;color:black !important;font-size:10pt !important;">
         <table class="bordered">
             <thead class="text-center">
                 <tr class="table-success">
-                <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;text-align:center">BREAKDOWN PRICING {{$quotation->kebutuhan}}</th>
+                    <th colspan="{{ 3 + count($quotation->quotation_detail) }}"
+                        style="vertical-align: middle;text-align:center">BREAKDOWN PRICING
+                        {{ $quotation->kebutuhan }}</th>
                 </tr>
                 <tr class="table-success">
-                <th colspan="{{3+count($quotation->quotation_detail)}}" style="vertical-align: middle;text-align:center">{{$leads->nama_perusahaan}}</th>
+                    <th colspan="{{ 3 + count($quotation->quotation_detail) }}"
+                        style="vertical-align: middle;text-align:center">{{ $leads->nama_perusahaan }}</th>
                 </tr>
                 <tr class="table-success">
-                <th>&nbsp;</th>
-                @foreach($quotation->site as $site)
-                <th colspan="{{$site->jumlah_detail}}" style="vertical-align: middle;text-align:center">{{$site->nama_site}}</th>
-                @endforeach
+                    <th>&nbsp;</th>
+                    @foreach ($quotation->site as $site)
+                        <th colspan="{{ $site->jumlah_detail }}" style="vertical-align: middle;text-align:center">
+                            {{ $site->nama_site }}</th>
+                    @endforeach
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                <td class="fw-bold" style="text-align:center">Structure</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <th class="text-center">{{$detailJabatan->jabatan_kebutuhan}}</th>
-                @endforeach
+                    <td class="fw-bold" style="text-align:center">Structure</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <th class="text-center">{{ $detailJabatan->jabatan_kebutuhan }}</th>
+                    @endforeach
                 </tr>
                 <tr>
-                <td class="fw-bold">Jumlah Personil</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <th class="text-center">{{$detailJabatan->jumlah_hc}}</th>
-                @endforeach
+                    <td class="fw-bold">Jumlah Personil</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <th class="text-center">{{ $detailJabatan->jumlah_hc }}</th>
+                    @endforeach
                 </tr>
                 <tr>
-                <td class="fw-bold">1. BASE MANPOWER COST</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-center" class="text-center fw-bold">Unit/Month</th>
-                @endforeach
+                    <td class="fw-bold">1. BASE MANPOWER COST</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="text-center" class="text-center fw-bold">Unit/Month</th>
+                        @endforeach
                 </tr>
                 <tr>
-                <td>Upah/Gaji</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">{{"Rp. ".number_format($detailJabatan->nominal_upah,2,",",".")}}</th>
-                @endforeach
+                    <td>Upah/Gaji</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="text-end">{{ 'Rp. ' . number_format($detailJabatan->nominal_upah, 2, ',', '.') }}</th>
+                        @endforeach
                 </tr>
-                @foreach($daftarTunjangan as $it => $tunjangan)
-                <tr>
-                <td>{{$tunjangan->nama}} &nbsp; <a href="javascript:void(0)"><i class="mdi mdi-delete text-danger delete-tunjangan" data-nama="{{$tunjangan->nama}}"></i></a></th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">{{"Rp. ".number_format($detailJabatan->{$tunjangan->nama},2,",",".")}}</th>
+                @foreach ($daftarTunjangan as $it => $tunjangan)
+                    <tr>
+                        <td>{{ $tunjangan->nama }} &nbsp; <a href="javascript:void(0)"><i
+                                    class="mdi mdi-delete text-danger delete-tunjangan"
+                                    data-nama="{{ $tunjangan->nama }}"></i></a></th>
+                            @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td class="text-end">
+                            {{ 'Rp. ' . number_format($detailJabatan->{$tunjangan->nama}, 2, ',', '.') }}</th>
                 @endforeach
                 </tr>
                 @endforeach
                 <tr class="table-success">
-                <td class="fw-bold text-center">TOTAL</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_base_manpower,2,",",".")}}</th>
-                @endforeach
+                    <td class="fw-bold text-center">TOTAL</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="fw-bold" style="text-align:right">Rp
+                        {{ number_format($detailJabatan->total_base_manpower, 2, ',', '.') }}</th>
+                        @endforeach
                 </tr>
                 <tr>
-                <td class="fw-bold">2. EXCLUDE BASE MANPOWER COST</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-center fw-bold">Unit/Month</th>
-                @endforeach
+                    <td class="fw-bold">2. EXCLUDE BASE MANPOWER COST</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="text-center fw-bold">Unit/Month</th>
+                        @endforeach
                 </tr>
-                @if($quotation->thr=="Ditagihkan" || $quotation->thr=="Diprovisikan" || $quotation->thr=="Diberikan Langsung")
-                <tr>
-                    <td>Provisi Tunjangan Hari Raya (THR)</td>
-                    <td class="text-center"></td>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
-                    <td class="text-end">@if($quotation->thr=="Ditagihkan")Ditagihkan Terpisah @elseif($quotation->thr=="Diberikan Langsung") Diberikan Langsung Oleh Client @else {{"Rp. ".number_format($detailJabatan->tunjangan_hari_raya,2,",",".")}} @endif</td>
-                    @endforeach
-                </tr>
-                @endif
-                @if($quotation->kompensasi=="Ditagihkan" || $quotation->kompensasi=="Diprovisikan")
-                <tr>
-                <td>Provisi Kompensasi</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">@if($quotation->kompensasi=="Ditagihkan")Ditagihkan Terpisah @else {{"Rp. ".number_format($detailJabatan->kompensasi,2,",",".")}} @endif</th>
-                @endforeach
-                </tr>
-                @endif
-                @if($quotation->tunjangan_holiday=="Flat" || $quotation->tunjangan_holiday=="Normatif")
-                <tr>
-                <td>Tunjangan Hari Libur Nasional</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">@if($quotation->tunjangan_holiday=="Flat") {{"Rp. ".number_format($detailJabatan->tunjangan_holiday,2,",",".")}} @else Ditagihkan Terpisah @endif</th>
+                @if ($quotation->thr == 'Ditagihkan' || $quotation->thr == 'Diprovisikan' || $quotation->thr == 'Diberikan Langsung')
+                    <tr>
+                        <td>Provisi Tunjangan Hari Raya (THR)</th>
+
+                            @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td class="text-end">
+                            @if ($quotation->thr == 'Ditagihkan')
+                                Ditagihkan Terpisah
+                            @elseif($quotation->thr == 'Diberikan Langsung')
+                                Diberikan Langsung Oleh Client
+                            @else
+                                {{ 'Rp. ' . number_format($detailJabatan->tunjangan_hari_raya, 2, ',', '.') }}
+                            @endif
+                        </td>
                 @endforeach
                 </tr>
                 @endif
-                @if($quotation->lembur=="Flat" || $quotation->lembur=="Normatif")
-                <tr>
-                    <td>Lembur</th>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
-                    <td class="text-end">@if($quotation->lembur=="Flat") {{"Rp. ".number_format($detailJabatan->lembur,2,",",".")}} @else Ditagihkan Terpisah @endif</th>
-                    @endforeach
+                @if ($quotation->kompensasi == 'Ditagihkan' || $quotation->kompensasi == 'Diprovisikan')
+                    <tr>
+                        <td>Provisi Kompensasi</th>
+                            @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td class="text-end">
+                            @if ($quotation->kompensasi == 'Ditagihkan')
+                                Ditagihkan Terpisah
+                            @else
+                                {{ 'Rp. ' . number_format($detailJabatan->kompensasi, 2, ',', '.') }}
+                            @endif
+                            </th>
+                @endforeach
+                </tr>
+                @endif
+                @if ($quotation->tunjangan_holiday == 'Flat' || $quotation->tunjangan_holiday == 'Normatif')
+                    <tr>
+                        <td>Tunjangan Hari Libur Nasional</th>
+                            @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td class="text-end">
+                            @if ($quotation->tunjangan_holiday == 'Flat')
+                                {{ 'Rp. ' . number_format($detailJabatan->tunjangan_holiday, 2, ',', '.') }}
+                            @else
+                                Ditagihkan Terpisah
+                            @endif
+                            </th>
+                @endforeach
+                </tr>
+                @endif
+                @if ($quotation->lembur == 'Flat' || $quotation->lembur == 'Normatif')
+                    <tr>
+                        <td>Lembur</th>
+                            @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td class="text-end">
+                            @if ($quotation->lembur == 'Flat')
+                                {{ 'Rp. ' . number_format($detailJabatan->lembur, 2, ',', '.') }}
+                            @else
+                                Ditagihkan Terpisah
+                            @endif
+                            </th>
+                @endforeach
                 </tr>
                 @endif
                 <tr>
-                    <td>@if($quotation->penjamin =="BPJS") BPJS Kesehatan @else Asuransi Kesehatan Swasta @endif ( {{number_format($quotation->persen_bpjs_kesehatan,2,",",".")}}% )</th>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
+                    <td>
+                        @if ($quotation->penjamin == 'BPJS')
+                            BPJS Kesehatan
+                        @else
+                            Asuransi Kesehatan Swasta
+                        @endif (
+                        {{ number_format($quotation->persen_bpjs_kesehatan, 2, ',', '.') }}% )
+                        </th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
                     <td class="text-end">
-                    @if($detailJabatan->penjamin_kesehatan == "Takaful")
-                    {{"Rp. ".number_format($detailJabatan->nominal_takaful,2,",",".")}}</td>
-                    @else
-                    {{"Rp. ".number_format($detailJabatan->bpjs_kesehatan,2,",",".")}}</td>
+                        @if ($detailJabatan->penjamin_kesehatan == 'Takaful')
+                            {{ 'Rp. ' . number_format($detailJabatan->nominal_takaful, 2, ',', '.') }}
+                    </td>
+                @else
+                    {{ 'Rp. ' . number_format($detailJabatan->bpjs_kesehatan, 2, ',', '.') }}</td>
                     @endif
                     </th>
                     @endforeach
                 </tr>
                 <tr>
-                    <td>BPJS Ketenagakerjaan ( {{number_format($quotation->persen_bpjs_ketenagakerjaan,2,",",".")}}% )</th>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
-                    <td class="text-end">{{"Rp. ".number_format($detailJabatan->bpjs_ketenagakerjaan,2,",",".")}}</th>
-                    @endforeach
+                    <td>BPJS Ketenagakerjaan (
+                        {{ number_format($quotation->persen_bpjs_ketenagakerjaan, 2, ',', '.') }}% )</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="text-end">
+                        {{ 'Rp. ' . number_format($detailJabatan->bpjs_ketenagakerjaan, 2, ',', '.') }}
+                        </th>
+                        @endforeach
                 <tr>
-                <td>Provisi Seragam</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_kaporlap_coss,2,",",".")}}</th>
-                @endforeach
+                    <td>Provisi Seragam</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="text-end">
+                        {{ 'Rp. ' . number_format($detailJabatan->personil_kaporlap_coss, 2, ',', '.') }}</th>
+                        @endforeach
                 </tr>
                 <tr>
-                <td>Provisi Peralatan</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_devices_coss,2,",",".")}}</th>
-                @endforeach
+                    <td>Provisi Peralatan</th>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="text-end">
+                        {{ 'Rp. ' . number_format($detailJabatan->personil_devices_coss, 2, ',', '.') }}</th>
+                        @endforeach
                 </tr>
-                @if($quotation->kebutuhan_id==3)
-                <tr>
-                <td>Provisi Chemical</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_chemical_coss,2,",",".")}}</th>
+                @if ($quotation->kebutuhan_id == 3)
+                    <tr>
+                        <td>Provisi Chemical</th>
+                            @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td class="text-end">
+                            {{ 'Rp. ' . number_format($detailJabatan->personil_chemical_coss, 2, ',', '.') }}</th>
                 @endforeach
                 </tr>
                 @endif
                 <tr class="table-success">
                     <td class="fw-bold text-center">TOTAL</th>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
-                    <td class="fw-bold" style="text-align:right">Rp {{number_format($detailJabatan->total_exclude_base_manpower,2,",",".")}}</th>
-                    @endforeach
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="fw-bold" style="text-align:right">Rp
+                        {{ number_format($detailJabatan->total_exclude_base_manpower, 2, ',', '.') }}</th>
+                        @endforeach
                 </tr>
                 <tr class="table-success">
                     <td class="fw-bold text-center">BIAYA PENGAWASAN DAN PELAKSANAAN LAPANGAN ( UNIT / MONTH )</th>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
-                    <td class="text-end">{{"Rp. ".number_format($detailJabatan->personil_ohc_coss,2,",",".")}}</td>
+                        @foreach ($quotation->quotation_detail as $detailJabatan)
+                    <td class="text-end">{{ 'Rp. ' . number_format($detailJabatan->personil_ohc_coss, 2, ',', '.') }}
+                    </td>
                     @endforeach
                 </tr>
                 <!-- <tr> -->
                 <!-- <td class="fw-bold">3. BIAYA MONITORING & KONTROL</th>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td class="text-center fw-bold">Unit/Month</th>
-                @endforeach
+                @foreach ($quotation->quotation_detail as $detailJabatan)
+<td class="text-center fw-bold">Unit/Month</th>
+@endforeach
                 </tr>
                 <tr>
                 <td style="text-align:left">Biaya Visit & Kontrol Operasional, visit CRM</td>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td rowspan="5" style="text-align:right;font-weight:bold"><span data-quotation_detail_id="{{$detailJabatan->id}}" data-quotation_id="{{$detailJabatan->quotation_id}}" class="edit-biaya-monitoring">Rp {{number_format($detailJabatan->biaya_monitoring_kontrol,2,",",".")}} <i class="mdi mdi-pencil text-warning"></i></span></td>
-                @endforeach
+                @foreach ($quotation->quotation_detail as $detailJabatan)
+<td rowspan="5" style="text-align:right;font-weight:bold"><span data-quotation_detail_id="{{ $detailJabatan->id }}" data-quotation_id="{{ $detailJabatan->quotation_id }}" class="edit-biaya-monitoring">Rp {{ number_format($detailJabatan->biaya_monitoring_kontrol, 2, ',', '.') }} <i class="mdi mdi-pencil text-warning"></i></span></td>
+@endforeach
                 </tr>
                 <tr>
                 <td style="text-align:left">Biaya Komunikasi Rekrutmen, Pembinaan, Training Induction & Supervisi</td>
@@ -232,58 +331,81 @@
                 <td style="text-align:left">Biaya Investigasi Team</td>
                 </tr> -->
                 <tr class="table-success">
-                    <td style="text-align:right" class="fw-bold">Total Biaya per Personil <span class="text-danger">(1+2+3)</span></td>
-                    @foreach($quotation->quotation_detail as $detailJabatan)
-                    <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->total_personil_coss,2,",",".")}}</td>
+                    <td style="text-align:right" class="fw-bold">Total Biaya per Personil <span
+                            class="text-danger">(1+2+3)</span></td>
+                    @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">
+                            {{ 'Rp. ' . number_format($detailJabatan->total_personil_coss, 2, ',', '.') }}</td>
                     @endforeach
                 </tr>
                 <tr class="">
-                <td style="text-align:right" class="fw-bold">Harga Per Personel x Jumlah Personel</td>
-                @foreach($quotation->quotation_detail as $detailJabatan)
-                <td style="text-align:right" class="">{{"Rp. ".number_format($detailJabatan->sub_total_personil_coss,2,",",".")}}</td>
-                @endforeach
+                    <td style="text-align:right" class="fw-bold">Harga Per Personel x Jumlah Personel</td>
+                    @foreach ($quotation->quotation_detail as $detailJabatan)
+                        <td style="text-align:right" class="">
+                            {{ 'Rp. ' . number_format($detailJabatan->sub_total_personil_coss, 2, ',', '.') }}</td>
+                    @endforeach
                 </tr>
                 <tr class="">
-                    <td style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari sub total biaya</span> ( {{$quotation->persentase}} % )</td>
-                    <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->nominal_management_fee_coss,2,",",".")}}</td>
+                    <td style="text-align:right" class="">Management Fee (MF) <span class="text-danger">*dari
+                            sub total biaya</span> ( {{ $quotation->persentase }} % )</td>
+                    <td style="text-align:right" class="" colspan="{{ count($quotation->quotation_detail) }}">
+                        {{ 'Rp. ' . number_format($quotation->nominal_management_fee_coss, 2, ',', '.') }}</td>
                 </tr>
-                @if($quotation->is_ppn == 1)
-                <tr class="table-success">
-                    <td style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
-                    <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->grand_total_sebelum_pajak_coss,2,",",".")}}</td>
-                </tr>
-                <tr class="">
-                    <td style="text-align:right" class="fw-bold">Dasar Pengenaan Pajak</td>
-                    <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->dpp_coss,2,",",".")}}</td>
-                </tr>
-                <tr class="">
-                    <td style="text-align:right" class="fw-bold">PPN <span class='text-danger'>*dari management fee</span> ( 12 % )</td>
-                    <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->ppn_coss,2,",",".")}}</td>
-                </tr>
-                <tr class="">
-                    <td style="text-align:right" class="fw-bold">PPh <span class='text-danger'>*dari management fee</span> ( -2 % )</td>
-                    <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pph_coss,2,",",".")}}</td>
-                </tr>
+                @if ($quotation->is_ppn == 1)
+                    <tr class="table-success">
+                        <td style="text-align:right" class="fw-bold">Grand Total Sebelum Pajak</td>
+                        <td style="text-align:right" class=""
+                            colspan="{{ count($quotation->quotation_detail) }}">
+                            {{ 'Rp. ' . number_format($quotation->grand_total_sebelum_pajak_coss, 2, ',', '.') }}</td>
+                    </tr>
+                    <tr class="">
+                        <td style="text-align:right" class="fw-bold">Dasar Pengenaan Pajak</td>
+                        <td style="text-align:right" class=""
+                            colspan="{{ count($quotation->quotation_detail) }}">
+                            {{ 'Rp. ' . number_format($quotation->dpp_coss, 2, ',', '.') }}</td>
+                    </tr>
+                    <tr class="">
+                        <td style="text-align:right" class="fw-bold">PPN <span class='text-danger'>*dari
+                                management fee</span> ( 12 % )</td>
+                        <td style="text-align:right" class=""
+                            colspan="{{ count($quotation->quotation_detail) }}">
+                            {{ 'Rp. ' . number_format($quotation->ppn_coss, 2, ',', '.') }}</td>
+                    </tr>
+                    <tr class="">
+                        <td style="text-align:right" class="fw-bold">PPh <span class='text-danger'>*dari
+                                management fee</span> ( -2 % )</td>
+                        <td style="text-align:right" class=""
+                            colspan="{{ count($quotation->quotation_detail) }}">
+                            {{ 'Rp. ' . number_format($quotation->pph_coss, 2, ',', '.') }}</td>
+                    </tr>
                 @endif
                 <tr class="table-success">
                     <td style="text-align:right" class="fw-bold">TOTAL INVOICE</td>
-                    <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->total_invoice_coss,2,",",".")}}</td>
+                    <td style="text-align:right" class="" colspan="{{ count($quotation->quotation_detail) }}">
+                        {{ 'Rp. ' . number_format($quotation->total_invoice_coss, 2, ',', '.') }}</td>
                 </tr>
                 <tr class="table-success">
                     <td style="text-align:right" class="fw-bold">PEMBULATAN</td>
-                    <td style="text-align:right" class="" colspan="{{count($quotation->quotation_detail)}}">{{"Rp. ".number_format($quotation->pembulatan_coss,2,",",".")}}</td>
+                    <td style="text-align:right" class="" colspan="{{ count($quotation->quotation_detail) }}">
+                        {{ 'Rp. ' . number_format($quotation->pembulatan_coss, 2, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <div class="mt-3" style="padding-left:40px;color:black !important;font-size:9pt !important">
-        <p><b><i>Note :</i></b>	<br>
-        {!! $quotation->note_harga_jual !!}</p>
-</div>
-</div>
+    <br><br><br>
+    <div class="mt-4" style=" padding-left:40px;color:black !important;font-size:9pt !important">
+        <p><b><i>Note :</i></b> <br>
+            {!! $quotation->note_harga_jual !!}</p>
+    </div>
+
+
+
+    </div>
+    
 
 </body>
 <script>
-        window.print();
-    </script>
+    window.print();
+</script>
+
 </html>

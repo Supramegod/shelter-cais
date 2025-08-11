@@ -22,7 +22,7 @@
         }
 
         .content {
-            page-break-after: always;
+            
             margin-left: 20mm;
             margin-right: 20mm;
             margin-bottom: 20mm;
@@ -53,18 +53,60 @@
             td {
                 background-color: white !important;
             }
+            .watermark-footer {
+                position: fixed;
+                bottom: 15px;
+                left: 0;
+                right: 0;
+                text-align: center;
+                font-size: 10px;
+                color: rgba(0, 0, 0, 0.5);
+            }
         }
     </style>
 </head>
+<div class="watermark-footer">
+Dicetak oleh: {{ Auth::user()->full_name }} pada {{ now()->format('d-m-Y H:i:s') }}
+</div>
 <body>
 <div class="content">
-    <div style="margin-top:50px;margin-right:20px;color:black !important;font-size:10pt !important;">
-        <p style="text-align:center">HARGA POKOK PENJUALAN {{strtoupper($quotation->kebutuhan)}}<br>
-        @foreach($quotation->quotation_site as $site)
-        {{strtoupper($site->nama_site)}}<br>
-        @endforeach
-        TAHUN {{$quotation->tahun_quotation}}</p>
+    <div class="row col-12"style="width:100%">
+            <div class="col-sm-8">
 
+                <div style="margin-top:70px;color:black !important;font-size:10pt !important">
+                      <p style="text-align:center">HARGA POKOK PENJUALAN {{strtoupper($quotation->kebutuhan)}}<br>
+        
+                    @foreach ($quotation->quotation_site as $site)
+                        {{ strtoupper($site->nama_site) }}<br>
+                    @endforeach
+                    TAHUN {{ $quotation->tahun_quotation }}</p>
+                </div>
+            </div>
+
+            <div class="col-sm-4" style="color:black;font-size:8pt;">
+                <br><br><br>
+                <p style="color: black">Disetujui Oleh:</p>
+                <table class="bordered">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center" class="fw-bold">Atas Nama</th>
+                            <th style="text-align:center" class="fw-bold">Waktu Approval</th>
+
+                    </thead>
+                    <tbody>
+                        @foreach ($approval as $approve)
+                            <tr>
+                                <td style="text-align:start" class="mx-2">{{ $approve->created_by }}</td>
+                                <td style="text-align:center" class="mx-2">{{ \Carbon\Carbon::parse($approve->created_at)->format('d/m/Y H:i:s') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    <div style="margin-top:50px;margin-right:20px;color:black !important;font-size:10pt !important;">
         <table class="bordered">
             <thead class="text-center">
             <tr class="table-success">
@@ -297,6 +339,7 @@
             </tbody>
         </table>
         </table>
+        
     </div>
 </div>
 

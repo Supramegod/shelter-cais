@@ -3943,6 +3943,7 @@ ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
             $salaryRuleQ = DB::table('m_salary_rule')->where('id', $quotation->salary_rule_id)->first();
             $quotation->tahun_quotation = Carbon::createFromFormat('Y-m-d', $quotation->tgl_quotation)->isoFormat('Y');
             $quotation->site = DB::table('sl_quotation_site')->where('quotation_id', $quotation->id)->whereNull('deleted_at')->get();
+            $approval = DB::table('log_approval')->where('doc_id', $quotation->id)->get();
             foreach ($quotation->site as $key => $value) {
                 $value->jumlah_detail = 0;
                 foreach ($quotationDetail as $kd => $vd) {
@@ -3951,7 +3952,7 @@ ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
                     }
                 }
             }
-            return view('sales.quotation.cetakan.coss', compact('quotation', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'now', 'leads'));
+            return view('sales.quotation.cetakan.coss', compact('quotation', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'now', 'leads','approval'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e, Auth::user(), $request);
@@ -4008,6 +4009,7 @@ ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
             $salaryRuleQ = DB::table('m_salary_rule')->where('id', $quotation->salary_rule_id)->first();
             $quotation->tahun_quotation = Carbon::createFromFormat('Y-m-d', $quotation->tgl_quotation)->isoFormat('Y');
             $quotation->quotation_site = DB::table('sl_quotation_site')->where('quotation_id', $quotation->id)->whereNull('deleted_at')->get();
+            $approval = DB::table('log_approval')->where('doc_id', $quotation->id)->get();
             foreach ($quotation->quotation_site as $key => $value) {
                 $value->jumlah_detail = 0;
                 foreach ($quotationDetail as $kd => $vd) {
@@ -4016,7 +4018,7 @@ ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
                     }
                 }
             }
-            return view('sales.quotation.cetakan.hpp', compact('quotation', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'now', 'leads'));
+            return view('sales.quotation.cetakan.hpp', compact('quotation', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'now', 'leads','approval'));
         } catch (\Exception $e) {
             dd($e);
             SystemController::saveError($e, Auth::user(), $request);

@@ -7,6 +7,8 @@
         <title>@yield('title') - Customer & Activity Information System</title>
 
     <meta name="description" content="" />
+    
+    
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icons/favicon-shelter.png') }}" />
@@ -25,6 +27,7 @@
     <!-- Icons -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/materialdesignicons.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
+    
 
     <!-- Menu waves for no-customizer fix -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />

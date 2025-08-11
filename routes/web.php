@@ -53,6 +53,7 @@ use App\Http\Controllers\Sdt\TrainingSiteController;
 use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
+use App\Http\Controllers\Master\MasterMenuController;
 use App\Http\Controllers\Master\PositionController;
 use App\Http\Controllers\Sales\PurchaseController;
 
@@ -62,6 +63,18 @@ Route::controller(AuthController::class)->group(function() {
     Route::get('/login', 'login')->name('login');
     Route::post('/logout', 'logout')->name('logout');
     Route::post('/authenticate', 'authenticate')->name('authenticate');
+});
+
+Route::controller(MasterMenuController::class)->group(function() {
+    Route::get('/master/menu', 'index')->name('master.menu');
+    Route::get('/master/menu/list', 'list')->name('master.menu.list');
+    Route::get('/master/menu/add', 'add')->name('master.menu.add');
+    Route::get('/master/menu/list/role', 'listRole')->name('master.menu.list-role');
+    Route::post('/master/menu/simpan-akses', 'simpanRole')->name('master.menu.simpan-akses');
+    Route::post('/master/menu/save', 'save')->name('master.menu.save');
+    Route::get('/master/menu/view/{id}', 'view')->name('master.menu.view');
+    Route::post('/master/menu/update/{id}', 'update')->name('master.menu.update');
+    Route::post('/master/menu/delete/{id}', 'delete')->name('master.menu.delete');
 });
 
 //form luar

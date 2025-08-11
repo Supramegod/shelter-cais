@@ -8,6 +8,14 @@
             </a>
         </li>
         @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,40,98,99,100]))
+        <li class="menu-item @if(str_contains(Request::url(), route('master.menu')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('master.menu')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <div data-i18n="Menu">Master Menu</div>
+            </a>
+        </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,40,98,99,100]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
@@ -163,7 +171,7 @@
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2]))
+        @if(in_array(Auth::user()->role_id,[2,29]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-package-variant-closed-plus"></i>
@@ -176,13 +184,14 @@
                         <div data-i18n="Purchase Request">Purchase Request</div>
                     </a>
                 </li>
+                @if(in_array(Auth::user()->role_id,[2]))
                 <li class="menu-item">
                     <a href="{{route('purchase-order')}}" class="menu-link">
                       
                         <div data-i18n="Purchase Order">Purchase Order</div>
                     </a>
                 </li>
-                
+                @endif
             </ul>
         </li>
         @endif
@@ -253,11 +262,11 @@
                 </li>
             </ul>
         </li>
-        <!-- TR -->
+        <!-- Jenis Barang -->
          <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
                     <a href="{{route('jenis-barang')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-view-list-outline"></i>
-                        <div data-i18n="Jenis Barang">Jenis Barang</div>
+                        <div data-i18n="Jenis Barang">Master Jenis Barang</div>
                     </a>
                 </li>
         <!-- TRAINING SDT -->
