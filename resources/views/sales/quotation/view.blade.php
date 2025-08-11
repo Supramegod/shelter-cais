@@ -112,6 +112,7 @@
                rel="noopener noreferrer" href="javascript:void(0)">
                Cetak Quotation Semua
             </a>
+<<<<<<< HEAD
         </li>
         <li>
             <a class="dropdown-item"
@@ -122,6 +123,86 @@
         </li>
     </ul>
 </li>
+=======
+        </div>
+        <div class="card-body">
+          <div class="card-header p-0">
+            <div class="nav-align-top">
+              <ul class="nav nav-tabs nav-fill" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-kaporlap" aria-controls="navs-top-kaporlap" aria-selected="true">
+                    Kaporlap
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-ohc" aria-controls="navs-top-ohc" aria-selected="false" tabindex="-1">
+                    OHC
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-devices" aria-controls="navs-top-devices" aria-selected="false" tabindex="-1">
+                    Devices
+                  </button>
+                </li>
+                @if($quotation->kebutuhan_id == 3)
+                <li class="nav-item" role="presentation">
+                  <button type="button" class="nav-link waves-effect" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-chemical" aria-controls="navs-top-chemical" aria-selected="false" tabindex="-1">
+                    Chemical
+                  </button>
+                </li>
+                @endif
+                <span class="tab-slider" style="left: 0px; width: 91.4062px; bottom: 0px;"></span>
+              </ul>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tab-content p-0">
+              <div class="tab-pane fade active show" id="navs-top-kaporlap" role="tabpanel">
+                <div class="row mb-5">
+                @if($quotation->step == 100 && $quotation->is_aktif == 0)
+                <div class="col-12 d-flex justify-content-between">
+                  <div></div>
+                  <!-- <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'7','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                      <span class="align-middle me-sm-1">Edit</span>
+                  </a> -->
+                </div>
+                @endif
+                    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                        <div></div>
+                        <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'Kaporlap']) }}" class="btn btn-success btn-next w-20">
+                            <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Kaporlap</span>
+                        </a>
+                        <button
+                          id="btn-print"
+                          data-url="{{ route('print.gr.kaporlap', ['quotation_id' => $quotation->id]) }}"
+                          class="btn btn-primary">
+                          <i class="fa fa-print"></i> Print GR
+                      </button>
+                    </div>
+                </div>
+                <div class="row">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table" >
+                      @php
+                      $totalKaporlap = 0;
+                      @endphp
+                      @foreach($listJenisKaporlap as $jenisKaporlap)
+                      <thead class="text-center">
+                        <tr class="table-primary">
+                          <th>{{$jenisKaporlap->jenis_barang}}</th>
+                          <th>Harga / Unit</th>
+                          <th>Jumlah</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach($listKaporlap as $kaporlap)
+                        @if($kaporlap->jenis_barang == $jenisKaporlap->jenis_barang)
+                          <tr>
+                            <td>{{$kaporlap->nama}}</td>
+                            <td style="text-align:right">Rp {{number_format($kaporlap->harga,0,",",".")}}</td>
+                            <td style="text-align:center">{{$kaporlap->jumlah}}</td>
+                          </tr>
+>>>>>>> shelter-cais/developer_jalu
 
                                         @if ($quotation->is_aktif == 1)
                                             <li><a class="dropdown-item"
@@ -274,6 +355,7 @@
                         @if ($quotation->step == 100 && $quotation->is_aktif == 0)
                             <!-- <h6 class="m-0"><a href="{{ route('quotation.step', ['id' => $quotation->id, 'step' => '2', 'edit' => 1]) }}">Edit</a></h6> -->
                         @endif
+<<<<<<< HEAD
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -386,7 +468,47 @@
                                 </tr>
                             </table>
                         </div>
+=======
+                        @endforeach
+                      </tbody>
+                      @endforeach
+                      <tbody>
+                      <tr class="table-success">
+                        <td><b>TOTAL</b> </td>
+                        <td style="text-align:right">Rp {{number_format($totalDevices,0,",",".")}}</td>
+                        <td class="total-semua" style="text-align:right"></td>
+                      </tr>
+                    </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              @if($quotation->kebutuhan_id == 3)
+              <div class="tab-pane fade" id="navs-top-chemical" role="tabpanel">
+                <div class="row mb-5">
+                @if($quotation->step == 100 && $quotation->is_aktif == 0)
+                  <div class="col-12 d-flex justify-content-between">
+                    <div></div>
+                    <!-- <a href="{{route('quotation.step',['id'=>$quotation->id,'step'=>'10','edit'=>1])}}" class="btn btn-primary btn-next w-20">
+                        <span class="align-middle me-sm-1">Edit</span>
+                    </a> -->
+                  </div>
+                @endif
+                    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                        <div></div>
+                        <a href="{{ route('quotation.export.detail-coss', ['id' => $quotation->id,'jenis' => 'Chemical']) }}" class="btn btn-success btn-next w-20">
+                            <span class="align-middle me-sm-1"><i class="mdi mdi-file-excel"></i>&nbsp; Export Chemical</span>
+                        </a>
+                        <button
+                          id="btn-print"
+                          data-url="{{ route('print.gr', ['quotation_id' => $quotation->id]) }}"
+                          class="btn btn-primary">
+                          <i class="fa fa-print"></i> Print GR
+                      </button>
+
+>>>>>>> shelter-cais/developer_jalu
                     </div>
+                  </div>
                 </div>
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -1197,6 +1319,7 @@
                     d.quotation_id = {{ $quotation->id }};
                 },
             },
+<<<<<<< HEAD
             "order": [
                 [0, 'asc']
             ],
@@ -1220,6 +1343,138 @@
             }],
             "language": datatableLang,
         });
+=======
+        },
+        "order":[
+            [0,'asc']
+        ],
+        columns:[{
+            data : 'id',
+            name : 'id',
+            visible: false,
+            searchable: false
+        },{
+            data : 'nomor',
+            name : 'nomor',
+            className:'text-center',
+            width: "10%",
+        },{
+            data : 'requirement',
+            name : 'requirement',
+            className:'text-center'
+        },{
+            data : 'aksi',
+            name : 'aksi',
+            width: "10%",
+            orderable: false,
+            searchable: false,
+        }],
+        "language": datatableLang,
+      });
+ $('#btn-print').on('click', function () {
+    const url = $(this).data('url');
+
+    // Tampilkan loading
+    $(this).prop('disabled', true);
+    $(this).html('<i class="fa fa-spinner fa-spin"></i> Generating PDF...');
+
+    // Buka PDF di tab baru
+    window.open(url, '_blank');
+
+    // Reset tombol setelah 3 detik
+    setTimeout(() => {
+        $(this).prop('disabled', false);
+        $(this).html('<i class="fa fa-print"></i> Print GR');
+    }, 3000);
+});
+
+      $('#btn-input-requirement-{{$detail->id}}').on('click', function() {
+        Swal.fire({
+            title: 'requirement',
+            html: '<textarea id="textareaInput" class="swal2-textarea" placeholder="Masukkan requirement" style="height: 100px;"></textarea>',
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            preConfirm: () => {
+                const text = $('#textareaInput').val();
+                if (!text) {
+                    Swal.showValidationMessage('Requirement Harus Diisi !');
+                }
+                return text;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                type: "POST",
+                url: "{{route('quotation.add-detail-requirement')}}",
+                data: {
+                  "_token": "{{ csrf_token() }}",
+                  requirement: result.value,
+                  quotation_detail_id:{{$detail->id}}
+                },
+                success: function(response){
+                  if(response=="Data Berhasil Ditambahkan"){
+                    $('#table-data-requirement-{{$detail->id}}').DataTable().ajax.reload();
+                  }else{
+                    Swal.fire({
+                      title: "Pemberitahuan",
+                      html: response,
+                      icon: "warning",
+                    });
+                  }
+                },
+                error:function(error){
+                  console.log(error);
+                }
+              });
+            }
+          });
+      });
+    @endforeach
+
+    $('body').on('click', '.btn-delete', function() {
+      let formData = {
+        "id":$(this).data('id'),
+        "_token": "{{ csrf_token() }}"
+      };
+
+      let table ='#table-data-requirement-'+$(this).data('detail');
+      $.ajax({
+        type: "POST",
+        url: "{{route('quotation.delete-detail-requirement')}}",
+        data:formData,
+        success: function(response){
+          $(table).DataTable().ajax.reload();
+        },
+        error:function(error){
+          console.log(error);
+        }
+      });
+    });
+
+    let baseUrl = "{{ route('quotation.copy-quotation', ['qasal' => ':qasal', 'qtujuan' => ':qtujuan']) }}";
+
+    function redirectToQuotationCopy(qasal, qtujuan) {
+        // Ganti placeholder `:qasal` dan `:qtujuan` dengan nilai aktual
+        let url = baseUrl.replace(':qasal', qasal).replace(':qtujuan', qtujuan);
+        location.href = url;
+    }
+
+    $("#simpan-copy-quotation").on('click',function() {
+        let msg = "";
+        let qasal = $("#quotationAsal").val();
+        let qtujuan = $("#quotationTujuan").val();
+
+        if(qasal==null || qasal==""){
+            msg += "<b>Quotation Asal</b> belum dipilih </br>";
+        }
+
+        if(qtujuan==null || qtujuan==""){
+            msg += "<b>Quotation Tujuan</b> belum dipilih </br>";
+        }
+
+        if(msg == ""){
+            $("#quotationModal").modal("hide");
+>>>>>>> shelter-cais/developer_jalu
 
         $('body').on('click', '#delete-quotation', function() {
             Swal.fire({

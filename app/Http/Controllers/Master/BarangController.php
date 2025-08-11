@@ -13,171 +13,184 @@ use Illuminate\Support\Facades\Validator;
 use App\Exports\BarangTemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
 use \stdClass;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BarangController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
 
         return view('master.barang.list');
     }
 
-    public function indexKaporlap(Request $request){
+    public function indexKaporlap(Request $request)
+    {
         return view('master.barang.list-kaporlap');
     }
-    public function indexOhc(Request $request){
+    public function indexOhc(Request $request)
+    {
         return view('master.barang.list-ohc');
     }
 
-    public function indexChemical(Request $request){
+    public function indexChemical(Request $request)
+    {
         return view('master.barang.list-chemical');
     }
 
-    public function indexDevices(Request $request){
+    public function indexDevices(Request $request)
+    {
         return view('master.barang.list-devices');
     }
 
 
-    public function list(Request $request){
+    public function list(Request $request)
+    {
         try {
             $data = DB::table('m_barang')
-                    ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
-                    ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
-                    ->whereNull('m_barang.deleted_at')
-                    ->get();
+                ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
+                ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
+                ->whereNull('m_barang.deleted_at')
+                ->get();
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                        <a href="'.route('barang.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                        <a href="' . route('barang.view', $data->id) . '" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="' . $data->id . '"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
                 })
                 ->rawColumns(['aksi'])
-            ->make(true);
+                ->make(true);
         } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
-    public function listKaporlap(Request $request){
+    public function listKaporlap(Request $request)
+    {
         try {
-            $arrKaporlap = [1,2,3,4,5];
+            $arrKaporlap = [1, 2, 3, 4, 5];
             $data = DB::table('m_barang')
-                    ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
-                    ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
-                    ->whereIn('m_barang.jenis_barang_id',$arrKaporlap)
-                    ->whereNull('m_barang.deleted_at')
+                ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
+                ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
+                ->whereIn('m_barang.jenis_barang_id', $arrKaporlap)
+                ->whereNull('m_barang.deleted_at')
 
-                    ->get();
+                ->get();
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                        <a href="'.route('barang.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                        <a href="' . route('barang.view', $data->id) . '" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="' . $data->id . '"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
                 })
                 ->rawColumns(['aksi'])
-            ->make(true);
+                ->make(true);
         } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
-    }
-
-    public function listDevices(Request $request){
-        try {
-            $arrDevices = [9,10,11,12,17];
-            $data = DB::table('m_barang')
-                    ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
-                    ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
-                    ->whereIn('m_barang.jenis_barang_id', $arrDevices)
-                    ->whereNull('m_barang.deleted_at')
-                    ->get();
-            return DataTables::of($data)
-                ->addColumn('aksi', function ($data) {
-                    return '<div class="justify-content-center d-flex">
-                        <a href="'.route('barang.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
-                    </div>';
-                })
-                ->rawColumns(['aksi'])
-            ->make(true);
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
 
-    public function listOhc(Request $request){
+    public function listDevices(Request $request)
+    {
         try {
-            $arrOhc = [6,7,8];
+            $arrDevices = [9, 10, 11, 12, 17];
             $data = DB::table('m_barang')
-                    ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
-                    ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
-                    ->whereIn('m_barang.jenis_barang_id', $arrOhc)
-                    ->whereNull('m_barang.deleted_at')
-                    ->get();
+                ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
+                ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
+                ->whereIn('m_barang.jenis_barang_id', $arrDevices)
+                ->whereNull('m_barang.deleted_at')
+                ->get();
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                        <a href="'.route('barang.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                        <a href="' . route('barang.view', $data->id) . '" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="' . $data->id . '"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
                 })
                 ->rawColumns(['aksi'])
-            ->make(true);
+                ->make(true);
         } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
 
-    public function listChemical(Request $request){
+    public function listOhc(Request $request)
+    {
         try {
-            $arrChemical = [13,14,15,16,18,19];
+            $arrOhc = [6, 7, 8];
             $data = DB::table('m_barang')
-                    ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
-                    ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
-                    ->whereIn('m_barang.jenis_barang_id', $arrChemical)
-                    ->whereNull('m_barang.deleted_at')
-                    ->get();
+                ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
+                ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
+                ->whereIn('m_barang.jenis_barang_id', $arrOhc)
+                ->whereNull('m_barang.deleted_at')
+                ->get();
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                        <a href="'.route('barang.view',$data->id).'" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
-                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                        <a href="' . route('barang.view', $data->id) . '" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="' . $data->id . '"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
                 })
                 ->rawColumns(['aksi'])
-            ->make(true);
+                ->make(true);
         } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
 
-    public function add(Request $request){
+    public function listChemical(Request $request)
+    {
+        try {
+            $arrChemical = [13, 14, 15, 16, 18, 19];
+            $data = DB::table('m_barang')
+                ->join('m_jenis_barang', 'm_barang.jenis_barang_id', '=', 'm_jenis_barang.id')
+                ->select('m_barang.*', 'm_jenis_barang.nama as nama_jenis_barang')
+                ->whereIn('m_barang.jenis_barang_id', $arrChemical)
+                ->whereNull('m_barang.deleted_at')
+                ->get();
+            return DataTables::of($data)
+                ->addColumn('aksi', function ($data) {
+                    return '<div class="justify-content-center d-flex">
+                        <a href="' . route('barang.view', $data->id) . '" class="btn-view btn btn-info waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a>&nbsp;
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="' . $data->id . '"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                    </div>';
+                })
+                ->rawColumns(['aksi'])
+                ->make(true);
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), $request);
+            abort(500);
+        }
+    }
+
+    public function add(Request $request)
+    {
         $now = Carbon::now()->isoFormat('DD MMMM Y');
         $jenis = $request->jenis;
 
         $listJenisBarang = DB::table('m_jenis_barang')->whereNull('deleted_at')->orderBy('id', 'ASC')->get();
 
-        return view('master.barang.add',compact('jenis','now', 'listJenisBarang'));
+        return view('master.barang.add', compact('jenis', 'now', 'listJenisBarang'));
     }
 
-    public function view(Request $request,$id){
-        try {
-            $data = DB::table('m_barang')->where('id', $id)->first();
-            $listJenisBarang = DB::table('m_jenis_barang')->whereNull('deleted_at')->orderBy('id', 'ASC')->get();
-            $listLayanan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+    public function view(Request $request, $id)
+    {
+        $data = DB::table('m_barang')->where('id', $id)->first();
+        $listJenisBarang = DB::table('m_jenis_barang')->whereNull('deleted_at')->orderBy('id', 'ASC')->get();
+        $listLayanan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
 
-            return view('master.barang.view',compact('data', 'listJenisBarang','listLayanan'));
-        } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
-            abort(500);
-        }
+
+
+        return view('master.barang.view', compact('data', 'listJenisBarang', 'listLayanan'));
     }
 
-    public function save(Request $request){
+
+
+    public function save(Request $request)
+    {
         try {
             DB::beginTransaction();
 
@@ -193,14 +206,14 @@ class BarangController extends Controller
 
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
-            }else{
+            } else {
                 $current_date_time = Carbon::now()->toDateTimeString();
-                $harga = str_replace(",", "",$request->harga);
-                $jenisBarang = DB::table('m_jenis_barang')->where('id',$request->jenis_barang_id)->first();
+                $harga = str_replace(",", "", $request->harga);
+                $jenisBarang = DB::table('m_jenis_barang')->where('id', $request->jenis_barang_id)->first();
 
                 $msgSave = '';
-                if(!empty($request->id)){
-                    DB::table('m_barang')->where('id',$request->id)->update([
+                if (!empty($request->id)) {
+                    DB::table('m_barang')->where('id', $request->id)->update([
                         'nama' => $request->nama,
                         'jenis_barang_id' => $request->jenis_barang_id,
                         'jenis_barang' => $jenisBarang->nama,
@@ -213,7 +226,7 @@ class BarangController extends Controller
                         'updated_at' => $current_date_time,
                         'updated_by' => Auth::user()->full_name
                     ]);
-                }else{
+                } else {
                     DB::table('m_barang')->insert([
                         'nama' => $request->nama,
                         'jenis_barang_id' => $request->jenis_barang_id,
@@ -228,47 +241,51 @@ class BarangController extends Controller
                         'created_by' => Auth::user()->full_name
                     ]);
                 }
-                $msgSave = 'Barang '.$request->nama.' berhasil disimpan.';
+                $msgSave = 'Barang ' . $request->nama . ' berhasil disimpan.';
             }
             DB::commit();
             return redirect()->back()->with('success', $msgSave);
         } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
 
-    public function delete(Request $request){
+    public function delete(Request $request)
+    {
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            DB::table('m_barang')->where('id',$request->id)->update([
+            DB::table('m_barang')->where('id', $request->id)->update([
                 'deleted_at' => $current_date_time,
                 'deleted_by' => Auth::user()->full_name
             ]);
 
             return response()->json([
-                'success'   => true,
-                'data'      => [],
-                'message'   => "Berhasil menghapus data"
+                'success' => true,
+                'data' => [],
+                'message' => "Berhasil menghapus data"
             ], 200);
         } catch (\Exception $e) {
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
 
-    public function templateImport(Request $request) {
+    public function templateImport(Request $request)
+    {
         $dt = Carbon::now()->toDateTimeString();
 
-        return Excel::download(new BarangTemplateExport(), 'Template Barang-'.$dt.'.xlsx');
+        return Excel::download(new BarangTemplateExport(), 'Template Barang-' . $dt . '.xlsx');
     }
 
-    public function import (Request $request){
+    public function import(Request $request)
+    {
         $now = Carbon::now()->isoFormat('DD MMMM Y');
 
-        return view('master.barang.import',compact('now'));
+        return view('master.barang.import', compact('now'));
     }
-    public function inquiryImport(Request $request){
+    public function inquiryImport(Request $request)
+    {
         try {
             DB::beginTransaction();
 
@@ -284,7 +301,7 @@ class BarangController extends Controller
             $array = null;
             if ($validator->fails()) {
                 return back()->withErrors($validator->errors())->withInput();
-            }else{
+            } else {
                 $file = $request->file('file');
                 $current_date_time = Carbon::now()->toDateTimeString();
                 $importId = uniqid();
@@ -295,9 +312,10 @@ class BarangController extends Controller
                 $jumlahWarning = 0;
                 $jumlahSuccess = 0;
                 foreach ($array[0] as $key => $v) {
-                    if($key==0){
+                    if ($key == 0) {
                         continue;
-                    };
+                    }
+                    ;
                     if ($v[1] == null) {
                         continue;
                     }
@@ -313,7 +331,7 @@ class BarangController extends Controller
                     $jumlahDefault = $v[8];
                     $urutan = $v[9];
 
-                    $jenisBarang = DB::table('m_jenis_barang')->where('id',$jenisBarangId)->first();
+                    $jenisBarang = DB::table('m_jenis_barang')->where('id', $jenisBarangId)->first();
                     $arrayBarang = [
                         'import_id' => $importId,
                         'barang_id' => $barangId,
@@ -337,21 +355,22 @@ class BarangController extends Controller
             }
             $now = Carbon::now()->isoFormat('DD MMMM Y');
             DB::commit();
-            $datas = DB::table('m_barang_import')->where('import_id',$importId)->get();
-            return view('master.barang.inquiry',compact('importId','datas','now','jumlahError','jumlahSuccess','jumlahWarning'));
+            $datas = DB::table('m_barang_import')->where('import_id', $importId)->get();
+            return view('master.barang.inquiry', compact('importId', 'datas', 'now', 'jumlahError', 'jumlahSuccess', 'jumlahWarning'));
         } catch (\Exception $e) {
             dd($e);
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
 
-    public function saveImport(Request $request){
+    public function saveImport(Request $request)
+    {
         DB::beginTransaction();
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             $importId = $request->importId;
-            $datas = DB::table('m_barang_import')->where('import_id',$importId)->get();
+            $datas = DB::table('m_barang_import')->where('import_id', $importId)->get();
             foreach ($datas as $data) {
                 $arrBarang = [
                     'nama' => $data->nama,
@@ -367,12 +386,12 @@ class BarangController extends Controller
 
 
 
-                if($data->barang_id != null){
+                if ($data->barang_id != null) {
                     $arrBarang['updated_at'] = $current_date_time;
                     $arrBarang['updated_by'] = Auth::user()->full_name;
 
-                    DB::table('m_barang')->where('id',$data->barang_id)->update($arrBarang);
-                }else{
+                    DB::table('m_barang')->where('id', $data->barang_id)->update($arrBarang);
+                } else {
                     $arrBarang['created_at'] = $current_date_time;
                     $arrBarang['created_by'] = Auth::user()->full_name;
 
@@ -386,7 +405,7 @@ class BarangController extends Controller
             return redirect()->route('barang')->with('success', $msgSave);
         } catch (\Exception $e) {
             dd($e);
-            SystemController::saveError($e,Auth::user(),$request);
+            SystemController::saveError($e, Auth::user(), $request);
             abort(500);
         }
     }
@@ -407,11 +426,11 @@ class BarangController extends Controller
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                        <div class="btn-delete btn btn-danger waves-effect btn-xs" data-id="' . $data->id . '"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                     </div>';
                 })
                 ->rawColumns(['aksi'])
-            ->make(true);
+                ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
             abort(500);
@@ -446,7 +465,7 @@ class BarangController extends Controller
                 ->whereNull('deleted_at')
                 ->first();
 
-            $dLayanan = DB::table('m_kebutuhan')->where('id',$request->layanan_id)->first();
+            $dLayanan = DB::table('m_kebutuhan')->where('id', $request->layanan_id)->first();
             if ($existing) {
                 DB::table('m_barang_default_qty')
                     ->where('id', $existing->id)

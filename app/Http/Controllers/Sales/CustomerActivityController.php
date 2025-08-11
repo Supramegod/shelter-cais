@@ -26,34 +26,72 @@ class CustomerActivityController extends Controller
         $tglDari = $request->tgl_dari;
         $tglSampai = $request->tgl_sampai;
 
-        if ($tglDari == null) {
-            $tglDari = carbon::now()->startOfMonth()->subMonths(3)->toDateString();
-        }
-        if ($tglSampai == null) {
-            $tglSampai = carbon::now()->toDateString();
+        // Default tanggal
+        if (!$tglDari) {
+            $tglDari = Carbon::now()->subMonths(3)->startOfMonth()->toDateString();
         }
 
-        $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
-        $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
+        if (!$tglSampai) {
+            $tglSampai = Carbon::now()->toDateString();
+        }
 
+        // Konversi ke Carbon instance
+        $ctglDari = Carbon::parse($tglDari);
+        $ctglSampai = Carbon::parse($tglSampai);
 
-        $branch = DB::connection('mysqlhris')->table('m_branch')->where('id', '!=', 1)->where('is_active', 1)->get();
-        $company = DB::connection('mysqlhris')->table('m_company')->where('is_active', 1)->get();
-        $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
-
-        $listUser = DB::connection('mysqlhris')->table('m_user')->whereIn('role_id', [4, 5, 29, 30, 31, 54])->where('is_active', 1)->orderBy('full_name', 'asc')->get();
         $error = null;
         $success = null;
+
+        // Validasi tanggal
         if ($ctglDari->gt($ctglSampai)) {
-            $tglDari = carbon::now()->startOfMonth()->subMonths(3)->toDateString();
-            $error = 'Tanggal dari tidak boleh melebihi tanggal sampai';
-        };
-        if ($ctglSampai->lt($ctglDari)) {
-            $tglSampai = carbon::now()->toDateString();
-            $error = 'Tanggal sampai tidak boleh kurang dari tanggal dari';
+            $error = 'Tanggal dari tidak boleh melebihi tanggal sampai.';
+            $tglDari = Carbon::now()->subMonths(3)->startOfMonth()->toDateString();
+            $tglSampai = Carbon::now()->toDateString();
         }
-        return view('sales.customer-activity.list', compact('listUser', 'branch', 'tglDari', 'tglSampai', 'request', 'error', 'success', 'company', 'kebutuhan'));
+
+        // Data pendukung
+        $branch = DB::connection('mysqlhris')
+            ->table('m_branch')
+            ->where('id', '!=', 1)
+            ->where('is_active', 1)
+            ->get();
+
+        $company = DB::connection('mysqlhris')
+            ->table('m_company')
+            ->where('is_active', 1)
+            ->get();
+
+        $kebutuhan = DB::table('m_kebutuhan')
+            ->whereNull('deleted_at')
+            ->get();
+        // Sesudah (gunakan distinct)
+        $tipe = DB::table('sl_customer_activity')
+            ->select('tipe')
+            ->whereNull('deleted_at')
+            ->distinct()
+            ->get();
+
+        $listUser = DB::connection('mysqlhris')
+            ->table('m_user')
+            ->whereIn('role_id', [4, 5, 29, 30, 31, 54])
+            ->where('is_active', 1)
+            ->orderBy('full_name', 'asc')
+            ->get();
+
+        return view('sales.customer-activity.list', compact(
+            'listUser',
+            'branch',
+            'tglDari',
+            'tglSampai',
+            'request',
+            'error',
+            'success',
+            'company',
+            'kebutuhan',
+            'tipe'
+        ));
     }
+
 
     public function add(Request $request)
     {
@@ -450,7 +488,8 @@ class CustomerActivityController extends Controller
                             'updated_at' => $current_date_time,
                             'updated_by' => Auth::user()->full_name
                         ]);
-                    };
+                    }
+                    ;
                 }
 
 
@@ -559,16 +598,20 @@ class CustomerActivityController extends Controller
                 ->select($db2 . '.m_role.name as role', 'sl_customer_activity.created_by', 'sl_customer_activity.email', 'sl_customer_activity.notulen', 'sl_customer_activity.jenis_visit', 'sl_customer_activity.link_bukti_foto', 'sl_customer_activity.penerima', 'sl_customer_activity.jam_realisasi', 'sl_customer_activity.tgl_realisasi', 'sl_customer_activity.notes_tipe', 'sl_customer_activity.start', 'sl_customer_activity.end', 'sl_customer_activity.durasi', 'm_status_leads.nama as status_leads', 'sl_customer_activity.leads_id', 'sl_customer_activity.id', 'sl_customer_activity.tgl_activity', 'sl_customer_activity.nomor', 'sl_customer_activity.tipe', 'sl_leads.nama_perusahaan as nama', $db2 . '.m_branch.name as branch', 'm_kebutuhan.nama as kebutuhan', 'm_tim_sales_d.nama as sales', 'sl_customer_activity.notes as keterangan')
                 ->whereNull('sl_customer_activity.deleted_at');
 
-            if (!empty($request->tgl_dari)) {
-                $data = $data->where('sl_customer_activity.tgl_activity', '>=', $request->tgl_dari);
-            } else {
-                $data = $data->where('sl_customer_activity.tgl_activity', '==', carbon::now()->toDateString());
+            if (!empty($request->tgl_dari) && !empty($request->tgl_sampai)) {
+                $data = $data->whereBetween('sl_customer_activity.tgl_activity', [$request->tgl_dari, $request->tgl_sampai]);
             }
-            if (!empty($request->tgl_sampai)) {
-                $data = $data->where('sl_customer_activity.tgl_activity', '<=', $request->tgl_sampai);
-            } else {
-                $data = $data->where('sl_customer_activity.tgl_activity', '==', carbon::now()->toDateString());
-            }
+
+            // if (!empty($request->tgl_dari)) {
+            //     $data = $data->where('sl_customer_activity.tgl_activity', '>=', $request->tgl_dari);
+            // } else {
+            //     $data = $data->where('sl_customer_activity.tgl_activity', '==', carbon::now()->toDateString());
+            // }
+            // if (!empty($request->tgl_sampai)) {
+            //     $data = $data->where('sl_customer_activity.tgl_activity', '<=', $request->tgl_sampai);
+            // } else {
+            //     $data = $data->where('sl_customer_activity.tgl_activity', '==', carbon::now()->toDateString());
+            // }
             if (!empty($request->branch)) {
                 $data = $data->where('sl_leads.branch_id', $request->branch);
             }
@@ -613,7 +656,8 @@ class CustomerActivityController extends Controller
                     $data = $data->where('sl_leads.crm_id', Auth::user()->id);
                 } else if (in_array(Auth::user()->role_id, [55, 56])) {
                 }
-            };
+            }
+            ;
 
             if (!empty($request->kebutuhan)) {
                 $data = $data->where('m_kebutuhan.id', $request->kebutuhan);
@@ -648,6 +692,84 @@ class CustomerActivityController extends Controller
             dd($e);
             SystemController::saveError($e, Auth::user(), $request);
             abort(500);
+        }
+    }
+    public function ajaxFeedPaginated(Request $request)
+    {
+        $perPage = 10;
+        $page = $request->get('page', 1);
+        $offset = ($page - 1) * $perPage;
+
+        try {
+            $db2 = DB::connection('mysqlhris')->getDatabaseName();
+
+            $query = DB::table('sl_customer_activity')
+                ->join('sl_leads', 'sl_leads.id', 'sl_customer_activity.leads_id')
+                ->leftJoin('m_tim_sales_d', 'sl_leads.tim_sales_d_id', '=', 'm_tim_sales_d.id')
+                ->leftJoin('m_kebutuhan', 'sl_leads.kebutuhan_id', '=', 'm_kebutuhan.id')
+                ->leftJoin('m_status_leads', 'sl_customer_activity.status_leads_id', '=', 'm_status_leads.id')
+                ->select(
+                    'sl_customer_activity.id',
+                    'sl_customer_activity.nomor',
+                    'sl_customer_activity.tgl_activity',
+                    'sl_customer_activity.jenis_visit',
+                    'sl_customer_activity.tipe',
+                    'sl_customer_activity.leads_id',
+                    'sl_customer_activity.notes as keterangan',
+                    'sl_customer_activity.created_at',
+                    'sl_leads.nama_perusahaan as nama',
+                    'm_tim_sales_d.nama as sales',
+                    'm_kebutuhan.nama as kebutuhan',
+                    'm_status_leads.nama as status_leads',
+                    'm_status_leads.warna_background',
+                    'm_status_leads.warna_font',
+                    // Tambahkan field-field untuk detail
+                    'sl_customer_activity.start',
+                    'sl_customer_activity.end',
+                    'sl_customer_activity.durasi',
+                    'sl_customer_activity.tgl_realisasi',
+                    'sl_customer_activity.jam_realisasi',
+                    'sl_customer_activity.penerima',
+                    'sl_customer_activity.notes_tipe',
+                    'sl_customer_activity.link_bukti_foto',
+                    'sl_customer_activity.notulen',
+                    'sl_customer_activity.email'
+                )
+                ->whereNull('sl_customer_activity.deleted_at');
+
+            // Filter Tanggal
+            if ($request->tgl_dari && $request->tgl_sampai) {
+                $query->whereBetween('sl_customer_activity.tgl_activity', [$request->tgl_dari, $request->tgl_sampai]);
+            }
+
+            // Filter Wilayah
+            if ($request->branch) {
+                $query->where('sl_leads.branch_id', $request->branch);
+            }
+
+            // Filter User
+            if ($request->user) {
+                $query->where('m_tim_sales_d.user_id', $request->user);
+            }
+
+            // Filter Kebutuhan
+            if ($request->kebutuhan) {
+                $query->where('m_kebutuhan.id', $request->kebutuhan);
+            }
+            // Filter Tipe
+            if ($request->tipe) {
+                $query->where('sl_customer_activity.tipe', $request->tipe);
+            }
+
+
+            $results = $query->orderBy('sl_customer_activity.tgl_activity', 'desc')
+                ->offset($offset)
+                ->limit($perPage)
+                ->get();
+
+            return response()->json($results);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

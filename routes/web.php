@@ -49,6 +49,7 @@ use App\Http\Controllers\Master\TrainingClientController;
 use App\Http\Controllers\Master\TrainingGadaHargaController;
 use App\Http\Controllers\Master\TrainingGadaJadwalController;
 
+use App\Http\Controllers\Master\SupplierController;
 use App\Http\Controllers\Sdt\SdtTrainingController;
 use App\Http\Controllers\Sdt\TrainingSiteController;
 
@@ -63,7 +64,7 @@ use App\Http\Controllers\Sales\PurchaseController;
 
 use App\Http\Controllers\Dashboard\DashboardManagerCrmController;
 
-Route::controller(AuthController::class)->group(function() {
+Route::controller(AuthController::class)->group(function () {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/', 'dashboard')->name('home');
     Route::get('/login', 'login')->name('login');
@@ -72,13 +73,13 @@ Route::controller(AuthController::class)->group(function() {
 });
 
 //form luar
-Route::controller(ContactController::class)->group(function() {
+Route::controller(ContactController::class)->group(function () {
     Route::get('/contact', 'contact')->name('contact');
     Route::post('/contact-save', 'contactSave')->name('contact.save');
     Route::post('/webhook-endpoint/{key}', 'handleWebhook')->name('webhook-endpoint');
 });
 
-Route::controller(SdtTrainingInviteController::class)->group(function() {
+Route::controller(SdtTrainingInviteController::class)->group(function () {
     Route::get('/sdt-training', 'invite')->name('invite');
     Route::get('/sdt-training/nik', 'dataNik')->name('invite-nik');
     Route::post('/sdt-training-save', 'pesertaSave')->name('invite-save');
@@ -89,18 +90,18 @@ Route::controller(SdtTrainingInviteController::class)->group(function() {
     // Route::post('/webhook-endpoint/{key}', 'handleWebhook')->name('webhook-endpoint');
 });
 
-Route::controller(QuotationController::class)->group(function() {
+Route::controller(QuotationController::class)->group(function () {
     Route::get('/view/checklist/{id}/{key}', 'viewChecklist')->name('quotation.view-checklist');
 });
 
 Route::group(['middleware' => ['verify_leads_api']], function () {
-    Route::controller(ContactController::class)->group(function() {
+    Route::controller(ContactController::class)->group(function () {
         Route::post('/api/contact-save', 'apiContactSave')->name('api.contact.save');
     });
 });
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::controller(DashboardController::class)->group(function() {
+    Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard/approval', 'dashboardApproval')->name('dashboard-approval');
         Route::get('/dashboard/aktifitas-sales', 'dashboardAktifitasSales')->name('dashboard-aktifitas-sales');
         Route::get('/dashboard/aktifitas-telesales', 'dashboardAktifitasTelesales')->name('dashboard-aktifitas-telesales');
@@ -138,13 +139,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/pks-siap-aktif/list', 'listPksSiapAktif')->name('dashboard-pks-siap-aktif.list');
     });
 
-    Route::controller(LeadsController::class)->group(function() {
+    Route::controller(LeadsController::class)->group(function () {
         Route::get('/sales/leads', 'index')->name('leads');
         Route::get('/sales/leads/terhapus', 'indexTerhapus')->name('leads.terhapus');
         Route::get('/sales/leads/add', 'add')->name('leads.add');
         Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
         Route::get('/sales/leads/import', 'import')->name('leads.import');
         Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
+        Route::post('/sales/leads/groupkan', 'groupkan')->name('leads.groupkan');
+        Route::post('/sales/leads/filter-rekomendasi', 'filterRekomendasi')->name('leads.rekomendasi.filter');
+        Route::get('/sales/leads/group-modal', 'showGrupModal')->name('leads.group_modal');
+
 
         Route::post('/sales/leads/inquiry-import', 'inquiryImport')->name('leads.inquiry-import');
         Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
@@ -174,7 +179,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/leads/generate-null-kode', 'generateNullKode')->name('leads.generate-null-kode'); // ajax
     });
 
-    Route::controller(SubmissionController::class)->group(function() {
+    Route::controller(SubmissionController::class)->group(function () {
         Route::get('/sales/submission', 'index')->name('submission');
 
         Route::post('/sales/submission/save', 'save')->name('submission.save');
@@ -183,7 +188,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/submission/list', 'list')->name('submission.list'); // ajax
     });
 
-    Route::controller(CustomerController::class)->group(function() {
+    Route::controller(CustomerController::class)->group(function () {
         Route::get('/sales/customer', 'index')->name('customer');
         Route::get('/sales/customer/view/{id}', 'view')->name('customer.view');
 
@@ -192,14 +197,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(SiteController::class)->group(function() {
+    Route::controller(SiteController::class)->group(function () {
         Route::get('/sales/site', 'index')->name('site');
         Route::get('/sales/site/view/{id}', 'view')->name('site.view');
 
         Route::get('/sales/site/list', 'list')->name('site.list'); // ajax
     });
 
-    Route::controller(CustomerActivityController::class)->group(function() {
+    Route::controller(CustomerActivityController::class)->group(function () {
         Route::get('/sales/customer-activity', 'index')->name('customer-activity');
         Route::get('/sales/customer-activity/add', 'add')->name('customer-activity.add');
         Route::get('/sales/customer-activity/add-activity-kontrak/{id}', 'addActivityKontrak')->name('customer-activity.add-activity-kontrak');
@@ -217,6 +222,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sales/customer-activity/delete', 'delete')->name('customer-activity.delete');
 
         Route::get('/sales/customer-activity/track/{leadsId}', 'trackActivity')->name('customer-activity.track');
+        Route::get('/sales/customer-activity/ajax', 'ajaxFeedPaginated')->name('customer-activity.ajaxFeedPaginated');
 
         Route::get('/sales/customer-activity/list', 'list')->name('customer-activity.list'); // ajax
         Route::get('/sales/customer-activity/member-tim-sales', 'memberTimSales')->name('customer-activity.member-tim-sales'); // ajax
@@ -227,7 +233,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 
-    Route::controller(SpkController::class)->group(function() {
+    Route::controller(SpkController::class)->group(function () {
         Route::get('/sales/spk', 'index')->name('spk');
         Route::get('/sales/spk/terhapus', 'indexTerhapus')->name('spk.terhapus');
         Route::get('/sales/spk/add', 'add')->name('spk.add');
@@ -248,7 +254,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(PksController::class)->group(function() {
+    Route::controller(PksController::class)->group(function () {
         Route::get('/sales/pks', 'index')->name('pks');
         Route::get('/sales/pks/terhapus', 'indexTerhapus')->name('pks.terhapus');
         Route::get('/sales/pks/add', 'add')->name('pks.add');
@@ -279,7 +285,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/pks/get-detail-quotation', 'getDetailQuotation')->name('pks.get-detail-quotation'); // ajax
     });
 
-    Route::controller(PksKelengkapanController::class)->group(function() {
+    Route::controller(PksKelengkapanController::class)->group(function () {
         Route::get('/sales/lengkapi-quotation/add/{pksId}', 'add')->name('lengkapi-quotation.add');
         Route::post('/sales/lengkapi-quotation/save', 'save')->name('lengkapi-quotation.save');
         Route::get('/sales/lengkapi-quotation/step/{id}', 'step')->name('lengkapi-quotation.step');
@@ -306,7 +312,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(QuotationSandboxController::class)->group(function() {
+    Route::controller(QuotationSandboxController::class)->group(function () {
         Route::get('/sales/quotation-sandbox/add/{pksId}', 'add')->name('quotation-sandbox.add');
         Route::post('/sales/quotation-sandbox/save', 'save')->name('quotation-sandbox.save');
         Route::get('/sales/quotation-sandbox/step/{id}', 'step')->name('quotation-sandbox.step');
@@ -332,13 +338,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation-sandbox/list-quotation-kerjasama', 'listQuotationKerjasama')->name('quotation-sandbox.list-quotation-kerjasama'); // ajax
     });
 
-    Route::controller(QuotationController::class)->group(function() {
+    Route::controller(QuotationController::class)->group(function () {
         Route::get('/sales/quotation', 'index')->name('quotation');
         Route::get('/sales/quotation/terhapus', 'indexTerhapus')->name('quotation.terhapus');
         Route::get('/sales/quotation/add', 'add')->name('quotation.add');
         Route::get('/sales/quotation/step/{id}', 'step')->name('quotation.step');
         Route::post('/sales/quotation/save-step', 'saveStep')->name('quotation.save-step');
-
+        ;
         //page quotation
         Route::get('/sales/quotation/view/{id}', 'view')->name('quotation.view');
 
@@ -450,9 +456,34 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/export/detail-coss/{id}/{jenis}', 'exportDetailCoss')->name('quotation.export.detail-coss');
 
     });
+    Route::controller(SupplierController::class)->group(function () {
+        Route::get('/master/supplier', 'index')->name('supplier');
+        Route::get('/master/supplier/Gr', 'indexGr')->name('supplier.Gr');
+        Route::get('/master/supplier/Rn', 'indexRn')->name('supplier.Rn');
+        Route::get('/master/supplier/addGr', 'addGr')->name('supplier.addGr');
+        Route::get('/master/supplier/addRn', 'addRn')->name('supplier.addRn');
+        Route::get('/master/supplier/add', 'add')->name('supplier.add');
+        Route::post('/master/supplier/save', 'save')->name('supplier.save');
+        Route::post('/sales/supplier/delete', 'delete')->name('supplier.delete');
+        Route::get('/master/supplier/view/{id}', 'view')->name('supplier.view');
+        Route::get('/master/supplier/viewGr/{id}', 'viewGr')->name('supplier.viewGr');
+        Route::get('/master/supplier/viewRn/{id}', 'viewRn')->name('supplier.viewRn');
+        Route::get('/master/supplier/create', 'addGr')->name('supplier.create');
+        Route::get('/master/supplier/create2', 'addRn')->name('supplier.create2');
+        Route::get('/master/supplier/get-purchase-order-list', 'getPurchaseOrderList')->name('supplier.get-purchase-order-list');
+        Route::get('/master/supplier/get-barang-by-po', 'availableBarangPO')->name('supplier.get-barang-by-po');
+        Route::get('/master/supplier/get-request-order-list', 'getPurchaseRequestList')->name('supplier.get-purchase-request-list');
+        Route::get('/master/supplier/get-barang-by-pr', 'availableBarangPR')->name('supplier.get-barang-by-pr');
+        Route::post('/master/supplier/print-gr', 'saveGr')->name('supplier.saveGr');
+        Route::post('/master/supplier/print-rn', 'saveRn')->name('supplier.saveRn');
+        // ajax
+        Route::get('/sales/supplier/data', 'list')->name('supplier.data');
+        Route::get('/master/supplier/listGr', 'listGr')->name('supplier.listGr');
+        Route::get('/master/supplier/listRn', 'listRn')->name('supplier.listRn');
+    });
 
 
-    Route::controller(PlatformController::class)->group(function() {
+    Route::controller(PlatformController::class)->group(function () {
         Route::get('/master/platform', 'index')->name('platform');
         Route::get('/master/platform/add', 'add')->name('platform.add');
         Route::get('/master/platform/view/{id}', 'view')->name('platform.view');
@@ -464,7 +495,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(AplikasiPendukungController::class)->group(function() {
+    Route::controller(AplikasiPendukungController::class)->group(function () {
         Route::get('/master/aplikasi-pendukung', 'index')->name('aplikasi-pendukung');
         Route::get('/master/aplikasi-pendukung/add', 'add')->name('aplikasi-pendukung.add');
         Route::get('/master/aplikasi-pendukung/view/{id}', 'view')->name('aplikasi-pendukung.view');
@@ -476,7 +507,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(JenisBarangController::class)->group(function() {
+    Route::controller(JenisBarangController::class)->group(function () {
         Route::get('/master/jenis-barang', 'index')->name('jenis-barang');
         Route::get('/master/jenis-barang/view/{id}', 'view')->name('jenis-barang.view');
 
@@ -484,7 +515,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/jenis-barang/detail-barang', 'detailBarang')->name('jenis-barang.detail-barang'); // ajax
     });
 
-    Route::controller(JabatanController::class)->group(function() {
+    Route::controller(JabatanController::class)->group(function () {
         Route::get('/master/jabatan', 'index')->name('jabatan');
         Route::get('/master/jabatan/add', 'add')->name('jabatan.add');
         Route::get('/master/jabatan/view/{id}', 'view')->name('jabatan.view');
@@ -496,7 +527,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(JenisPerusahaanController::class)->group(function() {
+    Route::controller(JenisPerusahaanController::class)->group(function () {
         Route::get('/master/perusahaan', 'index')->name('perusahaan');
         Route::get('/master/perusahaan/add', 'add')->name('perusahaan.add');
         Route::get('/master/perusahaan/view/{id}', 'view')->name('perusahaan.view');
@@ -508,7 +539,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(ManagementFeeController::class)->group(function() {
+    Route::controller(ManagementFeeController::class)->group(function () {
         Route::get('/master/management-fee', 'index')->name('management-fee');
         Route::get('/master/management-fee/add', 'add')->name('management-fee.add');
         Route::get('/master/management-fee/view/{id}', 'view')->name('management-fee.view');
@@ -520,7 +551,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(TopController::class)->group(function() {
+    Route::controller(TopController::class)->group(function () {
         Route::get('/master/top', 'index')->name('top');
         Route::get('/master/top/add', 'add')->name('top.add');
         Route::get('/master/top/view/{id}', 'view')->name('top.view');
@@ -531,7 +562,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/top/list', 'list')->name('top.list'); // ajax
     });
 
-    Route::controller(JenisVisitController::class)->group(function() {
+    Route::controller(JenisVisitController::class)->group(function () {
         Route::get('/master/jenis-visit', 'index')->name('jenis-visit');
         Route::get('/master/jenis-visit/add', 'add')->name('jenis-visit.add');
         Route::get('/master/jenis-visit/view/{id}', 'view')->name('jenis-visit.view');
@@ -543,7 +574,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(SalaryRuleController::class)->group(function() {
+    Route::controller(SalaryRuleController::class)->group(function () {
         Route::get('/master/salary-rule', 'index')->name('salary-rule');
         Route::get('/master/salary-rule/add', 'add')->name('salary-rule.add');
         Route::get('/master/salary-rule/view/{id}', 'view')->name('salary-rule.view');
@@ -555,14 +586,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(StatusLeadsController::class)->group(function() {
+    Route::controller(StatusLeadsController::class)->group(function () {
         Route::get('/master/status-leads', 'index')->name('status-leads');
 
         Route::get('/master/status-leads/list', 'list')->name('status-leads.list'); // ajax
 
     });
 
-    Route::controller(TunjanganController::class)->group(function() {
+    Route::controller(TunjanganController::class)->group(function () {
         Route::get('/master/tunjangan', 'index')->name('tunjangan');
         Route::get('/master/tunjangan/add', 'add')->name('tunjangan.add');
         Route::get('/master/tunjangan/view/{id}', 'view')->name('tunjangan.view');
@@ -574,7 +605,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(TunjanganJabatanController::class)->group(function() {
+    Route::controller(TunjanganJabatanController::class)->group(function () {
         Route::get('/master/tunjangan-jabatan', 'index')->name('tunjangan-jabatan');
         Route::get('/master/tunjangan-jabatan/add', 'add')->name('tunjangan-jabatan.add');
         Route::get('/master/tunjangan-jabatan/view/{id}', 'view')->name('tunjangan-jabatan.view');
@@ -587,14 +618,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(BarangController::class)->group(function() {
+    Route::controller(BarangController::class)->group(function () {
         Route::get('/master/barang', 'index')->name('barang');
         Route::get('/master/barang/add', 'add')->name('barang.add');
         Route::get('/master/barang/view/{id}', 'view')->name('barang.view');
 
         Route::post('/master/barang/save', 'save')->name('barang.save');
         Route::post('/master/barang/delete', 'delete')->name('barang.delete');
-
         Route::get('/master/barang/list', 'list')->name('barang.list'); // ajax
         Route::get('/master/barang/template-import', 'templateImport')->name('barang.template-import');
         Route::get('/master/barang/import', 'import')->name('barang.import');
@@ -617,7 +647,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/barang/defaultqty/delete', 'deleteDefaultQty')->name('barang.defaultqty.delete');
     });
 
-    Route::controller(KebutuhanController::class)->group(function() {
+    Route::controller(KebutuhanController::class)->group(function () {
         Route::get('/master/kebutuhan', 'index')->name('kebutuhan');
         Route::get('/master/kebutuhan/view/{id}', 'view')->name('kebutuhan.view');
 
@@ -633,7 +663,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/kebutuhan/add-detail-requirement', 'addDetailrequiRement')->name('kebutuhan.add-detail-requirement');
     });
 
-    Route::controller(TimSalesController::class)->group(function() {
+    Route::controller(TimSalesController::class)->group(function () {
         Route::get('/master/tim-sales', 'index')->name('tim-sales');
         Route::get('/master/tim-sales/add', 'add')->name('tim-sales.add');
         Route::get('/master/tim-sales/view/{id}', 'view')->name('tim-sales.view');
@@ -650,7 +680,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 
-    Route::controller(TrainingController::class)->group(function() {
+    Route::controller(TrainingController::class)->group(function () {
         Route::get('/master/training', 'index')->name('training');
         Route::get('/master/training/add', 'add')->name('training.add');
         Route::get('/master/training/view/{id}', 'view')->name('training.view');
@@ -674,7 +704,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/position/delete/{id}', 'delete')->name('position.delete');
      });
 
-    Route::controller(UmpController::class)->group(function() {
+    Route::controller(UmpController::class)->group(function () {
         Route::get('/master/ump', 'index')->name('ump');
         Route::get('/master/ump/add', 'add')->name('ump.add');
         Route::get('/master/ump/view/{id}', 'view')->name('ump.view');
@@ -684,7 +714,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/ump/list-ump', 'listUmp')->name('ump.list-ump'); // ajax
     });
 
-    Route::controller(UmkController::class)->group(function() {
+    Route::controller(UmkController::class)->group(function () {
         Route::get('/master/umk', 'index')->name('umk');
         Route::get('/master/umk/add', 'add')->name('umk.add');
         Route::get('/master/umk/view/{id}', 'view')->name('umk.view');
@@ -694,7 +724,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
     });
 
-    Route::controller(TrainingMateriController::class)->group(function() {
+    Route::controller(TrainingMateriController::class)->group(function () {
         Route::get('/master/training-materi', 'index')->name('training-materi');
         Route::get('/master/training-materi/add', 'add')->name('training-materi.add');
         Route::get('/master/training-materi/view/{id}', 'view')->name('training-materi.view');
@@ -728,7 +758,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/master/training-gada-jadwal/save', 'save')->name('training-gada-jadwal.save');
     });
 
-    Route::controller(TrainingDivisiController::class)->group(function() {
+    Route::controller(TrainingDivisiController::class)->group(function () {
         Route::get('/master/training-divisi', 'index')->name('training-divisi');
         Route::get('/master/training-divisi/add', 'add')->name('training-divisi.add');
         Route::get('/master/training-divisi/view/{id}', 'view')->name('training-divisi.view');
@@ -737,7 +767,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/training-divisi/list', 'list')->name('training-divisi.list'); // ajax
     });
 
-    Route::controller(TrainingTrainerController::class)->group(function() {
+    Route::controller(TrainingTrainerController::class)->group(function () {
         Route::get('/master/training-trainer', 'index')->name('training-trainer');
         Route::get('/master/training-trainer/add', 'add')->name('training-trainer.add');
         Route::get('/master/training-trainer/view/{id}', 'view')->name('training-trainer.view');
@@ -746,7 +776,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/training-trainer/list', 'list')->name('training-trainer.list'); // ajax
     });
 
-    Route::controller(TrainingAreaController::class)->group(function() {
+    Route::controller(TrainingAreaController::class)->group(function () {
         Route::get('/master/training-area', 'index')->name('training-area');
         Route::get('/master/training-area/add', 'add')->name('training-area.add');
         Route::get('/master/training-area/view/{id}', 'view')->name('training-area.view');
@@ -755,7 +785,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/training-area/list', 'list')->name('training-area.list'); // ajax
     });
 
-    Route::controller(TrainingClientController::class)->group(function() {
+    Route::controller(TrainingClientController::class)->group(function () {
         Route::get('/master/training-client', 'index')->name('training-client');
         Route::get('/master/training-client/add', 'add')->name('training-client.add');
         Route::get('/master/training-client/view/{id}', 'view')->name('training-client.view');
@@ -764,7 +794,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/training-client/list', 'list')->name('training-client.list'); // ajax
     });
 
-    Route::controller(SdtTrainingController::class)->group(function() {
+    Route::controller(SdtTrainingController::class)->group(function () {
 
         Route::get('/sdt/sdt-training', 'index')->name('sdt-training');
         Route::get('/sdt/sdt-training/add', 'add')->name('sdt-training.add');
@@ -842,7 +872,7 @@ Route::group(['middleware' => ['auth']], function () {
          Route::get('/purchase-order/print/{id}', 'cetakOrderPdf')->name('purchase-order.print');
          Route::get('/purchase/purchase-order/view/{id}', 'purchaseOrderView')->name('purchase-order.view');
     });
-    Route::controller(TrainingSiteController::class)->group(function() {
+    Route::controller(TrainingSiteController::class)->group(function () {
         Route::get('/sdt/training-site', 'index')->name('training-site');
         // Route::get('/master/training-client/add', 'add')->name('training-client.add');
         // Route::get('/master/training-client/view/{id}', 'view')->name('training-client.view');
@@ -852,7 +882,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sdt/training-site/history', 'historyTrainingByClient')->name('training-site.history');
     });
 
-    Route::controller(MonitoringKontrakController::class)->group(function() {
+    Route::controller(MonitoringKontrakController::class)->group(function () {
         Route::get('/sales/monitoring-kontrak', 'index')->name('monitoring-kontrak');
         Route::get('/sales/monitoring-kontrak/list', 'list')->name('monitoring-kontrak.list');
         Route::get('/sales/monitoring-kontrak/view/{id}', 'view')->name('monitoring-kontrak.view');
@@ -874,7 +904,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/monitoring-kontrak/modal/list-site', 'listSite')->name('monitoring-kontrak.modal.list-site'); // ajax
     });
 
-    Route::controller(PutusKontrakController::class)->group(function() {
+    Route::controller(PutusKontrakController::class)->group(function () {
         Route::get('/sales/putus-kontrak', 'index')->name('putus-kontrak');
         Route::get('/sales/putus-kontrak/list', 'list')->name('putus-kontrak.list');
         Route::get('/sales/putus-kontrak/view/{id}', 'view')->name('putus-kontrak.view');
@@ -885,7 +915,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(EntitasController::class)->group(function() {
+    Route::controller(EntitasController::class)->group(function () {
         Route::get('/setting/entitas', 'index')->name('entitas');
         Route::get('/setting/entitas/view/{id}', 'view')->name('entitas.view');
 
@@ -901,13 +931,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     // LOG
     //NOTIFIKASI
-    Route::controller(NotifikasiController::class)->group(function() {
+    Route::controller(NotifikasiController::class)->group(function () {
         Route::get('/log/notifikasi', 'index')->name('notifikasi');
         Route::get('/log/notifikasi/list', 'list')->name('notifikasi.list'); // ajax
         Route::post('/log/notifikasi/read', 'read')->name('notifikasi.read');
     });
 
-    Route::controller(WhatsappController::class)->group(function() {
+    Route::controller(WhatsappController::class)->group(function () {
         Route::get('/whatsapp/login', 'login')->name('whatsapp.login');
         Route::get('/whatsapp', 'index')->name('whatsapp');
         Route::get('/whatsapp/list', 'list')->name('whatsapp.list');
