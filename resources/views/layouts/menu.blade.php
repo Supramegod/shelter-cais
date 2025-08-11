@@ -153,7 +153,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2]))
+        @if(in_array(Auth::user()->role_id,[2,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
@@ -175,7 +175,7 @@
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2]))
+        @if(in_array(Auth::user()->role_id,[2,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-account-multiple"></i>
@@ -319,7 +319,7 @@
                     </a>
                 </li>
         <!-- TRAINING SDT -->
-        <li class="menu-item">
+        <!-- <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-school-outline"></i>
                 <div data-i18n="Training SDT">Master Training SDT</div>
@@ -351,7 +351,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> -->
         <!-- SETTING -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -466,6 +466,42 @@
                     </a>
                 </li>
                 @endif
+            </ul>
+        </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
+        <!-- TRAINING SDT -->
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-school-outline"></i>
+                <div data-i18n="Training SDT">Master Training SDT</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                    <a href="{{route('training-materi')}}" class="menu-link">
+                        <div data-i18n="Training Materi">Training Materi</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-divisi'))) active @endif">
+                    <a href="{{route('training-divisi')}}" class="menu-link">
+                        <div data-i18n="Training Divisi">Training Divisi</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-trainer'))) active @endif">
+                    <a href="{{route('training-trainer')}}" class="menu-link">
+                        <div data-i18n="Training Trainer">Training Trainer</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-area'))) active @endif">
+                    <a href="{{route('training-area')}}" class="menu-link">
+                        <div data-i18n="Training Area">Training Area</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                    <a href="{{route('training-client')}}" class="menu-link">
+                        <div data-i18n="Training Client">Training Client</div>
+                    </a>
+                </li>
             </ul>
         </li>
         @endif
