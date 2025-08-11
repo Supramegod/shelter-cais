@@ -497,11 +497,11 @@
                         <div data-i18n="Training Area">Training Area</div>
                     </a>
                 </li>
-                <!-- <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
                     <a href="{{route('training-client')}}" class="menu-link">
                         <div data-i18n="Training Client">Training Client</div>
                     </a>
-                </li> -->
+                </li>
             </ul>
         </li>
         @endif
