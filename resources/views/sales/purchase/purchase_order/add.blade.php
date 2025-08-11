@@ -60,6 +60,21 @@
                             <div class="content-header mb-5 text-center">
                                 <h4>List Barang</h4>
                             </div>
+
+                            <ul class="nav nav-tabs mb-3" id="statusTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" data-status="all" data-bs-toggle="tab"
+                                        type="button">All</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-status="open" data-bs-toggle="tab"
+                                        type="button">Open</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-status="closed" data-bs-toggle="tab"
+                                        type="button">Closed</button>
+                                </li>
+                            </ul>
                             <div class="row mb-3">
                                 <div class="table-responsive overflow-hidden">
                                     <table class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
@@ -87,13 +102,14 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-12 d-flex flex-row-reverse">
+                                <div class="col-12 d-flex flex-row-reverse gap-3">
                                     <button id="btn-submit" type="submit" class="btn btn-primary btn-next w-20"
                                         style="color:white">
                                         <span class="align-middle d-sm-inline-block d-none me-sm-1">Buat Purchase
                                             Order</span>
                                         <i class="mdi mdi-arrow-right"></i>
                                     </button>
+                                     <a href="{{ route('purchase-order') }}" class="btn btn-secondary waves-effect">Kembali</a>
                                 </div>
                             </div>
                     </div>
@@ -142,6 +158,7 @@
 
 @section('pageScript')
     <script>
+        let statusTab = 'all';
         $(document).ready(function() {
             fetchListRequest();
         });
@@ -154,6 +171,27 @@
                     '.listRequest-checkbox')
                 .length);
         });
+          @if (session()->has('success'))
+
+            Swal.fire({
+                title: 'Pemberitahuan',
+                html: '{{ session()->get('success') }}<br><br>Kode Purchase Order: <strong>{{ session('kode_po') }}</strong>',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Cetak',
+                cancelButtonText: 'Tutup',
+                customClass: {
+                    confirmButton: 'btn btn-success me-2',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    window.open("{{ route('purchase-order.print', ['id' => session('id')]) }}", "_blank");
+                }
+            });
+        @endif
         $('#btn-modal-nomor').on('click', function() {
             if ($('#company').val() === "") {
                 Swal.fire("Pilih perusahaan terlebih dahulu", "", "warning");
@@ -175,6 +213,13 @@
                 fetchListRequest();
             }
         });
+        $('#statusTabs button').on('click', function() {
+            $('#statusTabs button').removeClass('active');
+            $(this).addClass('active');
+            statusTab = $(this).data('status');
+            fetchListRequest()
+        });
+
 
         let isiTabel = $('#table-nomor').DataTable({
             "initComplete": function(settings, json) {
@@ -231,9 +276,10 @@
                 url: '{{ route('purchase-order.listRequest') }}',
                 type: 'GET',
                 data: {
+                    status: statusTab,
                     perusahaan: $('#company').val() ?? '',
-                    kode_pr: $('#kode_pr').val()?? ''
-                    
+                    kode_pr: $('#kode_pr').val() ?? ''
+
                 },
                 success: function(data) {
                     $('#purchase_request_id').val(data[0]?.purchase_request_id ?? '');
@@ -241,20 +287,21 @@
 
                     if (!data || data.length === 0) {
                         $('#tbody-listRequest').append(
-                            '<tr><td colspan="7" class="text-center">Data tidak ditemukan</td></tr>'
+                            '<tr><td colspan="8" class="text-center">Data tidak ditemukan</td></tr>'
                         );
                         return;
                     }
 
                     $.each(data, function(key, value) {
-                         value.jumlah_po = (value.qty ?? 0) - value.stok_barang;
+                        value.jumlah_po = (value.qty ?? 0) - value.stok_barang;
 
-                     
                         if (value.jumlah_po <= 0) {
                             value.jumlah_po = 0;
                         }
+                          let rowClass = (value.is_open === 0) ? 'bg-danger-subtle text-dark' :
+                            'bg-success-subtle text-dark';
                         $('#tbody-listRequest').append(
-                            '<tr>' +
+                            '<tr class="' + rowClass + '">' +
                             '<td>' +
                             '<input type="checkbox" name="listRequest_ids[]" value="' + value.id +
                             '" class="form-check-input listRequest-checkbox" style="transform: scale(1.5); margin-right: 8px;" />' +
@@ -267,7 +314,7 @@
                             value.id + '" />' +
                             '</td>' +
                             '<td>' + (value.qty ?? '') + '</td>' +
-                            '<td>' + value.stok_barang + '</td>' +
+                            '<td>' + (value.stok_barang ?? '') + '</td>' +
                             '<td>' + (value.satuan ?? '') + '</td>' +
                             '<td>' + (value.merk ?? '') + '</td>' +
                             '<td>' + (value.jenis_barang ?? '') + '</td>' +

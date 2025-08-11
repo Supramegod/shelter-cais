@@ -200,7 +200,7 @@
         @if(in_array(Auth::user()->role_id,[2]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-package-variant-closed"></i>
+                <i class="menu-icon tf-icons mdi mdi-package-variant-closed-plus"></i>
                 <div data-i18n="Purchase">Purchase</div>
             </a>
             <ul class="menu-sub">
@@ -311,6 +311,47 @@
                 </li>
             </ul>
         </li>
+        <!-- TR -->
+         <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
+                    <a href="{{route('jenis-barang')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-view-list-outline"></i>
+                        <div data-i18n="Jenis Barang">Jenis Barang</div>
+                    </a>
+                </li>
+        <!-- TRAINING SDT -->
+        <!-- <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons mdi mdi-school-outline"></i>
+                <div data-i18n="Training SDT">Master Training SDT</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                    <a href="{{route('training-materi')}}" class="menu-link">
+                        <div data-i18n="Training Materi">Training Materi</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-divisi'))) active @endif">
+                    <a href="{{route('training-divisi')}}" class="menu-link">
+                        <div data-i18n="Training Divisi">Training Divisi</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-trainer'))) active @endif">
+                    <a href="{{route('training-trainer')}}" class="menu-link">
+                        <div data-i18n="Training Trainer">Training Trainer</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-area'))) active @endif">
+                    <a href="{{route('training-area')}}" class="menu-link">
+                        <div data-i18n="Training Area">Training Area</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                    <a href="{{route('training-client')}}" class="menu-link">
+                        <div data-i18n="Training Client">Training Client</div>
+                    </a>
+                </li>
+            </ul>
+        </li> -->
         <!-- SETTING -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">

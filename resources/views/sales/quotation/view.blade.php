@@ -6,6 +6,21 @@
         .dataTables_scrollHeadInner {
             width: 100% !important;
         }
+        .dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -0.5rem;
+    margin-left: 0.1rem;
+    display: none;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
     </style>
     <div class="container-fluid flex-grow-1 container-p-y">
         <div class="col-12 col-lg-12">
@@ -83,9 +98,31 @@
                                         Cetak Dokumen
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btncetak">
-                                        <li><a class="dropdown-item"
-                                                onclick="window.open('{{ route('quotation.cetak-quotation', $quotation->id) }}','name','width=600,height=400')"
-                                                rel="noopener noreferrer" href="javascript:void(0)">Cetak Quotation</a></li>
+                                      <!-- Parent Dropdown -->
+<li class="dropdown-submenu dropend">
+    <a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+        Cetak Quotation
+    </a>
+
+    <!-- Submenu -->
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item"
+               onclick="window.open('{{ route('quotation.cetak-quotation', ['id' => $quotation->id, 'mode' => 'all']) }}','name','width=600,height=400')"
+               rel="noopener noreferrer" href="javascript:void(0)">
+               Cetak Quotation Semua
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item"
+               onclick="window.open('{{ route('quotation.cetak-quotation', ['id' => $quotation->id, 'mode' => 'per-site']) }}','name','width=600,height=400')"
+               rel="noopener noreferrer" href="javascript:void(0)">
+               Cetak Quotation Per Site
+            </a>
+        </li>
+    </ul>
+</li>
+
                                         @if ($quotation->is_aktif == 1)
                                             <li><a class="dropdown-item"
                                                     onclick="window.open('{{ route('quotation.cetak-coss', $quotation->id) }}','name','width=600,height=400')"

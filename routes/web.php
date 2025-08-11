@@ -5,6 +5,7 @@ use App\Http\Middleware\VerifyFastApiKey;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\DashboardController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Fitur\ContactController;
 use App\Http\Controllers\Fitur\SdtTrainingInviteController;
 
@@ -438,7 +439,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/cetak-hpp/{id}', 'cetakHpp')->name('quotation.cetak-hpp');
         Route::get('/sales/quotation/cetak-coss/{id}', 'cetakCoss')->name('quotation.cetak-coss');
         Route::get('/sales/quotation/cetak-gpm/{id}', 'cetakGpm')->name('quotation.cetak-gpm');
-        Route::get('/sales/quotation/cetak-quotation/{id}', 'cetakQuotation')->name('quotation.cetak-quotation');
+        Route::get('/sales/quotation/cetak-quotation/{id}/{mode?}', 'cetakQuotation')->name('quotation.cetak-quotation');
         Route::get('/sales/quotation/cetak-kaporlap/{id}', 'cetakKaporlap')->name('quotation.cetak-kaporlap');
         Route::get('/sales/quotation/cetak-devices/{id}', 'cetakDevices')->name('quotation.cetak-devices');
         Route::get('/sales/quotation/cetak-chemical/{id}', 'cetakChemical')->name('quotation.cetak-chemical');
@@ -824,8 +825,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::controller(PurchaseController::class)->group(function() {
-         Route::get('/purchase/purchase-request', 'purchaseRequestIndex')->name('purchase-request');
+        Route::get('/purchase/purchase-request', 'purchaseRequestIndex')->name('purchase-request');
+        Route::get('/purchase/purchase-request/add', 'purchaseRequestAdd')->name('purchase-request.add');
          Route::get('/purchase/purchase-request/list', 'purchaseRequestList')->name('purchase-request.list');
+         Route::get('/purchase/purchase-request/list-barang', 'getListBarang')->name('purchase-request.list-barang');
+         Route::get('/purchase/purchase-request/listPKS', 'cariNomorPKS')->name('purchase-request.list-PKS');
+         Route::get('/purchase-request/print/{id}', 'printRequestPdf')->name('purchase-request.print');
          Route::get('/purchase/purchase-request/view/{id}', 'purchaseRequestView')->name('purchase-request.view');
          Route::post('/purchase/purchase-request/save', 'purchaseRequestSave')->name('purchase-request.save');
          Route::get('/purchase/purchase-order', 'purchaseOrderIndex')->name('purchase-order');
@@ -834,7 +839,7 @@ Route::group(['middleware' => ['auth']], function () {
          Route::get('/purchase/purchase-order/list', 'purchaseOrderList')->name('purchase-order.list');
          Route::get('/purchase/purchase-order/no-company', 'cariNomorRequest')->name('purchase-order.no-company');
          Route::get('/purchase/purchase-order/list-request', 'getRequestList')->name('purchase-order.listRequest');
-         Route::get('/purchase-order/pdf/{id}', 'cetakOrderPdf')->name('purchase_order.pdf');
+         Route::get('/purchase-order/print/{id}', 'cetakOrderPdf')->name('purchase-order.print');
          Route::get('/purchase/purchase-order/view/{id}', 'purchaseOrderView')->name('purchase-order.view');
     });
     Route::controller(TrainingSiteController::class)->group(function() {
@@ -889,6 +894,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/setting/entitas/list', 'list')->name('entitas.list'); // ajax
 
     });
+     Route::controller(ProfileController::class)->group(function() {
+        Route::get('/profile', 'index')->name('profile');
+        Route::get('/profile/list-activity', 'listActivity')->name('profile.activities');
+     });
 
     // LOG
     //NOTIFIKASI

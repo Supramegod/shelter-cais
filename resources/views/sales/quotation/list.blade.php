@@ -239,6 +239,8 @@
                     }else if(data.status=="Tidak Disetujui"){
                         $('td', row).css('background-color', '#c0392b');
                         $('td', row).css('color', '#fff');
+                    }else if(data.status=="Quotation Perlu Approval"){
+                        $('td', row).css('background-color', '#127bf340');
                     }else if(data.is_aktif==0){
                         $('td', row).css('background-color', '#27ae6040');
                         // $('td', row).css('color', '#fff');
