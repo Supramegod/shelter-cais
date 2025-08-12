@@ -6,7 +6,7 @@ services:
    #image: hris-dev:latest
    container_name: cais-dev
    ports:
-     - "8182-:80"
+     - "8182:80"
    volumes:
      - .:/var/www/html
      - /home/data/development/cais/public:/var/www/html/public
