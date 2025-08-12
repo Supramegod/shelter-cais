@@ -31,7 +31,7 @@
                                     <th class="text-center">Area</th>
                                     <th class="text-center">Kab/Kota</th>
                                     <th class="text-center">Tanggal Gabung</th>
-                                    <th class="text-center">Jumlah Karyawan</th>
+                                    <!-- <th class="text-center">Jumlah Karyawan</th> -->
                                     <th class="text-center">Target/Thn</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
@@ -80,7 +80,7 @@
 
             var table = $('#table-data').DataTable({
                 scrollX: true,
-                "iDisplayLength": 25,
+                "iDisplayLength": 100,
                 'processing': true,
         'language': {
             'loadingRecords': '&nbsp;',
@@ -93,7 +93,7 @@
                     },
                 },   
                 "order":[
-                    [0,'desc']
+                    [1,'asc']
                 ],
                 columns:[{
                     data : 'id',
@@ -116,11 +116,8 @@
                     data : 'tgl_gabung',
                     name : 'tgl_gabung',
                     className:'text-center'
-                },{
-                    data : 'jml_karyawan',
-                    name : 'jml_karyawan',
-                    className:'text-center'
-                },{
+                },
+                {
                     data : 'target_per_tahun',
                     name : 'target_per_tahun',
                     className:'text-center'
@@ -129,19 +126,7 @@
                     name : 'aksi',
                     className:'text-center'
                 }],
-                "language": datatableLang,
-                dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
-                buttons: [
-                    {
-                    text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Client</span>',
-                    className: 'create-new btn btn-label-primary waves-effect waves-light',
-                    action: function (e, dt, node, config)
-                        {
-                            //This will send the page to the location specified
-                            window.location.href = '{{route("training-client.add")}}';
-                        }
-                    }
-                ],
+                "language": datatableLang
             });
         
         $('body').on('click', '.btn-delete', function() {
