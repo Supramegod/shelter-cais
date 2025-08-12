@@ -118,5 +118,16 @@
                 buttonsStyling: false
             });
         @endif
+         @if (isset($error) || session()->has('error'))
+            Swal.fire({
+                title: 'Pemberitahuan',
+                html: '{{ $error }} {{ session()->has('error') }}',
+                icon: 'warning',
+                customClass: {
+                    confirmButton: 'btn btn-warning waves-effect waves-light'
+                },
+                buttonsStyling: false
+            });
+        @endif
     </script>
 @endsection

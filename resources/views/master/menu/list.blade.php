@@ -87,11 +87,11 @@
         function confirmDelete(id, childMenus = []) {
             let warningText = '';
             if (childMenus.length > 0) {
-                warningText = "Ini adalah Menu Utama.<br>Menu berikut juga akan ikut terhapus:<br><ul>";
+                warningText = "Menu ini memiliki Sub Menu.<br>Menu berikut juga akan ikut terhapus:<br><ul>";
                 childMenus.forEach((name) => {
                     warningText += "<span style=' color:blue;'>" + name + "</span><br>";
                 });
-                warningText += "</ul>";
+                warningText += "</ul>Apakah anda yakin ingin menghapusnya?";
             } else {
                 warningText = "Menu ini akan dihapus.";
             }

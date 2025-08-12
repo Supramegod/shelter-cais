@@ -55,6 +55,7 @@ use App\Http\Controllers\Setting\EntitasController;
 use App\Http\Controllers\Log\NotifikasiController;
 use App\Http\Controllers\Master\MasterMenuController;
 use App\Http\Controllers\Master\PositionController;
+use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Sales\PurchaseController;
 
 Route::controller(AuthController::class)->group(function() {
@@ -475,6 +476,13 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/aplikasi-pendukung/list', 'list')->name('aplikasi-pendukung.list'); // ajax
 
+    });
+    Route::controller(RoleController::class)->group(function() {
+        Route::get('/master/role', 'index')->name('role');
+        Route::get('/master/role/list', 'list')->name('role.list');
+        Route::get('/master/role/list-menu', 'listMenu')->name('role.list-menu');
+        Route::get('/master/role/view/{id}', 'view')->name('role.view');
+        Route::post('/master/role/update', 'updateAkses')->name('role.update-akses');
     });
 
     Route::controller(JenisBarangController::class)->group(function() {

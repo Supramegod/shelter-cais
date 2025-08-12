@@ -335,6 +335,11 @@
                         <div data-i18n="Aplikasi Pendukung">Aplikasi Pendukung</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('aplikasi-pendukung'))) active @endif">
+                    <a href="{{route('role')}}" class="menu-link">
+                        <div data-i18n="Role">Role</div>
+                    </a>
+                </li>
             </ul>
         </li>
         <!-- KEUANGAN & LAINNYA -->

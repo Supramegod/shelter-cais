@@ -193,7 +193,7 @@ class PositionController extends Controller
         } catch (\Exception $e) {
 
             SystemController::saveError($e, Auth::user(), $request);
-            abort(500);
+            return redirect()->back()->with('error', 'Data gagal Ditambahkan');
         }
     }
     public function requirementEdit(Request $request)

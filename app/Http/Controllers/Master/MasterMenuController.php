@@ -22,7 +22,6 @@ class MasterMenuController extends Controller
         try {
 
             $menu = DB::table('sysmenu')->whereNull('deleted_at')->get();
-
             $data = collect($this->formatMenu($menu));
             foreach ($data as  $value) {
                 $value->created_at = Carbon::parse($value->created_at)->isoFormat('D MMMM Y');
@@ -88,7 +87,8 @@ class MasterMenuController extends Controller
             return redirect()->back()->with('success', 'Data Berhasil Disimpan');
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
-            abort(500);
+            return redirect()->back()->with('error', 'Data Gagal Disimpan');
+            
         }
     }
     public function listRole(Request $request)
@@ -110,7 +110,6 @@ class MasterMenuController extends Controller
                 )
                 ->where('m_role.is_active', '!=', 0)
                 ->get();
-
 
             return DataTables::of($data)
                 ->addColumn('is_view', function ($row) {
@@ -168,7 +167,7 @@ class MasterMenuController extends Controller
                     }
 
                     if (!empty($changed)) {
-                        $changed['updated_at'] = now();
+                        $changed['updated_at'] = Carbon::now()->toDateTimeString();
                         $changed['updated_by'] = Auth::user()->full_name;
 
                         $listUpdate[] = [
@@ -181,7 +180,7 @@ class MasterMenuController extends Controller
                         $listInsert[] = array_merge([
                             'sysmenu_id' => $sysmenuId,
                             'role_id'    => $roleId,
-                            'created_at' => now(),
+                            'created_at' => Carbon::now()->toDateTimeString(),
                             'created_by' => Auth::user()->full_name,
                         ], $permissions);
                     }
@@ -202,10 +201,9 @@ class MasterMenuController extends Controller
             return redirect()->back()->with('success', 'Data Akses Berhasil Disimpan');
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
-            return response()->json(['success' => false], 500);
+            return redirect()->back()->with('error', 'Data Akses Gagal Disimpan');
         }
     }
-
 
     public function update(Request $request, $id)
     {
@@ -232,7 +230,7 @@ class MasterMenuController extends Controller
             return redirect()->back()->with('success', 'Data Berhasil Disimpan');
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
-            abort(500);
+            return redirect()->back()->with('error', 'Data Gagal Disimpan');
         }
     }
 
@@ -243,13 +241,11 @@ class MasterMenuController extends Controller
             ->get();
 
         foreach ($children as $child) {
-
             $childNewUrl = preg_replace(
                 '#^' . preg_quote($oldPrefix, '#') . '#',
                 $newPrefix,
                 $child->url
             );
-
 
             DB::table('sysmenu')
                 ->where('id', $child->id)
@@ -289,8 +285,6 @@ class MasterMenuController extends Controller
             ->where('parent_id', $parentId)
             ->whereNull('deleted_at')
             ->pluck('id');
-
-
         $all = [];
 
         foreach ($childs as $childId) {
@@ -324,7 +318,6 @@ class MasterMenuController extends Controller
                 $menu->nama = $prefix . $menu->nama;
                 $result[] = $menu;
 
-                // Recursive: cari anak-anaknya
                 $children = $this->formatMenu($data, $menu->id, $prefix . '- ');
                 $result = array_merge($result, $children);
             }
