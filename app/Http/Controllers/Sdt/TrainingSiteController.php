@@ -152,7 +152,7 @@ class TrainingSiteController extends Controller
                     DB::raw("GROUP_CONCAT(DISTINCT mtt.trainer SEPARATOR ', ') AS trainer")
                 )
                 ->whereNotNull('st.id_training')
-                ->where('mtc.id', 1)
+                ->where('mtc.id', $request->client_id)
                 ->groupBy(
                     'st.id_training',
                     'mtm.nama',
