@@ -114,6 +114,7 @@ class TrainingMateriController extends Controller
                 DB::raw('COUNT(DISTINCT st.id_training) AS training'),
                 'materi.updated_at'
             )
+            ->whereNull('materi.deleted_at')
             ->groupBy('materi.id', 'materi.jenis', 'materi.nama', 'materi.updated_at')
             ->get();
             
@@ -142,7 +143,11 @@ class TrainingMateriController extends Controller
     public function view(Request $request,$id){
         try {
             $data = DB::table('m_training')->where('id',$id)->first();
+<<<<<<< HEAD
             dd($data);
+=======
+            // dd($data);
+>>>>>>> dev
             return view('master.training-materi.view',compact('data'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
@@ -153,10 +158,9 @@ class TrainingMateriController extends Controller
     public function delete(Request $request){
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
-            DB::table('m_training_materi')->where('id',$request->id)->update([
+            DB::table('m_training')->where('id',$request->id)->update([
                 'deleted_at' => $current_date_time,
-                'deleted_by' => Auth::user()->id,
-                'is_aktif' => 0
+                'deleted_by' => Auth::user()->id
             ]);
 
             return response()->json([
@@ -176,27 +180,50 @@ class TrainingMateriController extends Controller
 
             $current_date_time = Carbon::now()->toDateTimeString();
             $msg = '';
+
+            $validator = Validator::make($request->all(), [
+                'nama' => 'required',
+                'jenis' => 'required',
+            ]);
             
-            if(!empty($request->id)){
-                $msg = 'Data Berhasil Diubah';
-                
-                DB::table('m_training_materi')->where('id',$request->id)->update([
-                    'materi'        => $request->judul,
-                    'tujuan'        => $request->tujuan,
-                    'kompetensi'    => $request->kompetensi,
-                    'laman_id'      => $request->laman,
-                    'user_id'       => Auth::user()->id,
-                    'updated_at'    => $current_date_time
-                ]);
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
             }else{
-                DB::table('m_training_materi')->insert([
-                    'materi'        => $request->judul,
-                    'tujuan'        => $request->tujuan,
-                    'kompetensi'    => $request->kompetensi,
-                    'laman_id'      => $request->laman,
-                    'user_id'       => Auth::user()->id
-                ]);
-                $msg = 'Data Berhasil Ditambahkan';
+                if(!empty($request->id)){
+                    $msg = 'Data Berhasil Diubah';
+                    
+                    // DB::table('m_training_materi')->where('id',$request->id)->update([
+                    //     'materi'        => $request->judul,
+                    //     'tujuan'        => $request->tujuan,
+                    //     'kompetensi'    => $request->kompetensi,
+                    //     'laman_id'      => $request->laman,
+                    //     'user_id'       => Auth::user()->id,
+                    //     'updated_at'    => $current_date_time
+                    // ]);
+
+                    DB::table('m_training')->where('id',$request->id)->update([
+                        'jenis'        => $request->jenis,
+                        'nama'        => $request->nama,
+                        'updated_by'    => Auth::user()->id,
+                        'updated_at'    => $current_date_time
+                    ]);
+                }else{
+                    // DB::table('m_training_materi')->insert([
+                    //     'materi'        => $request->judul,
+                    //     'tujuan'        => $request->tujuan,
+                    //     'kompetensi'    => $request->kompetensi,
+                    //     'laman_id'      => $request->laman,
+                    //     'user_id'       => Auth::user()->id
+                    // ]);
+
+                    DB::table('m_training')->insert([
+                        'jenis'         => $request->jenis,
+                        'nama'          => $request->nama,
+                        'created_by'    => Auth::user()->id,
+                        'created_at'    => $current_date_time
+                    ]);
+                    $msg = 'Data Berhasil Ditambahkan';
+                }
             }
             
             DB::commit();
