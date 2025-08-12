@@ -27,10 +27,8 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th class="text-center">Materi</th>
-                                    <th class="text-center">Tujuan</th>
-                                    <th class="text-center">Kompetensi</th>
-                                    <th class="text-center">Laman ID</th>
+                                    <th class="text-center">Jenis</th>
+                                    <th class="text-center">Nama</th>
                                     <th class="text-center">Training</th>
                                     <!-- <th class="text-center">Diubah Tanggal</th> -->
                                     <th class="text-center">Aksi</th>
@@ -187,22 +185,14 @@
                     visible: false,
                     searchable: false
                 },{
-                    data : 'materi',
-                    name : 'materi',
+                    data : 'jenis',
+                    name : 'jenis',
                     className:'dt-body-left'
                 },{
-                    data : 'tujuan',
-                    name : 'tujuan',
+                    data : 'nama',
+                    name : 'nama',
                     className:'dt-body-left',
                     render: $.fn.dataTable.render.number('.','.', 0,'')
-                },{
-                    data : 'kompetensi',
-                    name : 'kompetensi',
-                    className:'dt-body-left'
-                },{
-                    data : 'laman',
-                    name : 'laman_id',
-                    className:'dt-body-center'
                 },{
                     data : 'training',
                     name : 'training',
