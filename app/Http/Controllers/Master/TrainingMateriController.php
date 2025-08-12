@@ -143,11 +143,6 @@ class TrainingMateriController extends Controller
     public function view(Request $request,$id){
         try {
             $data = DB::table('m_training')->where('id',$id)->first();
-<<<<<<< HEAD
-            dd($data);
-=======
-            // dd($data);
->>>>>>> dev
             return view('master.training-materi.view',compact('data'));
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
