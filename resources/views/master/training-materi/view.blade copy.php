@@ -20,23 +20,49 @@
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label text-sm-end">Jenis Training <span class="text-danger">*</span></label>
             <div class="col-sm-10">
-              <input type="text" id="jenis" name="jenis" value="{{$data->jenis}}" class="form-control @if ($errors->any()) @if($errors->has('jenis')) is-invalid @else   @endif @endif">
-              @if($errors->has('jenis'))
-                  <div class="invalid-feedback">{{$errors->first('jenis')}}</div>
+              <div class="position-relative">
+              <select id="laman" name="laman" class="form-select @if ($errors->any()) @if($errors->has('laman')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                    <option value="">- Pilih Business Unit -</option>
+                    <option value="1" @if($data->laman_id == '1') selected @endif>Shelter Nusantara</option>
+                    <option value="2" @if($data->laman_id == '2') selected @endif>Shelter Nusantara Indah</option>
+                </select>
+                @if($errors->has('laman'))
+                  <div class="invalid-feedback">{{$errors->first('laman')}}</div>
+                @endif
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
+            <div class="col-sm-10">
+              <input type="text" id="judul" name="judul" value="{{$data->materi}}" class="form-control @if ($errors->any()) @if($errors->has('judmateriul')) is-invalid @else   @endif @endif">
+              @if($errors->has('materi'))
+                  <div class="invalid-feedback">{{$errors->first('materi')}}</div>
               @endif
             </div>
           </div>
           
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Nama Training <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Tujuan <span class="text-danger">*</span></label>
             <div class="col-sm-10">
-              <textarea class="form-control h-px-100 @if ($errors->any()) @if($errors->has('nama')) is-invalid @else   @endif @endif" name="nama" id="nama" placeholder="">{{$data->nama}}</textarea>    
-              @if($errors->has('nama'))
-                  <div class="invalid-feedback">{{$errors->first('nama')}}</div>
+              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="tujuan" id="tujuan" placeholder="">{{$data->tujuan}}</textarea>    
+            <!-- <input type="text" id="tujuan" name="tujuan" value="{{$data->tujuan}}" class="form-control @if ($errors->any()) @if($errors->has('tujuan')) is-invalid @else   @endif @endif"> -->
+              @if($errors->has('tujuan'))
+                  <div class="invalid-feedback">{{$errors->first('tujuan')}}</div>
               @endif
             </div>
           </div>
 
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label text-sm-end">Kompetensi <span class="text-danger">*</span></label>
+            <div class="col-sm-10">
+              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="kompetensi" id="kompetensi" placeholder="">{{$data->kompetensi}}</textarea>  
+              <!-- <input type="text" id="kompetensi" name="kompetensi" value="{{$data->kompetensi}}" class="form-control @if ($errors->any()) @if($errors->has('kompetensi')) is-invalid @else   @endif @endif"> -->
+              @if($errors->has('kompetensi'))
+                  <div class="invalid-feedback">{{$errors->first('kompetensi')}}</div>
+              @endif
+            </div>
+          </div>
           <div class="pt-4">
           </div>
         </form>
