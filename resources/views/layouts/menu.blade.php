@@ -502,6 +502,12 @@
                         <div data-i18n="Training Client">Training Client</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('whatsapp'))) active @endif">
+                    <a href="{{route('whatsapp')}}" class="menu-link">
+                        <div data-i18n="whatsapp">Whatsapp</div>
+                    </a>
+                </li>
+
             </ul>
         </li>
         @endif
