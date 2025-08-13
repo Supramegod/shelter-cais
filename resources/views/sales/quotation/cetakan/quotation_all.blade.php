@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QUOTATION - {{ $leads->nama_perusahaan }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-   
+
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
@@ -118,10 +118,10 @@
             }
           table {
         width: 100% !important;
-          
-        
-     
-        
+
+
+
+
     }
 
         }
@@ -132,7 +132,7 @@
 
     <!-- Halaman 1: Cover -->
     <div class="cover">
-        <img src="{{ asset('assets/img/cover-quotation-1.png') }}" alt="Cover Image">
+        <img src="{{ asset('public/assets/img/cover-quotation-1.png') }}" alt="Cover Image">
     </div>
 
     <!-- Halaman 2: Kata Pengantar -->

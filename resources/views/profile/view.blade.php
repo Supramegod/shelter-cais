@@ -7,7 +7,7 @@
     .profile-fixed {
         position: sticky;
          top: 9rem;
-        
+
     }
 </style>
 @endsection
@@ -23,7 +23,7 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('assets/img/avatars/1.png') }}" class="rounded-circle" width="120" alt="Foto Profil">
+                        <img src="{{ asset('public/assets/img/avatars/1.png') }}" class="rounded-circle" width="120" alt="Foto Profil">
                     </div>
                     <table class="table table-borderless">
                         <tr><th>Nama</th><td>: {{ $data->full_name }}</td></tr>
@@ -81,9 +81,9 @@ $(document).ready(function() {
             { data: 'created_at', name: 'created_at' },
         ],
         "language": datatableLang,
-        
+
         dom:'frtip'
-        
+
     });
      $('#activityTable tbody').on('click', 'tr', function () {
         var data = table.row(this).data();
