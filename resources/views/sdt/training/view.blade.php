@@ -1,7 +1,11 @@
 @extends('layouts.master')
 @section('title','SDT Training')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
 @section('content')
 <!--/ Content -->
+
 <div class="container-fluid flex-grow-1 container-p-y">
   <h4 class="py-3 mb-4"><span class="text-muted fw-light">SDT/ </span> Detail SDT Training</h4>
   <!-- Multi Column with Form Separator -->
@@ -16,35 +20,47 @@
         </h5>
         <div class="row">
           <div class="col-md-5">
-            <div id="carouselExample" class="carousel slide" style="margin: 15px;">
-              <div class="carousel-indicators">
-                @foreach($listImage as $value)
-                  <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ $loop->index }}" class="@if($loop->index == 0) active @endif" aria-current="true" aria-label="Slide {{ $loop->index }}"></button>
-                @endforeach
-                <!-- <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button> -->
-              </div>
-
-              <div class="carousel-inner">
-                @foreach($listImage as $value)
-                <div class="carousel-item @if($loop->index == 0) active @endif" style="height: 450px; width:700px">
-                  <img style="border-radius: 1%; width: 100%;max-height: 100%" src="{{$value->path}}" class="d-block w-100" alt="...">
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5>{{$value->nama}}</h5>
-                    <p>{{$value->keterangan}}</p>
-                  </div>
+            <div class="container mt-4">
+                <div id="carouselExample" class="carousel slide" style="margin: 15px;">
+                <div class="carousel-indicators">
+                  @foreach($listImage as $value)
+                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ $loop->index }}" class="@if($loop->index == 0) active @endif" aria-current="true" aria-label="Slide {{ $loop->index }}"></button>
+                  @endforeach
                 </div>
-                @endforeach
+
+                <div class="carousel-inner">
+                @foreach($listImage as $value)
+                  <div class="carousel-item @if($loop->index == 0) active @endif" style="height: 450px; width:700px">
+                    <img style="border-radius: 1%; width: 100%;max-height: 100%" 
+                      src="{{$value->path}}" 
+                      class="d-block w-100 img-thumbnail preview-trigger" 
+                      data-index="{{ $loop->index }}" 
+                      alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                      <h5>{{$value->nama}}</h5>
+                      <p>{{$value->keterangan}}</p>
+                    </div>
+                  </div>
+                  <!-- <div class="col-md-3 mb-3">
+                      <img src="{{$value->path}}" 
+                          class="img-thumbnail" 
+                          style="cursor:pointer"
+                          data-bs-toggle="modal" 
+                          data-bs-target="#imageModal"
+                          onclick="showImage('{{$value->path}}')"
+                          >
+                  </div> -->
+                  @endforeach
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
               </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
             </div>
           </div>
           <div class="col-md-6">
@@ -387,7 +403,60 @@
 
 </div>
 <!--/ Content -->
+
+<script>
+    let images = @json($listImage->pluck('path'));
+    let currentIndex = 0;
+
+    // Klik gambar buat buka modal
+    document.querySelectorAll('.preview-trigger').forEach(img => {
+        img.addEventListener('click', function() {
+            currentIndex = parseInt(this.dataset.index);
+            showImage();
+            new bootstrap.Modal(document.getElementById('imageModal')).show();
+        });
+    });
+
+    function showImage() {
+        document.getElementById('previewImage').src = images[currentIndex];
+    }
+
+    function prevImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        showImage();
+    }
+
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        showImage();
+    }
+
+    // Bersihkan backdrop kalau modal ditutup
+    const modal = document.getElementById('imageModal');
+    modal.addEventListener('hidden.bs.modal', function () {
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+    });
+</script>
+
 @endsection
+
+<!-- Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-body text-center position-relative">
+                <button class="btn btn-light position-absolute top-50 start-0 translate-middle-y" onclick="prevImage()">&#10094;</button>
+                <img id="previewImage" class="img-fluid rounded" alt="Preview">
+                <button class="btn btn-light position-absolute top-50 end-0 translate-middle-y" onclick="nextImage()">&#10095;</button>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">TUTUP</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section('pageScript')
 <script>
