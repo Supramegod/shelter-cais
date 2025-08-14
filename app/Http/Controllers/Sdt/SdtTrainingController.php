@@ -221,7 +221,8 @@ class SdtTrainingController extends Controller
                             // DB::raw("sum(stc.peserta_hadir) AS total_peserta"),
                             DB::raw("count(distinct stcd.id) AS total_peserta"),
                             DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
-                            DB::raw("count(distinct mtt.id) AS total_trainer"))
+                            DB::raw("count(distinct mtt.id) AS total_trainer"),
+                            "tr.created_by_name as created_who")
                         ->where('tr.is_aktif', 1)
                         ->orderBy('tr.id_training', 'DESC')
                         ->groupBy('tr.id_training');
@@ -393,63 +394,82 @@ class SdtTrainingController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             $msgSave = '';
             
-            if(!empty($request->id)){
-                DB::table('sdt_training')->where('id_training',$request->id)->update([
-                    'keterangan' => $request->keterangan,
-                    'waktu_mulai' => $request->start_date,
-                    'waktu_selesai' => $request->end_date,
-                    'id_pel_tempat' => $request->tempat_id,
-                    'id_materi' => $request->materi_id,
-                    'alamat' => $request->alamat,
-                    'link_zoom' => $request->link_zoom,
-                    'updated_at' => $current_date_time,
-                    'enable' => ($request->enable == 'on' ? 1 : 0)
-                ]);
-                $msgSave = 'Training berhasil diubah.';
-                
+            $validator = Validator::make($request->all(), [
+                'laman_id' => 'required',
+                'area_id' => 'required',
+                'client_id' => 'required',
+                'trainer_id' => 'required',
+                'materi_id' => 'required',
+                'tempat_id' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required',
+                'alamat' => 'required',
+                'keterangan' => 'required'
+            ]);
+            
+            if ($validator->fails()) {
+                return back()->withErrors($validator->errors())->withInput();
             }else{
-                $message = "*Undangan Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
-                $messageReminder = "*Reminder Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
-                
-                // $nomor = $this->generateNomor();
-                $trainingId = DB::table('sdt_training')->insertGetId([
-                    'keterangan' => $request->keterangan,
-                    'waktu_mulai' => $request->start_date,
-                    'waktu_selesai' => $request->end_date,
-                    'id_pel_tempat' => $request->tempat_id,
-                    'id_materi' => $request->materi_id,
-                    'id_laman' => $request->laman_id,
-                    'alamat' => $request->alamat,
-                    'link_zoom' => $request->link_zoom,
-                    'id_user' => Auth::user()->id,
-                    'created_at' => $current_date_time,
-                    'whatsapp_message' => $message,
-                    'notification_message' => $messageReminder,
-                    'notification_reminder_before_day' => 3,
-                    'notification_reminder_status' => 0,
-                    'id_area' => $request->area_id,
-                ]);
-    
-                foreach ($request->client_id as $x) {
-                    $trainingClient = DB::table('sdt_training_client')->insertGetId([
-                        'id_client' => (int) $x,
-                        'id_training' => $trainingId
-                    ]);    
-                    // dd($trainingClient);
-                }
-                
-                foreach ($request->trainer_id as $x) {
-                    $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
-                        'id_trainer' => (int) $x,
-                        'id_training' => $trainingId
+                if(!empty($request->id)){
+                    DB::table('sdt_training')->where('id_training',$request->id)->update([
+                        'keterangan' => $request->keterangan,
+                        'waktu_mulai' => $request->start_date,
+                        'waktu_selesai' => $request->end_date,
+                        'id_pel_tempat' => $request->tempat_id,
+                        'id_materi' => $request->materi_id,
+                        'alamat' => $request->alamat,
+                        'link_zoom' => $request->link_zoom,
+                        'updated_at' => $current_date_time,
+                        'updated_by' => Auth::user()->id,
+                        'enable' => ($request->enable == 'on' ? 1 : 0)
                     ]);
+                    $msgSave = 'Training berhasil diubah.';
+                    
+                }else{
+                    $message = "*Undangan Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
+                    $messageReminder = "*Reminder Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
+                    
+                    // $nomor = $this->generateNomor();
+                    $trainingId = DB::table('sdt_training')->insertGetId([
+                        'keterangan' => $request->keterangan,
+                        'waktu_mulai' => $request->start_date,
+                        'waktu_selesai' => $request->end_date,
+                        'id_pel_tempat' => $request->tempat_id,
+                        'id_materi' => $request->materi_id,
+                        'id_laman' => $request->laman_id,
+                        'alamat' => $request->alamat,
+                        'link_zoom' => $request->link_zoom,
+                        'id_user' => Auth::user()->id,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->id,
+                        'created_by_name' => Auth::user()->full_name,
+                        'whatsapp_message' => $message,
+                        'notification_message' => $messageReminder,
+                        'notification_reminder_before_day' => 3,
+                        'notification_reminder_status' => 0,
+                        'id_area' => $request->area_id,
+                    ]);
+        
+                    foreach ($request->client_id as $x) {
+                        $trainingClient = DB::table('sdt_training_client')->insertGetId([
+                            'id_client' => (int) $x,
+                            'id_training' => $trainingId
+                        ]);    
+                        // dd($trainingClient);
+                    }
+                    
+                    foreach ($request->trainer_id as $x) {
+                        $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
+                            'id_trainer' => (int) $x,
+                            'id_training' => $trainingId
+                        ]);
+                    }
+                    
+                    $msgSave = 'Training berhasil disimpan ';
                 }
-                
-                $msgSave = 'Training berhasil disimpan ';
+                DB::commit();
+                return redirect()->back()->with('success', $msgSave);
             }
-            // }
-            DB::commit();
-            return redirect()->back()->with('success', $msgSave);
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);

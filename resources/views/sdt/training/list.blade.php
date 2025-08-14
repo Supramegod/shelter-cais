@@ -102,6 +102,7 @@
                                     <th class="text-left">Total Peserta</th>
                                     <th class="text-left">Trainer</th>
                                     <th class="text-left">Total Trainer</th>
+                                    <th class="text-left">Created By</th>
                                     <th class="text-left">Aksi</th>
                                 </tr>
                             </thead>
@@ -196,6 +197,10 @@
             },{
                 data : 'total_trainer',
                 name : 'total_trainer',
+                className:'text-left'
+            },{
+                data : 'created_who',
+                name : 'created_who',
                 className:'text-left'
             },{
                 data : 'aksi',
