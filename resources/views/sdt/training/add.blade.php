@@ -21,21 +21,27 @@
             <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1" onchange="setValueArea(this)";>
+                <select id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any()) @if($errors->has('laman_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1" onchange="setValueArea(this)";>
                   <option value="">- Pilih data -</option>
                   @foreach($listBu as $value)
                   <option value="{{$value->id}}" @if(old('laman_id') == $value->id) selected @endif>{{$value->laman}}</option>
                   @endforeach
                 </select>
+                @if($errors->has('trainer_id'))
+                  <div class="invalid-feedback">{{$errors->first('laman_id')}}</div>
+                @endif
               </div>
             </div>
 
             <label class="col-sm-1 col-form-label text-sm-end">Area</label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select disabled id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1" onchange="setValueClient(this)">
+                <select disabled id="area_id" name="area_id" class="select2 form-select @if ($errors->any()) @if($errors->has('area_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1" onchange="setValueClient(this)">
                   <option value="">- Pilih Business Unit dulu -</option>
                 </select>
+                @if($errors->has('area_id'))
+                  <div class="invalid-feedback">{{$errors->first('area_id')}}</div>
+                @endif
               </div>
             </div>
           </div>
@@ -44,7 +50,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-                <select disabled multiple id="client_id" name="client_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('branch')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
+                <select disabled multiple id="client_id" name="client_id[]" class="select2 form-select @if ($errors->any()) @if($errors->has('client_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
                   <option value="">- Pilih Area dulu -</option>
                 </select>
                 @if($errors->has('client_id'))
@@ -112,7 +118,7 @@
             <label class="col-sm-2 col-form-label text-sm-end">Waktu Mulai <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-              <input type="datetime-local" id="start_date" name="start_date" value="{{old('start_date')}}" class="form-control @if ($errors->any())   @endif">
+              <input type="datetime-local" id="start_date" name="start_date" value="{{old('start_date')}}" class="form-control @if ($errors->any()) @if($errors->has('start_date')) is-invalid @else   @endif @endif">
                 @if($errors->has('start_date'))
                   <div class="invalid-feedback">{{$errors->first('start_date')}}</div>
                 @endif
@@ -122,7 +128,7 @@
             <label class="col-sm-1 col-form-label text-sm-end">Waktu Selesai <span class="text-danger">*</span></label>
             <div class="col-sm-3">
               <div class="position-relative">
-              <input type="datetime-local" id="end_date" name="end_date" value="{{old('end_date')}}" class="form-control @if ($errors->any())   @endif">
+              <input type="datetime-local" id="end_date" name="end_date" value="{{old('end_date')}}" class="form-control @if ($errors->any()) @if($errors->has('end_date')) is-invalid @else   @endif @endif">
                 @if($errors->has('end_date'))
                   <div class="invalid-feedback">{{$errors->first('end_date')}}</div>
                 @endif
@@ -131,10 +137,13 @@
           </div>  
 
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Alamat</label>
+            <label class="col-sm-2 col-form-label text-sm-end">Alamat <span class="text-danger">*</span> </label>
             <div class="col-sm-3">
               <div class="form-floating form-floating-outline mb-4">
-                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="alamat" id="alamat" placeholder="">{{old('alamat')}}</textarea>
+                <textarea class="form-control h-px-100 @if ($errors->any()) @if($errors->has('alamat')) is-invalid @else   @endif @endif" name="alamat" id="alamat" placeholder="">{{old('alamat')}}</textarea>
+                @if($errors->has('alamat'))
+                  <div class="invalid-feedback">{{$errors->first('alamat')}}</div>
+                @endif
               </div>
             </div>
 
@@ -150,7 +159,10 @@
             <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
             <div class="col-sm-7">
               <div class="form-floating form-floating-outline mb-4">
-                <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="keterangan" id="keterangan" placeholder="">{{old('keterangan')}}</textarea>
+                <textarea class="form-control h-px-100 @if ($errors->any()) @if($errors->has('keterangan')) is-invalid @else   @endif @endif" name="keterangan" id="keterangan" placeholder="">{{old('keterangan')}}</textarea>
+                @if($errors->has('keterangan'))
+                  <div class="invalid-feedback">{{$errors->first('keterangan')}}</div>
+                @endif
               </div>
             </div>
           </div>
