@@ -394,37 +394,37 @@ class SdtTrainingController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             $msgSave = '';
             
-            $validator = Validator::make($request->all(), [
-                'laman_id' => 'required',
-                'area_id' => 'required',
-                'client_id' => 'required',
-                'trainer_id' => 'required',
-                'materi_id' => 'required',
-                'tempat_id' => 'required',
-                'start_date' => 'required',
-                'end_date' => 'required',
-                'alamat' => 'required',
-                'keterangan' => 'required'
-            ]);
             
-            if ($validator->fails()) {
-                return back()->withErrors($validator->errors())->withInput();
+            if(!empty($request->id)){
+                DB::table('sdt_training')->where('id_training',$request->id)->update([
+                    'keterangan' => $request->keterangan,
+                    'waktu_mulai' => $request->start_date,
+                    'waktu_selesai' => $request->end_date,
+                    'id_pel_tempat' => $request->tempat_id,
+                    'id_materi' => $request->materi_id,
+                    'alamat' => $request->alamat,
+                    'link_zoom' => $request->link_zoom,
+                    'updated_at' => $current_date_time,
+                    'updated_by' => Auth::user()->id,
+                    'enable' => ($request->enable == 'on' ? 1 : 0)
+                ]);
+                $msgSave = 'Training berhasil diubah.';
             }else{
-                if(!empty($request->id)){
-                    DB::table('sdt_training')->where('id_training',$request->id)->update([
-                        'keterangan' => $request->keterangan,
-                        'waktu_mulai' => $request->start_date,
-                        'waktu_selesai' => $request->end_date,
-                        'id_pel_tempat' => $request->tempat_id,
-                        'id_materi' => $request->materi_id,
-                        'alamat' => $request->alamat,
-                        'link_zoom' => $request->link_zoom,
-                        'updated_at' => $current_date_time,
-                        'updated_by' => Auth::user()->id,
-                        'enable' => ($request->enable == 'on' ? 1 : 0)
-                    ]);
-                    $msgSave = 'Training berhasil diubah.';
-                    
+                $validator = Validator::make($request->all(), [
+                    'laman_id' => 'required',
+                    'area_id' => 'required',
+                    'client_id' => 'required',
+                    'trainer_id' => 'required',
+                    'materi_id' => 'required',
+                    'tempat_id' => 'required',
+                    'start_date' => 'required',
+                    'end_date' => 'required',
+                    'alamat' => 'required',
+                    'keterangan' => 'required'
+                ]);
+
+                if ($validator->fails()) {
+                    return back()->withErrors($validator->errors())->withInput();
                 }else{
                     $message = "*Undangan Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
                     $messageReminder = "*Reminder Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
@@ -467,9 +467,10 @@ class SdtTrainingController extends Controller
                     
                     $msgSave = 'Training berhasil disimpan ';
                 }
-                DB::commit();
-                return redirect()->back()->with('success', $msgSave);
             }
+            DB::commit();
+            return redirect()->back()->with('success', $msgSave);
+            
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
