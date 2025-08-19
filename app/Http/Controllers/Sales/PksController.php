@@ -348,7 +348,8 @@ class PksController extends Controller
             // $quotation = DB::table('sl_quotation')->whereNull('deleted_at')->where('id',$dataSpk->quotation_id)->first();
             // $jumlahHcQuotationDetail = DB::table('sl_quotation_detail')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->sum('jumlah_hc');
 
-            $pksNomor = $this->generateNomorNew($leads->id);
+            // $pksNomor = $this->generateNomorNew($leads->id);
+            $pksNomor = $this->generateNomor($leads->id,$company->id);
             $newId = DB::table('sl_pks')->insertGetId([
                 // 'quotation_id' => $quotation->id,
                 // 'spk_id' => $dataSpk->id,
