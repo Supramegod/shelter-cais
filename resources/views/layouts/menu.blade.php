@@ -137,6 +137,13 @@
             </a>
         </li>
         @endif
+         <li class="menu-item @if(str_contains(Request::url(), route('loyalty')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('issue')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-document-multiple-outline"></i>
+            <div data-i18n="Issue">Issue</div>
+            </a>
+        </li>
+
         @if(in_array(Auth::user()->role_id,[2,29,31,33,36,54,55,56,4,5,6,8,52,53,56,10,96,97,98,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
             <a href="{{route('monitoring-kontrak')}}" class="menu-link">
@@ -197,7 +204,7 @@
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2]))
+        @if(in_array(Auth::user()->role_id,[2,29]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-package-variant-closed-plus"></i>
@@ -211,12 +218,14 @@
                     </a>
                 </li>
                 <li class="menu-item @if(Request::url() === route('purchase-order')) active @endif">
+                @if(in_array(Auth::user()->role_id,[2]))
+                <li class="menu-item">
                     <a href="{{route('purchase-order')}}" class="menu-link">
 
                         <div data-i18n="Purchase Order">Purchase Order</div>
                     </a>
                 </li>
-
+                @endif
             </ul>
         </li>
         @endif
@@ -311,7 +320,7 @@
                 </li>
             </ul>
         </li>
-        <!-- TR -->
+        <!-- Jenis Barang -->
          <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
                     <a href="{{route('jenis-barang')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-view-list-outline"></i>
@@ -384,6 +393,19 @@
                         <div data-i18n="Aplikasi Pendukung">Aplikasi Pendukung</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('aplikasi-pendukung'))) active @endif">
+                    <a href="{{route('role')}}" class="menu-link">
+                        <div data-i18n="Role">Role</div>
+                    </a>
+                </li>
+                @if(in_array(Auth::user()->role_id,[2]))
+                <li class="menu-item @if(str_contains(Request::url(), route('master.menu')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+                    <a href="{{route('master.menu')}}" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-playlist-star"></i>
+                    <div data-i18n="Menu">Master Menu</div>
+                    </a>
+                </li>
+                @endif
             </ul>
         </li>
         <!-- KEUANGAN & LAINNYA -->
@@ -426,7 +448,14 @@
             </ul>
         </li>
 
+        <!-- Loyalty Customer -->
 
+        <li class="menu-item @if(str_contains(Request::url(), route('loyalty')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('loyalty')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-tag-heart-outline"></i>
+            <div data-i18n="Loyalty Customer">Loyalty Customer</div>
+            </a>
+        </li>
 
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">

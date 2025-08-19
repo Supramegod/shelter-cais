@@ -108,6 +108,13 @@
     <ul class="dropdown-menu">
         <li>
             <a class="dropdown-item"
+               onclick="window.open('{{ route('quotation.cetak-quotation', ['id' => $quotation->id, 'mode' => '1']) }}','name','width=600,height=400')"
+               rel="noopener noreferrer" href="javascript:void(0)">
+               Cetak Quotation
+            </a>
+        </li>
+        <!-- <li>
+            <a class="dropdown-item"
                onclick="window.open('{{ route('quotation.cetak-quotation', ['id' => $quotation->id, 'mode' => 'all']) }}','name','width=600,height=400')"
                rel="noopener noreferrer" href="javascript:void(0)">
                Cetak Quotation Semua
@@ -119,7 +126,7 @@
                rel="noopener noreferrer" href="javascript:void(0)">
                Cetak Quotation Per Site
             </a>
-        </li>
+        </li> -->
     </ul>
 </li>
 
@@ -728,7 +735,7 @@
                                                 <span class="align-middle me-sm-1"><i
                                                         class="mdi mdi-file-excel"></i>&nbsp; Export Kaporlap</span>
                                             </a>
-                                            
+
 
                                         </div>
                                     </div>
@@ -923,8 +930,8 @@
                                                     <span class="align-middle me-sm-1"><i
                                                             class="mdi mdi-file-excel"></i>&nbsp; Export Chemical</span>
                                                 </a>
-                                                
-                                               
+
+
                                             </div>
                                         </div>
                                         <div class="row">

@@ -8,6 +8,8 @@
 
     <meta name="description" content="" />
 
+
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('public/assets/img/icons/favicon-shelter.png') }}" />
 
