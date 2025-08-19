@@ -106,11 +106,20 @@
 
     <!-- Submenu -->
     <ul class="dropdown-menu">
+        @if($quotation->is_aktif == 1)
         <li>
             <a class="dropdown-item"
-               onclick="window.open('{{ route('quotation.cetak-quotation', ['id' => $quotation->id, 'mode' => '1']) }}','name','width=600,height=400')"
+               onclick="window.open('{{ route('quotation.cetak-quotation', ['id' => $quotation->id, 'mode' => 'print']) }}','name','width=600,height=400')"
                rel="noopener noreferrer" href="javascript:void(0)">
                Cetak Quotation
+            </a>
+        </li>
+        @endif
+        <li>
+            <a class="dropdown-item"
+               onclick="window.open('{{ route('quotation.cetak-quotation', ['id' => $quotation->id, 'mode' => 'draft']) }}','name','width=600,height=400')"
+               rel="noopener noreferrer" href="javascript:void(0)">
+               Cetak Quotation Draft
             </a>
         </li>
         <!-- <li>
