@@ -8,6 +8,57 @@
                     <div data-i18n="Dashboards">Home</div>
                 </a>
             </li>
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
+                    <div data-i18n="Dashboards">Home</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('home.homepage.sales') }}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Sales">Sales</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('home.homepage.telesales') }}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Telesales">Telesales</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('home.homepage.ro') }}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="RO">RO (Relational Officer)</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('home.homepage.staff-crm') }}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Staff CRM">Staff CRM</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('home.homepage.manager-ro') }}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Manager RO">Manager RO</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('home.homepage.manager-sales') }}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="Manager Sales">Manager Sales</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('home.homepage.gm') }}" class="menu-link">
+                            <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
+                            <div data-i18n="General Manager">General Manager</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             @if(in_array(Auth::user()->role_id, [2, 31, 32, 33, 52, 54, 55, 56, 53, 56, 96, 97, 40, 98, 99, 100]))
                 <li class="menu-item">
                     <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -168,6 +219,20 @@
                     </ul>
                 </li>
             @endif
+            <!-- Menu Bidang Perusahaan -->
+            <li class="menu-item @if(Request::is('master/bidang-perusahaan*')) active @endif">
+                <a href="{{ route('bidang-perusahaan') }}" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-domain"></i>
+                    <div data-i18n="Bidang Perusahaan">Master Bidang Perusahaan</div>
+                </a>
+            </li>
+             <li class="menu-item @if(Request::is('master/mutasi-stok*')) active @endif">
+                <a href="{{ route('mutasi-stok') }}" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-compare-horizontal"></i>
+                    <div data-i18n="Stok Barang"> Stok Barang</div>
+                </a>
+            </li>
+
             @if(in_array(Auth::user()->role_id, [2, 36, 57, 58, 59]))
                 <!-- MASTER DATA -->
                 <li class="menu-item">
@@ -193,6 +258,7 @@
                         </li>
                     </ul>
                 </li>
+
                 <!-- BARANG -->
                 <li class="menu-item">
                     <a href="javascript:void(0)" class="menu-link menu-toggle">

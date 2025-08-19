@@ -76,7 +76,7 @@
         <img src="{{ public_path('assets/img/icons/icon-shelter.png') }}" alt="Logo" style="height: 20px;">
     </div>
     <div style="width: 100%; text-align: center;">
-        <h2 style="margin: 0; font-size: 20px;">PT. SHELTER INDONESIA</h2>
+        <h2 style="margin: 0; font-size: 20px;">SHELTER INDONESIA</h2>
         <p style="margin: 2px 0; font-size: 12px;">Jl. Semampir Sel. V A No.18, Medokan Semampir, Kec. Sukolilo,
             Kota SBY, Jawa Timur, 60119, Indonesia</p>
         <p style="margin: 2px 0; font-size: 12px;">Telp: (031) 12345678 | Email: info@shelter.co.id</p>
@@ -100,7 +100,7 @@
         </tr>
         <tr>
             <td>
-                Nomor             : {{ $nomor_surat ?? '' }}<br>
+                Nomor : {{ $nomor_surat ?? '' }}<br>
                 Tanggal Pengiriman: {{ $now ?? '' }}<br>
             </td>
             <td>
@@ -147,8 +147,27 @@
     <div class="remarks">
         <label>Catatan Tambahan:</label>
     </div>
+    <!-- Tanda Tangan -->
+    <table style="width: 100%; margin-top: 50px; text-align: center;">
+        <tr>
+            <td>Sales</td>
+            <td>Logistik</td>
+            <td>Operasional</td>
+        </tr>
+        <tr>
+            <td style="height: 80px;"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>(___________________)</td>
+            <td>(___________________)</td>
+            <td>(___________________)</td>
+        </tr>
+    </table>
 
     
+
 
 
 </body>
