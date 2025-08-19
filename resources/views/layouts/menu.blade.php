@@ -10,7 +10,7 @@
         @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,40,98,99,100]))
         <li class="menu-item @if(str_contains(Request::url(), route('master.menu')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
             <a href="{{route('master.menu')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-account-star-outline"></i>
+            <i class="menu-icon tf-icons mdi mdi-playlist-star"></i>
             <div data-i18n="Menu">Master Menu</div>
             </a>
         </li>
@@ -133,6 +133,13 @@
             </a>
         </li>
         @endif
+         <li class="menu-item @if(str_contains(Request::url(), route('loyalty')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('issue')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-document-multiple-outline"></i>
+            <div data-i18n="Issue">Issue</div>
+            </a>
+        </li>
+
         @if(in_array(Auth::user()->role_id,[2,29,31,33,36,54,55,56,4,5,6,8,52,53,56,10,96,97,98,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
             <a href="{{route('monitoring-kontrak')}}" class="menu-link">
@@ -266,7 +273,7 @@
          <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
                     <a href="{{route('jenis-barang')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-view-list-outline"></i>
-                        <div data-i18n="Jenis Barang">Master Jenis Barang</div>
+                        <div data-i18n="Jenis Barang">Jenis Barang</div>
                     </a>
                 </li>
         <!-- TRAINING SDT -->
@@ -382,7 +389,14 @@
             </ul>
         </li>
 
+        <!-- Loyalty Customer -->
 
+        <li class="menu-item @if(str_contains(Request::url(), route('loyalty')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('loyalty')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-tag-heart-outline"></i>
+            <div data-i18n="Loyalty Customer">Loyalty Customer</div>
+            </a>
+        </li>
 
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">

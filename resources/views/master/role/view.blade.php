@@ -109,7 +109,7 @@
 
         var table = $('#table-data').DataTable({
             scrollX: true,
-            'processing': true,
+            processing: true,
             ajax: {
                 url: "{{ route('role.list-menu') }}",
                 data: function(d) {
@@ -155,6 +155,7 @@
 
         });
 
+        
         $('#btnSimpanRole').click(function() {
             let data = [];
             $('.perm-check').each(function() {

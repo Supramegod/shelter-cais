@@ -27,7 +27,7 @@ class RoleController extends Controller
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                                    <a href="' . route('role.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs">View</a> &nbsp;
+                                    <a href="' . route('role.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a> &nbsp;
                         </div>';
                 })
                 ->rawColumns(['aksi'])

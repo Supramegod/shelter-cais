@@ -22,6 +22,7 @@ use App\Http\Controllers\Sales\PksController;
 use App\Http\Controllers\Sales\MonitoringKontrakController;
 use App\Http\Controllers\Sales\PutusKontrakController;
 use App\Http\Controllers\Sales\WhatsappController;
+use App\Http\Controllers\Sales\IssueController;
 
 use App\Http\Controllers\Master\PlatformController;
 use App\Http\Controllers\Master\AplikasiPendukungController;
@@ -53,6 +54,7 @@ use App\Http\Controllers\Sdt\TrainingSiteController;
 use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
+use App\Http\Controllers\Master\LoyaltyController;
 use App\Http\Controllers\Master\MasterMenuController;
 use App\Http\Controllers\Master\PositionController;
 use App\Http\Controllers\Master\RoleController;
@@ -281,6 +283,18 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/pks/get-detail-quotation', 'getDetailQuotation')->name('pks.get-detail-quotation'); // ajax
     });
 
+    Route::controller(IssueController::class)->group(function() {
+        Route::get('/sales/issue', 'index')->name('issue');
+        Route::get('/sales/issue/list', 'list')->name('issue.list');
+        Route::get('/sales/issue/lead-list', 'leadsList')->name('issue.leads-list');
+        Route::get('/sales/issue/pks-list', 'pksList')->name('issue.pks-list');
+        Route::get('/sales/issue/site-list', 'siteList')->name('issue.site-list');
+        Route::get('/sales/issue/add', 'add')->name('issue.add'); 
+        Route::get('/sales/issue/view/{id}', 'view')->name('issue.view'); 
+        Route::post('/sales/issue/save', 'save')->name('issue.save');
+        Route::post('/sales/issue/update/{id}', 'update')->name('issue.update');
+        Route::post('/sales/issue/delete/{id}', 'delete')->name('issue.delete');
+    });
     Route::controller(PksKelengkapanController::class)->group(function() {
         Route::get('/sales/lengkapi-quotation/add/{pksId}', 'add')->name('lengkapi-quotation.add');
         Route::post('/sales/lengkapi-quotation/save', 'save')->name('lengkapi-quotation.save');
@@ -701,6 +715,16 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/umk/list', 'list')->name('umk.list'); // ajax
         Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
+    });
+    Route::controller(LoyaltyController::class)->group(function() {
+        Route::get('/master/loyalty', 'index')->name('loyalty');
+        Route::get('/master/loyalty/list','list')->name('loyalty.list'); // ajax
+        Route::get('/master/loyalty/add', 'add')->name('loyalty.add');
+        Route::get('/master/loyalty/view/{id}', 'view')->name('loyalty.view');
+        Route::post('/master/loyalty/save', 'save')->name('loyalty.save');
+        Route::post('/master/loyalty/update/{id}', 'update')->name('loyalty.update');
+        Route::post('/master/loyalty/delete/{id}', 'delete')->name('loyalty.delete');
+
     });
 
     Route::controller(TrainingMateriController::class)->group(function() {
