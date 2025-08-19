@@ -4321,7 +4321,7 @@ ORDER BY m_barang.jenis_barang_id asc,sl_quotation_chemical.nama ASC;");
             $quotation->quotation_detail = $quotation->quotation_detail->sortBy('quotation_site_id')->values();
             $listKerjasama = DB::table('sl_quotation_kerjasama')->where('quotation_id',$quotation->id)->whereNull('deleted_at')->get();
             // dd($quotation->is_aktif);
-            if ($quotation->is_aktif == 1 && $mode == 'print') {
+            if ($quotation->is_aktif == 1) {
                 return view('sales.quotation.cetakan.quotation', compact('quotation', 'listKerjasama', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'listChemical', 'listDevices', 'listOhc', 'listKaporlap', 'listJenisChemical', 'listJenisDevices', 'listJenisOhc', 'listJenisKaporlap', 'now', 'leads', 'aplikasiPendukung'));
             }else {
                 return view('sales.quotation.cetakan.quotation-draft', compact('quotation', 'listKerjasama', 'salaryRuleQ', 'quotationDetail', 'listPic', 'daftarTunjangan', 'listChemical', 'listDevices', 'listOhc', 'listKaporlap', 'listJenisChemical', 'listJenisDevices', 'listJenisOhc', 'listJenisKaporlap', 'now', 'leads', 'aplikasiPendukung'));
