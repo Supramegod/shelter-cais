@@ -160,7 +160,7 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
+        @if(in_array(Auth::user()->role_id,[2,4,6,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
@@ -182,7 +182,7 @@
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
+        @if(in_array(Auth::user()->role_id,[2,4,6,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-account-multiple"></i>
@@ -498,7 +498,7 @@
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
+        @if(in_array(Auth::user()->role_id,[2,4,6,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
         <!-- TRAINING SDT -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
