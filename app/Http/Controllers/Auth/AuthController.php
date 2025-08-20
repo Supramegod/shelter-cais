@@ -127,7 +127,16 @@ class AuthController extends Controller
                     $userData->tim_sales_d_id = $dataSalesD->id;
                 }
             }
-            return view('home.dashboard',compact('userData'));
+              $patch = DB::table('patch_info')
+                ->whereNull('deleted_at')
+                ->orderBy('id', 'desc')
+                ->first();
+              $allPatch = DB::table('patch_info')
+                ->whereNull('deleted_at')
+                ->where('id', '!=', $patch->id)
+                ->orderBy('id', 'desc')
+                ->get();
+            return view('home.dashboard',compact('userData','patch','allPatch'));
         }
 
         return redirect()->route('login')

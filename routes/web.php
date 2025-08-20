@@ -117,6 +117,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
         Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
         Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
+        Route::get('/dashboard/edit-patch', 'editPatch')->name('change.log');
+        Route::post('/dashboard/update-patch', 'updatePatch')->name('update.log');
 
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');

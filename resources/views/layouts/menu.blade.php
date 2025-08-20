@@ -7,14 +7,7 @@
             <div data-i18n="Dashboards">Home</div>
             </a>
         </li>
-        @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,40,98,99,100]))
-        <li class="menu-item @if(str_contains(Request::url(), route('master.menu')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
-            <a href="{{route('master.menu')}}" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-playlist-star"></i>
-            <div data-i18n="Menu">Master Menu</div>
-            </a>
-        </li>
-        @endif
+       
         @if(in_array(Auth::user()->role_id,[2,31,32,33,52,54,55,56,53,56,96,97,40,98,99,100]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -347,6 +340,14 @@
                         <div data-i18n="Role">Role</div>
                     </a>
                 </li>
+                
+        <li class="menu-item @if(str_contains(Request::url(), route('master.menu')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('master.menu')}}" class="menu-link">
+            
+            <div data-i18n="Menu">Master Menu</div>
+            </a>
+        </li>
+        
             </ul>
         </li>
         <!-- KEUANGAN & LAINNYA -->
