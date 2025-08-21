@@ -51,6 +51,7 @@ use App\Http\Controllers\Sdt\SdtTrainingController;
 use App\Http\Controllers\Sdt\TrainingSiteController;
 use App\Http\Controllers\Master\BidangPerusahaanController;
 use App\Http\Controllers\Master\MutasiStokController;
+use App\Http\Controllers\Master\MasterMenuController;
 
 use App\Http\Controllers\Setting\EntitasController;
 
@@ -63,6 +64,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logout');
     Route::post('/authenticate', 'authenticate')->name('authenticate');
 });
+
 
 //form luar
 Route::controller(ContactController::class)->group(function () {
@@ -483,17 +485,22 @@ Route::group(['middleware' => ['auth']], function () {
         // AJAX route - menggunakan method 'list'
         Route::get('/master/bidang-perusahaan/data', 'list')->name('bidang-perusahaan.data');
     });
+
+    // Route untuk Master Menu Dashboard
+    Route::get('/master-menu', [MasterMenuController::class, 'index'])
+        ->name('master-menu')
+        ->middleware('auth');
     // Routes untuk Mutasi Stok
-Route::controller(MutasiStokController::class)->group(function () {
-    Route::get('/master/mutasi-stok', 'index')->name('mutasi-stok');
-    Route::get('/master/mutasi-stok/get-jenis-barang', 'getJenisBarang')->name('mutasi-stok.get-jenis-barang');
-    Route::get('/master/mutasi-stok/get-barang', 'getBarang')->name('mutasi-stok.get-barang');
-    Route::get('/master/mutasi-stok/stok-barang-data', 'stokBarangList')->name('mutasi-stok.stok-barang-data');
-    Route::get('/master/mutasi-stok/mutasi-data', 'mutasiList')->name('mutasi-stok.mutasi-data');
-    
-    // Route baru untuk search barang dengan Select2
-    Route::get('/master/mutasi-stok/search-barang', 'searchBarang')->name('mutasi-stok.search-barang');
-});
+    Route::controller(MutasiStokController::class)->group(function () {
+        Route::get('/master/mutasi-stok', 'index')->name('mutasi-stok');
+        Route::get('/master/mutasi-stok/get-jenis-barang', 'getJenisBarang')->name('mutasi-stok.get-jenis-barang');
+        Route::get('/master/mutasi-stok/get-barang', 'getBarang')->name('mutasi-stok.get-barang');
+        Route::get('/master/mutasi-stok/stok-barang-data', 'stokBarangList')->name('mutasi-stok.stok-barang-data');
+        Route::get('/master/mutasi-stok/mutasi-data', 'mutasiList')->name('mutasi-stok.mutasi-data');
+
+        // Route baru untuk search barang dengan Select2
+        Route::get('/master/mutasi-stok/search-barang', 'searchBarang')->name('mutasi-stok.search-barang');
+    });
     Route::controller(PlatformController::class)->group(function () {
         Route::get('/master/platform', 'index')->name('platform');
         Route::get('/master/platform/add', 'add')->name('platform.add');

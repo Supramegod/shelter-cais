@@ -189,6 +189,15 @@
                     </a>
                 </li>
             @endif
+            <!-- MASTER MENU -->
+            @if(in_array(Auth::user()->role_id, [2, 36, 57, 58, 59]))
+                <li class="menu-item @if(str_contains(Request::url(), 'master-menu')) active @endif">
+                    <a href="{{route('master-menu')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-database-outline"></i>
+                        <div data-i18n="Master Menu">Master Menu</div>
+                    </a>
+                </li>
+            @endif
             @if(in_array(Auth::user()->role_id, [2]))
                 <li class="menu-item @if(str_contains(Request::url(), route('putus-kontrak'))) active @endif">
                     <a href="{{route('putus-kontrak')}}" class="menu-link">
@@ -226,12 +235,13 @@
                     <div data-i18n="Bidang Perusahaan">Master Bidang Perusahaan</div>
                 </a>
             </li>
-             <li class="menu-item @if(Request::is('master/mutasi-stok*')) active @endif">
+            <li class="menu-item @if(Request::is('master/mutasi-stok*')) active @endif">
                 <a href="{{ route('mutasi-stok') }}" class="menu-link">
                     <i class="menu-icon tf-icons mdi mdi-compare-horizontal"></i>
                     <div data-i18n="Stok Barang"> Stok Barang</div>
                 </a>
             </li>
+
 
             @if(in_array(Auth::user()->role_id, [2, 36, 57, 58, 59]))
                 <!-- MASTER DATA -->

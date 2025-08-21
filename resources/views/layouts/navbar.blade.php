@@ -128,7 +128,7 @@
                         href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                         aria-expanded="false">
                         <i class="mdi mdi-file-sign mdi-24px"></i>
-                        @if(count($approval) > 0)
+                        @if(isset($approval) && is_countable($approval) && count($approval) > 0)
                             <span
                                 class="position-absolute top-0 start-50 translate-middle-y badge badge-dot bg-danger mt-2 border"></span>
                         @endif
@@ -137,30 +137,36 @@
                         <li class="dropdown-menu-header border-bottom">
                             <div class="dropdown-header d-flex align-items-center py-3">
                                 <h6 class="mb-0 me-auto">Approval</h6>
-                                <span class="badge rounded-pill bg-label-primary">{{count($approval)}}</span>
+                                <span class="badge rounded-pill bg-label-primary">{{ isset($approval) ? count($approval) : 0 }}</span>
                             </div>
                         </li>
                         <li class="dropdown-notifications-list scrollable-container">
                             <ul class="list-group list-group-flush">
-                                @foreach($approval as $quot)
-                                    <a href="{{route('quotation.view', $quot->id)}}">
-                                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                            <div class="d-flex gap-2">
-                                                <div class="d-flex flex-column flex-grow-1 overflow-hidden w-px-200">
-                                                    <h6 class="mb-1 text-truncate">{{$quot->nomor}}</h6>
-                                                    <small class="text-truncate text-body">{{$quot->nama_site}}</small>
-                                                    <small class="text-truncate text-body">membutuhkan approval anda</small>
+                                @if(isset($approval) && count($approval) > 0)
+                                    @foreach($approval as $quot)
+                                        <a href="{{route('quotation.view', $quot->id)}}">
+                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                                                <div class="d-flex gap-2">
+                                                    <div class="d-flex flex-column flex-grow-1 overflow-hidden w-px-200">
+                                                        <h6 class="mb-1 text-truncate">{{$quot->nomor}}</h6>
+                                                        <small class="text-truncate text-body">{{$quot->nama_site}}</small>
+                                                        <small class="text-truncate text-body">membutuhkan approval anda</small>
+                                                    </div>
+                                                    <div class="flex-shrink-0 dropdown-notifications-actions">
+                                                        <small class="text-muted">{{$quot->tgl_quot}}</small>
+                                                    </div>
                                                 </div>
-                                                <div class="flex-shrink-0 dropdown-notifications-actions">
-                                                    <small class="text-muted">{{$quot->tgl_quot}}</small>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </a>
-                                @endforeach
+                                            </li>
+                                        </a>
+                                    @endforeach
+                                @else
+                                    <li class="list-group-item text-center">
+                                        <small class="text-muted">Tidak ada approval yang pending</small>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
-                        @if(count($approval) > 0)
+                        @if(isset($approval) && count($approval) > 0)
                             <li class="dropdown-menu-footer border-top p-2">
                                 <a href="{{route('dashboard-approval')}}"
                                     class="btn btn-primary d-flex justify-content-center">
@@ -170,7 +176,7 @@
                         @endif
                     </ul>
                 </li>
-                <!--/ Notification -->
+                <!--/ Approval -->
 
 
                 <!-- Notification -->
@@ -179,7 +185,7 @@
                         href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                         aria-expanded="false">
                         <i class="mdi mdi-bell-outline mdi-24px"></i>
-                        @if(count($notifikasi) > 0)
+                        @if(isset($notifikasi) && count($notifikasi) > 0)
                             <span
                                 class="position-absolute top-0 start-50 translate-middle-y badge badge-dot bg-danger mt-2 border"></span>
                         @endif
@@ -188,40 +194,48 @@
                         <li class="dropdown-menu-header border-bottom">
                             <div class="dropdown-header d-flex align-items-center py-3">
                                 <h6 class="mb-0 me-auto">Notification</h6>
-                                <span class="badge rounded-pill bg-label-primary">{{count($notifikasi)}} New</span>
+                                <span class="badge rounded-pill bg-label-primary">{{ isset($notifikasi) ? count($notifikasi) : 0 }} New</span>
                             </div>
                         </li>
                         <li class="dropdown-notifications-list scrollable-container">
                             <ul class="list-group list-group-flush">
-                                @foreach($notifikasi as $notif)
-                                    <div class="read-notif" data-id="{{$notif->id}}" data-url="{{$notif->url}}"
-                                        data-pesan="{{$notif->pesan}}">
-                                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                            <div class="d-flex gap-2">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avatar me-1">
-                                                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt
-                                                            class="w-px-40 h-auto rounded-circle" />
+                                @if(isset($notifikasi) && count($notifikasi) > 0)
+                                    @foreach($notifikasi as $notif)
+                                        <div class="read-notif" data-id="{{$notif->id}}" data-url="{{$notif->url}}"
+                                            data-pesan="{{$notif->pesan}}">
+                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                                                <div class="d-flex gap-2">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="avatar me-1">
+                                                            <img src="{{ asset('assets/img/avatars/1.png') }}" alt
+                                                                class="w-px-40 h-auto rounded-circle" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-column flex-grow-1 overflow-hidden w-px-200">
+                                                        <h6 class="mb-1 text-truncate">{{$notif->transaksi}}</h6>
+                                                        <small class="text-truncate text-body">{{$notif->pesan}}</small>
+                                                    </div>
+                                                    <div class="flex-shrink-0 dropdown-notifications-actions">
+                                                        <small class="text-muted">{{$notif->waktu}}</small>
                                                     </div>
                                                 </div>
-                                                <div class="d-flex flex-column flex-grow-1 overflow-hidden w-px-200">
-                                                    <h6 class="mb-1 text-truncate">{{$notif->transaksi}}</h6>
-                                                    <small class="text-truncate text-body">{{$notif->pesan}}</small>
-                                                </div>
-                                                <div class="flex-shrink-0 dropdown-notifications-actions">
-                                                    <small class="text-muted">{{$notif->waktu}}</small>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </div>
-                                @endforeach
+                                            </li>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <li class="list-group-item text-center">
+                                        <small class="text-muted">Tidak ada notifikasi baru</small>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
-                        <li class="dropdown-menu-footer border-top p-2">
-                            <a href="{{route('notifikasi')}}" class="btn btn-primary d-flex justify-content-center">
-                                View all notifications
-                            </a>
-                        </li>
+                        @if(isset($notifikasi) && count($notifikasi) > 0)
+                            <li class="dropdown-menu-footer border-top p-2">
+                                <a href="{{route('notifikasi')}}" class="btn btn-primary d-flex justify-content-center">
+                                    View all notifications
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
                 <!--/ Notification -->
@@ -265,8 +279,7 @@
                             <a class="dropdown-item" href="#">
                                 <i class="mdi mdi-cog-outline me-2"></i>
                                 <span class="align-middle">Settings</span>
-                            </a>
-                        </li>
+                            </li>
                         <li>
                             <div class="dropdown-divider"></div>
                         </li>
