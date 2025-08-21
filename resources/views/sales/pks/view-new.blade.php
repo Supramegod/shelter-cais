@@ -68,6 +68,12 @@
                                     </a>
                                 @endif
                             @endif
+                            @if($pks->status_pks_id == 5)
+                                <a href="javascript:void(0)" id="btn-upload-pks" class="btn btn-primary waves-effect waves-light">
+                                    <span class="me-1">Upload PKS</span>
+                                    <i class="mdi mdi-upload scaleX-n1-rtl"></i>
+                                </a>
+                            @endif
                             <a onclick="window.open('{{ route('pks.cetak-pks', $pks->id) }}','name','width=600,height=400')"
                                 rel="noopener noreferrer" href="javascript:void(0)" id="btn-download-pks"
                                 class="btn btn-info waves-effect waves-light">
