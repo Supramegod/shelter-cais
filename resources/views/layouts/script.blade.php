@@ -55,7 +55,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/7.6.1/imask.min.js"
     integrity="sha512-+3RJc0aLDkj0plGNnrqlTwCCyMmDCV1fSYqXw4m+OczX09Pas5A/U+V3pFwrSyoC1svzDy40Q9RU/85yb/7D2A=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/colresizable/1.6.0/colResizable-1.6.min.js"></script>
 <!-- Flat Picker -->
 <script src="{{ asset('assets/vendor/libs/moment/moment.js')}}"></script>
 <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js')}}"></script>

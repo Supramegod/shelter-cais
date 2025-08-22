@@ -198,6 +198,13 @@
                     </a>
                 </li>
             @endif
+            <li class="menu-item @if(str_contains(Request::url(), 'notifications')) active @endif">
+                <a href="{{ route('notifications.list') }}" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-bell-outline"></i>
+                    <div data-i18n="Notifications">Notifications</div>
+                </a>
+            </li>
+
             @if(in_array(Auth::user()->role_id, [2]))
                 <li class="menu-item @if(str_contains(Request::url(), route('putus-kontrak'))) active @endif">
                     <a href="{{route('putus-kontrak')}}" class="menu-link">
