@@ -876,7 +876,7 @@ class CustomerActivityController extends Controller
             // dd($request);
             return response()->json(['status' => 'success', 'message' => 'Email berhasil dikirim']);
         } catch (\Throwable $th) {
-            dd('$e');
+            dd($e);
             return response()->json(['status' => 'gagal', 'message' => 'Email gagal dikirim']);
             SystemController::saveError($e, Auth::user(), $request);
             abort(500);

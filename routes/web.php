@@ -52,7 +52,6 @@ use App\Http\Controllers\Sdt\TrainingSiteController;
 use App\Http\Controllers\Master\BidangPerusahaanController;
 use App\Http\Controllers\Master\MutasiStokController;
 use App\Http\Controllers\Master\MasterMenuController;
-use App\Http\Controllers\Master\NotificationController;
 
 use App\Http\Controllers\Setting\EntitasController;
 
@@ -491,26 +490,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/master-menu', [MasterMenuController::class, 'index'])
         ->name('master-menu')
         ->middleware('auth');
-
-    Route::controller(NotificationController::class)->group(function () {
-        Route::get('/notifications', 'list')->name('notifications.list');
-        Route::get('/notifications/create', 'create')->name('notifications.create');
-        Route::post('/notifications/save', 'save')->name('notifications.save');
-        Route::delete('/notifications/{id}', 'destroy')->name('notifications.destroy');
-        Route::get('/notifications/data', 'data')->name('notifications.data');
-
-        // Route yang kurang - untuk modal file preview
-        Route::get('/notifications/{id}/files', 'getFiles')->name('notifications.files');
-
-        // Route download attachment (sudah ada tapi URL pattern sedikit berbeda)
-        Route::get('/notifications/{id}/download/{fileIndex?}', 'downloadAttachment')->name('notifications.download');
-
-        // Debug route - hapus di production
-        Route::get('/notifications/debug', 'debug')->name('notifications.debug');
-    });
-
-    // Alternatif jika masih bermasalah, coba pisahkan route data di luar group:
-// Route::get('/notifications/data', [NotificationController::class, 'data'])->name('notifications.data');
     // Routes untuk Mutasi Stok
     Route::controller(MutasiStokController::class)->group(function () {
         Route::get('/master/mutasi-stok', 'index')->name('mutasi-stok');
