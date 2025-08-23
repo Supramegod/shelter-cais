@@ -124,6 +124,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
         Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
         Route::get('/dashboard/training-gada', 'dashboardTrainingGada')->name('dashboard-training-gada');
+        Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
+        Route::get('/dashboard/edit-patch', 'editPatch')->name('change.log');
+        Route::post('/dashboard/update-patch', 'updatePatch')->name('update.log');
 
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
@@ -301,8 +304,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/issue/lead-list', 'leadsList')->name('issue.leads-list');
         Route::get('/sales/issue/pks-list', 'pksList')->name('issue.pks-list');
         Route::get('/sales/issue/site-list', 'siteList')->name('issue.site-list');
-        Route::get('/sales/issue/add', 'add')->name('issue.add'); 
-        Route::get('/sales/issue/view/{id}', 'view')->name('issue.view'); 
+        Route::get('/sales/issue/add', 'add')->name('issue.add');
+        Route::get('/sales/issue/view/{id}', 'view')->name('issue.view');
         Route::post('/sales/issue/save', 'save')->name('issue.save');
         Route::post('/sales/issue/update/{id}', 'update')->name('issue.update');
         Route::post('/sales/issue/delete/{id}', 'delete')->name('issue.delete');

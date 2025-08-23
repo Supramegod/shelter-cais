@@ -131,7 +131,19 @@ class AuthController extends Controller
             if($userData->role_id == 56 || $userData->role_id == 55){
                 return redirect()->route('dashboard-manager-crm');
             }
-            return view('home.dashboard',compact('userData'));
+
+            // return view('home.dashboard',compact('userData'));
+
+              $patch = DB::table('patch_info')
+                ->whereNull('deleted_at')
+                ->orderBy('id', 'desc')
+                ->first();
+              $allPatch = DB::table('patch_info')
+                ->whereNull('deleted_at')
+                ->where('id', '!=', $patch->id)
+                ->orderBy('id', 'desc')
+                ->get();
+            return view('home.dashboard',compact('userData','patch','allPatch'));
         }
 
         return redirect()->route('login')

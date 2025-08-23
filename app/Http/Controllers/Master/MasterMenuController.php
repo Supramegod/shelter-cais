@@ -35,14 +35,11 @@ class MasterMenuController extends Controller
         <div class="justify-content-center d-flex">
            
             <a href="' . route('master.menu.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a> &nbsp;
-
             <form id="delete-form-' . $data->id . '" action="' . route('master.menu.delete', $data->id) . '" method="POST" style="display:inline;">
-                ' . csrf_field() . '
-                ' . method_field('POST') . '
+                ' . csrf_field() . '' . method_field('POST') . '
                 <button type="button" class="btn btn-danger waves-effect btn-xs" onclick="confirmDelete(' . $data->id . ',' . $childJson . ')"><i class="mdi mdi-delete"></i>&nbsp;Delete</button>
             </form>
-        </div>
-    ';
+        </div>';
                 })
                 ->rawColumns(['aksi'])
                 ->make(true);
