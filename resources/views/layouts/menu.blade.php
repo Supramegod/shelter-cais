@@ -1,6 +1,5 @@
 <aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0">
     <div class="container-fluid d-flex h-100">
-<<<<<<< HEAD
     <ul class="menu-inner">
         <li class="menu-item @if(Request::url() === route('home')||Request::url() === route('dashboard') || str_contains(Request::url(), route('dashboard'))) active @endif">
             <a href="{{route('home')}}" class="menu-link">
@@ -138,6 +137,13 @@
             </a>
         </li>
         @endif
+         <li class="menu-item @if(str_contains(Request::url(), route('loyalty')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('issue')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-file-document-multiple-outline"></i>
+            <div data-i18n="Issue">Issue</div>
+            </a>
+        </li>
+
         @if(in_array(Auth::user()->role_id,[2,29,31,33,36,54,55,56,4,5,6,8,52,53,56,10,96,97,98,40,99]))
         <li class="menu-item @if(str_contains(Request::url(), route('monitoring-kontrak'))) active @endif">
             <a href="{{route('monitoring-kontrak')}}" class="menu-link">
@@ -154,24 +160,13 @@
             </a>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2]))
+        @if(in_array(Auth::user()->role_id,[2,4,6,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-account-search-outline"></i>
                 <div data-i18n="Kontrak">Training</div>
             </a>
             <ul class="menu-sub">
-=======
-        <ul class="menu-inner">
-            <li
-                class="menu-item @if(Request::url() === route('home') || Request::url() === route('dashboard')) active @endif">
-                <a href="{{route('home')}}" class="menu-link">
-                    <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
-                    <div data-i18n="Dashboards">Home</div>
-                </a>
-            </li>
-            @if(in_array(Auth::user()->role_id, [2, 31, 32, 33, 52, 54, 55, 56, 53, 56, 96, 97, 40, 98, 99, 100]))
->>>>>>> shelter-cais/developer_jalu
                 <li class="menu-item">
                     <a href="javascript:void(0)" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons mdi mdi-chart-box-outline"></i>
@@ -330,11 +325,10 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2]))
+        @if(in_array(Auth::user()->role_id,[2,4,6,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-account-multiple"></i>
@@ -356,7 +350,7 @@
             </ul>
         </li>
         @endif
-        @if(in_array(Auth::user()->role_id,[2]))
+        @if(in_array(Auth::user()->role_id,[2,29]))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-package-variant-closed-plus"></i>
@@ -370,12 +364,14 @@
                     </a>
                 </li>
                 <li class="menu-item @if(Request::url() === route('purchase-order')) active @endif">
+                @if(in_array(Auth::user()->role_id,[2]))
+                <li class="menu-item">
                     <a href="{{route('purchase-order')}}" class="menu-link">
 
                         <div data-i18n="Purchase Order">Purchase Order</div>
                     </a>
                 </li>
-
+                @endif
             </ul>
         </li>
         @endif
@@ -395,15 +391,6 @@
                 <li class="menu-item @if(str_contains(Request::url(), route('tim-sales'))) active @endif">
                     <a href="{{route('tim-sales')}}" class="menu-link">
                         <div data-i18n="Tim Sales">Tim Sales</div>
-=======
-            @endif
-            @if(in_array(Auth::user()->role_id, [2, 36, 57, 58, 59]))
-                <!-- MASTER DATA -->
-                <li class="menu-item">
-                    <a href="javascript:void(0)" class="menu-link menu-toggle">
-                        <i class="menu-icon tf-icons mdi mdi-database-outline"></i>
-                        <div data-i18n="Master Data">Master Data</div>
->>>>>>> shelter-cais/developer_jalu
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item @if(str_contains(Request::url(), route('tim-sales'))) active @endif">
@@ -457,19 +444,18 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
 
                 <li class="menu-item @if(str_contains(Request::url(), route('training'))) active @endif">
                 <li class="menu-item @if(Request::url() == route('training')) active @endif">
                     <a href="{{route('training')}}" class="menu-link">
                         <div data-i18n="Training">Training</div>
-=======
+                    </a>
+                </li>
                 <!-- SUPPLIER -->
                 <li class="menu-item">
                     <a href="javascript:void(0)" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons mdi mdi-truck"></i>
                         <div data-i18n="Supplier">Master Supplier</div>
->>>>>>> shelter-cais/developer_jalu
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item @if(str_contains(Request::url(), route('supplier'))) active @endif">
@@ -494,7 +480,6 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
                 @if(in_array( Auth::user()->role_id,[2]))
                 <li class="menu-item @if(str_contains(Request::url(), route('position'))) active @endif">
                     <a href="{{route('position')}}" class="menu-link">
@@ -514,13 +499,11 @@
                 <li class="menu-item @if(str_contains(Request::url(), route('barang'))) active @endif">
                     <a href="{{route('barang')}}" class="menu-link">
                         <div data-i18n="Semua Barang">Semua Barang</div>
-=======
                 <!-- TRAINING SDT -->
                 <li class="menu-item">
                     <a href="javascript:void(0)" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons mdi mdi-school-outline"></i>
                         <div data-i18n="Training SDT">Master Training SDT</div>
->>>>>>> shelter-cais/developer_jalu
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
@@ -550,7 +533,6 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
                 <li class="menu-item @if(Request::url() === route('training-gada-harga')) active @endif">
                     <a href="{{route('training-gada-harga')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
@@ -572,13 +554,11 @@
                 <li class="menu-item @if(str_contains(Request::url(), route('barang.kaporlap'))) active @endif">
                     <a href="{{route('barang.kaporlap')}}" class="menu-link">
                         <div data-i18n="Kaporlap">Kaporlap</div>
-=======
                 <!-- SETTING -->
                 <li class="menu-item">
                     <a href="javascript:void(0)" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons mdi mdi-cog-outline"></i>
                         <div data-i18n="Setting">Setting</div>
->>>>>>> shelter-cais/developer_jalu
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item @if(str_contains(Request::url(), route('jabatan'))) active @endif">
@@ -647,7 +627,6 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
                 <li class="menu-item @if(str_contains(Request::url(), route('barang.ohc'))) active @endif">
                     <a href="{{route('barang.ohc')}}" class="menu-link">
                         <div data-i18n="OHC">OHC</div>
@@ -660,7 +639,7 @@
                 </li>
             </ul>
         </li>
-        <!-- TR -->
+        <!-- Jenis Barang -->
          <li class="menu-item @if(str_contains(Request::url(), route('jenis-barang'))) active @endif">
                     <a href="{{route('jenis-barang')}}" class="menu-link">
                         <i class="menu-icon tf-icons mdi mdi-view-list-outline"></i>
@@ -668,7 +647,7 @@
                     </a>
                 </li>
         <!-- TRAINING SDT -->
-        <li class="menu-item">
+        <!-- <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-school-outline"></i>
                 <div data-i18n="Training SDT">Master Training SDT</div>
@@ -700,7 +679,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> -->
         <!-- SETTING -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -733,6 +712,19 @@
                         <div data-i18n="Aplikasi Pendukung">Aplikasi Pendukung</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('aplikasi-pendukung'))) active @endif">
+                    <a href="{{route('role')}}" class="menu-link">
+                        <div data-i18n="Role">Role</div>
+                    </a>
+                </li>
+                @if(in_array(Auth::user()->role_id,[2]))
+                <li class="menu-item @if(str_contains(Request::url(), route('master.menu')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+                    <a href="{{route('master.menu')}}" class="menu-link">
+                    <i class="menu-icon tf-icons mdi mdi-playlist-star"></i>
+                    <div data-i18n="Menu">Master Menu</div>
+                    </a>
+                </li>
+                @endif
             </ul>
         </li>
         <!-- KEUANGAN & LAINNYA -->
@@ -774,10 +766,15 @@
                 </li>
             </ul>
         </li>
-=======
->>>>>>> shelter-cais/developer_jalu
 
+        <!-- Loyalty Customer -->
 
+        <li class="menu-item @if(str_contains(Request::url(), route('loyalty')) && str_contains(Request::url(), 'customer-activity')==false)) active @endif">
+            <a href="{{route('loyalty')}}" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-tag-heart-outline"></i>
+            <div data-i18n="Loyalty Customer">Loyalty Customer</div>
+            </a>
+        </li>
 
                 <li class="menu-item">
                     <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -819,107 +816,77 @@
                         @endif
                     </ul>
                 </li>
-            @endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <!-- <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-invoice-list-outline"></i>
-            <div data-i18n="Quotation">Quotation</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-format-list-text"></i>
-            <div data-i18n="SPK">SPK</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-sign"></i>
-            <div data-i18n="PKS">PKS</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-file-refresh-outline"></i>
-            <div data-i18n="Adendum">Adendum</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons mdi mdi-page-next-outline"></i>
-            <div data-i18n="Form Lanjutan">Form Lanjutan</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Quotation Lanjutan">Quotation Lanjutan</div>
+                @if(in_array(Auth::user()->role_id,[2]))
+                <li class="menu-item @if(str_contains(Request::url(), route('leads.terhapus'))) active @endif">
+                    <a href="{{route('leads.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>Leads Dihapus</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="SPK Lanjutan">SPK Lanjutan</div>
+                <li class="menu-item @if(str_contains(Request::url(), route('quotation.terhapus'))) active @endif">
+                    <a href="{{route('quotation.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>Quotation Dihapus</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="SPK Lanjutan">PKS Lanjutan</div>
+                <li class="menu-item @if(str_contains(Request::url(), route('spk.terhapus'))) active @endif">
+                    <a href="{{route('spk.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>SPK Dihapus</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="SPK Lanjutan">Adendum Lanjutan</div>
+                <li class="menu-item @if(str_contains(Request::url(), route('pks.terhapus'))) active @endif">
+                    <a href="{{route('pks.terhapus')}}" class="menu-link">
+                        <i class="menu-icon tf-icons mdi mdi-delete"></i>
+                        <div>PKS Dihapus</div>
                     </a>
                 </li>
+                @endif
             </ul>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id,[2,4,6,8,19,32,33,40,47,49,50,51,52,56,59,61,62,63,  6,17,24,31,55,   4,5,57,58,60]))
+        <!-- TRAINING SDT -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-file-cabinet"></i>
-                <div data-i18n="Kontrak">Kontrak</div>
+                <i class="menu-icon tf-icons mdi mdi-school-outline"></i>
+                <div data-i18n="Training SDT">Master Training SDT</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Monitoring Kontrak">Monitoring Kontrak</div>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-materi'))) active @endif">
+                    <a href="{{route('training-materi')}}" class="menu-link">
+                        <div data-i18n="Training Materi">Training Materi</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="menu-icon tf-icons mdi mdi-circle-medium"></i>
-                        <div data-i18n="Terminate Kontrak">Terminate Kontrak</div>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-divisi'))) active @endif">
+                    <a href="{{route('training-divisi')}}" class="menu-link">
+                        <div data-i18n="Training Divisi">Training Divisi</div>
                     </a>
                 </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-trainer'))) active @endif">
+                    <a href="{{route('training-trainer')}}" class="menu-link">
+                        <div data-i18n="Training Trainer">Training Trainer</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-area'))) active @endif">
+                    <a href="{{route('training-area')}}" class="menu-link">
+                        <div data-i18n="Training Area">Training Area</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('training-client'))) active @endif">
+                    <a href="{{route('training-client')}}" class="menu-link">
+                        <div data-i18n="Training Client">Training Client</div>
+                    </a>
+                </li>
+                <li class="menu-item @if(str_contains(Request::url(), route('whatsapp'))) active @endif">
+                    <a href="{{route('whatsapp')}}" class="menu-link">
+                        <div data-i18n="whatsapp">Whatsapp</div>
+                    </a>
+                </li>
+
             </ul>
         </li>
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link">
-            <i class="menu-icon tf-icons mdi mdi-chart-areaspline"></i>
-            <div data-i18n="Report">Report</div>
-            </a>
-        </li> -->
+        @endif
         </ul>
     </div>
 </aside>

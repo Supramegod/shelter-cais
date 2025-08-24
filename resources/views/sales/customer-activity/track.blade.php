@@ -1,7 +1,6 @@
 @extends('layouts.master')
 @section('title', 'Track Customer Activity')
 @section('content')
-<<<<<<< HEAD
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="row gy-4 mb-5">
         <!-- Congratulations card -->
@@ -38,33 +37,6 @@
                             @foreach($quotation as $key => $quotation)
                                 <div class="row mb-3">
                                     <h5>Quotation {{$key+1}}</h5>
-=======
-    <div class="container-fluid flex-grow-1 container-p-y">
-        <div class="row gy-4 mb-5">
-            <!-- Congratulations card -->
-            <div class="col-xl-12">
-                <div class="card h-100">
-                    <div class="card-header d-flex w-100" style="justify-content: space-between;">
-                        <h4 class="card-title mb-1 d-flex flex-wrap">Track Aktifitas
-                            @if($tipe == 'Leads')
-                                Leads / Customer
-                            @elseif($tipe == 'Quotation')
-                                Quotation
-                            @elseif($tipe == 'SPK')
-                                SPK
-                            @elseif($tipe == 'PKS')
-                                PKS
-                            @endif
-                        </h4>
-                        <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <!-- Informasi Leads / Customer -->
-                            <div class="col-md-4 mb-3">
-                                <div class="row mb-5">
-                                    <h5>Informasi Leads / Customer</h5>
->>>>>>> shelter-cais/developer_jalu
                                     <ul class="list-group">
                                         <li class="list-group-item">Nomor : <b>{{$leads->nomor}}</b></li>
                                         <li class="list-group-item">Nama : {{$leads->nama_perusahaan}}</li>
@@ -125,5 +97,5 @@
 @endsection
 
 @section('pageScript')
-    <script src="{{ asset('assets/js/dashboards-crm.js') }}"></script>
+    <script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
 @endsection

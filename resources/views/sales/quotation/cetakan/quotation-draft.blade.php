@@ -111,7 +111,7 @@
 
     <!-- Halaman 1: Cover -->
     <div class="cover">
-        <img src="{{ asset('assets/img/cover-quotation-1.png') }}" alt="Cover Image">
+        <img src="{{ asset('public/assets/img/cover-quotation-1.png') }}" alt="Cover Image">
     </div>
 
     <!-- Halaman 2: Kata Pengantar -->

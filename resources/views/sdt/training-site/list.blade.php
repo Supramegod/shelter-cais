@@ -81,7 +81,7 @@
 
             var table = $('#table-data').DataTable({
                 scrollX: true,
-                "iDisplayLength": 25,
+                "iDisplayLength": 100,
                 'processing': true,
                 'language': {
                 'loadingRecords': '&nbsp;',
@@ -94,7 +94,7 @@
                     },
                 },   
                 "order":[
-                    [0,'desc']
+                    [7,'desc']
                 ],
                 columns:[{
                     data : 'id',
@@ -102,27 +102,27 @@
                     visible: false,
                     searchable: false
                 },{
-                    data : 'client',
+                    data : 'nama_site',
                     name : 'client',
                     className:'text-left'
                 },{
-                    data : 'laman',
+                    data : 'bu',
                     name : 'laman',
                     className:'text-left'
                 },{
-                    data : 'area',
+                    data : 'branch',
                     name : 'area',
                     className:'text-left'
                 },{
-                    data : 'kab_kota',
+                    data : 'kota',
                     name : 'kab_kota',
                     className:'text-left'
                 },{
-                    data : 'tgl_gabung',
+                    data : 'tanggal_gabung',
                     name : 'tgl_gabung',
                     className:'text-left'
                 },{
-                    data : 'target_per_tahun',
+                    data : 'training_tahun',
                     name : 'target_per_tahun',
                     className:'text-left'
                 },{

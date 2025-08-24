@@ -51,15 +51,12 @@ class PositionController extends Controller
                 ->addColumn('aksi', function ($data) {
                     return '
         <div class="justify-content-center d-flex">
-            <a href="' . route('position.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs">View</a> &nbsp;
-
+            <a href="' . route('position.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a> &nbsp;
             <form action="' . route('position.delete', $data->id) . '" method="POST" style="display:inline;">
-                ' . csrf_field() . '
-                ' . method_field('POST') . '
-                <button type="submit" class="btn btn-danger waves-effect btn-xs" onclick="return confirm(\'Yakin ingin menghapus?\')">Delete</button>
+                ' . csrf_field() . '' . method_field('POST') . '
+                <button type="submit" class="btn btn-danger waves-effect btn-xs" onclick="return confirm(\'Yakin ingin menghapus?\')"><i class="mdi mdi-delete"></i>&nbsp;Delete</button>
             </form>
-        </div>
-    ';
+        </div>';
                 })
                 ->rawColumns(['aksi'])
                 ->make(true);
@@ -193,7 +190,7 @@ class PositionController extends Controller
         } catch (\Exception $e) {
 
             SystemController::saveError($e, Auth::user(), $request);
-            abort(500);
+            return redirect()->back()->with('error', 'Data gagal Ditambahkan');
         }
     }
     public function requirementEdit(Request $request)

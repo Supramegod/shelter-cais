@@ -22,6 +22,7 @@ use App\Http\Controllers\Sales\PksController;
 use App\Http\Controllers\Sales\MonitoringKontrakController;
 use App\Http\Controllers\Sales\PutusKontrakController;
 use App\Http\Controllers\Sales\WhatsappController;
+use App\Http\Controllers\Sales\IssueController;
 
 use App\Http\Controllers\Master\PlatformController;
 use App\Http\Controllers\Master\AplikasiPendukungController;
@@ -59,7 +60,10 @@ use App\Http\Controllers\Gada\TrainingGadaPembayaranController;
 use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
+use App\Http\Controllers\Master\LoyaltyController;
+use App\Http\Controllers\Master\MasterMenuController;
 use App\Http\Controllers\Master\PositionController;
+use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Sales\PurchaseController;
 
 use App\Http\Controllers\Dashboard\DashboardManagerCrmController;
@@ -70,6 +74,18 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'login')->name('login');
     Route::post('/logout', 'logout')->name('logout');
     Route::post('/authenticate', 'authenticate')->name('authenticate');
+});
+
+Route::controller(MasterMenuController::class)->group(function() {
+    Route::get('/master/menu', 'index')->name('master.menu');
+    Route::get('/master/menu/list', 'list')->name('master.menu.list');
+    Route::get('/master/menu/add', 'add')->name('master.menu.add');
+    Route::get('/master/menu/list/role', 'listRole')->name('master.menu.list-role');
+    Route::post('/master/menu/simpan-akses', 'simpanRole')->name('master.menu.simpan-akses');
+    Route::post('/master/menu/save', 'save')->name('master.menu.save');
+    Route::get('/master/menu/view/{id}', 'view')->name('master.menu.view');
+    Route::post('/master/menu/update/{id}', 'update')->name('master.menu.update');
+    Route::post('/master/menu/delete/{id}', 'delete')->name('master.menu.delete');
 });
 
 //form luar
@@ -109,6 +125,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
         Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
         Route::get('/dashboard/training-gada', 'dashboardTrainingGada')->name('dashboard-training-gada');
+        Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
+        Route::get('/dashboard/edit-patch', 'editPatch')->name('change.log');
+        Route::post('/dashboard/update-patch', 'updatePatch')->name('update.log');
 
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
@@ -285,7 +304,19 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/pks/get-detail-quotation', 'getDetailQuotation')->name('pks.get-detail-quotation'); // ajax
     });
 
-    Route::controller(PksKelengkapanController::class)->group(function () {
+    Route::controller(IssueController::class)->group(function() {
+        Route::get('/sales/issue', 'index')->name('issue');
+        Route::get('/sales/issue/list', 'list')->name('issue.list');
+        Route::get('/sales/issue/lead-list', 'leadsList')->name('issue.leads-list');
+        Route::get('/sales/issue/pks-list', 'pksList')->name('issue.pks-list');
+        Route::get('/sales/issue/site-list', 'siteList')->name('issue.site-list');
+        Route::get('/sales/issue/add', 'add')->name('issue.add');
+        Route::get('/sales/issue/view/{id}', 'view')->name('issue.view');
+        Route::post('/sales/issue/save', 'save')->name('issue.save');
+        Route::post('/sales/issue/update/{id}', 'update')->name('issue.update');
+        Route::post('/sales/issue/delete/{id}', 'delete')->name('issue.delete');
+    });
+    Route::controller(PksKelengkapanController::class)->group(function() {
         Route::get('/sales/lengkapi-quotation/add/{pksId}', 'add')->name('lengkapi-quotation.add');
         Route::post('/sales/lengkapi-quotation/save', 'save')->name('lengkapi-quotation.save');
         Route::get('/sales/lengkapi-quotation/step/{id}', 'step')->name('lengkapi-quotation.step');
@@ -506,6 +537,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/aplikasi-pendukung/list', 'list')->name('aplikasi-pendukung.list'); // ajax
 
     });
+    Route::controller(RoleController::class)->group(function() {
+        Route::get('/master/role', 'index')->name('role');
+        Route::get('/master/role/list', 'list')->name('role.list');
+        Route::get('/master/role/list-menu', 'listMenu')->name('role.list-menu');
+        Route::get('/master/role/view/{id}', 'view')->name('role.view');
+        Route::post('/master/role/update', 'updateAkses')->name('role.update-akses');
+    });
 
     Route::controller(JenisBarangController::class)->group(function () {
         Route::get('/master/jenis-barang', 'index')->name('jenis-barang');
@@ -722,6 +760,16 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/umk/list', 'list')->name('umk.list'); // ajax
         Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
+    });
+    Route::controller(LoyaltyController::class)->group(function() {
+        Route::get('/master/loyalty', 'index')->name('loyalty');
+        Route::get('/master/loyalty/list','list')->name('loyalty.list'); // ajax
+        Route::get('/master/loyalty/add', 'add')->name('loyalty.add');
+        Route::get('/master/loyalty/view/{id}', 'view')->name('loyalty.view');
+        Route::post('/master/loyalty/save', 'save')->name('loyalty.save');
+        Route::post('/master/loyalty/update/{id}', 'update')->name('loyalty.update');
+        Route::post('/master/loyalty/delete/{id}', 'delete')->name('loyalty.delete');
+
     });
 
     Route::controller(TrainingMateriController::class)->group(function () {

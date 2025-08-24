@@ -24,7 +24,7 @@ npm-debug.log
 yarn-error.log
 cais.zip
 public.zip
-
+.gitlab-ci.yml
 /.fleet
 /.idea
 /.vscode

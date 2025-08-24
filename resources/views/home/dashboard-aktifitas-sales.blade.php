@@ -258,7 +258,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitas))
                             <div class="text-center">
-                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -274,7 +274,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitasTipe))
                             <div class="text-center">
-                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -294,7 +294,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitasStatusLeads))
                             <div class="text-center">
-                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -315,7 +315,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitasVisit))
                             <div class="text-center">
-                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -340,7 +340,7 @@
                     <div class="card-body pt-2">
                         @if(empty($aktifitasSalesPerTanggal))
                             <div class="text-center">
-                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -362,7 +362,7 @@
                     <div class="card-body">
                         @if(empty($aktifitasSalesByTipePerTanggal))
                             <div class="text-center">
-                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -428,7 +428,7 @@
 @endsection
 
 @section('pageScript')
-    <script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/xlsx.full.min.js"></script>
     <script>
         const purpleColor = '#836AF9',
@@ -847,7 +847,7 @@
                         if (pivotData.length === 0) {
                             $('#output').html(`
                                 <div class="text-center">
-                                    <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid" style="max-width: 200px;">
+                                    <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid" style="max-width: 200px;">
                                 </div>
                                 <p class="text-center">Tidak ditemukan data</p>
                             `);

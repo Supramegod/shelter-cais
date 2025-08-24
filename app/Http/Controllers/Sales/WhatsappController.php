@@ -97,12 +97,12 @@ class WhatsappController extends Controller
             //     ])
             //     ->post('https://whatsapp.ulilworld.com/sessions/add', [
             //         'isLegacy' => 'false',
-            //         'id' => 'test1'
+            //         'id' => 'cais_prod'
             //     ]);
 
             $response = Http::asForm()->post('https://whatsapp.ulilworld.com/sessions/add', [
                 'isLegacy' => 'false',
-                'id' => 'test1',
+                'id' => 'cais_prod',
             ]);
 
             // dd($response->successful());
@@ -146,9 +146,9 @@ class WhatsappController extends Controller
             ->withHeaders([
                 'Authorization' => 'Bearer '.$tokenWhatsapp->value
             ])
-            ->post('https://whatsapp.ulilworld.com/chats/send?id=test1', [
+            ->post('https://whatsapp.ulilworld.com/chats/send?id=cais_prod', [
                 'receiver' => '628986362990',
-                'message' => 'test1',
+                'message' => 'cais_prod',
             ]);
 
             // dd($response->json());
@@ -178,7 +178,7 @@ class WhatsappController extends Controller
             ->withHeaders([
                 'Authorization' => 'Bearer '.$tokenWhatsapp->value
             ])
-            ->post('https://whatsapp.ulilworld.com/chats/send?id=test1', [
+            ->post('https://whatsapp.ulilworld.com/chats/send?id=cais_prod', [
                 'receiver' => $request->no_wa,
                 'message' => $request->message,
             ]);

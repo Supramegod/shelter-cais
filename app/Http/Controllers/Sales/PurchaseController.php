@@ -60,7 +60,7 @@ class PurchaseController extends Controller
             return DataTables::of($data)
                 ->addColumn('aksi', function ($data) {
                     return '<div class="justify-content-center d-flex">
-                                    <a href="' . route('purchase-request.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-magnify"></i></a> &nbsp;
+                                    <a href="' . route('purchase-request.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs">View</a> &nbsp;
                         </div>';
                 })
                 ->rawColumns(['aksi'])

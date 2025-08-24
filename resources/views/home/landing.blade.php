@@ -13,7 +13,7 @@
   <meta name="description" content="" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icons/favicon-shelter.png') }}" />
+  <link rel="icon" type="image/x-icon" href="{{ asset('public/assets/img/icons/favicon-shelter.png') }}" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,24 +22,24 @@
     rel="stylesheet" />
 
   <!-- Icons -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/materialdesignicons.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/fonts/materialdesignicons.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/fonts/flag-icons.css') }}" />
 
   <!-- Menu waves for no-customizer fix -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/node-waves/node-waves.css') }}" />
 
   <!-- Core CSS -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/front-page.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/core.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/theme-default.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/css/demo.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/front-page.css') }}" />
 
   <!-- Vendors CSS -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/nouislider/nouislider.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/swiper/swiper.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/nouislider/nouislider.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/swiper/swiper.css') }}" />
 
   <!-- Page CSS -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/front-page-landing.css') }}" />
+  <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/front-page-landing.css') }}" />
   <!-- Helpers -->
   <link href="
 https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
@@ -47,7 +47,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.min.css
   <script src="
 https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
 "></script>
-  <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/js/helpers.js') }}"></script>
   <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
   <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
   <script src="{{ asset('js/front-config.js') }}"></script>
@@ -55,10 +55,9 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
 </head>
 
 <body>
-  <script src="{{ asset('assets/vendor/js/dropdown-hover.js') }}"></script>
-  <script src="{{ asset('assets/vendor/js/mega-dropdown.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/js/dropdown-hover.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/js/mega-dropdown.js') }}"></script>
 
-<<<<<<< HEAD
     <!-- Navbar: Start -->
     <nav class="layout-navbar container-fluid shadow-none py-0" style="background-color:#121240 !important;display: flex;height: 80px !important;justify-content: center;align-items: center;">
         <div class="navbar navbar-expand-lg landing-navbar border-0 px-3 px-md-4" style="background-color:#121240 !important;">
@@ -93,20 +92,6 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
           <!-- navbar button: End -->
         </ul>
         <!-- Toolbar: End -->
-=======
-  <!-- Navbar: Start -->
-  <nav class="layout-navbar container-fluid shadow-none py-0"
-    style="background-color:#121240 !important;display: flex;height: 80px !important;justify-content: center;align-items: center;">
-    <div class="navbar navbar-expand-lg landing-navbar border-0 px-3 px-md-4"
-      style="background-color:#121240 !important;">
-      <!-- Menu logo wrapper: Start -->
-      <div class="navbar-brand app-brand demo d-xl-flex py-0 ml-1">
-        <a href="https://shelterindonesia.id" class="app-brand-link gap-2">
-          <span class="app-brand-logo demo">
-            <img src="{{asset('assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
-          </span>
-        </a>
->>>>>>> shelter-cais/developer_jalu
       </div>
       <!-- Menu logo wrapper: End -->
       <!-- Menu wrapper: Start -->
@@ -123,7 +108,6 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
       <!-- Toolbar: Start -->
       <ul class="navbar-nav flex-row align-items-center ms-auto">
 
-<<<<<<< HEAD
     <div data-bs-spy="scroll" class="scrollspy-example">
       <!-- Contact Us: Start -->
       <section id="landingContact" class="section-py bg-body landing-contact" style="padding-top:2rem !important">
@@ -222,18 +206,12 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
         </div>
       </section>
       <!-- Contact Us: End -->
-=======
-        <!-- navbar button: End -->
-      </ul>
-      <!-- Toolbar: End -->
->>>>>>> shelter-cais/developer_jalu
     </div>
   </nav>
   <!-- Navbar: End -->
 
   <!-- Sections:Start -->
 
-<<<<<<< HEAD
     <!-- Footer: Start -->
     <footer class="landing-footer">
       <div class="footer-top position-relative overflow-hidden" style="background-color:#121240 !important">
@@ -243,22 +221,6 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
           class="footer-bg banner-bg-img" />
         <div class="container position-relative">
           <div class="row gx-0 gy-4 g-md-5">
-=======
-  <div data-bs-spy="scroll" class="scrollspy-example">
-    <!-- Contact Us: Start -->
-    <section id="landingContact" class="section-py bg-body landing-contact" style="padding-top:2rem !important">
-      <div class="container bg-icon-left position-relative">
-        <form class="card-body overflow-hidden" action="{{route('contact.save')}}" method="POST">
-          @csrf
-          <input type="hidden" name="platform" id="platform" value="{{$platform}}">
-          <img src="{{ asset('assets/img/front-pages/icons/bg-left-icon-light.png') }}" alt="section icon"
-            class="position-absolute top-0 start-0" data-speed="1" />
-          <h6 class="text-center fw-semibold d-flex justify-content-center align-items-center mb-5">
-
-            <span class="text-uppercase" style="font-size:3rem">KONTAK</span>
-          </h6>
-          <div class="row gy-4">
->>>>>>> shelter-cais/developer_jalu
             <div class="col-lg-5">
               <div class="card h-100">
                 <div class="rounded text-white card-body p-5" style="background-color:#121240">
@@ -357,15 +319,9 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
         <div class="row gx-0 gy-4 g-md-5">
           <div class="col-lg-5">
             <a href="https://shelterindonesia.id" class="app-brand-link gap-2 mb-3">
-<<<<<<< HEAD
             <span class="app-brand-logo demo">
                 <img src="{{ asset('public/assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
             </span>
-=======
-              <span class="app-brand-logo demo">
-                <img src="{{asset('assets/img/icons/icon-light-shelter.png')}}" style="width:200px" alt="Logo" />
-              </span>
->>>>>>> shelter-cais/developer_jalu
             </a>
             <p class="footer-text footer-logo-description mb-4">
               Facility Management Service
@@ -431,44 +387,30 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
   </footer>
   <!-- Footer: End -->
 
-<<<<<<< HEAD
     <!-- Core JS -->
     <!-- build:js assets/assets/vendor/js/core.js -->
 
     <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/libs/node-waves/node-waves.js') }}"></script>
-=======
-  <!-- Core JS -->
-  <!-- build:js assets/assets/vendor/js/core.js -->
->>>>>>> shelter-cais/developer_jalu
-
-  <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
-  <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/node-waves/node-waves.js') }}"></script>
-
   <!-- endbuild -->
 
   <!-- Vendors JS -->
-  <script src="{{ asset('assets/vendor/libs/nouislider/nouislider.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/swiper/swiper.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/libs/nouislider/nouislider.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/libs/swiper/swiper.js') }}"></script>
   <script async src="https://www.google.com/recaptcha/api.js">
 
     <!-- Main JS -->
-    <script src="{{ asset('assets/js/front-main.js') }}"></script>
+    <script src="{{ asset('public/assets/js/front-main.js') }}"></script>
 
   <!-- Page JS -->
-  <script src="{{ asset('assets/js/front-page-landing.js') }}"></script>
+  <script src="{{ asset('public/assets/js/front-page-landing.js') }}"></script>
 </body>
 
 </html>
 
 <script>
-<<<<<<< HEAD
 @if(session()->has('success'))
-=======
-    @if(session()->has('success'))
->>>>>>> shelter-cais/developer_jalu
     Swal.fire({
       title: 'Pemberitahuan',
     html: '{{session()->get('success')}}',
@@ -478,13 +420,8 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
       },
     buttonsStyling: false
     });
-<<<<<<< HEAD
 @endif
 @if(session()->has('error'))
-=======
-  @endif
-    @if(session()->has('error'))
->>>>>>> shelter-cais/developer_jalu
     Swal.fire({
       title: 'Pemberitahuan',
     html: '{{session()->get('error')}}',
@@ -494,10 +431,5 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js
       },
     buttonsStyling: false
     });
-<<<<<<< HEAD
 @endif
 </script>
-=======
-  @endif  
-</script>
->>>>>>> shelter-cais/developer_jalu

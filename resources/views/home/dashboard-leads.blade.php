@@ -130,7 +130,6 @@
         </div>
         </div>
       </div>
-<<<<<<< HEAD
       <div class="col-lg-4 col-12 mb-4">
         <div class="card">
           <div class="card-header header-elements">
@@ -153,10 +152,8 @@
             <canvas id="polarChart" class="chartjs" data-height="337" height="200"></canvas>
           </div>
         </div>
-=======
       <div class="card-body pt-2">
         <canvas id="lineAreaChart" class="chartjs" data-height="450" height="400"></canvas>
->>>>>>> shelter-cais/developer_jalu
       </div>
       </div>
     </div>
@@ -241,7 +238,7 @@
 @endsection
 
 @section('pageScript')
-  <script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
 
   <script>
     const purpleColor = '#836AF9',
@@ -384,17 +381,10 @@
     arrDataPolar.forEach(function (element) {
     arrLabelPolar.push(element.platform);
     arrDataPolarChart.push(element.jumlah_leads);
-<<<<<<< HEAD
   });
 
   const polarChart = document.getElementById('polarChart');
   if (polarChart) {
-=======
-    });
-
-    const polarChart = document.getElementById('polarChart');
-    if (polarChart) {
->>>>>>> shelter-cais/developer_jalu
     const polarChartVar = new Chart(polarChart, {
       type: 'polarArea',
       data: {
@@ -505,7 +495,6 @@
     arrDougData.forEach(function (element) {
     labelDoug.push(element.kebutuhan);
     dataDoug.push(element.jumlah_leads);
-<<<<<<< HEAD
   });
   console.log(labelDoug);
   console.log(dataDoug);
@@ -513,15 +502,6 @@
 
   const doughnutChartKebutuhan = document.getElementById('doughnutChartKebutuhan');
   if (doughnutChartKebutuhan) {
-=======
-    });
-    console.log(labelDoug);
-    console.log(dataDoug);
-
-
-    const doughnutChartKebutuhan = document.getElementById('doughnutChartKebutuhan');
-    if (doughnutChartKebutuhan) {
->>>>>>> shelter-cais/developer_jalu
     const doughnutChartKebutuhanVar = new Chart(doughnutChartKebutuhan, {
       type: 'doughnut',
       data: {

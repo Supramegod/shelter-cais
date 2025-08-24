@@ -314,7 +314,7 @@
                             value.id + '" />' +
                             '</td>' +
                             '<td>' + (value.qty ?? '') + '</td>' +
-                            '<td>' + (value.stok_barang ?? '') + '</td>' +
+                            '<td>' + (value.stok_barang ?? '0') + '</td>' +
                             '<td>' + (value.satuan ?? '') + '</td>' +
                             '<td>' + (value.merk ?? '') + '</td>' +
                             '<td>' + (value.jenis_barang ?? '') + '</td>' +
@@ -327,9 +327,6 @@
                 }
             });
         };
-
-
-
 
         $('form').bind("keypress", function(e) {
             if (e.keyCode == 13) {
