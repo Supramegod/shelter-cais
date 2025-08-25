@@ -133,7 +133,7 @@ class NotificationController extends Controller
                 $uploadPath = "uploads/lampiran_notification/{$dateFolder}";
 
                 // Pastikan direktori ada
-                if (!file_exists(public_path($uploadPath))) {
+                if (!file_exists(filename: public_path($uploadPath))) {
                     mkdir(public_path($uploadPath), 0755, true);
                 }
 
@@ -277,4 +277,11 @@ class NotificationController extends Controller
             ], 500);
         }
     }
+    public function getNow()
+    {
+        return response()->json([
+            'now' => now()->format('Y-m-d\TH:i') // format cocok untuk datetime-local
+        ]);
+    }
+
 }

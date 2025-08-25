@@ -384,8 +384,8 @@
 
     <div class="dashboard-container">
         <div class="header">
-            <h1>Master Menu Dashboard</h1>
-            <p>Kelola semua data master perusahaan dengan antarmuka yang intuitif</p>
+            <h1>Master Menu </h1>
+            <p>Kelola semua data master</p>
         </div>
         <div class="cards-grid">
             <div class="card">
@@ -455,7 +455,7 @@
                     <i class="mdi mdi-truck card-icon"></i>
                     <div class="card-title-container">
                         <h3 class="card-title">Master Supplier</h3>
-                        <span class="card-badge">4 Submenu</span>
+                        <span class="card-badge">3 Submenu</span>
                     </div>
                     <i class="mdi mdi-chevron-down toggle-indicator"></i>
                 </div>
@@ -464,10 +464,6 @@
                         <a href="{{ route('supplier') }}" class="submenu-item">
                             <i class="mdi mdi-format-list-bulleted submenu-icon"></i>
                             <span class="submenu-text">Semua Supplier</span>
-                        </a>
-                        <a href="{{ route('supplier.add') }}" class="submenu-item">
-                            <i class="mdi mdi-plus-circle submenu-icon"></i>
-                            <span class="submenu-text">Tambah Supplier</span>
                         </a>
                         <a href="{{ route('supplier.Gr') }}" class="submenu-item">
                             <i class="mdi mdi-check-circle submenu-icon"></i>

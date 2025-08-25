@@ -11,16 +11,21 @@
     <!-- Content -->
     <div class="container-fluid flex-grow-1 container-p-y">
         <!-- Row -->
-        <div class="row row-sm mt-2">
+         <div class="row row-sm mt-2">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header d-flex" style="padding-bottom: 0px !important;">
-                        <div class="col-md-6 text-left col-12 my-auto">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="padding-bottom: 0px !important;">
+                        <div class="text-left">
                             <h3 class="page-title">Supplier</h3>
                             <ol class="breadcrumb" style="background-color:white !important;padding:0 !important">
                                 <li class="breadcrumb-item"><a href="javascript:void(0);">Master</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Supplier</li>
                             </ol>
+                        </div>
+                        <div class="text-right">
+                            <a href="{{ route('supplier.add') }}" class="btn btn-primary">
+                                <i class="mdi mdi-plus"></i> Tambah Supplier
+                            </a>
                         </div>
                     </div>
                     <div class="card-body pt-4">

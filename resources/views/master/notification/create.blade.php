@@ -85,7 +85,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Title</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="title" class="form-control" placeholder="Judul notifikasi" required>
+                                    <input type="text" name="title" class="form-control" placeholder="Judul notifikasi"
+                                        required>
                                 </div>
                             </div>
 
@@ -93,7 +94,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Body</label>
                                 <div class="col-sm-10">
-                                    <textarea name="body" class="form-control" rows="4" placeholder="Isi notifikasi" required></textarea>
+                                    <textarea name="body" class="form-control" rows="4" placeholder="Isi notifikasi"
+                                        required></textarea>
                                 </div>
                             </div>
 
@@ -101,7 +103,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Kirim Pada</label>
                                 <div class="col-sm-10">
-                                    <input type="datetime-local" name="kirim_pada" class="form-control" required>
+                                    <input type="datetime-local" id="kirim_pada" name="kirim_pada" class="form-control"
+                                        required>
                                 </div>
                             </div>
 
@@ -112,13 +115,16 @@
                                     <div class="card border-dashed border-2" id="dropzone-card">
                                         <div class="card-body text-center py-5" id="dropzone-area">
                                             <div id="drop-area">
-                                                <i class="mdi mdi-cloud-upload-outline text-muted mb-3" style="font-size: 48px;"></i>
+                                                <i class="mdi mdi-cloud-upload-outline text-muted mb-3"
+                                                    style="font-size: 48px;"></i>
                                                 <h5 class="text-muted mb-2">Drop files here or click to browse</h5>
-                                                <p class="text-muted small mb-3">Maximum 3 files • PDF, DOC, DOCX, JPG, PNG (Max 10MB each)</p>
+                                                <p class="text-muted small mb-3">Maximum 3 files • PDF, DOC, DOCX, JPG, PNG
+                                                    (Max 10MB each)</p>
                                                 <button type="button" class="btn btn-outline-primary" id="browse-files">
                                                     <i class="mdi mdi-folder-open-outline me-2"></i>Browse Files
                                                 </button>
-                                                <input type="file" id="file-input" name="files[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;" max="3">
+                                                <input type="file" id="file-input" name="files[]" multiple
+                                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;" max="3">
                                             </div>
                                             <div id="file-preview" class="mt-4" style="display: none;">
                                                 <div class="row" id="file-list">
@@ -127,7 +133,8 @@
                                             </div>
                                             <div id="upload-progress" style="display: none;">
                                                 <div class="progress mt-3">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">0%</div>
+                                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                                        role="progressbar" style="width: 0%;">0%</div>
                                                 </div>
                                                 <p class="text-muted mt-2">Uploading...</p>
                                             </div>
@@ -152,6 +159,15 @@
 
 @section('pageScript')
     <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "{{ route('notifications.now') }}",
+                type: "GET",
+                success: function (response) {
+                    $('#kirim_pada').val(response.now);
+                }
+            });
+        });
         document.addEventListener('DOMContentLoaded', function () {
             const dropzoneArea = document.getElementById('dropzone-area');
             const fileInput = document.getElementById('file-input');
@@ -232,17 +248,17 @@
                         const fileItem = document.createElement('div');
                         fileItem.className = 'col-lg-4 col-md-6 mb-3';
                         fileItem.innerHTML = `
-                            <div class="d-flex align-items-center bg-light p-3 rounded">
-                                <i class="${getFileIcon(file.type)} text-primary file-icon me-3"></i>
-                                <div class="flex-grow-1">
-                                    <div class="file-name fw-bold small">${file.name}</div>
-                                    <small class="text-muted">${formatFileSize(file.size)}</small>
-                                </div>
-                                <button type="button" class="btn btn-icon btn-sm btn-outline-danger ms-2" onclick="removeFile(${index})">
-                                    <i class="mdi mdi-close"></i>
-                                </button>
-                            </div>
-                        `;
+                                    <div class="d-flex align-items-center bg-light p-3 rounded">
+                                        <i class="${getFileIcon(file.type)} text-primary file-icon me-3"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="file-name fw-bold small">${file.name}</div>
+                                            <small class="text-muted">${formatFileSize(file.size)}</small>
+                                        </div>
+                                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger ms-2" onclick="removeFile(${index})">
+                                            <i class="mdi mdi-close"></i>
+                                        </button>
+                                    </div>
+                                `;
                         fileList.appendChild(fileItem);
                     });
                 } else {
@@ -292,21 +308,21 @@
             // Form submission handler
             $('#notificationForm').on('submit', function (e) {
                 e.preventDefault(); // Prevent default form submission
-                
+
                 let formData = new FormData(this);
-                
+
                 // Show progress bar
                 $('#upload-progress').show();
-                
+
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
-                    xhr: function() {
+                    xhr: function () {
                         var xhr = new window.XMLHttpRequest();
-                        xhr.upload.addEventListener("progress", function(evt) {
+                        xhr.upload.addEventListener("progress", function (evt) {
                             if (evt.lengthComputable) {
                                 var percentComplete = Math.round((evt.loaded / evt.total) * 100);
                                 $('.progress-bar').css('width', percentComplete + '%')
@@ -316,7 +332,7 @@
                         }, false);
                         return xhr;
                     },
-                    success: function(response) {
+                    success: function (response) {
                         $('#upload-progress').hide();
                         Swal.fire({
                             title: 'Success!',
@@ -329,16 +345,16 @@
                             }
                         });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         $('#upload-progress').hide();
                         let errorMessage = 'An error occurred while saving the notification.';
-                        
+
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMessage = xhr.responseJSON.message;
                         } else if (xhr.responseJSON && xhr.responseJSON.errors) {
                             errorMessage = Object.values(xhr.responseJSON.errors).flat().join('\n');
                         }
-                        
+
                         Swal.fire({
                             title: 'Error!',
                             text: errorMessage,

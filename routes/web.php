@@ -497,6 +497,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/notifications/save', 'save')->name('notifications.save');
         Route::delete('/notifications/{id}', 'destroy')->name('notifications.destroy');
         Route::get('/notifications/data', 'data')->name('notifications.data');
+        Route::get('/notifications/now', 'getNow')->name('notifications.now');
 
         // Route yang kurang - untuk modal file preview
         Route::get('/notifications/{id}/files', 'getFiles')->name('notifications.files');

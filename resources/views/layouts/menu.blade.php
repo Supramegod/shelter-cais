@@ -321,11 +321,6 @@
                                 <div data-i18n="Semua Supplier">Semua Supplier</div>
                             </a>
                         </li>
-                        <li class="menu-item @if(str_contains(Request::url(), route('supplier.add'))) active @endif">
-                            <a href="{{ route('supplier.add') }}" class="menu-link">
-                                <div data-i18n="Tambah Supplier">Tambah Supplier</div>
-                            </a>
-                        </li>
                         <li class="menu-item @if(str_contains(Request::url(), route('supplier.Gr'))) active @endif">
                             <a href="{{ route('supplier.Gr') }}" class="menu-link">
                                 <div data-i18n="Good Receipt">Good Receipt</div>
