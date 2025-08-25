@@ -40,9 +40,9 @@
 
                     <div class="container px-2 py-5">
                         <h4>Role Akses</h4>
-                        <div class=" col-sm-8 table-responsive overflow-hidden table-data">
+                        <div class=" col-sm-12 table-responsive overflow-hidden table-data">
                             <table id="table-data" class=" table w-100 table-hover table-bordered"
-                                style="text-wrap: nowrap;width:60%">
+                                style="text-wrap: nowrap;width:100%">
                                 <thead>
                                     <tr>
                                         <th class="text-center">ID</th>
@@ -155,7 +155,7 @@
 
         });
 
-        
+
         $('#btnSimpanRole').click(function() {
             let data = [];
             $('.perm-check').each(function() {

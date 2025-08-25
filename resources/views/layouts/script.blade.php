@@ -35,7 +35,7 @@
     <script src="{{ asset('public/assets/vendor/libs/i18n/i18n.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
     <script src="{{ asset('public/assets/vendor/js/menu.js') }}"></script>
-
+    <script src="{{ asset('public/assets/vendor/js/list-icon.js') }}"></script>
 <!-- endbuild -->
 
 <!-- Vendors JS -->

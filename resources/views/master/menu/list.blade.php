@@ -33,8 +33,8 @@
 
                                         <th class="text-center">Aksi</th>
                                         <th class="text-center">ID</th>
-                                        <th class="text-center">Menu</th>
                                         <th class="text-center">Kode</th>
+                                        <th class="text-center">Menu</th>
                                         <th class="text-center">Icon</th>
                                         <th class="text-center">URL</th>
                                         <th class="text-center">Created at</th>
@@ -131,29 +131,28 @@
                 },
             },
             "order": [
-                [0, 'desc']
+                [2, 'asc']
             ],
-            columns: [{
-                    data: 'aksi',
-                    name: 'aksi',
-                    width: "10%",
-                    orderable: false,
-                    searchable: false,
-                }, {
+            columns: [
+                {
                     data: 'id',
                     name: 'id',
                     visible: false,
                     searchable: false,
                     className: 'text-center'
-                }, {
-                    data: 'nama',
-                    name: 'nama',
-                    className: 'text-center'
-                }, {
+                },{
+                    data: 'aksi',
+                    name: 'aksi',
+                    width: "10%",
+                    orderable: false,
+                    searchable: false,
+                },  {
                     data: 'kode',
                     name: 'kode',
-                    className: 'text-center'
-                }, {
+                },  {
+                    data: 'nama',
+                    name: 'nama',
+                },{
                     data: 'icon',
                     name: 'icon',
                     className: 'text-center'
@@ -161,7 +160,6 @@
                 {
                     data: 'url',
                     name: 'url',
-                    className: 'text-center'
                 }, {
                     data: 'created_at',
                     name: 'created_at',

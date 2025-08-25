@@ -33,7 +33,7 @@ class MasterMenuController extends Controller
                     $childJson = htmlspecialchars(json_encode($childNames), ENT_QUOTES, 'UTF-8');
                     return '
         <div class="justify-content-center d-flex">
-           
+
             <a href="' . route('master.menu.view', $data->id) . '" class="btn btn-primary waves-effect btn-xs"><i class="mdi mdi-eye"></i>&nbsp;View</a> &nbsp;
             <form id="delete-form-' . $data->id . '" action="' . route('master.menu.delete', $data->id) . '" method="POST" style="display:inline;">
                 ' . csrf_field() . '' . method_field('POST') . '
@@ -41,7 +41,10 @@ class MasterMenuController extends Controller
             </form>
         </div>';
                 })
-                ->rawColumns(['aksi'])
+                ->editColumn('icon', function ($data) {
+                    return '<i class="' . $data->icon . '" title="' . htmlspecialchars($data->icon, ENT_QUOTES, 'UTF-8') . '" data-bs-toggle="tooltip"></i>';
+                })
+                ->rawColumns(['aksi', 'icon'])
                 ->make(true);
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
@@ -64,16 +67,31 @@ class MasterMenuController extends Controller
     public function save(Request $request)
     {
 
+         $request->validate([
+            'nama' => 'required|string|max:100',
+            'kode' => 'required|string|max:50|unique:sysmenu,kode',
+            'menu_parent' => 'nullable|exists:sysmenu,id',
+            'url' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:100',
+        ], [
+            'nama.required' => 'Nama menu wajib diisi.',
+            'nama.string' => 'Nama menu harus berupa teks.',
+            'nama.max' => 'Nama menu maksimal 100 karakter.',
+            'kode.required' => 'Kode menu wajib diisi.',
+            'kode.string' => 'Kode menu harus berupa teks.',
+            'kode.max' => 'Kode menu maksimal 50 karakter.',
+            'kode.unique' => 'Kode menu sudah digunakan.',
+            'menu_parent.exists' => 'Menu induk tidak valid.',
+            'url.required' => 'URL wajib diisi.',
+            'url.string' => 'URL harus berupa teks.',
+            'url.max' => 'URL maksimal 255 karakter.',
+            'icon.string' => 'Icon harus berupa teks.',
+            'icon.max' => 'Icon maksimal 100 karakter.',
+        ]);
         try {
-
-            if ($request->menu_parent == null) {
-                $kode = $request->kode;
-            } else {
-                $kode = $this->generateKode($request->menu_parent);
-            }
-            DB::table('sysmenu')->insert([
+            $id = DB::table('sysmenu')->insertGetId([
                 'nama' => $request->nama,
-                'kode' => $kode,
+                'kode' => $request->kode,
                 'parent_id' => $request->menu_parent,
                 'url' => $request->url,
                 'icon' => $request->icon,
@@ -81,11 +99,12 @@ class MasterMenuController extends Controller
                 'created_by' => Auth::user()->full_name,
 
             ]);
-            return redirect()->back()->with('success', 'Data Berhasil Disimpan');
+
+            return redirect()->route('master.menu.view', $id)->with('success', 'Data Berhasil Disimpan');
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
             return redirect()->back()->with('error', 'Data Gagal Disimpan');
-            
+
         }
     }
     public function listRole(Request $request)
@@ -204,30 +223,42 @@ class MasterMenuController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nama' => 'required|string|max:100',
+            'kode' => 'required|string|max:50|unique:sysmenu,kode',
+            'menu_parent' => 'nullable|exists:sysmenu,id',
+            'url' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:100',
+        ], [
+            'nama.required' => 'Nama menu wajib diisi.',
+            'nama.string' => 'Nama menu harus berupa teks.',
+            'nama.max' => 'Nama menu maksimal 100 karakter.',
+            'kode.required' => 'Kode menu wajib diisi.',
+            'kode.string' => 'Kode menu harus berupa teks.',
+            'kode.max' => 'Kode menu maksimal 50 karakter.',
+            'kode.unique' => 'Kode menu sudah digunakan.',
+            'menu_parent.exists' => 'Menu induk tidak valid.',
+            'url.required' => 'URL wajib diisi.',
+            'url.string' => 'URL harus berupa teks.',
+            'url.max' => 'URL maksimal 255 karakter.',
+            'icon.string' => 'Icon harus berupa teks.',
+            'icon.max' => 'Icon maksimal 100 karakter.',
+        ]);
         try {
-
-            $menu = DB::table('sysmenu')->where('id', $id)->first();
-            if (!$menu) {
-                return redirect()->back()->with('error', 'Menu tidak ditemukan');
-            }
-
-            $oldUrl = rtrim($menu->url, '/');
-            $newUrl = rtrim($request->url, '/');
             DB::table('sysmenu')->where('id', $id)->update([
-                'nama'       => $request->nama,
-                'kode'       => $request->kode,
-                'url'        => $request->url,
-                'icon'       => $request->icon,
+                'nama' => $request->nama,
+                'kode' => $request->kode,
+                'url' => $request->url,
+                'icon' => $request->icon,
                 'updated_at' => Carbon::now()->toDateTimeString(),
                 'updated_by' => Auth::user()->full_name,
+
             ]);
-
-            $this->updateChildrenUrl($id, $oldUrl, $newUrl);
-
             return redirect()->back()->with('success', 'Data Berhasil Disimpan');
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
             return redirect()->back()->with('error', 'Data Gagal Disimpan');
+
         }
     }
 
@@ -321,14 +352,5 @@ class MasterMenuController extends Controller
         }
 
         return $result;
-    }
-
-    private function generateKode($id)
-    {
-        $parent = DB::table('sysmenu')->where('id', $id)->select('kode')->first();
-        $jumlahChild = DB::table('sysmenu')->where('parent_id', $id)->count();
-        $newChild = str_pad($jumlahChild + 1, 2, '0', STR_PAD_LEFT);
-        $kode = $parent->kode . '.' . $newChild;
-        return $kode;
     }
 }

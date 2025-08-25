@@ -65,7 +65,7 @@
                 buttonsStyling: false
             });
         @endif
-    
+
         @if (isset($error) || session()->has('error'))
             Swal.fire({
                 title: 'Pemberitahuan',
@@ -82,14 +82,15 @@
             scrollX: true,
             "iDisplayLength": 25,
             'processing': true,
+            'paging' : false,
             'language': {
                 'loadingRecords': '&nbsp;',
                 'processing': 'Loading...'
             },
             ajax: {
                 url: "{{ route('role.list') }}",
-                
-                  
+
+
             },
             "order": [
                 [1, 'desc']

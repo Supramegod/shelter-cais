@@ -53,11 +53,9 @@ class RoleController extends Controller
     }
     public function listMenu(Request $request)
     {
-
-
         try {
             $data = DB::table('sysmenu')
-                ->join('sysmenu_role', 'sysmenu_role.sysmenu_id', '=', 'sysmenu.id')
+                ->leftJoin('sysmenu_role', 'sysmenu_role.sysmenu_id', '=', 'sysmenu.id')
                 ->where('sysmenu_role.role_id', $request->id)
                 ->select(
                     'sysmenu.id',
@@ -106,7 +104,7 @@ class RoleController extends Controller
                 ->first();
 
             if ($record) {
-                
+
                 DB::table('sysmenu_role')
                     ->where('role_id', $roleId)
                     ->where('sysmenu_id', $sysmenuId)
