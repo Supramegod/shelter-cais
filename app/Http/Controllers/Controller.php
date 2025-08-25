@@ -14,7 +14,7 @@ class Controller extends BaseController
 
     private $user;
     private $signed_in;
-    private $menu;
+    private $menus;
     private $notifikasi;
     private $pesan;
     private $approval;
@@ -46,8 +46,8 @@ class Controller extends BaseController
                     ->where('sl_quotation.is_aktif',0)->get();
 
                     $approval = [];
-                    foreach ($dataApproval as $key => $quotation) {   
-                        $quotation->tgl_quot = Carbon::createFromFormat('Y-m-d', $quotation->tgl_quotation)->toFormattedDateString();        
+                    foreach ($dataApproval as $key => $quotation) {
+                        $quotation->tgl_quot = Carbon::createFromFormat('Y-m-d', $quotation->tgl_quotation)->toFormattedDateString();
                         if ($quotation->step == 100 && $quotation->is_aktif==0 && $quotation->ot1 == null) {
                             if(Auth::user()->role_id==96){
                                 array_push($approval,$quotation);
@@ -75,12 +75,46 @@ class Controller extends BaseController
 
                 $this->notifikasi = $notifikasiList;
 
+                // MENU
+                $menus = DB::table('sysmenu')
+                    ->orderBy('kode', 'asc')
+                    ->get();
+
+                // konversi ke tree
+                $tree = $this->buildTree($menus);
+
+                $this->menus = $tree;
                 view()->share('signed_in', $this->signed_in);
                 view()->share('user', $this->user);
                 view()->share('approval', $this->approval);
                 view()->share('notifikasi', $this->notifikasi);
+                view()->share('menus', $this->menus);
             }
             return $next($request);
         });
+    }
+
+    private function buildTree($menus){
+        $items = [];
+        foreach ($menus as $menu) {
+            $items[$menu->kode] = (array) $menu;
+            $items[$menu->kode]['children'] = [];
+        }
+
+        $tree = [];
+        foreach ($items as $kode => &$menu) {
+            if (strpos($kode, '.') !== false) {
+                // ambil parent dari kode
+                $parentKode = substr($kode, 0, strrpos($kode, '.'));
+                if (isset($items[$parentKode])) {
+                    $items[$parentKode]['children'][] = &$menu;
+                }
+            } else {
+                // root menu
+                $tree[] = &$menu;
+            }
+        }
+
+        return $tree;
     }
 }

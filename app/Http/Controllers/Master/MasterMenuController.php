@@ -99,8 +99,9 @@ class MasterMenuController extends Controller
                 'created_by' => Auth::user()->full_name,
 
             ]);
+            return redirect()->back()->with('success', 'Data Berhasil Disimpan');
 
-            return redirect()->route('master.menu.view', $id)->with('success', 'Data Berhasil Disimpan');
+            // return redirect()->route('master.menu.view', $id)->with('success', 'Data Berhasil Disimpan');
         } catch (\Exception $e) {
             SystemController::saveError($e, Auth::user(), $request);
             return redirect()->back()->with('error', 'Data Gagal Disimpan');
