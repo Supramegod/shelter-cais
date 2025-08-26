@@ -138,45 +138,65 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::controller(LeadsController::class)->group(function () {
-        Route::get('/sales/leads', 'index')->name('leads');
-        Route::get('/sales/leads/terhapus', 'indexTerhapus')->name('leads.terhapus');
-        Route::get('/sales/leads/add', 'add')->name('leads.add');
-        Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
-        Route::get('/sales/leads/import', 'import')->name('leads.import');
-        Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
-        Route::post('/sales/leads/groupkan', 'groupkan')->name('leads.groupkan');
-        Route::post('/sales/leads/filter-rekomendasi', 'filterRekomendasi')->name('leads.rekomendasi.filter');
-        Route::get('/sales/leads/group-modal', 'showGrupModal')->name('leads.group_modal');
+   Route::controller(LeadsController::class)->group(function () {
+    // Basic CRUD Routes
+    Route::get('/sales/leads', 'index')->name('leads');
+    Route::get('/sales/leads/terhapus', 'indexTerhapus')->name('leads.terhapus');
+    Route::get('/sales/leads/add', 'add')->name('leads.add');
+    Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
+    Route::get('/sales/leads/edit/{id}', 'edit')->name('leads.edit');
+    Route::get('/sales/leads/import', 'import')->name('leads.import');
+    Route::get('/sales/leads/export', 'export')->name('leads.export');
+    Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
+    Route::get('/sales/leads/group-modal', 'showGrupModal')->name('leads.group_modal');
+    Route::get('/sales/leads/filter-rekomendasi', 'filterRekomendasi')->name('leads.filter-rekomendasi');
 
+    // Group Management Routes
+    Route::get('/sales/leads/groups-list', 'groupsList')->name('leads.groups.list');
+    Route::get('/sales/leads/group/{id}', 'viewGroup')->name('leads.group.view');
+    Route::get('/sales/leads/group-modal/{id?}', 'getGroupModal')->name('leads.group.modal');
+    Route::get('/sales/leads/add-company-modal/{groupId}', 'getAddCompanyModal')->name('leads.group.add-company-modal');
+    Route::get('/sales/leads/group/{groupId}/available-companies', 'getAddCompanyModal')->name('leads.group.availableCompanies');
+    Route::get('/sales/leads/rekomendasi', 'filterRekomendasi')->name('leads.rekomendasi');
+    
+    // POST Routes
+    Route::post('/sales/leads/groupkan', 'groupkan')->name('leads.groupkan');
+    Route::post('/sales/leads/inquiry-import', 'inquiryImport')->name('leads.inquiry-import');
+    Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
+    Route::post('/sales/leads/save', 'save')->name('leads.save');
+    Route::post('/sales/leads/group', 'group')->name('leads.group');
+    Route::post('/sales/leads/group/save', 'saveGroup')->name('leads.group.save');
+    Route::post('/sales/leads/group/add-company', 'addCompanyToGroup')->name('leads.group.addCompany');
+    Route::post('/sales/leads/generate-null-kode', 'generateNullKode')->name('leads.generateNullKode');
+    Route::post('/sales/leads/restore', 'restore')->name('leads.restore');
 
-        Route::post('/sales/leads/inquiry-import', 'inquiryImport')->name('leads.inquiry-import');
-        Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
-        Route::post('/sales/leads/save', 'save')->name('leads.save');
-        Route::post('/sales/leads/delete', 'delete')->name('leads.delete');
+    // PUT/DELETE Routes
+    Route::put('/sales/leads/update/{id}', 'update')->name('leads.update');
+    Route::delete('/sales/leads/delete', 'delete')->name('leads.delete');
+    Route::delete('/sales/leads/group/{id}', 'deleteGroup')->name('leads.group.delete');
+    Route::delete('/sales/leads/group/{groupId}/company/{leadsId}', 'removeCompanyFromGroup')->name('leads.group.remove-company');
 
-        Route::get('/sales/leads/export-excel', 'exportExcel')->name('leads.export-excel');
+    // Export Routes
+    Route::get('/sales/leads/export-excel', 'exportExcel')->name('leads.export-excel');
 
-        Route::get('/sales/leads/list', 'list')->name('leads.list'); // ajax
-        Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus'); // ajax
-        Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads'); // ajax
-        Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation'); // ajax
+    // AJAX Routes
+    Route::get('/sales/leads/list', 'list')->name('leads.list');
+    Route::get('/sales/leads/list-terhapus', 'listTerhapus')->name('leads.list-terhapus');
+    Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads');
+    Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation');
+    Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads');
+    Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads');
 
-        Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads'); // ajax
-        Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads'); // ajax
+    // Location Routes
+    Route::get('/sales/leads/get-kota/{provinsiId}', 'getKota')->name('leads.get-kota');
+    Route::get('/sales/leads/get-kecamatan/{kotaId}', 'getKecamatan')->name('leads.get-kecamatan');
+    Route::get('/sales/leads/get-kelurahan/{kecamatanId}', 'getKelurahan')->name('leads.get-kelurahan');
+    Route::get('/sales/leads/get-negara/{kecamatanId}', 'getNegara')->name('leads.get-negara');
 
-        Route::get('/sales/leads/get-kota/{provinsiId}', 'getKota')->name('leads.get-kota'); // ajax
-        Route::get('/sales/leads/get-kecamatan/{kotaId}', 'getKecamatan')->name('leads.get-kecamatan'); // ajax
-        Route::get('/sales/leads/get-kelurahan/{kecamatanId}', 'getKelurahan')->name('leads.get-kelurahan'); // ajax
-
-        Route::get('/sales/leads/aktifkan', 'aktifkanLeads')->name('leads.aktifkan'); // ajax
-        Route::get('/sales/leads/leads-belum-aktif', 'leadsBelumAktif')->name('sales.leads.leads-belum-aktif');
-
-        Route::get('/sales/leads/get-negara/{kecamatanId}', 'getNegara')->name('leads.get-negara'); // ajax
-
-        // generate null kode
-        Route::get('/sales/leads/generate-null-kode', 'generateNullKode')->name('leads.generate-null-kode'); // ajax
-    });
+    // Additional Routes
+    Route::get('/sales/leads/aktifkan', 'aktifkanLeads')->name('leads.aktifkan');
+    Route::get('/sales/leads/leads-belum-aktif', 'leadsBelumAktif')->name('sales.leads.leads-belum-aktif');
+});
 
     Route::controller(SubmissionController::class)->group(function () {
         Route::get('/sales/submission', 'index')->name('submission');
@@ -490,7 +510,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/master-menu', [MasterMenuController::class, 'index'])
         ->name('master-menu')
         ->middleware('auth');
-        
+
     Route::controller(NotificationController::class)->group(function () {
         Route::get('/notifications', 'list')->name('notifications.list');
         Route::get('/notifications/create', 'create')->name('notifications.create');
