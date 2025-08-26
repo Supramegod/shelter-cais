@@ -333,84 +333,97 @@
           </select>
           </div>
         </div>
-        <label class="col-sm-2 col-form-label text-sm-end">Kebutuhan <span class="text-danger">*</span></label>
-        <div class="col-sm-4">
-          <div class="position-relative">
-          <select id="kebutuhan" name="kebutuhan"
-            class="form-select @if ($errors->any()) @if($errors->has('kebutuhan')) is-invalid @else   @endif @endif"
-            data-allow-clear="true" tabindex="-1">
-            <option value="">- Pilih data -</option>
-            @foreach($kebutuhan as $value)
-        @if($value->id == 99) @continue @endif
-        <option value="{{$value->id}}" @if(old('kebutuhan') == $value->id) selected @endif>{{$value->nama}}
-        </option>
+      <label class="col-sm-2 col-form-label text-sm-end">
+    Kebutuhan <span class="text-danger">*</span>
+</label>
+<div class="col-sm-4">
+    <div class="d-flex flex-column gap-1">
+        @foreach($kebutuhan as $value)
+            @if($value->id == 99)
+                @continue
+            @endif
+            <div class="form-check">
+                <input 
+                    type="checkbox" 
+                    id="kebutuhan_{{ $value->id }}" 
+                    name="kebutuhan[]" 
+                    value="{{ $value->id }}"
+                    class="form-check-input @error('kebutuhan') is-invalid @enderror"
+                    @if(is_array(old('kebutuhan')) && in_array($value->id, old('kebutuhan'))) checked @endif
+                >
+                <label class="form-check-label" for="kebutuhan_{{ $value->id }}">
+                    {{ $value->nama }}
+                </label>
+            </div>
         @endforeach
-          </select>
-          @if($errors->has('kebutuhan'))
-        <div class="invalid-feedback">{{$errors->first('kebutuhan')}}</div>
-      @endif
-          </div>
-        </div>
-        </div>
+
+        @error('kebutuhan')
+            <div class="invalid-feedback d-block">
+                {{ $message }}
+            </div>
+        @enderror
+    </div>
+</div>
+
         <hr class="my-4 mx-4">
         <h6>3. Informasi PIC</h6>
         <div class="row mb-3">
-        <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
-        <div class="col-sm-4">
+          <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
+          <div class="col-sm-4">
           <input type="text" id="pic" name="pic" value="{{old('pic')}}"
-          class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
+            class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
           @if($errors->has('pic'))
         <div class="invalid-feedback">{{$errors->first('pic')}}</div>
       @endif
-        </div>
-        <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
-        <div class="col-sm-4">
+          </div>
+          <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
+          <div class="col-sm-4">
           <div class="position-relative">
-          <select id="jabatan_pic" name="jabatan_pic" class="form-select @if ($errors->any())   @endif"
+            <select id="jabatan_pic" name="jabatan_pic" class="form-select @if ($errors->any())   @endif"
             data-allow-clear="true" tabindex="-1">
             <option value="">- Pilih data -</option>
             @foreach($jabatanPic as $value)
         <option value="{{$value->id}}" @if(old('jabatan_pic') == $value->id) selected @endif>{{$value->nama}}
         </option>
         @endforeach
-          </select>
+            </select>
+          </div>
           </div>
         </div>
-        </div>
         <div class="row mb-3">
-        <label class="col-sm-2 col-form-label text-sm-end">Nomor Telepon</label>
-        <div class="col-sm-4">
+          <label class="col-sm-2 col-form-label text-sm-end">Nomor Telepon</label>
+          <div class="col-sm-4">
           <input type="number" id="no_telp" name="no_telp" value="{{old('no_telp')}}"
-          class="form-control @if ($errors->any())   @endif">
-        </div>
-        <label class="col-sm-2 col-form-label text-sm-end">Email</label>
-        <div class="col-sm-4">
+            class="form-control @if ($errors->any())   @endif">
+          </div>
+          <label class="col-sm-2 col-form-label text-sm-end">Email</label>
+          <div class="col-sm-4">
           <input type="text" id="email" name="email" value="{{old('email')}}"
-          class="form-control @if ($errors->any())   @endif">
-        </div>
+            class="form-control @if ($errors->any())   @endif">
+          </div>
         </div>
         <hr class="my-4 mx-4">
         <div class="row mb-3">
-        <label class="col-sm-2 col-form-label text-sm-end">Detail Leads</label>
-        <div class="col-sm-10">
+          <label class="col-sm-2 col-form-label text-sm-end">Detail Leads</label>
+          <div class="col-sm-10">
           <div class="form-floating form-floating-outline mb-4">
-          <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="detail_leads"
+            <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="detail_leads"
             id="detail_leads" placeholder="">{{old('detail_leads')}}</textarea>
           </div>
-        </div>
+          </div>
         </div>
         <hr class="my-4 mx-4">
         <div class="row mb-3">
-        <label class="col-sm-12 col-form-label">Note : <span class="text-danger">*)</span> Wajib Diisi</label>
+          <label class="col-sm-12 col-form-label">Note : <span class="text-danger">*)</span> Wajib Diisi</label>
         </div>
         <div class="pt-4">
-        <div class="row justify-content-end">
+          <div class="row justify-content-end">
           <div class="col-sm-12 d-flex justify-content-center">
-          <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Simpan</button>
-          <button type="reset" class="btn btn-warning me-sm-2 me-1 waves-effect">Reset</button>
-          <a href="{{route('leads')}}" class="btn btn-secondary waves-effect">Kembali</a>
+            <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Simpan</button>
+            <button type="reset" class="btn btn-warning me-sm-2 me-1 waves-effect">Reset</button>
+            <a href="{{route('leads')}}" class="btn btn-secondary waves-effect">Kembali</a>
           </div>
-        </div>
+          </div>
         </div>
       </form>
       </div>
@@ -439,4 +452,31 @@
     });
     @endif
   </script>
+<script>
+$(document).ready(function() {
+    // Debug: Tampilkan nilai kebutuhan yang dipilih sebelum submit
+    $('form').on('submit', function(e) {
+        var selectedKebutuhan = [];
+        $('input[name="kebutuhan[]"]:checked').each(function() {
+            selectedKebutuhan.push($(this).val());
+        });
+        
+        console.log('Kebutuhan yang dipilih:', selectedKebutuhan);
+        console.log('Jumlah kebutuhan:', selectedKebutuhan.length);
+        
+        // Validasi client-side
+        if (selectedKebutuhan.length === 0) {
+            alert('Silakan pilih minimal 1 kebutuhan!');
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Debug: Monitor perubahan checkbox
+    $('input[name="kebutuhan[]"]').on('change', function() {
+        var checkedCount = $('input[name="kebutuhan[]"]:checked').length;
+        console.log('Jumlah kebutuhan terpilih:', checkedCount);
+    });
+});
+</script>
 @endsection

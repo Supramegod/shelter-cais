@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Master\BidangPrusahaanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\VerifyFastApiKey;
 
@@ -57,6 +58,9 @@ use App\Http\Controllers\Sdt\TrainingSiteController;
 use App\Http\Controllers\Gada\TrainingGadaController;
 use App\Http\Controllers\Gada\TrainingGadaPembayaranController;
 
+use App\Http\Controllers\Master\BidangPerusahaanController;
+use App\Http\Controllers\Master\MutasiStokController;
+use App\Http\Controllers\Master\NotificationController;
 use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
@@ -128,6 +132,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
         Route::get('/dashboard/edit-patch', 'editPatch')->name('change.log');
         Route::post('/dashboard/update-patch', 'updatePatch')->name('update.log');
+        // New Home per User routes
+        Route::get('/dashboard/home-sales', 'dashboardHomeSales')->name('home.homepage.sales');
+        Route::get('/dashboard/home-telesales', 'dashboardHomeTelesales')->name('home.homepage.telesales');
+        Route::get('/dashboard/home-manager-sales', 'dashboardHomeManagerSales')->name('home.homepage.manager-sales');
+        Route::get('/dashboard/home-general-manager', 'dashboardHomeGeneralManager')->name('home.homepage.gm');
+        Route::get('/dashboard/home-ro', 'dashboardHomeRo')->name('home.homepage.ro');
+        Route::get('/dashboard/home-manager-ro', 'dashboardHomeManagerRo')->name('home.homepage.manager-ro');
+        Route::get('/dashboard/home-staff-crm', 'dashboardHomeStaffCrm')->name('home.homepage.staff-crm');
 
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
@@ -495,7 +507,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/supplier/addRn', 'addRn')->name('supplier.addRn');
         Route::get('/master/supplier/add', 'add')->name('supplier.add');
         Route::post('/master/supplier/save', 'save')->name('supplier.save');
-        Route::post('/sales/supplier/delete', 'delete')->name('supplier.delete');
+        Route::post('/master/supplier/delete', 'delete')->name('supplier.delete');
         Route::get('/master/supplier/view/{id}', 'view')->name('supplier.view');
         Route::get('/master/supplier/viewGr/{id}', 'viewGr')->name('supplier.viewGr');
         Route::get('/master/supplier/viewRn/{id}', 'viewRn')->name('supplier.viewRn');
@@ -512,8 +524,50 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/supplier/listGr', 'listGr')->name('supplier.listGr');
         Route::get('/master/supplier/listRn', 'listRn')->name('supplier.listRn');
     });
+    Route::controller(BidangPerusahaanController::class)->group(function () {
+        Route::get('/master/bidang-perusahaan', 'index')->name('bidang-perusahaan');
+        Route::get('/master/bidang-perusahaan/add', 'add')->name('bidang-perusahaan.add');
+        Route::post('/master/bidang-perusahaan/save', 'save')->name('bidang-perusahaan.save');
+        Route::post('/master/bidang-perusahaan/delete', 'delete')->name('bidang-perusahaan.delete');
+        Route::get('/master/bidang-perusahaan/view/{id}', 'view')->name('bidang-perusahaan.view');
 
+        // AJAX route - menggunakan method 'list'
+        Route::get('/master/bidang-perusahaan/data', 'list')->name('bidang-perusahaan.data');
+    });
 
+    // Route untuk Master Menu Dashboard
+    Route::get('/master-menu', [MasterMenuController::class, 'index'])
+        ->name('master-menu')
+        ->middleware('auth');
+
+    Route::controller(NotificationController::class)->group(function () {
+        Route::get('/notifications', 'list')->name('notifications.list');
+        Route::get('/notifications/create', 'create')->name('notifications.create');
+        Route::post('/notifications/save', 'save')->name('notifications.save');
+        Route::delete('/notifications/{id}', 'destroy')->name('notifications.destroy');
+        Route::get('/notifications/data', 'data')->name('notifications.data');
+        Route::get('/notifications/now', 'getNow')->name('notifications.now');
+
+        // Route yang kurang - untuk modal file preview
+        Route::get('/notifications/{id}/files', 'getFiles')->name('notifications.files');
+
+        // Route download attachment (sudah ada tapi URL pattern sedikit berbeda)
+        Route::get('/notifications/{id}/download/{fileIndex?}', 'downloadAttachment')->name('notifications.download');
+
+        // Debug route - hapus di production
+        Route::get('/notifications/debug', 'debug')->name('notifications.debug');
+    });
+    // Routes untuk Mutasi Stok
+    Route::controller(MutasiStokController::class)->group(function () {
+        Route::get('/master/mutasi-stok', 'index')->name('mutasi-stok');
+        Route::get('/master/mutasi-stok/get-jenis-barang', 'getJenisBarang')->name('mutasi-stok.get-jenis-barang');
+        Route::get('/master/mutasi-stok/get-barang', 'getBarang')->name('mutasi-stok.get-barang');
+        Route::get('/master/mutasi-stok/stok-barang-data', 'stokBarangList')->name('mutasi-stok.stok-barang-data');
+        Route::get('/master/mutasi-stok/mutasi-data', 'mutasiList')->name('mutasi-stok.mutasi-data');
+
+        // Route baru untuk search barang dengan Select2
+        Route::get('/master/mutasi-stok/search-barang', 'searchBarang')->name('mutasi-stok.search-barang');
+    });
     Route::controller(PlatformController::class)->group(function () {
         Route::get('/master/platform', 'index')->name('platform');
         Route::get('/master/platform/add', 'add')->name('platform.add');

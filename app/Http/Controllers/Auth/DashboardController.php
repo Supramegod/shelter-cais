@@ -1685,4 +1685,39 @@ class DashboardController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui patch. Pastikan koneksi database Anda berfungsi dengan baik.');
         }
     }
+    public function dashboardHomeSales()
+{
+    return view('home.homepage.sales');
+}
+
+public function dashboardHomeTelesales()
+{
+    return view('home.homepage.telesales');
+}
+
+public function dashboardHomeManagerSales()
+{
+    return view('home.homepage.manager-sales');
+}
+
+public function dashboardHomeGeneralManager()
+{
+    return view('home.homepage.gm');
+}
+
+public function dashboardHomeRo()
+{
+    return view('home.homepage.ro');
+}
+
+public function dashboardHomeManagerRo()
+{
+    return view('home.homepage.manager-ro');
+}
+
+public function dashboardHomeStaffCrm()
+{
+    return view('home.homepage.staff-crm');
+}
+
 }
