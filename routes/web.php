@@ -90,6 +90,7 @@ Route::controller(MasterMenuController::class)->group(function() {
     Route::get('/master/menu/view/{id}', 'view')->name('master.menu.view');
     Route::post('/master/menu/update/{id}', 'update')->name('master.menu.update');
     Route::post('/master/menu/delete/{id}', 'delete')->name('master.menu.delete');
+    Route::get('/master/menu/menu-master', 'menu')->name('master.menu.menu-master');
 });
 
 //form luar
@@ -556,8 +557,8 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     // Route untuk Master Menu Dashboard
-    Route::get('/master-menu', [MasterMenuController::class, 'index'])
-        ->name('master-menu')
+    Route::get('/menu-master', [MasterMenuController::class, 'index'])
+        ->name('menu-master')
         ->middleware('auth');
 
     Route::controller(NotificationController::class)->group(function () {

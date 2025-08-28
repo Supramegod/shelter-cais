@@ -73,7 +73,7 @@
 <body>
     <!-- KOP -->
     <div style="width: 100%; text-align: center; margin-bottom: 5px;">
-        <img src="{{ asset('public/assets/img/icons/icon-shelter.png') }}" alt="Logo" style="height: 20px;">
+        <img src="{{ asset('assets/img/icons/icon-shelter.png') }}" alt="Logo" style="height: 20px;">
     </div>
     <div style="width: 100%; text-align: center;">
         <h2 style="margin: 0; font-size: 20px;">PT. SHELTER INDONESIA</h2>
@@ -100,7 +100,7 @@
         </tr>
         <tr>
             <td>
-                Nomor             : {{ $nomor_surat ?? '' }}<br>
+                Nomor : {{ $nomor_surat ?? '' }}<br>
                 Tanggal Pengiriman: {{ $now ?? '' }}<br>
             </td>
             <td>

@@ -26,15 +26,15 @@
     .dashboard-card {
       background: white;
       border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
       height: 100%;
       transition: all 0.3s ease;
       overflow: hidden;
     }
 
     .dashboard-card:hover {
-      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
       transform: translateY(-2px);
     }
 
@@ -77,7 +77,7 @@
       right: -50%;
       width: 100px;
       height: 100px;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 50%;
       z-index: 0;
     }
@@ -144,8 +144,8 @@
       background: white;
       border-radius: 12px;
       padding: 1.5rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
       height: 100%;
       min-height: 350px;
     }
@@ -188,7 +188,7 @@
     /* Enhanced Progress Bar */
     .custom-progress {
       height: 8px;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 4px;
       overflow: hidden;
       margin-top: 0.75rem;
@@ -197,7 +197,7 @@
 
     .custom-progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,1) 100%);
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 1) 100%);
       border-radius: 4px;
       transition: width 0.6s ease;
       position: relative;
@@ -211,14 +211,19 @@
       left: 0;
       bottom: 0;
       right: 0;
-      background: linear-gradient(45deg, transparent 33%, rgba(255,255,255,0.3) 33%, rgba(255,255,255,0.3) 66%, transparent 66%);
+      background: linear-gradient(45deg, transparent 33%, rgba(255, 255, 255, 0.3) 33%, rgba(255, 255, 255, 0.3) 66%, transparent 66%);
       background-size: 30px 30px;
       animation: progress-stripe 2s linear infinite;
     }
 
     @keyframes progress-stripe {
-      0% { background-position: 0 0; }
-      100% { background-position: 30px 0; }
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: 30px 0;
+      }
     }
 
     /* Branch Cards */
@@ -327,7 +332,7 @@
     .ranking-item:hover {
       background: #e2e8f0;
       transform: translateX(5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .rank-number {
@@ -341,7 +346,7 @@
       color: white;
       margin-right: 1rem;
       font-size: 0.9rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .rank-1 {
@@ -478,8 +483,13 @@
     }
 
     @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
     }
 
     /* Improved Focus States */
@@ -822,556 +832,556 @@
 
     <!-- Interactive Analytics Row -->
     <!-- <div class="row dashboard-row">
-      <div class="col-12 mb-4">
-        <h2 class="section-header">Interactive Data Analytics</h2>
-      </div>
+        <div class="col-12 mb-4">
+          <h2 class="section-header">Interactive Data Analytics</h2>
+        </div>
 
-      <div class="col-12">
-        <div class="chart-wrapper">
-          <div class="chart-header">
-            <h5 class="chart-title">📊 Pivot Table Analysis</h5>
-            <small class="text-muted">Drag and drop untuk analisa data interaktif</small>
+        <div class="col-12">
+          <div class="chart-wrapper">
+            <div class="chart-header">
+              <h5 class="chart-title">📊 Pivot Table Analysis</h5>
+              <small class="text-muted">Drag and drop untuk analisa data interaktif</small>
+            </div>
+            <div id="output"></div>
           </div>
-          <div id="output"></div>
         </div>
       </div>
-    </div>
 
-  </div> -->
+    </div> -->
 @endsection
 
-@section('pageScript')
-  <script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+  @section('pageScript')
+    <script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
 
-  <!-- Enhanced Data Variables -->
-  <script>
-    // Enhanced Color Palette
-    const colors = {
-      primary: '#667eea',
-      secondary: '#764ba2',
-      success: '#28dac6',
-      warning: '#ffd93d',
-      danger: '#ff6b6b',
-      info: '#4facfe',
-      purple: '#836AF9',
-      orange: '#FF8132',
-      blue: '#2B9AFF',
-      green: '#4BC0C0',
-      red: '#FF6384',
-      gradient: {
-        primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        success: 'linear-gradient(135deg, #28dac6 0%, #20c997 100%)',
-        warning: 'linear-gradient(135deg, #ffd93d 0%, #ffb74d 100%)',
-        danger: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)'
-      }
-    };
-
-    // Enhanced Data with more realistic values
-    const branchData = [
-      { branch: 'Jakarta Pusat', target: 350, actual: 325, leads: 325 },
-      { branch: 'Surabaya', target: 300, actual: 280, leads: 280 },
-      { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
-      { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
-      { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
-      { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
-      { branch: 'Medan', target: 200, actual: 160, leads: 160 }
-    ];
-
-    const kebutuhanData = [
-      { nama: 'KPR', color: colors.primary },
-      { nama: 'KTA', color: colors.success },
-      { nama: 'Investasi', color: colors.warning },
-      { nama: 'Asuransi', color: colors.danger }
-    ];
-
-    const leadsByKebutuhan = [
-      { branch: 'Jakarta Pusat', KPR: 120, KTA: 85, Investasi: 95, Asuransi: 20 },
-      { branch: 'Surabaya', KPR: 95, KTA: 75, Investasi: 80, Asuransi: 30 },
-      { branch: 'Bandung', KPR: 70, KTA: 45, Investasi: 60, Asuransi: 20 },
-      { branch: 'Medan', KPR: 55, KTA: 40, Investasi: 45, Asuransi: 20 }
-    ];
-
-    const salesRanking = [
-      { name: 'Ahmad Budi Santoso', branch: 'Jakarta Pusat', sales: 150, achievement: 95 },
-      { name: 'Siti Nurhaliza', branch: 'Surabaya', sales: 142, achievement: 88 },
-      { name: 'Rizki Pratama', branch: 'Bandung', sales: 138, achievement: 85 },
-      { name: 'Maya Sari Dewi', branch: 'Medan', sales: 125, achievement: 78 },
-      { name: 'Indra Wijaya', branch: 'Jakarta Pusat', sales: 118, achievement: 74 },
-      { name: 'Putri Maharani', branch: 'Surabaya', sales: 112, achievement: 70 }
-    ];
-
-    // Update summary values
-    const totalTarget = branchData.reduce((sum, d) => sum + d.target, 0);
-    const totalActual = branchData.reduce((sum, d) => sum + d.actual, 0);
-    const totalGap = totalTarget - totalActual;
-    const achievementPercentage = ((totalActual / totalTarget) * 100).toFixed(1);
-
-    // Update DOM elements
-    document.addEventListener('DOMContentLoaded', function() {
-      const totalTargetEl = document.getElementById('totalTarget');
-      const totalActualEl = document.getElementById('totalActual');
-      const totalGapEl = document.getElementById('totalGap');
-      const achievementPercentageEl = document.getElementById('achievementPercentage');
-
-      if (totalTargetEl) totalTargetEl.textContent = totalTarget.toLocaleString();
-      if (totalActualEl) totalActualEl.textContent = totalActual.toLocaleString();
-      if (totalGapEl) totalGapEl.textContent = totalGap.toLocaleString();
-      if (achievementPercentageEl) achievementPercentageEl.textContent = achievementPercentage + '%';
-    });
-  </script>
-
-  <!-- Enhanced Target vs Actual Chart -->
-  <script>
-    const targetActualChart = document.getElementById('barChartTargetActual');
-    if (targetActualChart) {
-      new Chart(targetActualChart, {
-        type: 'bar',
-        data: {
-          labels: branchData.map(d => d.branch),
-          datasets: [
-            {
-              label: 'Target',
-              data: branchData.map(d => d.target),
-              backgroundColor: 'rgba(255, 193, 7, 0.8)',
-              borderColor: '#ffc107',
-              borderWidth: 2,
-              borderRadius: 8,
-              borderSkipped: false,
-            },
-            {
-              label: 'Actual',
-              data: branchData.map(d => d.actual),
-              backgroundColor: 'rgba(102, 126, 234, 0.8)',
-              borderColor: colors.primary,
-              borderWidth: 2,
-              borderRadius: 8,
-              borderSkipped: false,
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              align: 'end',
-              labels: {
-                usePointStyle: true,
-                padding: 20,
-                font: {
-                  size: 12,
-                  weight: '600'
-                }
-              }
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              titleColor: 'white',
-              bodyColor: 'white',
-              borderColor: colors.primary,
-              borderWidth: 1,
-              cornerRadius: 8,
-              displayColors: true,
-              callbacks: {
-                label: function(context) {
-                  const percentage = ((context.raw / branchData[context.dataIndex].target) * 100).toFixed(1);
-                  return context.dataset.label + ': ' + context.raw.toLocaleString() +
-                         (context.dataset.label === 'Actual' ? ` (${percentage}%)` : '');
-                }
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid: {
-                color: 'rgba(0,0,0,0.1)',
-                drawBorder: false
-              },
-              ticks: {
-                font: {
-                  size: 11
-                },
-                callback: function(value) {
-                  return value.toLocaleString();
-                }
-              }
-            },
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                font: {
-                  size: 11,
-                  weight: '600'
-                }
-              }
-            }
-          },
-          animation: {
-            duration: 2000,
-            easing: 'easeInOutQuart'
-          }
+    <!-- Enhanced Data Variables -->
+    <script>
+      // Enhanced Color Palette
+      const colors = {
+        primary: '#667eea',
+        secondary: '#764ba2',
+        success: '#28dac6',
+        warning: '#ffd93d',
+        danger: '#ff6b6b',
+        info: '#4facfe',
+        purple: '#836AF9',
+        orange: '#FF8132',
+        blue: '#2B9AFF',
+        green: '#4BC0C0',
+        red: '#FF6384',
+        gradient: {
+          primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          success: 'linear-gradient(135deg, #28dac6 0%, #20c997 100%)',
+          warning: 'linear-gradient(135deg, #ffd93d 0%, #ffb74d 100%)',
+          danger: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)'
         }
-      });
-    }
-  </script>
+      };
 
-  <!-- Enhanced Kebutuhan Leads Chart -->
-  <script>
-    const kebutuhanChart = document.getElementById('barChartKebutuhanPerBranch');
-    if (kebutuhanChart) {
-      const datasets = kebutuhanData.map(kebutuhan => ({
-        label: kebutuhan.nama,
-        data: leadsByKebutuhan.map(branch => branch[kebutuhan.nama]),
-        backgroundColor: kebutuhan.color + 'CC',
-        borderColor: kebutuhan.color,
-        borderWidth: 2,
-        borderRadius: 6,
-        borderSkipped: false,
-      }));
-
-      new Chart(kebutuhanChart, {
-        type: 'bar',
-        data: {
-          labels: leadsByKebutuhan.map(d => d.branch),
-          datasets: datasets
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              align: 'end',
-              labels: {
-                usePointStyle: true,
-                padding: 20,
-                font: {
-                  size: 12,
-                  weight: '600'
-                }
-              }
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              titleColor: 'white',
-              bodyColor: 'white',
-              borderColor: colors.primary,
-              borderWidth: 1,
-              cornerRadius: 8,
-              mode: 'index',
-              intersect: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              stacked: false,
-              grid: {
-                color: 'rgba(0,0,0,0.1)',
-                drawBorder: false
-              },
-              ticks: {
-                font: {
-                  size: 11
-                }
-              }
-            },
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                font: {
-                  size: 11,
-                  weight: '600'
-                }
-              }
-            }
-          },
-          animation: {
-            duration: 2000,
-            easing: 'easeInOutQuart'
-          }
-        }
-      });
-    }
-  </script>
-
-  <!-- Enhanced Performance Line Chart -->
-  <script>
-    const performanceChart = document.getElementById('performanceChart');
-    if (performanceChart) {
-      const achievements = branchData.map(d => ((d.actual / d.target) * 100).toFixed(1));
-
-      new Chart(performanceChart, {
-        type: 'line',
-        data: {
-          labels: branchData.map(d => d.branch),
-          datasets: [{
-            label: 'Achievement %',
-            data: achievements,
-            borderColor: colors.success,
-            backgroundColor: colors.success + '20',
-            borderWidth: 4,
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: colors.success,
-            pointBorderColor: '#fff',
-            pointBorderWidth: 3,
-            pointRadius: 8,
-            pointHoverRadius: 10,
-            pointHoverBackgroundColor: colors.success,
-            pointHoverBorderColor: '#fff',
-            pointHoverBorderWidth: 3,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              titleColor: 'white',
-              bodyColor: 'white',
-              borderColor: colors.success,
-              borderWidth: 1,
-              cornerRadius: 8,
-              callbacks: {
-                label: function(context) {
-                  return 'Achievement: ' + context.raw + '%';
-                }
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 100,
-              grid: {
-                color: 'rgba(0,0,0,0.1)',
-                drawBorder: false
-              },
-              ticks: {
-                font: {
-                  size: 11
-                },
-                callback: function(value) {
-                  return value + '%';
-                }
-              }
-            },
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                font: {
-                  size: 11,
-                  weight: '600'
-                }
-              }
-            }
-          },
-          animation: {
-            duration: 2000,
-            easing: 'easeInOutQuart'
-          }
-        }
-      });
-    }
-  </script>
-
-  <!-- Enhanced Overall Target Doughnut Chart -->
-  <script>
-    const overallChart = document.getElementById('overallTargetChart');
-    if (overallChart) {
-      const totalTarget = branchData.reduce((sum, d) => sum + d.target, 0);
-      const totalActual = branchData.reduce((sum, d) => sum + d.actual, 0);
-      const achievement = ((totalActual / totalTarget) * 100).toFixed(1);
-
-      new Chart(overallChart, {
-        type: 'doughnut',
-        data: {
-          labels: ['Achieved', 'Remaining'],
-          datasets: [{
-            data: [totalActual, totalTarget - totalActual],
-            backgroundColor: [
-              colors.success + 'CC',
-              '#e2e8f0'
-            ],
-            borderColor: [
-              colors.success,
-              '#cbd5e1'
-            ],
-            borderWidth: 3,
-            hoverBorderWidth: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '65%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                usePointStyle: true,
-                padding: 20,
-                font: {
-                  size: 12,
-                  weight: '600'
-                }
-              }
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              titleColor: 'white',
-              bodyColor: 'white',
-              borderColor: colors.primary,
-              borderWidth: 1,
-              cornerRadius: 8,
-              callbacks: {
-                label: function(context) {
-                  const percentage = ((context.raw / totalTarget) * 100).toFixed(1);
-                  return context.label + ': ' + context.raw.toLocaleString() + ` (${percentage}%)`;
-                }
-              }
-            }
-          },
-          animation: {
-            animateRotate: true,
-            animateScale: true,
-            duration: 2000,
-            easing: 'easeInOutQuart'
-          }
-        },
-        plugins: [{
-          beforeDraw: function(chart) {
-            const width = chart.width;
-            const height = chart.height;
-            const ctx = chart.ctx;
-
-            ctx.restore();
-            const fontSize = (height / 100).toFixed(2);
-            ctx.font = fontSize + "em sans-serif";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle = colors.success;
-
-            const text = achievement + "%";
-            const textX = Math.round((width - ctx.measureText(text).width) / 2);
-            const textY = height / 2;
-
-            ctx.fillText(text, textX, textY);
-            ctx.save();
-          }
-        }]
-      });
-    }
-  </script>
-
-  <!-- Enhanced Sales Ranking -->
-  <script>
-    const rankingContainer = document.getElementById('salesRanking');
-    if (rankingContainer) {
-      let html = '';
-      salesRanking.forEach((sales, index) => {
-        const rankClass = index < 3 ? `rank-${index + 1}` : 'rank-other';
-        html += `
-          <div class="ranking-item">
-            <div class="rank-number ${rankClass}">${index + 1}</div>
-            <div class="ranking-info flex-grow-1">
-              <div class="ranking-name">${sales.name}</div>
-              <div class="ranking-branch">${sales.branch}</div>
-            </div>
-            <div class="ranking-stats">
-              <div class="ranking-sales">${sales.sales}</div>
-              <div class="ranking-achievement">${sales.achievement}%</div>
-            </div>
-          </div>
-        `;
-      });
-      rankingContainer.innerHTML = html;
-
-      // Add animation delay
-      const items = rankingContainer.querySelectorAll('.ranking-item');
-      items.forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateX(-20px)';
-        setTimeout(() => {
-          item.style.transition = 'all 0.5s ease';
-          item.style.opacity = '1';
-          item.style.transform = 'translateX(0)';
-        }, index * 100);
-      });
-    }
-  </script>
-
-  <!-- Enhanced Pivot Table -->
-  <script>
-    $(function () {
-      const pivotData = [
-        { branch: "Jakarta Pusat", month: "Jan 2024", target: 350, actual: 325, type: "New", product: "KPR" },
-        { branch: "Jakarta Pusat", month: "Feb 2024", target: 360, actual: 340, type: "New", product: "KTA" },
-        { branch: "Jakarta Pusat", month: "Mar 2024", target: 355, actual: 335, type: "Existing", product: "Investasi" },
-        { branch: "Surabaya", month: "Jan 2024", target: 300, actual: 280, type: "Existing", product: "KPR" },
-        { branch: "Surabaya", month: "Feb 2024", target: 310, actual: 295, type: "New", product: "KTA" },
-        { branch: "Surabaya", month: "Mar 2024", target: 305, actual: 285, type: "Mixed", product: "Asuransi" },
-        { branch: "Bandung", month: "Jan 2024", target: 250, actual: 195, type: "New", product: "KPR" },
-        { branch: "Bandung", month: "Feb 2024", target: 260, actual: 220, type: "Existing", product: "Investasi" },
-        { branch: "Bandung", month: "Mar 2024", target: 255, actual: 210, type: "New", product: "KTA" },
-        { branch: "Medan", month: "Jan 2024", target: 200, actual: 160, type: "Mixed", product: "Asuransi" },
-        { branch: "Medan", month: "Feb 2024", target: 210, actual: 180, type: "New", product: "KPR" },
-        { branch: "Medan", month: "Mar 2024", target: 205, actual: 175, type: "Existing", product: "KTA" }
+      // Enhanced Data with more realistic values
+      const branchData = [
+        { branch: 'Jakarta Pusat', target: 350, actual: 325, leads: 325 },
+        { branch: 'Surabaya', target: 300, actual: 280, leads: 280 },
+        { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
+        { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
+        { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
+        { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
+        { branch: 'Medan', target: 200, actual: 160, leads: 160 }
       ];
 
-    //   $("#output").pivotUI(pivotData, {
-    //     renderers: $.extend($.pivotUtilities.renderers, $.pivotUtilities.plotly_renderers),
-    //     rendererName: "Table",
-    //     rows: ["branch"],
-    //     cols: ["month"],
-    //     aggregatorName: "Sum",
-    //     vals: ["actual"],
-    //     rendererOptions: {
-    //       table: {
-    //         clickCallback: function(e, value, filters, pivotData) {
-    //           console.log("Cell clicked:", value, filters);
-    //         }
-    //       }
-    //     }
-    //   });
-    // });
-  </script>
+      const kebutuhanData = [
+        { nama: 'KPR', color: colors.primary },
+        { nama: 'KTA', color: colors.success },
+        { nama: 'Investasi', color: colors.warning },
+        { nama: 'Asuransi', color: colors.danger }
+      ];
 
-  <!-- Loading Animation Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Add loading animation to charts
-      const chartContainers = document.querySelectorAll('.chart-container-inner');
-      chartContainers.forEach(container => {
-        container.classList.add('loading-shimmer');
-        setTimeout(() => {
-          container.classList.remove('loading-shimmer');
-        }, 1500);
-      });
+      const leadsByKebutuhan = [
+        { branch: 'Jakarta Pusat', KPR: 120, KTA: 85, Investasi: 95, Asuransi: 20 },
+        { branch: 'Surabaya', KPR: 95, KTA: 75, Investasi: 80, Asuransi: 30 },
+        { branch: 'Bandung', KPR: 70, KTA: 45, Investasi: 60, Asuransi: 20 },
+        { branch: 'Medan', KPR: 55, KTA: 40, Investasi: 45, Asuransi: 20 }
+      ];
 
-      // Add fade-in animation to cards
-      const cards = document.querySelectorAll('.dashboard-card');
-      cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          card.style.transition = 'all 0.6s ease';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, index * 100);
+      const salesRanking = [
+        { name: 'Ahmad Budi Santoso', branch: 'Jakarta Pusat', sales: 150, achievement: 95 },
+        { name: 'Siti Nurhaliza', branch: 'Surabaya', sales: 142, achievement: 88 },
+        { name: 'Rizki Pratama', branch: 'Bandung', sales: 138, achievement: 85 },
+        { name: 'Maya Sari Dewi', branch: 'Medan', sales: 125, achievement: 78 },
+        { name: 'Indra Wijaya', branch: 'Jakarta Pusat', sales: 118, achievement: 74 },
+        { name: 'Putri Maharani', branch: 'Surabaya', sales: 112, achievement: 70 }
+      ];
+
+      // Update summary values
+      const totalTarget = branchData.reduce((sum, d) => sum + d.target, 0);
+      const totalActual = branchData.reduce((sum, d) => sum + d.actual, 0);
+      const totalGap = totalTarget - totalActual;
+      const achievementPercentage = ((totalActual / totalTarget) * 100).toFixed(1);
+
+      // Update DOM elements
+      document.addEventListener('DOMContentLoaded', function () {
+        const totalTargetEl = document.getElementById('totalTarget');
+        const totalActualEl = document.getElementById('totalActual');
+        const totalGapEl = document.getElementById('totalGap');
+        const achievementPercentageEl = document.getElementById('achievementPercentage');
+
+        if (totalTargetEl) totalTargetEl.textContent = totalTarget.toLocaleString();
+        if (totalActualEl) totalActualEl.textContent = totalActual.toLocaleString();
+        if (totalGapEl) totalGapEl.textContent = totalGap.toLocaleString();
+        if (achievementPercentageEl) achievementPercentageEl.textContent = achievementPercentage + '%';
       });
-    });
-  </script>
-@endsection
+    </script>
+
+    <!-- Enhanced Target vs Actual Chart -->
+    <script>
+      const targetActualChart = document.getElementById('barChartTargetActual');
+      if (targetActualChart) {
+        new Chart(targetActualChart, {
+          type: 'bar',
+          data: {
+            labels: branchData.map(d => d.branch),
+            datasets: [
+              {
+                label: 'Target',
+                data: branchData.map(d => d.target),
+                backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                borderColor: '#ffc107',
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+              },
+              {
+                label: 'Actual',
+                data: branchData.map(d => d.actual),
+                backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                borderColor: colors.primary,
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                align: 'end',
+                labels: {
+                  usePointStyle: true,
+                  padding: 20,
+                  font: {
+                    size: 12,
+                    weight: '600'
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.primary,
+                borderWidth: 1,
+                cornerRadius: 8,
+                displayColors: true,
+                callbacks: {
+                  label: function (context) {
+                    const percentage = ((context.raw / branchData[context.dataIndex].target) * 100).toFixed(1);
+                    return context.dataset.label + ': ' + context.raw.toLocaleString() +
+                      (context.dataset.label === 'Actual' ? ` (${percentage}%)` : '');
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(0,0,0,0.1)',
+                  drawBorder: false
+                },
+                ticks: {
+                  font: {
+                    size: 11
+                  },
+                  callback: function (value) {
+                    return value.toLocaleString();
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                },
+                ticks: {
+                  font: {
+                    size: 11,
+                    weight: '600'
+                  }
+                }
+              }
+            },
+            animation: {
+              duration: 2000,
+              easing: 'easeInOutQuart'
+            }
+          }
+        });
+      }
+    </script>
+
+    <!-- Enhanced Kebutuhan Leads Chart -->
+    <script>
+      const kebutuhanChart = document.getElementById('barChartKebutuhanPerBranch');
+      if (kebutuhanChart) {
+        const datasets = kebutuhanData.map(kebutuhan => ({
+          label: kebutuhan.nama,
+          data: leadsByKebutuhan.map(branch => branch[kebutuhan.nama]),
+          backgroundColor: kebutuhan.color + 'CC',
+          borderColor: kebutuhan.color,
+          borderWidth: 2,
+          borderRadius: 6,
+          borderSkipped: false,
+        }));
+
+        new Chart(kebutuhanChart, {
+          type: 'bar',
+          data: {
+            labels: leadsByKebutuhan.map(d => d.branch),
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                align: 'end',
+                labels: {
+                  usePointStyle: true,
+                  padding: 20,
+                  font: {
+                    size: 12,
+                    weight: '600'
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.primary,
+                borderWidth: 1,
+                cornerRadius: 8,
+                mode: 'index',
+                intersect: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                stacked: false,
+                grid: {
+                  color: 'rgba(0,0,0,0.1)',
+                  drawBorder: false
+                },
+                ticks: {
+                  font: {
+                    size: 11
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                },
+                ticks: {
+                  font: {
+                    size: 11,
+                    weight: '600'
+                  }
+                }
+              }
+            },
+            animation: {
+              duration: 2000,
+              easing: 'easeInOutQuart'
+            }
+          }
+        });
+      }
+    </script>
+
+    <!-- Enhanced Performance Line Chart -->
+    <script>
+      const performanceChart = document.getElementById('performanceChart');
+      if (performanceChart) {
+        const achievements = branchData.map(d => ((d.actual / d.target) * 100).toFixed(1));
+
+        new Chart(performanceChart, {
+          type: 'line',
+          data: {
+            labels: branchData.map(d => d.branch),
+            datasets: [{
+              label: 'Achievement %',
+              data: achievements,
+              borderColor: colors.success,
+              backgroundColor: colors.success + '20',
+              borderWidth: 4,
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: colors.success,
+              pointBorderColor: '#fff',
+              pointBorderWidth: 3,
+              pointRadius: 8,
+              pointHoverRadius: 10,
+              pointHoverBackgroundColor: colors.success,
+              pointHoverBorderColor: '#fff',
+              pointHoverBorderWidth: 3,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.success,
+                borderWidth: 1,
+                cornerRadius: 8,
+                callbacks: {
+                  label: function (context) {
+                    return 'Achievement: ' + context.raw + '%';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                grid: {
+                  color: 'rgba(0,0,0,0.1)',
+                  drawBorder: false
+                },
+                ticks: {
+                  font: {
+                    size: 11
+                  },
+                  callback: function (value) {
+                    return value + '%';
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                },
+                ticks: {
+                  font: {
+                    size: 11,
+                    weight: '600'
+                  }
+                }
+              }
+            },
+            animation: {
+              duration: 2000,
+              easing: 'easeInOutQuart'
+            }
+          }
+        });
+      }
+    </script>
+
+    <!-- Enhanced Overall Target Doughnut Chart -->
+    <script>
+      const overallChart = document.getElementById('overallTargetChart');
+      if (overallChart) {
+        const totalTarget = branchData.reduce((sum, d) => sum + d.target, 0);
+        const totalActual = branchData.reduce((sum, d) => sum + d.actual, 0);
+        const achievement = ((totalActual / totalTarget) * 100).toFixed(1);
+
+        new Chart(overallChart, {
+          type: 'doughnut',
+          data: {
+            labels: ['Achieved', 'Remaining'],
+            datasets: [{
+              data: [totalActual, totalTarget - totalActual],
+              backgroundColor: [
+                colors.success + 'CC',
+                '#e2e8f0'
+              ],
+              borderColor: [
+                colors.success,
+                '#cbd5e1'
+              ],
+              borderWidth: 3,
+              hoverBorderWidth: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  usePointStyle: true,
+                  padding: 20,
+                  font: {
+                    size: 12,
+                    weight: '600'
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.primary,
+                borderWidth: 1,
+                cornerRadius: 8,
+                callbacks: {
+                  label: function (context) {
+                    const percentage = ((context.raw / totalTarget) * 100).toFixed(1);
+                    return context.label + ': ' + context.raw.toLocaleString() + ` (${percentage}%)`;
+                  }
+                }
+              }
+            },
+            animation: {
+              animateRotate: true,
+              animateScale: true,
+              duration: 2000,
+              easing: 'easeInOutQuart'
+            }
+          },
+          plugins: [{
+            beforeDraw: function (chart) {
+              const width = chart.width;
+              const height = chart.height;
+              const ctx = chart.ctx;
+
+              ctx.restore();
+              const fontSize = (height / 100).toFixed(2);
+              ctx.font = fontSize + "em sans-serif";
+              ctx.textBaseline = "middle";
+              ctx.fillStyle = colors.success;
+
+              const text = achievement + "%";
+              const textX = Math.round((width - ctx.measureText(text).width) / 2);
+              const textY = height / 2;
+
+              ctx.fillText(text, textX, textY);
+              ctx.save();
+            }
+          }]
+        });
+      }
+    </script>
+
+    <!-- Enhanced Sales Ranking -->
+    <script>
+      const rankingContainer = document.getElementById('salesRanking');
+      if (rankingContainer) {
+        let html = '';
+        salesRanking.forEach((sales, index) => {
+          const rankClass = index < 3 ? `rank-${index + 1}` : 'rank-other';
+          html += `
+            <div class="ranking-item">
+              <div class="rank-number ${rankClass}">${index + 1}</div>
+              <div class="ranking-info flex-grow-1">
+                <div class="ranking-name">${sales.name}</div>
+                <div class="ranking-branch">${sales.branch}</div>
+              </div>
+              <div class="ranking-stats">
+                <div class="ranking-sales">${sales.sales}</div>
+                <div class="ranking-achievement">${sales.achievement}%</div>
+              </div>
+            </div>
+          `;
+        });
+        rankingContainer.innerHTML = html;
+
+        // Add animation delay
+        const items = rankingContainer.querySelectorAll('.ranking-item');
+        items.forEach((item, index) => {
+          item.style.opacity = '0';
+          item.style.transform = 'translateX(-20px)';
+          setTimeout(() => {
+            item.style.transition = 'all 0.5s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+          }, index * 100);
+        });
+      }
+    </script>
+
+    <!-- Enhanced Pivot Table -->
+    <script>
+      $(function () {
+        const pivotData = [
+          { branch: "Jakarta Pusat", month: "Jan 2024", target: 350, actual: 325, type: "New", product: "KPR" },
+          { branch: "Jakarta Pusat", month: "Feb 2024", target: 360, actual: 340, type: "New", product: "KTA" },
+          { branch: "Jakarta Pusat", month: "Mar 2024", target: 355, actual: 335, type: "Existing", product: "Investasi" },
+          { branch: "Surabaya", month: "Jan 2024", target: 300, actual: 280, type: "Existing", product: "KPR" },
+          { branch: "Surabaya", month: "Feb 2024", target: 310, actual: 295, type: "New", product: "KTA" },
+          { branch: "Surabaya", month: "Mar 2024", target: 305, actual: 285, type: "Mixed", product: "Asuransi" },
+          { branch: "Bandung", month: "Jan 2024", target: 250, actual: 195, type: "New", product: "KPR" },
+          { branch: "Bandung", month: "Feb 2024", target: 260, actual: 220, type: "Existing", product: "Investasi" },
+          { branch: "Bandung", month: "Mar 2024", target: 255, actual: 210, type: "New", product: "KTA" },
+          { branch: "Medan", month: "Jan 2024", target: 200, actual: 160, type: "Mixed", product: "Asuransi" },
+          { branch: "Medan", month: "Feb 2024", target: 210, actual: 180, type: "New", product: "KPR" },
+          { branch: "Medan", month: "Mar 2024", target: 205, actual: 175, type: "Existing", product: "KTA" }
+        ];
+
+      //   $("#output").pivotUI(pivotData, {
+      //     renderers: $.extend($.pivotUtilities.renderers, $.pivotUtilities.plotly_renderers),
+      //     rendererName: "Table",
+      //     rows: ["branch"],
+      //     cols: ["month"],
+      //     aggregatorName: "Sum",
+      //     vals: ["actual"],
+      //     rendererOptions: {
+      //       table: {
+      //         clickCallback: function(e, value, filters, pivotData) {
+      //           console.log("Cell clicked:", value, filters);
+      //         }
+      //       }
+      //     }
+      //   });
+      // });
+    </script>
+
+    <!-- Loading Animation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          // Add loading animation to charts
+          const chartContainers = document.querySelectorAll('.chart-container-inner');
+          chartContainers.forEach(container => {
+            container.classList.add('loading-shimmer');
+            setTimeout(() => {
+              container.classList.remove('loading-shimmer');
+            }, 1500);
+          });
+
+          // Add fade-in animation to cards
+          const cards = document.querySelectorAll('.dashboard-card');
+          cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              card.style.transition = 'all 0.6s ease';
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, index * 100);
+          });
+        });
+    </script>
+  @endsection

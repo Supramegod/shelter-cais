@@ -116,13 +116,14 @@
                 background-color: white !important;
                 /* Mengatur latar belakang sel data saat mencetak */
             }
-          table {
-        width: 100% !important;
+
+            table {
+                width: 100% !important;
 
 
 
 
-    }
+            }
 
         }
     </style>
@@ -132,7 +133,7 @@
 
     <!-- Halaman 1: Cover -->
     <div class="cover">
-        <img src="{{ asset('public/assets/img/cover-quotation-1.png') }}" alt="Cover Image">
+        <img src="{{ asset('assets/img/cover-quotation-1.png') }}" alt="Cover Image">
     </div>
 
     <!-- Halaman 2: Kata Pengantar -->
@@ -225,10 +226,12 @@
                             <td class="text-end">Rp {{ number_format($detail->nominal_upah, 2, ',', '.') }}</td>
                             @foreach ($daftarTunjangan as $tunjangan)
                                 <td class="text-end">Rp
-                                    {{ number_format($detail->{$tunjangan->nama} ?? 0, 2, ',', '.') }}</td>
+                                    {{ number_format($detail->{$tunjangan->nama} ?? 0, 2, ',', '.') }}
+                                </td>
                             @endforeach
                             <td class="text-end fw-bold text-success">Rp
-                                {{ number_format($detail->total_base_manpower, 2, ',', '.') }}</td>
+                                {{ number_format($detail->total_base_manpower, 2, ',', '.') }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -309,17 +312,22 @@
                             <td class="text-end">{{ 'Rp. ' . number_format($detail->bpjs_kesehatan, 2, ',', '.') }}
                             </td>
                             <td class="text-end">
-                                {{ 'Rp. ' . number_format($detail->bpjs_ketenagakerjaan, 2, ',', '.') }}</td>
+                                {{ 'Rp. ' . number_format($detail->bpjs_ketenagakerjaan, 2, ',', '.') }}
+                            </td>
                             <td class="text-end">
-                                {{ 'Rp. ' . number_format($detail->personil_kaporlap_coss, 2, ',', '.') }}</td>
+                                {{ 'Rp. ' . number_format($detail->personil_kaporlap_coss, 2, ',', '.') }}
+                            </td>
                             <td class="text-end">
-                                {{ 'Rp. ' . number_format($detail->personil_devices_coss, 2, ',', '.') }}</td>
+                                {{ 'Rp. ' . number_format($detail->personil_devices_coss, 2, ',', '.') }}
+                            </td>
                             @if ($quotation->kebutuhan_id == 3)
                                 <td class="text-end">
-                                    {{ 'Rp. ' . number_format($detail->personil_chemical_coss, 2, ',', '.') }}</td>
+                                    {{ 'Rp. ' . number_format($detail->personil_chemical_coss, 2, ',', '.') }}
+                                </td>
                             @endif
                             <td class="fw-bold text-end">Rp
-                                {{ number_format($detail->total_exclude_base_manpower, 2, ',', '.') }}</td>
+                                {{ number_format($detail->total_exclude_base_manpower, 2, ',', '.') }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -346,9 +354,11 @@
                             <td class="text-end">{{ 'Rp. ' . number_format($detail->personil_ohc_coss, 2, ',', '.') }}
                             </td>
                             <td class="text-end">
-                                {{ 'Rp. ' . number_format($detail->total_personil_coss, 2, ',', '.') }}</td>
+                                {{ 'Rp. ' . number_format($detail->total_personil_coss, 2, ',', '.') }}
+                            </td>
                             <td class="text-end">
-                                {{ 'Rp. ' . number_format($detail->sub_total_personil_coss, 2, ',', '.') }}</td>
+                                {{ 'Rp. ' . number_format($detail->sub_total_personil_coss, 2, ',', '.') }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -370,9 +380,11 @@
                     <tr class="table-success">
 
                         <td class="text-end">
-                            {{ 'Rp. ' . number_format($quotation->nominal_management_fee_coss, 2, ',', '.') }}</td>
+                            {{ 'Rp. ' . number_format($quotation->nominal_management_fee_coss, 2, ',', '.') }}
+                        </td>
                         <td class="text-end">
-                            {{ 'Rp. ' . number_format($quotation->grand_total_sebelum_pajak_coss, 2, ',', '.') }}</td>
+                            {{ 'Rp. ' . number_format($quotation->grand_total_sebelum_pajak_coss, 2, ',', '.') }}
+                        </td>
                         <td class="text-end">{{ 'Rp. ' . number_format($quotation->dpp_coss, 2, ',', '.') }}</td>
                         <td class="text-end">{{ 'Rp. ' . number_format($quotation->ppn_coss, 2, ',', '.') }}</td>
                         <td class="text-end">{{ 'Rp. ' . number_format($quotation->pph_coss, 2, ',', '.') }}</td>

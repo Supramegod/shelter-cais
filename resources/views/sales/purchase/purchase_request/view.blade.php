@@ -66,7 +66,7 @@
 
 <body>
     <div style="width: 100%;  text-align: center; margin-bottom: 15px;">
-        <img src="{{ asset('public/assets/img/icons/icon-shelter.png') }}" alt="Logo"
+        <img src="{{ asset('assets/img/icons/icon-shelter.png') }}" alt="Logo"
             style="height: 20px; margin-bottom: 5px;">
         <div class=" kop text-center">
             <h2 style="margin: 0; font-size: 20px;">PT. SHELTER Nusantara</h2>

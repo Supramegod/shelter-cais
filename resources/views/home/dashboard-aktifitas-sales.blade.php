@@ -258,7 +258,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitas))
                             <div class="text-center">
-                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -274,7 +274,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitasTipe))
                             <div class="text-center">
-                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -294,7 +294,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitasStatusLeads))
                             <div class="text-center">
-                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -315,7 +315,7 @@
                     <div class="card-body">
                         @if(empty($jumlahAktifitasVisit))
                             <div class="text-center">
-                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -340,7 +340,7 @@
                     <div class="card-body pt-2">
                         @if(empty($aktifitasSalesPerTanggal))
                             <div class="text-center">
-                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -362,7 +362,7 @@
                     <div class="card-body">
                         @if(empty($aktifitasSalesByTipePerTanggal))
                             <div class="text-center">
-                                <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
+                                <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid"
                                     style="max-width: 200px;">
                             </div>
                             <p class="text-center">Tidak ditemukan data</p>
@@ -374,61 +374,61 @@
             </div>
         </div>
         <!-- <div class="row">
-                <div class="card w-100">
-                <div class="card-header header-elements">
-                    <h5 class="card-title mb-0">Pivot Summary Data Aktifitas Sales</h5>
-                    <div class="card-header-elements ms-auto py-0 dropdown">
-                    <button
-                        type="button"
-                        class="btn dropdown-toggle hide-arrow p-0"
-                        id="heat-chart-dd"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="mdi mdi-dots-vertical"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heat-chart-dd" id="dropdown-pivot-summary">
-                        <button class="dropdown-item" id="saveToExcel"><i class="mdi mdi-file-excel"></i> Save to Excel</button>
-                        <button class="dropdown-item" id="saveConfig"><i class="mdi mdi-content-save"></i> Save Config</button>
-                        <button class="dropdown-item" id="clearConfig"><i class="mdi mdi-delete"></i> Clear Config</button>
-                    </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <label for="tanggalDari" class="form-label">Tanggal Dari</label>
-                            <input type="date" class="form-control" id="tanggalDari" name="tanggalDari">
+                    <div class="card w-100">
+                    <div class="card-header header-elements">
+                        <h5 class="card-title mb-0">Pivot Summary Data Aktifitas Sales</h5>
+                        <div class="card-header-elements ms-auto py-0 dropdown">
+                        <button
+                            type="button"
+                            class="btn dropdown-toggle hide-arrow p-0"
+                            id="heat-chart-dd"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="mdi mdi-dots-vertical"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heat-chart-dd" id="dropdown-pivot-summary">
+                            <button class="dropdown-item" id="saveToExcel"><i class="mdi mdi-file-excel"></i> Save to Excel</button>
+                            <button class="dropdown-item" id="saveConfig"><i class="mdi mdi-content-save"></i> Save Config</button>
+                            <button class="dropdown-item" id="clearConfig"><i class="mdi mdi-delete"></i> Clear Config</button>
                         </div>
-                        <div class="col-md-4">
-                            <label for="tanggalSampai" class="form-label">Tanggal Sampai</label>
-                            <input type="date" class="form-control" id="tanggalSampai" name="tanggalSampai">
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button type="button" class="btn btn-primary" id="filterButton">
-                                <i class="mdi mdi-magnify"></i> Filter
-                            </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="tanggalDari" class="form-label">Tanggal Dari</label>
+                                <input type="date" class="form-control" id="tanggalDari" name="tanggalDari">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tanggalSampai" class="form-label">Tanggal Sampai</label>
+                                <input type="date" class="form-control" id="tanggalSampai" name="tanggalSampai">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="button" class="btn btn-primary" id="filterButton">
+                                    <i class="mdi mdi-magnify"></i> Filter
+                                </button>
+                            </div>
+                            @php
+                                $currentMonth = date('Y-m');
+                                $startDate = $currentMonth . '-01';
+                                $endDate = date('Y-m-t', strtotime($currentMonth));
+                            @endphp
+                            <script>
+                                document.getElementById('tanggalDari').value = '{{ $startDate }}';
+                                document.getElementById('tanggalSampai').value = '{{ $endDate }}';
+                            </script>
                         </div>
-                        @php
-                            $currentMonth = date('Y-m');
-                            $startDate = $currentMonth . '-01';
-                            $endDate = date('Y-m-t', strtotime($currentMonth));
-                        @endphp
-                        <script>
-                            document.getElementById('tanggalDari').value = '{{ $startDate }}';
-                            document.getElementById('tanggalSampai').value = '{{ $endDate }}';
-                        </script>
+                        <div class="row">
+                        <div id="output" style="overflow-x: auto; width: 100%;"></div>
+                        </div>
                     </div>
-                    <div class="row">
-                    <div id="output" style="overflow-x: auto; width: 100%;"></div>
-                    </div>
-                </div>
-              </div>
-            </div> -->
+                  </div>
+                </div> -->
     </div>
 @endsection
 
 @section('pageScript')
-    <script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/xlsx.full.min.js"></script>
     <script>
         const purpleColor = '#836AF9',
@@ -833,116 +833,116 @@
     </script>
 
     <!-- <script>
-            function fetchPivotData(tanggalDari, tanggalSampai) {
-                $('#output').html('<div class="d-flex justify-content-center align-items-center" style="height: 200px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
-                $.ajax({
-                    url: '{{ route('dashboard.aktifitas-sales.pivot.aktifitas-sales') }}',
-                    method: 'GET',
-                    data: {
-                        tanggalDari: tanggalDari,
-                        tanggalSampai: tanggalSampai
-                    },
-                    dataType: 'json',
-                    success: function(pivotData) {
-                        if (pivotData.length === 0) {
-                            $('#output').html(`
-                                <div class="text-center">
-                                    <img src="{{ asset('public/assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid" style="max-width: 200px;">
-                                </div>
-                                <p class="text-center">Tidak ditemukan data</p>
-                            `);
-                            return;
-                        }
-                        pivotData.forEach(element => {
-                            Object.keys(element).forEach(key => {
-                                const newKey = key.replaceAll('_', ' ');
-                                element[newKey] = element[key];
-                                if (newKey !== key){
-                                    delete element[key];
-                                }
+                function fetchPivotData(tanggalDari, tanggalSampai) {
+                    $('#output').html('<div class="d-flex justify-content-center align-items-center" style="height: 200px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+                    $.ajax({
+                        url: '{{ route('dashboard.aktifitas-sales.pivot.aktifitas-sales') }}',
+                        method: 'GET',
+                        data: {
+                            tanggalDari: tanggalDari,
+                            tanggalSampai: tanggalSampai
+                        },
+                        dataType: 'json',
+                        success: function(pivotData) {
+                            if (pivotData.length === 0) {
+                                $('#output').html(`
+                                    <div class="text-center">
+                                        <img src="{{ asset('assets/img/empty_data.png') }}" alt="Tidak ditemukan data" class="img-fluid" style="max-width: 200px;">
+                                    </div>
+                                    <p class="text-center">Tidak ditemukan data</p>
+                                `);
+                                return;
+                            }
+                            pivotData.forEach(element => {
+                                Object.keys(element).forEach(key => {
+                                    const newKey = key.replaceAll('_', ' ');
+                                    element[newKey] = element[key];
+                                    if (newKey !== key){
+                                        delete element[key];
+                                    }
+                                });
                             });
+
+
+                            var derivers = $.pivotUtilities.derivers;
+                            var renderers = $.extend($.pivotUtilities.renderers, $.pivotUtilities.plotly_renderers);
+
+                            // Render PivotTable with Plotly Renderer
+                            // $("#output").pivotUI(pivotData, {
+                            //     renderers: renderers,
+                            //     rendererName: "Table",
+                            //     aggregatorName: "Count"
+                            // });
+                            let savedConfig = localStorage.getItem("pivotConfig");
+                            let localConfig = {
+                                renderers: renderers,
+                                rendererName: "Table",
+                                aggregatorName: "Count"
+                            };
+                            if (savedConfig) {
+                                savedConfig = JSON.parse(savedConfig);
+                                localConfig.rows = savedConfig.rows;
+                                localConfig.cols = savedConfig.cols;
+                                localConfig.rendererName = savedConfig.rendererName;
+                                localConfig.aggregatorName = savedConfig.aggregatorName;
+                                localConfig.vals = savedConfig.vals;
+                            }
+
+                            $("#output").pivotUI(pivotData, localConfig);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching data:', error);
+                        }
+                    });
+                }
+
+                $(function() {
+                    // Initial fetch with default dates
+                    fetchPivotData($('#tanggalDari').val(), $('#tanggalSampai').val());
+
+                    // Fetch data on filter button click
+                    $('#filterButton').on('click', function() {
+                        var tanggalDari = $('#tanggalDari').val();
+                        var tanggalSampai = $('#tanggalSampai').val();
+                        fetchPivotData(tanggalDari, tanggalSampai);
+                    });
+
+                    $("#saveConfig").on("click", function() {
+                        var config = $("#output").data("pivotUIOptions");
+                        localStorage.setItem("pivotConfig", JSON.stringify(config));
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Konfigurasi disimpan!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    });
+                    $("#saveToExcel").on("click", function() {
+                        var table = $("#output table .pvtTable").clone();
+
+                        table.find('thead th').each(function() {
+                            $(this).text($(this).text().trim());
                         });
 
+                        var tanggalDari = $('#tanggalDari').val().split('-').reverse().join('-');
+                        var tanggalSampai = $('#tanggalSampai').val().split('-').reverse().join('-');
+                        table.find('tr:first').before('<tr><th colspan="' + table.find('thead th').length + '">Aktifitas Sales</th></tr><tr><th colspan="' + table.find('thead th').length + '">' + tanggalDari + ' s/d ' + tanggalSampai + '</th></tr><tr></tr>');
+                        var wb = XLSX.utils.table_to_book(table[0], {sheet: "Aktifitas Sales"});
 
-                        var derivers = $.pivotUtilities.derivers;
-                        var renderers = $.extend($.pivotUtilities.renderers, $.pivotUtilities.plotly_renderers);
-
-                        // Render PivotTable with Plotly Renderer
-                        // $("#output").pivotUI(pivotData, {
-                        //     renderers: renderers,
-                        //     rendererName: "Table",
-                        //     aggregatorName: "Count"
-                        // });
-                        let savedConfig = localStorage.getItem("pivotConfig");
-                        let localConfig = {
-                            renderers: renderers,
-                            rendererName: "Table",
-                            aggregatorName: "Count"
-                        };
-                        if (savedConfig) {
-                            savedConfig = JSON.parse(savedConfig);
-                            localConfig.rows = savedConfig.rows;
-                            localConfig.cols = savedConfig.cols;
-                            localConfig.rendererName = savedConfig.rendererName;
-                            localConfig.aggregatorName = savedConfig.aggregatorName;
-                            localConfig.vals = savedConfig.vals;
-                        }
-
-                        $("#output").pivotUI(pivotData, localConfig);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching data:', error);
-                    }
-                });
-            }
-
-            $(function() {
-                // Initial fetch with default dates
-                fetchPivotData($('#tanggalDari').val(), $('#tanggalSampai').val());
-
-                // Fetch data on filter button click
-                $('#filterButton').on('click', function() {
-                    var tanggalDari = $('#tanggalDari').val();
-                    var tanggalSampai = $('#tanggalSampai').val();
-                    fetchPivotData(tanggalDari, tanggalSampai);
-                });
-
-                $("#saveConfig").on("click", function() {
-                    var config = $("#output").data("pivotUIOptions");
-                    localStorage.setItem("pivotConfig", JSON.stringify(config));
-                    Swal.fire({
+                        XLSX.writeFile(wb, "Aktifitas Sales " + new Date().toISOString().slice(0, 10) + ".xlsx");
+                    });
+                    $("#clearConfig").on("click", function() {
+                        localStorage.removeItem("pivotConfig");
+                        Swal.fire({
                         icon: 'success',
-                        title: 'Konfigurasi disimpan!',
+                        title: 'Konfigurasi dihapus!',
                         showConfirmButton: false,
                         timer: 1500
+                        });
+                        location.reload();
+                        });
                     });
-                });
-                $("#saveToExcel").on("click", function() {
-                    var table = $("#output table .pvtTable").clone();
-
-                    table.find('thead th').each(function() {
-                        $(this).text($(this).text().trim());
-                    });
-
-                    var tanggalDari = $('#tanggalDari').val().split('-').reverse().join('-');
-                    var tanggalSampai = $('#tanggalSampai').val().split('-').reverse().join('-');
-                    table.find('tr:first').before('<tr><th colspan="' + table.find('thead th').length + '">Aktifitas Sales</th></tr><tr><th colspan="' + table.find('thead th').length + '">' + tanggalDari + ' s/d ' + tanggalSampai + '</th></tr><tr></tr>');
-                    var wb = XLSX.utils.table_to_book(table[0], {sheet: "Aktifitas Sales"});
-
-                    XLSX.writeFile(wb, "Aktifitas Sales " + new Date().toISOString().slice(0, 10) + ".xlsx");
-                });
-                $("#clearConfig").on("click", function() {
-                    localStorage.removeItem("pivotConfig");
-                    Swal.fire({
-                    icon: 'success',
-                    title: 'Konfigurasi dihapus!',
-                    showConfirmButton: false,
-                    timer: 1500
-                    });
-                    location.reload();
-                    });
-                });
-        </script> -->
+            </script> -->
     <script>
         let month = new Date().getMonth() + 1;
         $('#bulan').val(month < 10 ? '0' + month : month);

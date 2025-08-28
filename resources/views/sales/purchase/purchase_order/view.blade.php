@@ -66,7 +66,7 @@
 
 <body>
     <div style="width: 100%;  text-align: center; margin-bottom: 15px;">
-        <img src="{{ asset('public/assets/img/icons/icon-shelter.png') }}" alt="Logo"
+        <img src="{{ asset('assets/img/icons/icon-shelter.png') }}" alt="Logo"
             style="height: 20px; margin-bottom: 5px;">
         <div class=" kop text-center">
             <h2 style="margin: 0; font-size: 20px;">PT. SHELTER Nusantara</h2>
@@ -105,7 +105,7 @@
                     <table>
                         <tr>
                             <td><strong>Sales</strong></td>
-                            <td >: {{ $data->sales }}</td>
+                            <td>: {{ $data->sales }}</td>
                         </tr>
                         <tr>
                             <td><strong>Cabang</strong></td>
@@ -116,50 +116,50 @@
             </tr>
         </table>
 
-            <h3 class="mb-1">Daftar Barang {{ $data->jenis_barang }}</h3>
-            @foreach ($listJenisBarang as $jenisItem)
-                <div class="table-container mb-5 d-flex justify-content-center">
-                    <table class="table table-barang">
-                        <thead>
-                            <tr class="table-primary text-center">
-                                <th colspan="5">{{ $jenisItem->jenis_barang }}</th>
-                            </tr>
-                            <tr class="table-primary text-center">
-                                <th>Kode barang</th>
-                                <th>Nama barang</th>
-                                <th>Jumlah</th>
-                                <th>Satuan</th>
-                                <th>Merk barang</th>
+        <h3 class="mb-1">Daftar Barang {{ $data->jenis_barang }}</h3>
+        @foreach ($listJenisBarang as $jenisItem)
+            <div class="table-container mb-5 d-flex justify-content-center">
+                <table class="table table-barang">
+                    <thead>
+                        <tr class="table-primary text-center">
+                            <th colspan="5">{{ $jenisItem->jenis_barang }}</th>
+                        </tr>
+                        <tr class="table-primary text-center">
+                            <th>Kode barang</th>
+                            <th>Nama barang</th>
+                            <th>Jumlah</th>
+                            <th>Satuan</th>
+                            <th>Merk barang</th>
 
 
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($listBarang as $item)
-                                @if ($item->jenis_barang == $jenisItem->jenis_barang)
-                                    <tr>
-                                        <td class="text-center">000{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nama_barang }}</td>
-                                        <td class="text-center">{{ $item->qty }}</td>
-                                        <td class="text-center">{{ $item->satuan }}</td>
-                                        <td class="text-center">{{ $item->merk }}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($listBarang as $item)
+                            @if ($item->jenis_barang == $jenisItem->jenis_barang)
+                                <tr>
+                                    <td class="text-center">000{{ $loop->iteration }}</td>
+                                    <td>{{ $item->nama_barang }}</td>
+                                    <td class="text-center">{{ $item->qty }}</td>
+                                    <td class="text-center">{{ $item->satuan }}</td>
+                                    <td class="text-center">{{ $item->merk }}</td>
 
-                                    </tr>
-                                @endif
-                            @endforeach
+                                </tr>
+                            @endif
+                        @endforeach
 
-                        </tbody>
-                    </table>
-                </div>
-            @endforeach
-
-
-            <div class="signature-box mt-5" style="width: 200px; ">
-                <p>Dicetak oleh</p>
-                {{ $data->created_by }}
-
+                    </tbody>
+                </table>
             </div>
+        @endforeach
+
+
+        <div class="signature-box mt-5" style="width: 200px; ">
+            <p>Dicetak oleh</p>
+            {{ $data->created_by }}
+
+        </div>
 
 </body>
 <script>

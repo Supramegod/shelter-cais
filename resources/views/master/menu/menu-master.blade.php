@@ -1,5 +1,5 @@
 @extends('layouts.master')
-
+@section('title', 'Menu Master')
 @section('content')
     <style>
         :root {

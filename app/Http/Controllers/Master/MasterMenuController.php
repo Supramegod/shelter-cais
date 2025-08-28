@@ -17,6 +17,15 @@ class MasterMenuController extends Controller
     {
         return view('master.menu.list');
     }
+
+    public function menu()
+    {
+        // Bisa tambahkan logic tambahan di sini jika perlu
+        // Misalnya: count data, statistik, dll
+        
+        return view('master.menu.menu-master');
+    }
+
     public function list(Request $request)
     {
         try {

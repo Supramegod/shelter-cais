@@ -113,7 +113,8 @@ class DashboardController extends Controller
         return view('home.dashboard-sdt-training', compact('jumlahTraining', 'jumlahClient', 'jumlahTrainer', 'jumlahMateri'));
     }
 
-    public function dashboardTrainingGada (Request $request){
+    public function dashboardTrainingGada(Request $request)
+    {
         $totalNewRegister = DB::table('training_gada_calon')
             ->where('is_active', 1)
             ->where('status', 1)
@@ -148,8 +149,8 @@ class DashboardController extends Controller
             ->leftJoin('m_kebutuhan', 'sl_leads.kebutuhan_id', '=', 'm_kebutuhan.id')
             ->whereNull('sl_leads.deleted_at')
             ->whereYear('sl_leads.created_at', Carbon::now()->year)
-            ->select('m_kebutuhan.nama as kebutuhan','sl_leads.kebutuhan_id', DB::raw('MONTH(sl_leads.created_at) as bulan'), DB::raw('count(*) as jumlah_leads'))
-            ->groupBy('sl_leads.kebutuhan_id','kebutuhan', 'bulan')
+            ->select('m_kebutuhan.nama as kebutuhan', 'sl_leads.kebutuhan_id', DB::raw('MONTH(sl_leads.created_at) as bulan'), DB::raw('count(*) as jumlah_leads'))
+            ->groupBy('sl_leads.kebutuhan_id', 'kebutuhan', 'bulan')
             ->get();
 
 
@@ -160,9 +161,9 @@ class DashboardController extends Controller
             ->groupBy('status_id', 'status', 'bulan')
             ->get();
 
-            // dd($statusPembayaranPesertaPie);
+        // dd($statusPembayaranPesertaPie);
 
-            // dd($leadsByKebutuhan);
+        // dd($leadsByKebutuhan);
 
         $leadsGroupedByKebutuhan = [];
 
@@ -211,7 +212,7 @@ class DashboardController extends Controller
         $statusPembayaranPesertaPie = DB::table('training_gada_transaksi')
             ->where('is_active', 1)
             ->whereMonth('created_date', Carbon::now()->month)
-            ->select(DB::raw("IF(status = 0, 'Belum Bayar', 'Sudah Bayar') as status"),DB::raw('count(*) as jumlah_data'))
+            ->select(DB::raw("IF(status = 0, 'Belum Bayar', 'Sudah Bayar') as status"), DB::raw('count(*) as jumlah_data'))
             ->groupBy('status')
             ->get();
 
@@ -237,10 +238,10 @@ class DashboardController extends Controller
         //     ->whereNotNull('kebutuhan_id')
         //     ->count();
 
-        $warna = ['#836AF9','#ffe800','#28dac6','#FF8132','#ffcf5c','#299AFF','#4F5D70','#EDF1F4','#2B9AFF','#84D0FF','#FF6384','#4BC0C0','#FF9F40','#B9FF00','#00FFB9','#FF00B9','#B900FF','#4B00FF','#FFC107','#FF5722'];
+        $warna = ['#836AF9', '#ffe800', '#28dac6', '#FF8132', '#ffcf5c', '#299AFF', '#4F5D70', '#EDF1F4', '#2B9AFF', '#84D0FF', '#FF6384', '#4BC0C0', '#FF9F40', '#B9FF00', '#00FFB9', '#FF00B9', '#B900FF', '#4B00FF', '#FFC107', '#FF5722'];
         // return view('home.dashboard-training-gada',compact('totalLeadsKebutuhan','leadsGroupKebutuhan','leadsWithoutCustomer','leadsWithCustomer','leadsBySumber','leadsGroupedByKebutuhan','leadsBelumAdaQuotation','leadsBelumAdaSales','leadsBelumAdaCustomer','leadsBelumAdaAktifitas','warna','leadsBaruHariIni','leadsBaruMingguIni','leadsBaruBulanIni','leadsBaruTahunIni'));
         // return view('home.dashboard-training-gada',compact('totalNewRegister', 'totalLead', 'totalNewCold', 'totalNewHot', 'totalNewPeserta' , 'warna', 'leadsGroupedByKebutuhan', 'statusPembayaranPesertaPie', 'leadsWithCustomer', 'leadsWithoutCustomer', 'leadsGroupKebutuhan', 'totalLeadsKebutuhan'));
-        return view('home.dashboard-training-gada',compact('totalNewRegister', 'totalLead', 'totalNewCold', 'totalNewHot', 'totalNewPeserta' , 'warna', 'pembayaranPesertaGada', 'statusPembayaranPesertaPie'));
+        return view('home.dashboard-training-gada', compact('totalNewRegister', 'totalLead', 'totalNewCold', 'totalNewHot', 'totalNewPeserta', 'warna', 'pembayaranPesertaGada', 'statusPembayaranPesertaPie'));
     }
 
     public function dashboardAktifitasSales(Request $request)
@@ -320,7 +321,8 @@ class DashboardController extends Controller
         foreach ($aktifitasByTipe as $key => $value) {
             array_push($tipe, $value->tipe . " ( " . $value->jumlah_aktifitas . " )");
             array_push($jumlahAktifitasTipe, $value->jumlah_aktifitas);
-        };
+        }
+        ;
 
         $aktifitasByStatusLeads = DB::table('sl_customer_activity')
             ->join($db2 . '.m_user', $db2 . '.m_user.id', 'sl_customer_activity.user_id')
@@ -337,7 +339,8 @@ class DashboardController extends Controller
         foreach ($aktifitasByStatusLeads as $key => $value) {
             array_push($statusLeads, $value->status_leads . " ( " . $value->jumlah_aktifitas . " )");
             array_push($jumlahAktifitasStatusLeads, $value->jumlah_aktifitas);
-        };
+        }
+        ;
 
         $aktifitasSalesPerTanggal = [];
 
@@ -433,7 +436,8 @@ class DashboardController extends Controller
         foreach ($aktifitasByVisit as $key => $value) {
             array_push($jenisVisit, $value->jenis_visit . " ( " . $value->jumlah_aktifitas . " )");
             array_push($jumlahAktifitasVisit, $value->jumlah_aktifitas);
-        };
+        }
+        ;
 
         $warna = ['#836AF9', '#ffe800', '#28dac6', '#FF8132', '#ffcf5c', '#299AFF', '#4F5D70', '#EDF1F4', '#2B9AFF', '#84D0FF', '#FF6384', '#4BC0C0', '#FF9F40', '#B9FF00', '#00FFB9', '#FF00B9', '#B900FF', '#4B00FF', '#FFC107', '#FF5722'];
 
@@ -516,7 +520,8 @@ class DashboardController extends Controller
         foreach ($aktifitasByTipe as $key => $value) {
             array_push($tipe, $value->tipe . " ( " . $value->jumlah_aktifitas . " )");
             array_push($jumlahAktifitasTipe, $value->jumlah_aktifitas);
-        };
+        }
+        ;
 
         $aktifitasByStatusLeads = DB::table('sl_customer_activity')
             ->join($db2 . '.m_user', $db2 . '.m_user.id', 'sl_customer_activity.user_id')
@@ -533,7 +538,8 @@ class DashboardController extends Controller
         foreach ($aktifitasByStatusLeads as $key => $value) {
             array_push($statusLeads, $value->status_leads . " ( " . $value->jumlah_aktifitas . " )");
             array_push($jumlahAktifitasStatusLeads, $value->jumlah_aktifitas);
-        };
+        }
+        ;
 
         $aktifitasTelesalesPerTanggal = [];
 
@@ -629,7 +635,8 @@ class DashboardController extends Controller
         foreach ($aktifitasByVisit as $key => $value) {
             array_push($jenisVisit, $value->jenis_visit . " ( " . $value->jumlah_aktifitas . " )");
             array_push($jumlahAktifitasVisit, $value->jumlah_aktifitas);
-        };
+        }
+        ;
 
         $warna = ['#836AF9', '#ffe800', '#28dac6', '#FF8132', '#ffcf5c', '#299AFF', '#4F5D70', '#EDF1F4', '#2B9AFF', '#84D0FF', '#FF6384', '#4BC0C0', '#FF9F40', '#B9FF00', '#00FFB9', '#FF00B9', '#B900FF', '#4B00FF', '#FFC107', '#FF5722'];
 
@@ -811,7 +818,8 @@ class DashboardController extends Controller
                     array_push($arrData, $quotation);
                 }
             }
-        };
+        }
+        ;
 
         return DataTables::of($arrData)
             ->addColumn('aksi', function ($data) {
@@ -1245,25 +1253,25 @@ class DashboardController extends Controller
             ->leftjoin($db2 . '.m_user', 'sl_customer_activity.user_id', '=', $db2 . '.m_user.id')
             ->leftjoin($db2 . '.m_branch', $db2 . '.m_user.branch_id', '=', $db2 . '.m_branch.id')
             ->select(
-                $db2.'.m_user.id as user_id',
-                $db2.'.m_user.full_name as nama_sales',
-                $db2.'.m_branch.name as cabang',
+                $db2 . '.m_user.id as user_id',
+                $db2 . '.m_user.full_name as nama_sales',
+                $db2 . '.m_branch.name as cabang',
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w1_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w1_visit'),
-                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 1) as w1_quot'),
-                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 1) as w1_spk'),
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_quotation.created_at) = ' . $bulan . ' AND YEAR(sl_quotation.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_quotation.created_at) = 1) as w1_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_spk.created_at) = ' . $bulan . ' AND YEAR(sl_spk.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_spk.created_at) = 1) as w1_spk'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w2_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w2_visit'),
-                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 2) as w2_quot'),
-                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 2) as w2_spk'),
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_quotation.created_at) = ' . $bulan . ' AND YEAR(sl_quotation.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_quotation.created_at) = 2) as w2_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_spk.created_at) = ' . $bulan . ' AND YEAR(sl_spk.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_spk.created_at) = 2) as w2_spk'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w3_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w3_visit'),
-                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 3) as w3_quot'),
-                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 3) as w3_spk'),
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_quotation.created_at) = ' . $bulan . ' AND YEAR(sl_quotation.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_quotation.created_at) = 3) as w3_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_spk.created_at) = ' . $bulan . ' AND YEAR(sl_spk.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_spk.created_at) = 3) as w3_spk'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as w4_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 4 AND sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as w4_visit'),
-                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_quotation.created_at) = '.$bulan.' AND YEAR(sl_quotation.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_quotation.created_at) = 4) as w4_quot'),
-                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = '.$db2.'.m_user.full_name AND MONTH(sl_spk.created_at) = '.$bulan.' AND YEAR(sl_spk.created_at) = '.$tahun.' AND GetWeekOfMonth(sl_spk.created_at) = 4) as w4_spk')
+                DB::raw('(SELECT COUNT(*) FROM sl_quotation WHERE sl_quotation.deleted_at IS NULL AND sl_quotation.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_quotation.created_at) = ' . $bulan . ' AND YEAR(sl_quotation.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_quotation.created_at) = 4) as w4_quot'),
+                DB::raw('(SELECT COUNT(*) FROM sl_spk WHERE sl_spk.deleted_at IS NULL AND sl_spk.created_by = ' . $db2 . '.m_user.full_name AND MONTH(sl_spk.created_at) = ' . $bulan . ' AND YEAR(sl_spk.created_at) = ' . $tahun . ' AND GetWeekOfMonth(sl_spk.created_at) = 4) as w4_spk')
             )
             ->whereMonth('sl_customer_activity.created_at', $bulan)
             ->whereYear('sl_customer_activity.created_at', $tahun)
@@ -1321,8 +1329,8 @@ class DashboardController extends Controller
         END
     ) AS jumlah_appt'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as jumlah_visit'),
-                DB::raw('(select count(*) from sl_quotation where sl_quotation.deleted_at is null and sl_quotation.created_by = '.$db2.'.m_user.full_name and MONTH(sl_quotation.created_at) = '.$bulan.' and YEAR(sl_quotation.created_at) = '.$tahun.') as jumlah_quot'),
-                DB::raw('(select count(*) from sl_spk where sl_spk.deleted_at is null and sl_spk.created_by = '.$db2.'.m_user.full_name and MONTH(sl_spk.created_at) = '.$bulan.' and YEAR(sl_spk.created_at) = '.$tahun.') as jumlah_spk'),
+                DB::raw('(select count(*) from sl_quotation where sl_quotation.deleted_at is null and sl_quotation.created_by = ' . $db2 . '.m_user.full_name and MONTH(sl_quotation.created_at) = ' . $bulan . ' and YEAR(sl_quotation.created_at) = ' . $tahun . ') as jumlah_quot'),
+                DB::raw('(select count(*) from sl_spk where sl_spk.deleted_at is null and sl_spk.created_by = ' . $db2 . '.m_user.full_name and MONTH(sl_spk.created_at) = ' . $bulan . ' and YEAR(sl_spk.created_at) = ' . $tahun . ') as jumlah_spk'),
             )
 
             ->whereMonth('sl_customer_activity.created_at', $bulan)
@@ -1342,8 +1350,8 @@ class DashboardController extends Controller
             ->leftjoin($db2 . '.m_user', 'sl_customer_activity.user_id', '=', $db2 . '.m_user.id')
             ->leftjoin($db2 . '.m_branch', $db2 . '.m_user.branch_id', '=', $db2 . '.m_branch.id')
             ->select(
-                $db2.'.m_user.full_name as nama_sales',
-                $db2.'.m_branch.name as cabang',
+                $db2 . '.m_user.full_name as nama_sales',
+                $db2 . '.m_branch.name as cabang',
                 DB::raw('SUM(CASE WHEN (sl_customer_activity.tipe = "Visit" or sl_customer_activity.notes like "%visit%" or sl_customer_activity.notes like "%appt%" or sl_customer_activity.notes like "%appo%" or sl_customer_activity.notes like "%zoom%") THEN 1 ELSE 0 END) as jumlah_appt'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.tipe = "visit" THEN 1 ELSE 0 END) as jumlah_visit'),
                 DB::raw('SUM(CASE WHEN sl_customer_activity.notes like "%Quotation%terbentuk%" THEN 1 ELSE 0 END) as jumlah_quot'),
@@ -1410,8 +1418,8 @@ class DashboardController extends Controller
             ->leftjoin($db2 . '.m_user', 'sl_customer_activity.user_id', '=', $db2 . '.m_user.id')
             ->leftjoin($db2 . '.m_branch', $db2 . '.m_user.branch_id', '=', $db2 . '.m_branch.id')
             ->select(
-                $db2.'.m_user.full_name as nama_sales',
-                $db2.'.m_branch.name as cabang',
+                $db2 . '.m_user.full_name as nama_sales',
+                $db2 . '.m_branch.name as cabang',
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 1 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%" or sl_customer_activity.notes LIKE "%zoom%") THEN 1 ELSE 0 END) as w1_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 2 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%" or sl_customer_activity.notes LIKE "%zoom%") THEN 1 ELSE 0 END) as w2_appt'),
                 DB::raw('SUM(CASE WHEN GetWeekOfMonth(sl_customer_activity.created_at) = 3 AND sl_customer_activity.tipe != "Visit" and (sl_customer_activity.notes LIKE "%visit%" OR sl_customer_activity.notes LIKE "%appo%" or sl_customer_activity.notes LIKE "%zoom%") THEN 1 ELSE 0 END) as w3_appt'),
@@ -1535,7 +1543,7 @@ class DashboardController extends Controller
                 'name' => $lead->nama_perusahaan,
                 'subtitle' => 'Leads',
                 'meta' => \Carbon\Carbon::parse($lead->created_at)->format('d M Y'),
-                'src' => asset('public/assets/img/icons/leads.png'),
+                'src' => asset('assets/img/icons/leads.png'),
                 'url' => route('leads.view', $lead->id),
             ];
         }
@@ -1555,7 +1563,7 @@ class DashboardController extends Controller
                 'name' => $quotation->nomor,
                 'subtitle' => $quotation->nama_perusahaan,
                 'meta' => \Carbon\Carbon::parse($quotation->tgl_quotation)->format('d M Y'),
-                'src' => asset('public/assets/img/icons/quotation.png'),
+                'src' => asset('assets/img/icons/quotation.png'),
                 'url' => route('quotation.view', $quotation->id),
             ];
         }
@@ -1576,7 +1584,7 @@ class DashboardController extends Controller
                 'name' => $spk->nomor,
                 'subtitle' => $spk->nama_perusahaan,
                 'meta' => \Carbon\Carbon::parse($spk->tgl_spk)->format('d M Y'),
-                'src' => asset('public/assets/img/icons/spk.png'),
+                'src' => asset('assets/img/icons/spk.png'),
                 'url' => route('spk.view', $spk->id),
             ];
         }
@@ -1599,7 +1607,7 @@ class DashboardController extends Controller
                 'name' => $pks->nomor,
                 'subtitle' => $pks->nama_perusahaan,
                 'meta' => \Carbon\Carbon::parse($pks->tgl_pks)->format('d M Y'),
-                'src' => asset('public/assets/img/icons/pks.png'),
+                'src' => asset('assets/img/icons/pks.png'),
                 'url' => route('pks.view', $pks->id),
             ];
         }
@@ -1660,25 +1668,25 @@ class DashboardController extends Controller
                 ->whereNull('deleted_at')
                 ->where('version', $request->version)
                 ->first();
-             if (!$checked) {
-            // insert kalau belum ada
-            DB::table('patch_info')->insert([
-                'version'     => $request->version,
-                'keterangan'  => $request->keterangan ?? null, // null kalau kosong
-                'created_at'  => Carbon::now(),
-                'created_by'  => Auth::user()->full_name,
-            ]);
-        } else {
-            // update kalau sudah ada
-            DB::table('patch_info')
-                ->whereNull('deleted_at')
-                ->where('version', $request->version)
-                ->update([
-                    'keterangan' => $request->keterangan ?? null,
-                    'updated_at' => Carbon::now(),
-                    'updated_by' => Auth::user()->full_name,
+            if (!$checked) {
+                // insert kalau belum ada
+                DB::table('patch_info')->insert([
+                    'version' => $request->version,
+                    'keterangan' => $request->keterangan ?? null, // null kalau kosong
+                    'created_at' => Carbon::now(),
+                    'created_by' => Auth::user()->full_name,
                 ]);
-        }
+            } else {
+                // update kalau sudah ada
+                DB::table('patch_info')
+                    ->whereNull('deleted_at')
+                    ->where('version', $request->version)
+                    ->update([
+                        'keterangan' => $request->keterangan ?? null,
+                        'updated_at' => Carbon::now(),
+                        'updated_by' => Auth::user()->full_name,
+                    ]);
+            }
 
             return redirect()->back()->with('success', 'Patch berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -1686,38 +1694,38 @@ class DashboardController extends Controller
         }
     }
     public function dashboardHomeSales()
-{
-    return view('home.homepage.sales');
-}
+    {
+        return view('home.homepage.sales');
+    }
 
-public function dashboardHomeTelesales()
-{
-    return view('home.homepage.telesales');
-}
+    public function dashboardHomeTelesales()
+    {
+        return view('home.homepage.telesales');
+    }
 
-public function dashboardHomeManagerSales()
-{
-    return view('home.homepage.manager-sales');
-}
+    public function dashboardHomeManagerSales()
+    {
+        return view('home.homepage.manager-sales');
+    }
 
-public function dashboardHomeGeneralManager()
-{
-    return view('home.homepage.gm');
-}
+    public function dashboardHomeGeneralManager()
+    {
+        return view('home.homepage.gm');
+    }
 
-public function dashboardHomeRo()
-{
-    return view('home.homepage.ro');
-}
+    public function dashboardHomeRo()
+    {
+        return view('home.homepage.ro');
+    }
 
-public function dashboardHomeManagerRo()
-{
-    return view('home.homepage.manager-ro');
-}
+    public function dashboardHomeManagerRo()
+    {
+        return view('home.homepage.manager-ro');
+    }
 
-public function dashboardHomeStaffCrm()
-{
-    return view('home.homepage.staff-crm');
-}
+    public function dashboardHomeStaffCrm()
+    {
+        return view('home.homepage.staff-crm');
+    }
 
 }
