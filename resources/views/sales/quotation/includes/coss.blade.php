@@ -218,22 +218,8 @@
                       </tbody>
                     </table>
                   </div>
-                  <div class="mt-3" style="padding-left:40px">
-                    <p><b><i>Note :</i></b>	<br>
-                    <b>Upah pokok base on Umk 2024 </b> <br>
-  Tunjangan overtime flat total 75 jam. <span class="text-danger">*jika system jam kerja 12 jam </span> <br>
-  Tunjangan hari raya ditagihkan provisi setiap bulan. (upah/12) <br>
-  @if($quotation->program_bpjs=="2 BPJS")
-  BPJS Ketenagakerjaan 2 Program (JKK, JKM).
-  @elseif($quotation->program_bpjs=="3 BPJS")
-  BPJS Ketenagakerjaan 3 Program (JKK, JKM, JHT).
-  @elseif($quotation->program_bpjs=="4 BPJS")
-  BPJS Ketenagakerjaan 4 Program (JKK, JKM, JHT, JP).
-  @endif
-  <span class="text-danger">Pengalian base on upah</span>		<br>
-  BPJS Kesehatan. <span class="text-danger">*base on Umk 2024</span> <br>
-  <br>
-  <span class="text-danger">*prosentase Bpjs Tk J. Kecelakaan Kerja disesuaikan dengan tingkat resiko sesuai ketentuan.</span>
-  </p>
-                  </div>
+                    <div class="mt-3" style="padding-left:40px">
+                        <p><b><i>Note :</i></b><br>
+                        {!! $quotation->note_harga_jual !!}</p>
+                    </div>
                 </div>

@@ -97,12 +97,12 @@ class WhatsappController extends Controller
             //     ])
             //     ->post('https://whatsapp.ulilworld.com/sessions/add', [
             //         'isLegacy' => 'false',
-            //         'id' => 'test1'
+            //         'id' => 'cais_prod'
             //     ]);
 
             $response = Http::asForm()->post('https://whatsapp.ulilworld.com/sessions/add', [
                 'isLegacy' => 'false',
-                'id' => 'test1',
+                'id' => 'cais_prod',
             ]);
 
             // dd($response->successful());
@@ -146,13 +146,48 @@ class WhatsappController extends Controller
             ->withHeaders([
                 'Authorization' => 'Bearer '.$tokenWhatsapp->value
             ])
-            ->post('https://whatsapp.ulilworld.com/chats/send?id=test1', [
+            ->post('https://whatsapp.ulilworld.com/chats/send?id=cais_prod', [
                 'receiver' => '628986362990',
-                'message' => 'test1',
+                'message' => 'cais_prod',
             ]);
 
             // dd($response->json());
             if( $response->successful() ){
+                return response()->json([
+                    'success'   => true,
+                    'data'      => $response->json()['data'],
+                    'message'   => $response->json()['message']
+                ], 200);
+            }else{
+                return response()->json([
+                    'success'   => false,
+                    'data'      => [],
+                    'message'   => $response->json()['message']
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function sendMessage(Request $request){
+        try {
+            $tokenWhatsapp = DB::table('m_setting')->where('id', 1)->first();
+            $response = Http::asForm()
+            ->withHeaders([
+                'Authorization' => 'Bearer '.$tokenWhatsapp->value
+            ])
+            ->post('https://whatsapp.ulilworld.com/chats/send?id=cais_prod', [
+                'receiver' => $request->no_wa,
+                'message' => $request->message,
+            ]);
+
+            if( $response->successful() ){
+                $current_date_time = Carbon::now()->toDateTimeString();
+                DB::table('training_gada_calon')->where('id', $request->id)->update([
+                    'last_sent_notif_register' => $current_date_time
+                ]);        
                 return response()->json([
                     'success'   => true,
                     'data'      => $response->json()['data'],

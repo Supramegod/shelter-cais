@@ -23,7 +23,7 @@
             <!-- Menu -->
             @include('layouts.menu')
             <!-- / Menu -->
-            
+
             <!-- Content -->
             @yield('content')
             <!--/ Content -->
@@ -50,6 +50,6 @@
     <!--/ Layout wrapper -->
 
     @include('layouts.script')
-    
+
   </body>
 </html>

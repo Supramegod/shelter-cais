@@ -239,6 +239,8 @@
                     }else if(data.status=="Tidak Disetujui"){
                         $('td', row).css('background-color', '#c0392b');
                         $('td', row).css('color', '#fff');
+                    }else if(data.status=="Quotation Perlu Approval"){
+                        $('td', row).css('background-color', '#127bf340');
                     }else if(data.is_aktif==0){
                         $('td', row).css('background-color', '#27ae6040');
                         // $('td', row).css('color', '#fff');
@@ -365,7 +367,7 @@
                         }
                     ]
                     },
-                    @if(in_array(Auth::user()->role_id,[29,31,33,54,55,56]))
+                    @if(in_array(Auth::user()->role_id,[2,29,31,33,54,55,56]))
                     // {
                     // text: '<i class="mdi mdi-content-copy mr-1"></i> <span class="d-none d-sm-inline-block">Copy Quotation</span>',
                     // className: 'create-new btn btn-label-warning waves-effect waves-light',

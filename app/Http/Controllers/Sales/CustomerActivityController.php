@@ -419,7 +419,6 @@ class CustomerActivityController extends Controller
                         'updated_by' => Auth::user()->full_name
                     ]);
                     $msgSave = 'Customer Activity berhasil disimpan.';
-
                 } else {
                     $id = DB::table('sl_customer_activity')->insertGetId([
                         'tgl_activity' => $request->tgl_activity,
@@ -642,7 +641,6 @@ class CustomerActivityController extends Controller
                 }
                 // Asisten Manager Sales , Manager Sales
                 else if (Auth::user()->role_id == 32 || Auth::user()->role_id == 33) {
-
                 }
             }
             //divisi RO
@@ -650,7 +648,6 @@ class CustomerActivityController extends Controller
                 if (in_array(Auth::user()->role_id, [999])) {
                     $data = $data->where('sl_leads.ro_id', Auth::user()->id);
                 } else if (in_array(Auth::user()->role_id, [4, 5, 6, 8])) {
-
                 }
             }
             //divisi crm
@@ -658,7 +655,6 @@ class CustomerActivityController extends Controller
                 if (in_array(Auth::user()->role_id, [54])) {
                     $data = $data->where('sl_leads.crm_id', Auth::user()->id);
                 } else if (in_array(Auth::user()->role_id, [55, 56])) {
-
                 }
             }
             ;
@@ -1029,7 +1025,6 @@ class CustomerActivityController extends Controller
                     ->whereNull('sl_customer_activity.deleted_at')
                     ->where('is_activity', 1)
                     ->where('pks_id', $request->pks_id)->get();
-
             }
 
             return DataTables::of($data)
@@ -1106,6 +1101,31 @@ class CustomerActivityController extends Controller
             $spvRoList = DB::connection('mysqlhris')->select("SELECT id,full_name from m_user WHERE role_id IN ( 6 ) and is_active = 1 ORDER BY role_id ASC , full_name ASC");
 
             return view('sales.customer-activity.add-ro-pks', compact('roList', 'spvRoList', 'now', 'nowd', 'pks'));
+        } catch (\Exception $e) {
+            dd($e);
+            abort(500);
+        }
+    }
+
+    public function addPicKontrak($id)
+    {
+        try {
+            $pks = DB::table('sl_pks')->where('id', $id)->first();
+            if ($pks == null) {
+                abort(404);
+            }
+            $now = Carbon::now()->isoFormat('DD MMMM Y');
+            $nowd = Carbon::now()->toDateString();
+
+            $pks->s_mulai_kontrak = $pks->kontrak_awal ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_awal)->isoFormat('D MMMM Y') : null;
+            $pks->s_kontrak_selesai = $pks->kontrak_akhir ? Carbon::createFromFormat('Y-m-d', $pks->kontrak_akhir)->isoFormat('D MMMM Y') : null;
+
+            $pks->status_kontrak = "";
+            if ($pks->status_pks_id != null) {
+                $pks->status_kontrak = DB::table('m_status_pks')->where('id', $pks->status_pks_id)->whereNull('deleted_at')->first()->nama;
+            }
+
+            return view('sales.customer-activity.add-pic-pks', compact('now', 'nowd', 'pks'));
         } catch (\Exception $e) {
             dd($e);
             abort(500);
@@ -1328,5 +1348,4 @@ class CustomerActivityController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
         }
     }
-
 }

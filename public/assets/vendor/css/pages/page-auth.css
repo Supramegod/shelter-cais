@@ -36,7 +36,7 @@ html:not([dir=rtl]) .authentication-wrapper.authentication-cover .authentication
   inset-inline-start: unset;
 }
 .authentication-wrapper.authentication-basic .authentication-inner {
-  max-width: 450px;
+  max-width: 350px;
 }
 .authentication-wrapper .auth-input-wrapper .auth-input {
   max-width: 50px;

@@ -1,21 +1,55 @@
 @extends('layouts.master')
-@section('title', 'SDT Training')
+@section('title','SDT Training')
 @section('content')
   <div class="container-fluid flex-grow-1 container-p-y">
     <h4 class="py-3 mb-4"><span class="text-muted fw-light">SDT/ </span> Detail SDT Training</h4>
 
-    <div class="row">
-      <div class="col-md-9">
-        <div class="card mb-4">
-          <h5 class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-              <span>SDT Training Detail</span>
+  <div class="row">
+    <div class="col-md-9">
+      <div class="card mb-4">
+        <h5 class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>SDT Training Detail</span>
+          </div>
+        </h5>
+        <div class="row">
+          <div class="col-md-5">
+            <div id="carouselExample" class="carousel slide" style="margin: 15px;">
+              <div class="carousel-indicators">
+                @foreach($listImage as $value)
+                  <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ $loop->index }}"
+                          class="@if($loop->index == 0) active @endif" aria-current="true"
+                          aria-label="Slide {{ $loop->index }}"></button>
+                @endforeach
+              </div>
+
+              <div class="carousel-inner">
+                @foreach($listImage as $value)
+                <div class="carousel-item @if($loop->index == 0) active @endif" style="height: 450px; width:700px">
+                  <img style="border-radius: 1%; width: 100%;max-height: 100%" src="{{$value->path}}" class="d-block w-100" alt="...">
+                  <div class="carousel-caption d-none d-md-block">
+                    <h5>{{$value->nama}}</h5>
+                    <p>{{$value->keterangan}}</p>
+                  </div>
+                </div>
+                @endforeach
+              </div>
+
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
-          </h5>
-          <!-- Form langsung tanpa carousel di col-md-5 -->
-          <form class="card-body" action="{{route('sdt-training.save')}}" method="POST">
-            @csrf
-            <input type="hidden" name="id" value="{{$data->id_training}}">
+          </div>
+
+          <div class="col-md-7">
+            <form class="card-body" action="{{route('sdt-training.save')}}" method="POST">
+              @csrf
+              <input type="hidden" name="id" value="{{$data->id_training}}">
 
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">Absensi Active</label>
@@ -454,56 +488,56 @@
     </div>
   </div>
 
-  <div class="modal fade" id="modal-client" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Tambah Client</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <label class="col-sm-3 col-form-label">Client <span class="text-danger">*</span></label>
-            <div class="col-sm-9">
-              <select id="client_id" name="client_id" class="form-select">
-                <option value="">- Pilih data -</option>
-                @foreach($listClient as $value)
-                  <option value="{{$value->id}}">{{$value->client}}</option>
-                @endforeach
-              </select>
-            </div>
+<div class="modal fade" id="modal-client" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Client</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <label class="col-sm-3 col-form-label">Client <span class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <select id="client_id" name="client_id" class="form-select">
+              <option value="">- Pilih data -</option>
+              @foreach($listClient as $value)
+              <option value="{{$value->id}}">{{$value->client}}</option>
+              @endforeach
+            </select>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button id="btn-add-client-save" class="btn btn-primary">Add Client</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="btn-add-client-save" class="btn btn-primary">Add Client</button>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="modal fade" id="modal-pesan-undangan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Pesan Undangan</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-12">
-              <textarea class="form-control" name="pesan-undangan" id="pesan-undangan" rows="12"
-                placeholder="Masukkan pesan undangan">{{$message}}</textarea>
-            </div>
+<div class="modal fade" id="modal-pesan-undangan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pesan Undangan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <textarea class="form-control" name="pesan-undangan" id="pesan-undangan" rows="12"
+                      placeholder="Masukkan pesan undangan">{{$message}}</textarea>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button id="btn-add-pesan-undangan-save" class="btn btn-primary">Save</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="btn-add-pesan-undangan-save" class="btn btn-primary">Save</button>
       </div>
     </div>
   </div>
+</div>
 
   <div class="modal fade" id="modal-peserta" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -997,11 +1031,11 @@
         });
       });
 
-      $('#btn-kirim-wa').on('click', function () {
-        const noWa = $('#link-wa').val();
-
-        // Tutup modal terlebih dahulu
-        $('#modal-link').modal('hide');
+  $('#btn-kirim-wa').on('click', function() {
+    const noWa = $('#link-wa').val();
+    
+    // Tutup modal terlebih dahulu
+    $('#modal-link').modal('hide');
 
         // Tunda SweetAlert sebentar untuk memastikan modal sudah tertutup
         setTimeout(() => {

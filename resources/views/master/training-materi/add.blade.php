@@ -18,46 +18,25 @@
         <form class="card-body overflow-hidden" action="{{route('training-materi.save')}}" method="POST">
           @csrf
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Business Unit <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Jenis Training<span class="text-danger">*</span></label>
             <div class="col-sm-6">
-              <div class="position-relative">
-                <select id="laman" name="laman" class="form-select @if ($errors->any()) @if($errors->has('laman')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                    <option value="">- Pilih Business Unit -</option>
-                    <option value="1" @if(old('laman') == '1') selected @endif>Shelter Nusantara</option>
-                    <option value="2" @if(old('laman') == '2') selected @endif>Shelter Nusantara Indah</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Judul Materi <span class="text-danger">*</span></label>
-            <div class="col-sm-6">
-              <input type="text" id="judul" name="judul" value="{{old('judul')}}" class="form-control @if ($errors->any()) @if($errors->has('judul')) is-invalid @else   @endif @endif">
-              @if($errors->has('judul'))
-                  <div class="invalid-feedback">{{$errors->first('judul')}}</div>
+              <input type="text" id="jenis" name="jenis" value="{{old('jenis')}}" class="form-control @if ($errors->any()) @if($errors->has('jenis')) is-invalid @else   @endif @endif">
+              @if($errors->has('jenis'))
+                  <div class="invalid-feedback">{{$errors->first('jenis')}}</div>
               @endif
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Tujuan <span class="text-danger">*</span></label>
+            <label class="col-sm-2 col-form-label text-sm-end">Nama Training<span class="text-danger">*</span></label>
             <div class="col-sm-6">
-              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="tujuan" id="tujuan" placeholder="">{{old('tujuan')}}</textarea>  
-            <!-- <input type="text" id="tujuan" name="tujuan" value="{{old('tujuan')}}" class="form-control @if ($errors->any()) @if($errors->has('tujuan')) is-invalid @else   @endif @endif"> -->
-              @if($errors->has('tujuan'))
-                  <div class="invalid-feedback">{{$errors->first('tujuan')}}</div>
+              <textarea class="form-control h-px-100 @if ($errors->any()) @if($errors->has('nama')) is-invalid @else   @endif @endif" name="nama" id="nama" placeholder="">{{old('nama')}}</textarea>  
+            <!-- <input type="text" id="nama" name="nama" value="{{old('nama')}}" class="form-control @if ($errors->any()) @if($errors->has('nama')) is-invalid @else   @endif @endif"> -->
+              @if($errors->has('nama'))
+                  <div class="invalid-feedback">{{$errors->first('nama')}}</div>
               @endif
             </div>
           </div>  
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label text-sm-end">Kompetensi <span class="text-danger">*</span></label>
-            <div class="col-sm-6">
-              <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="kompetensi" id="kompetensi" placeholder="">{{old('kompetensi')}}</textarea>
-              <!-- <input type="text" id="kompetensi" name="kompetensi" value="{{old('kompetensi')}}" class="form-control @if ($errors->any()) @if($errors->has('kompetensi')) is-invalid @else   @endif @endif"> -->
-              @if($errors->has('kompetensi'))
-                  <div class="invalid-feedback">{{$errors->first('kompetensi')}}</div>
-              @endif
-            </div>
-          </div>
+          
           <div class="pt-4">
             <div class="row justify-content-end">
               <div class="col-sm-12 d-flex justify-content-center">

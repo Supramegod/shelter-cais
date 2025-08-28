@@ -95,7 +95,14 @@ return [
             'url' => env('APP_URL').'/uploads/sdt-training/file',
             'visibility' => 'public',
             'throw' => false,
-        ]
+        ],
+        'training-gada-bukti-bayar' => [
+            'driver' => 'local',
+            'root' => public_path(). '/uploads/training-gada/bukti-bayar',
+            'url' => env('APP_URL').'/public/uploads/training-gada/bukti-bayar',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
 
     ],
 

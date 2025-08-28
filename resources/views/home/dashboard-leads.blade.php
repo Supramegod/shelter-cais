@@ -130,6 +130,28 @@
         </div>
         </div>
       </div>
+      <div class="col-lg-4 col-12 mb-4">
+        <div class="card">
+          <div class="card-header header-elements">
+            <h5 class="card-title mb-0">Summary Sumber Leads</h5>
+            <div class="card-header-elements ms-auto py-0 dropdown">
+              <button
+                type="button"
+                class="btn dropdown-toggle hide-arrow p-0"
+                id="heat-chart-dd"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="mdi mdi-dots-vertical"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heat-chart-dd">
+
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <canvas id="polarChart" class="chartjs" data-height="337" height="200"></canvas>
+          </div>
+        </div>
       <div class="card-body pt-2">
         <canvas id="lineAreaChart" class="chartjs" data-height="450" height="400"></canvas>
       </div>
@@ -216,7 +238,7 @@
 @endsection
 
 @section('pageScript')
-  <script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+  <script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
 
   <script>
     const purpleColor = '#836AF9',
@@ -359,10 +381,10 @@
     arrDataPolar.forEach(function (element) {
     arrLabelPolar.push(element.platform);
     arrDataPolarChart.push(element.jumlah_leads);
-    });
+  });
 
-    const polarChart = document.getElementById('polarChart');
-    if (polarChart) {
+  const polarChart = document.getElementById('polarChart');
+  if (polarChart) {
     const polarChartVar = new Chart(polarChart, {
       type: 'polarArea',
       data: {
@@ -473,13 +495,13 @@
     arrDougData.forEach(function (element) {
     labelDoug.push(element.kebutuhan);
     dataDoug.push(element.jumlah_leads);
-    });
-    console.log(labelDoug);
-    console.log(dataDoug);
+  });
+  console.log(labelDoug);
+  console.log(dataDoug);
 
 
-    const doughnutChartKebutuhan = document.getElementById('doughnutChartKebutuhan');
-    if (doughnutChartKebutuhan) {
+  const doughnutChartKebutuhan = document.getElementById('doughnutChartKebutuhan');
+  if (doughnutChartKebutuhan) {
     const doughnutChartKebutuhanVar = new Chart(doughnutChartKebutuhan, {
       type: 'doughnut',
       data: {

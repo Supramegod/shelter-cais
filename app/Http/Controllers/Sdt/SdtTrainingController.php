@@ -34,7 +34,7 @@ class SdtTrainingController extends Controller
 
         $ctglDari = Carbon::createFromFormat('Y-m-d',  $tglDari);
         $ctglSampai = Carbon::createFromFormat('Y-m-d',  $tglSampai);
-        
+
 
         $branch = DB::connection('mysqlhris')->table('m_branch')->where('id','!=',1)->where('is_active',1)->get();
         $status = DB::table('m_status_leads')->whereNull('deleted_at')->get();
@@ -52,7 +52,7 @@ class SdtTrainingController extends Controller
         }
         return view('sdt.training.list',compact('branch','platform','status','tglDari','tglSampai','request','error','success'));
     }
-    
+
     public function indexTerhapus (Request $request){
         return view('sales.leads.list-terhapus');
     }
@@ -77,7 +77,7 @@ class SdtTrainingController extends Controller
     public function listArea(Request $request){
         try {
             // $now = Carbon::now()->isoFormat('DD MMMM Y');
-            
+
             // $listArea = DB::table('m_training_area')
             // ->where('is_aktif', 1)
             // ->where('laman_id', $request->id)
@@ -88,7 +88,7 @@ class SdtTrainingController extends Controller
             ->where('id','!=',1)
             ->select('id', 'name as area')
             ->orderBy('name', 'ASC')->get();
-            
+
             return response()->json([
                 'success'   => false,
                 'data'      => $listArea,
@@ -104,7 +104,7 @@ class SdtTrainingController extends Controller
     public function listClient(Request $request){
         try {
             // $now = Carbon::now()->isoFormat('DD MMMM Y');
-            
+
             // $listClient = DB::table('m_training_client')
             // ->where('is_aktif', 1)
             // ->where('laman_id', $request->laman_id)
@@ -117,7 +117,7 @@ class SdtTrainingController extends Controller
             ->where('lead.branch_id', $request->area_id)
             ->select("site.id", "site.nama_site as client")
             ->orderBy('site.nama_site', 'ASC')->get();
-            
+
             return response()->json([
                 'success'   => false,
                 'data'      => $listClient,
@@ -160,7 +160,7 @@ class SdtTrainingController extends Controller
             ->select("site.id", "site.nama_site as client")
             ->orderBy('site.nama_site', 'ASC')->get();
             // dd($listClient);
-            
+
             $listTrainer = DB::table('m_training_trainer')->where('is_aktif', 1)->orderBy('trainer', 'ASC')->get();
             $namaPerusahaan = DB::table('sdt_training_client as tr')
                         // ->leftJoin('m_training_client as mtc', 'mtc.id' ,'=', 'tr.id_client')
@@ -181,7 +181,7 @@ class SdtTrainingController extends Controller
                 ->where('position.description', '!=', 'Security')
                 ->orderBy('empl.full_name','asc')
                 ->get();
-            
+
                 // dd($linkInvite);
 
             return view('sdt.training.view', compact('listClient', 'listTrainer','namaPerusahaan', 'data', 'listPeserta', 'listBu', 'listMateri', 'listImage', 'message', 'listArea', 'linkInvite'));
@@ -190,7 +190,7 @@ class SdtTrainingController extends Controller
             SystemController::saveError($e,Auth::user(), $request);
             abort(500);
         }
-        
+
     }
 
     public function list (Request $request){
@@ -207,26 +207,27 @@ class SdtTrainingController extends Controller
                         // ->leftJoin('m_training_area as mta','mta.id', '=', 'tr.id_area')
                         ->leftJoin($db2.'.m_branch as mta','tr.id_area','=', 'mta.id')
                         ->leftJoin('sdt_training_client_detail as stcd', 'stcd.training_id', '=', DB::raw('tr.id_training AND stcd.is_active = 1'))
-                        
+
                         ->select(
                             "tr.id_training as id",
-                            "mtm.nama as materi", 
+                            "mtm.nama as materi",
                             DB::raw("DATE_FORMAT(tr.waktu_mulai,'%d-%m-%Y %H:%i') as waktu_mulai"),
                             DB::raw("DATE_FORMAT(tr.waktu_selesai,'%d-%m-%Y %H:%i') as waktu_selesai"),
-                            "mta.name as area", 
+                            "mta.name as area",
                             DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
                             DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
                             DB::raw("group_concat(distinct mtc.nama_site separator ', ') AS client"),
                             DB::raw("count(mtc.nama_site) AS total_client"),
                             // DB::raw("sum(stc.peserta_hadir) AS total_peserta"),
                             DB::raw("count(distinct stcd.id) AS total_peserta"),
-                            DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
-                            DB::raw("count(distinct mtt.id) AS total_trainer"))
+                            DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"),
+                            DB::raw("count(distinct mtt.id) AS total_trainer"),
+                            "tr.created_by_name as created_who")
                         ->where('tr.is_aktif', 1)
                         ->orderBy('tr.id_training', 'DESC')
                         ->groupBy('tr.id_training');
-            
-            $data = $data->get();          
+
+            $data = $data->get();
 
             // foreach ($data as $key => $value) {
             //     $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
@@ -256,14 +257,14 @@ class SdtTrainingController extends Controller
             ->where('training_id', $request->training_id)
             ->where('client_id', $request->client_id)
             ->where('is_active', 1)
-            ->get();          
+            ->get();
             return DataTables::of($data)
             ->addColumn('aksi', function ($data) {
                 return '<div class="justify-content-center d-flex">
                     <div class="btn-delete-peserta btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
                 </div>';
             })
-            
+
             ->rawColumns(['aksi'])
             ->make(true);
         } catch (\Exception $e) {
@@ -278,7 +279,7 @@ class SdtTrainingController extends Controller
             $data = DB::table('sdt_training_file')
             ->where('training_id', $request->training_id)
             ->where('is_active', 1)
-            ->get();          
+            ->get();
 
             // dd($data);
             return DataTables::of($data)
@@ -306,11 +307,11 @@ class SdtTrainingController extends Controller
             ->leftJoin('m_training_divisi as mtd','mtd.id','=', 'mtt.divisi_id')
             ->select(
                 "stt.id_pel_trainer as id",
-                "mtt.trainer as nama", 
+                "mtt.trainer as nama",
                 "mtd.divisi")
             ->where('stt.is_active', 1)
             ->where('stt.id_training', $request->training_id)
-            ->get();          
+            ->get();
 
             // dd($data);
             return DataTables::of($data)
@@ -341,8 +342,8 @@ class SdtTrainingController extends Controller
     //                     ->select('m_tim_sales_d.nama as sales','sl_leads.*', 'm_status_leads.nama as status', $db2.'.m_branch.name as branch', 'm_platform.nama as platform','m_status_leads.warna_background','m_status_leads.warna_font')
     //                     ->whereNotNull('sl_leads.deleted_at')
     //                     ->whereNull('sl_leads.customer_id');
-            
-    //         $data = $data->get();          
+
+    //         $data = $data->get();
 
     //         foreach ($data as $key => $value) {
     //             $value->tgl = Carbon::createFromFormat('Y-m-d',$value->tgl_leads)->isoFormat('D MMMM Y');
@@ -393,74 +394,188 @@ class SdtTrainingController extends Controller
 
             $current_date_time = Carbon::now()->toDateTimeString();
             $msgSave = '';
-            
+
+
             if(!empty($request->id)){
                 DB::table('sdt_training')->where('id_training',$request->id)->update([
                     'keterangan' => $request->keterangan,
                     'waktu_mulai' => $request->start_date,
                     'waktu_selesai' => $request->end_date,
-                    // 'id_pel_tipe' => $request->tipe_id,
                     'id_pel_tempat' => $request->tempat_id,
                     'id_materi' => $request->materi_id,
-                    // 'id_laman' => $request->laman_id,
                     'alamat' => $request->alamat,
                     'link_zoom' => $request->link_zoom,
                     'updated_at' => $current_date_time,
-                    // 'id_area' => $request->area_id,
+                    'updated_by' => Auth::user()->id,
                     'enable' => ($request->enable == 'on' ? 1 : 0)
                 ]);
                 $msgSave = 'Training berhasil diubah.';
-                
             }else{
-                $message = "*Undangan Training Shelter*
-                Tanggal Jam : {tanggal}
-                Materi : {materi}
-                Trainer : {trainer}
-                Tempat : {tempat}
-                Tipe : {tipe}
-                Alamat : {alamat}
-                Link Zoom : {zoom}
-                Keterangan : {keterangan}
-                Link Kehadiran : {link}";
-
-                // $nomor = $this->generateNomor();
-                $trainingId = DB::table('sdt_training')->insertGetId([
-                    'keterangan' => $request->keterangan,
-                    'waktu_mulai' => $request->start_date,
-                    'waktu_selesai' => $request->end_date,
-                    // 'id_pel_tipe' => $request->tipe_id,
-                    'id_pel_tempat' => $request->tempat_id,
-                    'id_materi' => $request->materi_id,
-                    'id_laman' => $request->laman_id,
-                    'alamat' => $request->alamat,
-                    'link_zoom' => $request->link_zoom,
-                    'id_user' => Auth::user()->id,
-                    'created_at' => $current_date_time,
-                    'whatsapp_message' => $message,
-                    'id_area' => $request->area_id,
+                $validator = Validator::make($request->all(), [
+                    'laman_id' => 'required',
+                    'area_id' => 'required',
+                    'client_id' => 'required',
+                    'trainer_id' => 'required',
+                    'materi_id' => 'required',
+                    'tempat_id' => 'required',
+                    'start_date' => 'required',
+                    'end_date' => 'required',
+                    'alamat' => 'required',
+                    'keterangan' => 'required'
                 ]);
-                
-                foreach ($request->client_id as $x) {
-                    $trainingClient = DB::table('sdt_training_client')->insertGetId([
-                        'id_client' => (int) $x,
-                        // 'peserta_hadir' => $request->peserta,
-                        'id_training' => $trainingId
-                    ]);    
-                    // dd($trainingClient);
-                }
-                
-                foreach ($request->trainer_id as $x) {
-                    $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
-                        'id_trainer' => (int) $x,
-                        'id_training' => $trainingId
+
+                if ($validator->fails()) {
+                    return back()->withErrors($validator->errors())->withInput();
+                }else{
+                    $message = "*Undangan Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
+                    $messageReminder = "*Reminder Training Shelter*\nTanggal Jam : {tanggal}\nMateri : {materi}\nTrainer : {trainer}\nTempat : {tempat}\nTipe : {tipe}\nAlamat : {alamat}\nLink Zoom : {zoom}\nKeterangan : {keterangan}\nLink Kehadiran : {link}";
+
+                    // $nomor = $this->generateNomor();
+                    $trainingId = DB::table('sdt_training')->insertGetId([
+                        'keterangan' => $request->keterangan,
+                        'waktu_mulai' => $request->start_date,
+                        'waktu_selesai' => $request->end_date,
+                        'id_pel_tempat' => $request->tempat_id,
+                        'id_materi' => $request->materi_id,
+                        'id_laman' => $request->laman_id,
+                        'alamat' => $request->alamat,
+                        'link_zoom' => $request->link_zoom,
+                        'id_user' => Auth::user()->id,
+                        'created_at' => $current_date_time,
+                        'created_by' => Auth::user()->id,
+                        'created_by_name' => Auth::user()->full_name,
+                        'whatsapp_message' => $message,
+                        'notification_message' => $messageReminder,
+                        'notification_reminder_before_day' => 3,
+                        'notification_reminder_status' => 0,
+                        'id_area' => $request->area_id,
                     ]);
+
+                    foreach ($request->client_id as $x) {
+                        $trainingClient = DB::table('sdt_training_client')->insertGetId([
+                            'id_client' => (int) $x,
+                            'id_training' => $trainingId
+                        ]);
+                        // dd($trainingClient);
+                    }
+
+                    foreach ($request->trainer_id as $x) {
+                        $trainingTrainer = DB::table('sdt_training_trainer')->insertGetId([
+                            'id_trainer' => (int) $x,
+                            'id_training' => $trainingId
+                        ]);
+                    }
+
+                    $msgSave = 'Training berhasil disimpan ';
                 }
-                
-                $msgSave = 'Training berhasil disimpan ';
             }
-            // }
             DB::commit();
             return redirect()->back()->with('success', $msgSave);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function dataNotification(Request $request){
+        try {
+
+            $dataTraining = DB::table('sdt_training')
+            ->select('id_training', 'notification_message', 'notification_reminder_before_day', DB::raw("IF(notification_reminder_status = 1, 'Sudah Kirim', 'Belum Kirim') as notification_reminder_status"),)
+            ->where('id_training', $request->training_id)
+            ->first();
+
+            $dataNotif = DB::table('sdt_training_notification_detail')
+            ->select('id','no_wa', 'nama')
+            ->where('active', 1)
+            ->where('id_training', $request->training_id)
+            ->orderBy('id', 'ASC')
+            ->get();
+
+            return response()->json([
+                'success'       => true,
+                'data_training' => $dataTraining,
+                // 'data_table'    => $dataTableReturn,
+                'message'       => "Berhasil get data Notification"
+            ], 200);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveNotification(Request $request) {
+        try {
+            // dd($request->id . " " . $request->message . " " . $request->days);
+            DB::beginTransaction();
+            DB::table('sdt_training')->where('id_training', $request->id)->update([
+                'notification_message' => $request->message,
+                'notification_reminder_before_day' => $request->days
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil merubah pesan whatsapp"
+            ], 200);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function saveNotificationPenerima(Request $request) {
+        try {
+            $trainerId = DB::table('sdt_training_notification_detail')->insertGetId([
+                'id_training' => $request->id,
+                'nama' => $request->nama,
+                'no_wa' => $request->wa,
+                'active' => 1
+            ]);
+
+            $msgSave = 'Penerima reminder berhasil disimpan ';
+            DB::commit();
+
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menambahkan penerima reminder"
+            ], 200);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function dataNotificationTable(Request $request){
+        try {
+            $dataNotif = DB::table('sdt_training_notification_detail')
+            ->select('id','no_wa', 'nama')
+            ->where('active', 1)
+            ->where('id_training', $request->training_id)
+            ->orderBy('id', 'ASC')
+            ->get();
+
+            // dd($data);
+            return DataTables::of($dataNotif)
+            ->addColumn('aksi', function ($data) {
+                return '<div class="justify-content-center d-flex">
+                    <div class="btn-delete-reminder btn btn-danger waves-effect btn-xs" data-id="'.$data->id.'"><i class="mdi mdi-trash-can"></i>&nbsp;Delete</div>
+                </div>';
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+
+            return response()->json([
+                'success'       => true,
+                'data_training' => $dataTraining,
+                'data_table'    => $dataTableReturn,
+                'message'       => "Berhasil get data Notification"
+            ], 200);
+
         } catch (\Exception $e) {
             SystemController::saveError($e,Auth::user(),$request);
             abort(500);
@@ -471,7 +586,7 @@ class SdtTrainingController extends Controller
         try {
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
-            
+
             $employeeExist = DB::table('sdt_training_client as client')
                 ->leftJoin('m_training_client as m_client', 'client.id_client', '=', 'm_client.id')
                 ->select("client.id_pel_client", "m_client.client")
@@ -494,8 +609,8 @@ class SdtTrainingController extends Controller
                 'id_client' => $request->client_id,
                 'is_active' => 1
             ]);
-            
-            
+
+
             $msgSave = 'Client berhasil disimpan ';
             DB::commit();
             // return redirect()->back()->with('success', $msgSave);
@@ -514,7 +629,7 @@ class SdtTrainingController extends Controller
         try {
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
-            
+
             $employee = DB::connection('mysqlhris')
                 ->table('m_employee as empl')
                 ->leftJoin('m_position as position', 'position.id' ,'=', 'empl.position_id')
@@ -537,7 +652,7 @@ class SdtTrainingController extends Controller
                 'created_at' => $current_date_time
             ]);
             // dd($request);
-            
+
             $msgSave = 'Peserta berhasil disimpan ';
             DB::commit();
             // return redirect()->back()->with('success', $msgSave);
@@ -556,7 +671,7 @@ class SdtTrainingController extends Controller
         try {
             DB::beginTransaction();
             $current_date_time = Carbon::now()->toDateTimeString();
-            
+
             // $nomor = $this->generateNomor();
             $trainerId = DB::table('sdt_training_trainer')->insertGetId([
                 'id_trainer' => $request->trainer_id,
@@ -565,7 +680,7 @@ class SdtTrainingController extends Controller
                 'created_at' => $current_date_time
             ]);
             // dd($request);
-            
+
             $msgSave = 'Trainer berhasil disimpan ';
             DB::commit();
             // return redirect()->back()->with('success', $msgSave);
@@ -587,7 +702,7 @@ class SdtTrainingController extends Controller
             DB::table('sdt_training')->where('id_training',$request->id)->update([
                 'whatsapp_message' => $request->pesan_undangan
             ]);
-            
+
             DB::commit();
             return response()->json([
                 'success'   => true,
@@ -605,7 +720,7 @@ class SdtTrainingController extends Controller
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('sdt_training')->where('id_training',$request->id)->update([
                 'updated_at' => $current_date_time,
-                'is_aktif' => 0 
+                'is_aktif' => 0
             ]);
 
             return response()->json([
@@ -627,7 +742,7 @@ class SdtTrainingController extends Controller
                     ->first();
 
             DB::table('sdt_training_file')->where('id', $request->id)->update([
-                'is_active' => 0 
+                'is_active' => 0
             ]);
 
             Storage::disk('sdt-training-image')->delete($data->file_name);
@@ -651,7 +766,7 @@ class SdtTrainingController extends Controller
         try {
             $current_date_time = Carbon::now()->toDateTimeString();
             DB::table('sdt_training_trainer')->where('id_pel_trainer', $request->id)->update([
-                'is_active' => 0 
+                'is_active' => 0
             ]);
 
             return response()->json([
@@ -668,7 +783,24 @@ class SdtTrainingController extends Controller
     public function deletePeserta(Request $request){
         try {
             DB::table('sdt_training_client_detail')->where('id', $request->id)->update([
-                'is_active' => 0 
+                'is_active' => 0
+            ]);
+
+            return response()->json([
+                'success'   => true,
+                'data'      => [],
+                'message'   => "Berhasil menghapus data"
+            ], 200);
+        } catch (\Exception $e) {
+            SystemController::saveError($e,Auth::user(),$request);
+            abort(500);
+        }
+    }
+
+    public function deleteNotification(Request $request){
+        try {
+            DB::table('sdt_training_notification_detail')->where('id', $request->id)->update([
+                'active' => 0
             ]);
 
             return response()->json([
@@ -690,7 +822,7 @@ class SdtTrainingController extends Controller
             //     ->where('no_whatsapp', '!=', '')
             //     ->where('training_id', $request->id)
             //     ->get();
-            
+
             // $data = DB::table('sdt_training')
             //         ->where('is_aktif', 1)
             //         ->where('id_training', $request->id)
@@ -703,19 +835,19 @@ class SdtTrainingController extends Controller
                         ->leftJoin('sdt_training_trainer as stt', 'stt.id_training', '=', DB::raw('tr.id_training AND stt.is_active = 1'))
                         ->leftJoin('m_training_trainer as mtt','mtt.id', '=', 'stt.id_trainer')
                         ->leftJoin('sdt_training_client_detail as stcd', 'stcd.training_id', '=', DB::raw('tr.id_training AND stcd.is_active = 1'))
-                        
+
                         ->select(
                             "tr.id_training as id",
-                            "mtm.materi", 
-                            "tr.waktu_mulai", 
-                            "tr.waktu_selesai", 
+                            "mtm.materi",
+                            "tr.waktu_mulai",
+                            "tr.waktu_selesai",
                             DB::raw("IF(tr.id_pel_tipe = 1, 'ON SITE', 'OFF SITE') as tipe"),
                             DB::raw("IF(tr.id_pel_tempat = 1, 'IN DOOR', 'OUT DOOR') AS tempat"),
                             DB::raw("group_concat(distinct mtc.client separator ', ') AS client"),
                             DB::raw("count(mtc.client) AS total_client"),
                             // DB::raw("sum(stc.peserta_hadir) AS total_peserta"),
                             DB::raw("count(distinct stcd.id) AS total_peserta"),
-                            DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"), 
+                            DB::raw("group_concat(distinct mtt.trainer separator ', ') AS trainer"),
                             DB::raw("count(distinct mtt.id) AS total_trainer"),
                             "tr.link_zoom",
                             "tr.keterangan",
@@ -728,9 +860,9 @@ class SdtTrainingController extends Controller
                         ->first();
 
             $message = str_replace(
-                array('{tanggal}', '{keterangan}', '{tempat}', '{zoom}', '{alamat}', '{tipe}', '{materi}', '{trainer}', '{link}'), 
-                array($data->waktu_mulai, $data->keterangan, $data->tempat, $data->link_zoom, $data->alamat, $data->tipe, $data->materi, $data->trainer, url('sdt-training?id=').$request->id), 
-                $data->whatsapp_message); 
+                array('{tanggal}', '{keterangan}', '{tempat}', '{zoom}', '{alamat}', '{tipe}', '{materi}', '{trainer}', '{link}'),
+                array($data->waktu_mulai, $data->keterangan, $data->tempat, $data->link_zoom, $data->alamat, $data->tipe, $data->materi, $data->trainer, url('sdt-training?id=').$request->id),
+                $data->whatsapp_message);
 
             $myarray = explode(',', $request->no_wa);
             $current_date_time = Carbon::now()->toDateTimeString();
@@ -742,8 +874,8 @@ class SdtTrainingController extends Controller
                     $baseNumber = '62' . substr($value,2);
                 }
 
-                // dd($baseNumber);    
-                          
+                // dd($baseNumber);
+
                 DB::table('whatsapp_message')->insert([
                     'nomor_wa' => $baseNumber,
                     'message' => $message,
@@ -755,8 +887,8 @@ class SdtTrainingController extends Controller
                 ]);
 
                 // dd($value);
-            }   
-            
+            }
+
             // dd($myarray);
             return response()->json([
                 'success'   => true,

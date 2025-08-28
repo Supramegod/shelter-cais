@@ -23,33 +23,33 @@
 </div>
 
 <!-- Core JS -->
-<!-- build:js assets/vendor/js/core.js -->
-<!-- build:js assets/assets/vendor/js/core.js -->
-<script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
-<script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
-<script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/node-waves/node-waves.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/hammer/hammer.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-<script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
-
+    <!-- build:js assets/vendor/js/core.js -->
+    <!-- build:js assets/assets/vendor/js/core.js -->
+    <script src="{{ asset('public/assets/vendor/libs/jquery/jquery.js') }}"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <script src="{{ asset('public/assets/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('public/assets/vendor/js/list-icon.js') }}"></script>
 <!-- endbuild -->
 
 <!-- Vendors JS -->
-<script src="{{ asset('assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
+<script src="{{ asset('public/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
 
-<script src="{{ asset('assets/vendor/libs/@form-validation/popular.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/@form-validation/bootstrap5.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/@form-validation/auto-focus.js') }}"></script>
+<script src="{{ asset('public/assets/vendor/libs/@form-validation/popular.js') }}"></script>
+<script src="{{ asset('public/assets/vendor/libs/@form-validation/bootstrap5.js') }}"></script>
+<script src="{{ asset('public/assets/vendor/libs/@form-validation/auto-focus.js') }}"></script>
 <!-- Vendors JS -->
-<script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+<script src="{{ asset('public/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js"></script>
-<!-- <script src="{{ asset('assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script> -->
-<!-- <script src="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script> -->
-<!-- <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script> -->
+<!-- <script src="{{ asset('public/assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script> -->
+<!-- <script src="{{ asset('public/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script> -->
+<!-- <script src="{{ asset('public/assets/vendor/libs/select2/select2.js') }}"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/7.6.1/imask.min.js"
@@ -57,10 +57,10 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <!-- Flat Picker -->
-<script src="{{ asset('assets/vendor/libs/moment/moment.js')}}"></script>
-<script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js')}}"></script>
+<script src="{{ asset('public/assets/vendor/libs/moment/moment.js')}}"></script>
+<script src="{{ asset('public/assets/vendor/libs/flatpickr/flatpickr.js')}}"></script>
 <!-- Main JS -->
-<script src="{{ asset('assets/js/main.js') }}"></script>
+<script src="{{ asset('public/assets/js/main.js') }}"></script>
 
 <!-- include summernote css/js -->
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
@@ -221,7 +221,299 @@
         });
     }
 
+// ! Removed following code if you do't wish to use jQuery. Remember that navbar search functionality will stop working on removal.
+if (typeof $ !== 'undefined') {
+  $(function () {
+    // ! TODO: Required to load after DOM is ready, did this now with jQuery ready.
+    window.Helpers.initSidebarToggle();
+    // Toggle Universal Sidebar
 
+    // Navbar Search with autosuggest (typeahead)
+    // ? You can remove the following JS if you don't want to use search functionality.
+    //----------------------------------------------------------------------------------
+
+    var searchToggler = $('.search-toggler'),
+      searchInputWrapper = $('.search-input-wrapper'),
+      searchInput = $('.search-input'),
+      contentBackdrop = $('.content-backdrop');
+
+    // Open search input on click of search icon
+    if (searchToggler.length) {
+      searchToggler.on('click', function () {
+        if (searchInputWrapper.length) {
+          searchInputWrapper.toggleClass('d-none');
+          searchInput.focus();
+        }
+      });
+    }
+    // Open search on 'CTRL+/'
+    $(document).on('keydown', function (event) {
+      let ctrlKey = event.ctrlKey,
+        slashKey = event.which === 191;
+
+      if (ctrlKey && slashKey) {
+        if (searchInputWrapper.length) {
+          searchInputWrapper.toggleClass('d-none');
+          searchInput.focus();
+        }
+      }
+    });
+    // Note: Following code is required to update container class of typeahead dropdown width on focus of search input. setTimeout is required to allow time to initiate Typeahead UI.
+    setTimeout(function () {
+      var twitterTypeahead = $('.twitter-typeahead');
+      searchInput.on('focus', function () {
+        if (searchInputWrapper.hasClass('container-xxl')) {
+          searchInputWrapper.find(twitterTypeahead).addClass('container-xxl');
+          twitterTypeahead.removeClass('container-fluid');
+        } else if (searchInputWrapper.hasClass('container-fluid')) {
+          searchInputWrapper.find(twitterTypeahead).addClass('container-fluid');
+          twitterTypeahead.removeClass('container-xxl');
+        }
+      });
+    }, 10);
+
+    if (searchInput.length) {
+      // Filter config
+      var filterConfig = function (data) {
+        return function findMatches(q, cb) {
+          let matches;
+          matches = [];
+          data.filter(function (i) {
+            // Filter by name or subtitle
+            const nameMatch = i.name && i.name.toLowerCase().includes(q.toLowerCase());
+            const subtitleMatch = i.subtitle && i.subtitle.toLowerCase().includes(q.toLowerCase());
+
+            if (nameMatch || subtitleMatch) {
+              matches.push(i);
+            } else if (
+              (!i.name.toLowerCase().startsWith(q.toLowerCase()) && nameMatch) ||
+              (!i.subtitle.toLowerCase().startsWith(q.toLowerCase()) && subtitleMatch)
+            ) {
+              matches.push(i);
+              matches.sort(function (a, b) {
+                return b.name < a.name ? 1 : -1;
+              });
+            } else {
+              return [];
+            }
+          });
+          cb(matches);
+        };
+      };
+
+      // Search JSON
+    //   var searchJson = 'search-vertical.json'; // For vertical layout
+    //   if ($('#layout-menu').hasClass('menu-horizontal')) {
+    //     var searchJson = 'search-horizontal.json'; // For vertical layout
+    //   }
+      // Search API AJAX call
+        var searchData = $.ajax({
+            url: "{{ route('dashboard.search') }}", // Laravel route helper
+            dataType: 'json',
+            async: false
+        }).responseJSON;
+      // Init typeahead on searchInput
+      searchInput.each(function () {
+        var $this = $(this);
+        searchInput
+          .typeahead(
+            {
+              hint: false,
+              classNames: {
+                menu: 'tt-menu navbar-search-suggestion',
+                cursor: 'active',
+                suggestion: 'suggestion d-flex justify-content-between px-3 py-2 w-100'
+              }
+            },
+            // ? Add/Update blocks as per need
+            // Pages
+            {
+              name: 'leads',
+              display: 'name',
+              limit: 5,
+              source: filterConfig(searchData.leads),
+              templates: {
+                header: '<h6 class="suggestions-header text-primary mb-0 mx-3 mt-3 pb-2">Leads</h6>',
+                suggestion: function ({ url, name, src = '', subtitle = '' }) {
+                  return (
+                    '<a href="' + url + '">' +
+                    '<div class="d-flex align-items-center">' +
+                    '<img class="rounded-circle me-3" src="' +
+                    src +
+                    '" alt="' +
+                    name +
+                    '" height="32">' +
+                    '<div class="user-info">' +
+                    '<h6 class="mb-0">' +
+                    name +
+                    '</h6>' +
+                    '<small class="text-muted">' +
+                    subtitle +
+                    '</small>' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>'
+                  );
+                },
+                notFound:
+                  '<div class="not-found px-3 py-2">' +
+                  '<h6 class="suggestions-header text-primary mb-2">Leads</h6>' +
+                  '<p class="py-2 mb-0"><i class="mdi mdi-alert-circle-outline me-2 mdi-14px"></i> No Results Found</p>' +
+                  '</div>'
+              }
+            },
+            {
+              name: 'quotation',
+              display: 'name',
+              limit: 5,
+              source: filterConfig(searchData.quotation),
+              templates: {
+                header: '<h6 class="suggestions-header text-primary mb-0 mx-3 mt-3 pb-2">Quotation</h6>',
+                suggestion: function ({ url, name, src = '', subtitle = '' }) {
+                  return (
+                    '<a href="' + url + '">' +
+                    '<div class="d-flex align-items-center">' +
+                    '<img class="rounded-circle me-3" src="' +
+                    src +
+                    '" alt="' +
+                    name +
+                    '" height="32">' +
+                    '<div class="user-info">' +
+                    '<h6 class="mb-0">' +
+                    name +
+                    '</h6>' +
+                    '<small class="text-muted">' +
+                    subtitle +
+                    '</small>' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>'
+                  );
+                },
+                notFound:
+                  '<div class="not-found px-3 py-2">' +
+                  '<h6 class="suggestions-header text-primary mb-2">Quotation</h6>' +
+                  '<p class="py-2 mb-0"><i class="mdi mdi-alert-circle-outline me-2 mdi-14px"></i> No Results Found</p>' +
+                  '</div>'
+              }
+            },
+            {
+              name: 'spk',
+              display: 'name',
+              limit: 5,
+              source: filterConfig(searchData.spk),
+              templates: {
+                header: '<h6 class="suggestions-header text-primary mb-0 mx-3 mt-3 pb-2">SPK</h6>',
+                suggestion: function ({ url, name, src = '', subtitle = '' }) {
+                  return (
+                    '<a href="' + url + '">' +
+                    '<div class="d-flex align-items-center">' +
+                    '<img class="rounded-circle me-3" src="' +
+                    src +
+                    '" alt="' +
+                    name +
+                    '" height="32">' +
+                    '<div class="user-info">' +
+                    '<h6 class="mb-0">' +
+                    name +
+                    '</h6>' +
+                    '<small class="text-muted">' +
+                    subtitle +
+                    '</small>' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>'
+                  );
+                },
+                notFound:
+                  '<div class="not-found px-3 py-2">' +
+                  '<h6 class="suggestions-header text-primary mb-2">SPK</h6>' +
+                  '<p class="py-2 mb-0"><i class="mdi mdi-alert-circle-outline me-2 mdi-14px"></i> No Results Found</p>' +
+                  '</div>'
+              }
+            },
+            {
+              name: 'kontrak',
+              display: 'name',
+              limit: 5,
+              source: filterConfig(searchData.kontrak),
+              templates: {
+                header: '<h6 class="suggestions-header text-primary mb-0 mx-3 mt-3 pb-2">Kontrak</h6>',
+                suggestion: function ({ url, name, src = '', subtitle = '' }) {
+                  return (
+                    '<a href="' + url + '">' +
+                    '<div class="d-flex align-items-center">' +
+                    '<img class="rounded-circle me-3" src="' +
+                    src +
+                    '" alt="' +
+                    name +
+                    '" height="32">' +
+                    '<div class="user-info">' +
+                    '<h6 class="mb-0">' +
+                    name +
+                    '</h6>' +
+                    '<small class="text-muted">' +
+                    subtitle +
+                    '</small>' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>'
+                  );
+                },
+                notFound:
+                  '<div class="not-found px-3 py-2">' +
+                  '<h6 class="suggestions-header text-primary mb-2">Kontrak</h6>' +
+                  '<p class="py-2 mb-0"><i class="mdi mdi-alert-circle-outline me-2 mdi-14px"></i> No Results Found</p>' +
+                  '</div>'
+              }
+            }
+          )
+          //On typeahead result render.
+          .bind('typeahead:render', function () {
+            // Show content backdrop,
+            contentBackdrop.addClass('show').removeClass('fade');
+          })
+          // On typeahead select
+          .bind('typeahead:select', function (ev, suggestion) {
+            // Open selected page
+            if (suggestion.url) {
+              window.location = suggestion.url;
+            }
+          })
+          // On typeahead close
+          .bind('typeahead:close', function () {
+            // Clear search
+            searchInput.val('');
+            $this.typeahead('val', '');
+            // Hide search input wrapper
+            searchInputWrapper.addClass('d-none');
+            // Fade content backdrop
+            contentBackdrop.addClass('fade').removeClass('show');
+          });
+
+        // On searchInput keyup, Fade content backdrop if search input is blank
+        searchInput.on('keyup', function () {
+          if (searchInput.val() == '') {
+            contentBackdrop.addClass('fade').removeClass('show');
+          }
+        });
+      });
+
+      // Init PerfectScrollbar in search result
+      var psSearch;
+      $('.navbar-search-suggestion').each(function () {
+        psSearch = new PerfectScrollbar($(this)[0], {
+          wheelPropagation: false,
+          suppressScrollX: true
+        });
+      });
+
+      searchInput.on('keyup', function () {
+        psSearch.update();
+      });
+    }
+  });
+}
 
 </script>
 

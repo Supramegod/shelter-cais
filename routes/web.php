@@ -6,6 +6,7 @@ use App\Http\Middleware\VerifyFastApiKey;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\DashboardController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Fitur\ContactController;
 use App\Http\Controllers\Fitur\SdtTrainingInviteController;
 
@@ -22,6 +23,7 @@ use App\Http\Controllers\Sales\PksController;
 use App\Http\Controllers\Sales\MonitoringKontrakController;
 use App\Http\Controllers\Sales\PutusKontrakController;
 use App\Http\Controllers\Sales\WhatsappController;
+use App\Http\Controllers\Sales\IssueController;
 
 use App\Http\Controllers\Master\PlatformController;
 use App\Http\Controllers\Master\AplikasiPendukungController;
@@ -46,16 +48,29 @@ use App\Http\Controllers\Master\TrainingDivisiController;
 use App\Http\Controllers\Master\TrainingTrainerController;
 use App\Http\Controllers\Master\TrainingAreaController;
 use App\Http\Controllers\Master\TrainingClientController;
+use App\Http\Controllers\Master\TrainingGadaHargaController;
+use App\Http\Controllers\Master\TrainingGadaJadwalController;
+
 use App\Http\Controllers\Master\SupplierController;
 use App\Http\Controllers\Sdt\SdtTrainingController;
 use App\Http\Controllers\Sdt\TrainingSiteController;
+
+use App\Http\Controllers\Gada\TrainingGadaController;
+use App\Http\Controllers\Gada\TrainingGadaPembayaranController;
+
 use App\Http\Controllers\Master\BidangPerusahaanController;
 use App\Http\Controllers\Master\MutasiStokController;
-use App\Http\Controllers\Master\MasterMenuController;
 use App\Http\Controllers\Master\NotificationController;
 use App\Http\Controllers\Setting\EntitasController;
 
 use App\Http\Controllers\Log\NotifikasiController;
+use App\Http\Controllers\Master\LoyaltyController;
+use App\Http\Controllers\Master\MasterMenuController;
+use App\Http\Controllers\Master\PositionController;
+use App\Http\Controllers\Master\RoleController;
+use App\Http\Controllers\Sales\PurchaseController;
+
+use App\Http\Controllers\Dashboard\DashboardManagerCrmController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
@@ -65,6 +80,17 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/authenticate', 'authenticate')->name('authenticate');
 });
 
+Route::controller(MasterMenuController::class)->group(function() {
+    Route::get('/master/menu', 'index')->name('master.menu');
+    Route::get('/master/menu/list', 'list')->name('master.menu.list');
+    Route::get('/master/menu/add', 'add')->name('master.menu.add');
+    Route::get('/master/menu/list/role', 'listRole')->name('master.menu.list-role');
+    Route::post('/master/menu/simpan-akses', 'simpanRole')->name('master.menu.simpan-akses');
+    Route::post('/master/menu/save', 'save')->name('master.menu.save');
+    Route::get('/master/menu/view/{id}', 'view')->name('master.menu.view');
+    Route::post('/master/menu/update/{id}', 'update')->name('master.menu.update');
+    Route::post('/master/menu/delete/{id}', 'delete')->name('master.menu.delete');
+});
 
 //form luar
 Route::controller(ContactController::class)->group(function () {
@@ -102,7 +128,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/leads', 'dashboardLeads')->name('dashboard-leads');
         Route::get('/dashboard/general', 'dashboardGeneral')->name('dashboard-general');
         Route::get('/dashboard/sdt-training', 'dashboardSdtTraining')->name('dashboard-sdt-training');
+        Route::get('/dashboard/training-gada', 'dashboardTrainingGada')->name('dashboard-training-gada');
         Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
+        Route::get('/dashboard/edit-patch', 'editPatch')->name('change.log');
+        Route::post('/dashboard/update-patch', 'updatePatch')->name('update.log');
         // New Home per User routes
         Route::get('/dashboard/home-sales', 'dashboardHomeSales')->name('home.homepage.sales');
         Route::get('/dashboard/home-telesales', 'dashboardHomeTelesales')->name('home.homepage.telesales');
@@ -115,7 +144,6 @@ Route::group(['middleware' => ['auth']], function () {
         // list
         Route::get('/dashboard/approval/list', 'getListDashboardApprovalData')->name('dashboard-approval.list');
         Route::get('/dashboard/aktifkan/list', 'getListDashboardAktifkanData')->name('dashboard-aktifkan.list');
-        Route::get('/dashboard/pks-siap-aktif/list', 'listPksSiapAktif')->name('dashboard-pks-siap-aktif.list');
 
         // ajax modal
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-hari-ini', 'listAktifitasSalesHariIni')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-hari-ini');
@@ -135,7 +163,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard/aktifitas-telesales/tabel/laporan-bulanan-telesales', 'laporanBulananTelesales')->name('dashboard.aktifitas-telesales.tabel.laporan-bulanan-telesales');
 
         Route::get('/dashboard/aktifitas-sales/modal/aktifitas-sales-bulanan-detail', 'listAktifitasSalesBulananDetail')->name('dashboard.aktifitas-sales.modal.aktifitas-sales-bulanan-detail');
+    });
 
+    Route::controller(DashboardManagerCrmController::class)->group(function() {
+        Route::get('/dashboard/manager-crm', 'dashboardManagerCrm')->name('dashboard-manager-crm');
+        Route::get('/dashboard/pks-siap-aktif/list', 'listPksSiapAktif')->name('dashboard-pks-siap-aktif.list');
     });
 
    Route::controller(LeadsController::class)->group(function () {
@@ -228,6 +260,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/customer-activity/add', 'add')->name('customer-activity.add');
         Route::get('/sales/customer-activity/add-activity-kontrak/{id}', 'addActivityKontrak')->name('customer-activity.add-activity-kontrak');
         Route::get('/sales/customer-activity/add-ro-kontrak/{id}', 'addRoKontrak')->name('customer-activity.add-ro-kontrak');
+        Route::get('/sales/customer-activity/add-pic-kontrak/{id}', 'addPicKontrak')->name('customer-activity.add-pic-kontrak');
         Route::get('/sales/customer-activity/add-crm-kontrak/{id}', 'addCrmKontrak')->name('customer-activity.add-crm-kontrak');
         Route::get('/sales/customer-activity/add-status-kontrak/{id}', 'addStatusKontrak')->name('customer-activity.add-status-kontrak');
         Route::get('/sales/customer-activity/view/{id}', 'view')->name('customer-activity.view');
@@ -281,7 +314,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/pks/list-terhapus', 'listTerhapus')->name('pks.list-terhapus'); // ajax
         Route::get('/sales/pks/available-spk', 'availableSpk')->name('pks.available-spk'); // ajax
         Route::post('/sales/pks/save', 'save')->name('pks.save');
-        Route::get('/sales/pks/view/{id}', 'view')->name('pks.view');
+        Route::get('/sales/pks/view/{id}', 'viewNew')->name('pks.view');
+        Route::get('/sales/pks/view-new/{id}', 'viewNew')->name('pks.view-new');
         Route::post('/sales/pks/upload-pks', 'uploadPks')->name('pks.upload-pks');
 
         Route::post('/sales/pks/approve', 'approve')->name('pks.approve');
@@ -302,7 +336,19 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/pks/get-detail-quotation', 'getDetailQuotation')->name('pks.get-detail-quotation'); // ajax
     });
 
-    Route::controller(PksKelengkapanController::class)->group(function () {
+    Route::controller(IssueController::class)->group(function() {
+        Route::get('/sales/issue', 'index')->name('issue');
+        Route::get('/sales/issue/list', 'list')->name('issue.list');
+        Route::get('/sales/issue/lead-list', 'leadsList')->name('issue.leads-list');
+        Route::get('/sales/issue/pks-list', 'pksList')->name('issue.pks-list');
+        Route::get('/sales/issue/site-list', 'siteList')->name('issue.site-list');
+        Route::get('/sales/issue/add', 'add')->name('issue.add');
+        Route::get('/sales/issue/view/{id}', 'view')->name('issue.view');
+        Route::post('/sales/issue/save', 'save')->name('issue.save');
+        Route::post('/sales/issue/update/{id}', 'update')->name('issue.update');
+        Route::post('/sales/issue/delete/{id}', 'delete')->name('issue.delete');
+    });
+    Route::controller(PksKelengkapanController::class)->group(function() {
         Route::get('/sales/lengkapi-quotation/add/{pksId}', 'add')->name('lengkapi-quotation.add');
         Route::post('/sales/lengkapi-quotation/save', 'save')->name('lengkapi-quotation.save');
         Route::get('/sales/lengkapi-quotation/step/{id}', 'step')->name('lengkapi-quotation.step');
@@ -462,13 +508,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales/quotation/cetak-hpp/{id}', 'cetakHpp')->name('quotation.cetak-hpp');
         Route::get('/sales/quotation/cetak-coss/{id}', 'cetakCoss')->name('quotation.cetak-coss');
         Route::get('/sales/quotation/cetak-gpm/{id}', 'cetakGpm')->name('quotation.cetak-gpm');
-        Route::get('/sales/quotation/cetak-quotation/{id}', 'cetakQuotation')->name('quotation.cetak-quotation');
+        Route::get('/sales/quotation/cetak-quotation/{id}/{mode?}', 'cetakQuotation')->name('quotation.cetak-quotation');
         Route::get('/sales/quotation/cetak-kaporlap/{id}', 'cetakKaporlap')->name('quotation.cetak-kaporlap');
         Route::get('/sales/quotation/cetak-devices/{id}', 'cetakDevices')->name('quotation.cetak-devices');
         Route::get('/sales/quotation/cetak-chemical/{id}', 'cetakChemical')->name('quotation.cetak-chemical');
 
+
+
         // EXPORT
         Route::get('/sales/quotation/export/detail-coss/{id}/{jenis}', 'exportDetailCoss')->name('quotation.export.detail-coss');
+
     });
     Route::controller(SupplierController::class)->group(function () {
         Route::get('/master/supplier', 'index')->name('supplier');
@@ -561,6 +610,13 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/aplikasi-pendukung/list', 'list')->name('aplikasi-pendukung.list'); // ajax
 
+    });
+    Route::controller(RoleController::class)->group(function() {
+        Route::get('/master/role', 'index')->name('role');
+        Route::get('/master/role/list', 'list')->name('role.list');
+        Route::get('/master/role/list-menu', 'listMenu')->name('role.list-menu');
+        Route::get('/master/role/view/{id}', 'view')->name('role.view');
+        Route::post('/master/role/update', 'updateAkses')->name('role.update-akses');
     });
 
     Route::controller(JenisBarangController::class)->group(function () {
@@ -746,6 +802,19 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/training/list', 'list')->name('training.list'); // ajax
     });
+     Route::controller(PositionController::class)->group(function() {
+        Route::get('/master/position', 'index')->name('position');
+        Route::get('/master/position/list', 'list')->name('position.list');
+        Route::get('/master/position/add', 'add')->name('position.add');
+        Route::get('/master/position/view/{id}', 'view')->name('position.view');
+        Route::get('/master/position/requirement-list', 'requirementList')->name('requirement.list');
+        Route::post('/master/position/save', 'save')->name('position.save');
+        Route::post('/master/position/add-requirement', 'addRequirement')->name('requirement.add');
+        Route::post('/master/position/requirement-edit', 'requirementEdit')->name('requirement.edit');
+        Route::post('/master/position/requirement-delete', 'requirementDelete')->name('requirement.delete');
+        Route::post('/master/position/edit/{id}', 'edit')->name('position.edit');
+        Route::post('/master/position/delete/{id}', 'delete')->name('position.delete');
+     });
 
     Route::controller(UmpController::class)->group(function () {
         Route::get('/master/ump', 'index')->name('ump');
@@ -766,6 +835,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/master/umk/list', 'list')->name('umk.list'); // ajax
         Route::get('/master/umk/list-umk', 'listUmk')->name('umk.list-umk'); // ajax
     });
+    Route::controller(LoyaltyController::class)->group(function() {
+        Route::get('/master/loyalty', 'index')->name('loyalty');
+        Route::get('/master/loyalty/list','list')->name('loyalty.list'); // ajax
+        Route::get('/master/loyalty/add', 'add')->name('loyalty.add');
+        Route::get('/master/loyalty/view/{id}', 'view')->name('loyalty.view');
+        Route::post('/master/loyalty/save', 'save')->name('loyalty.save');
+        Route::post('/master/loyalty/update/{id}', 'update')->name('loyalty.update');
+        Route::post('/master/loyalty/delete/{id}', 'delete')->name('loyalty.delete');
+
+    });
 
     Route::controller(TrainingMateriController::class)->group(function () {
         Route::get('/master/training-materi', 'index')->name('training-materi');
@@ -778,6 +857,27 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master/training-materi/history', 'historyTrainingByMateri')->name('training-materi.history');
         // Route::get('/master/training-materi/list-training-materi', 'listUmk')->name('training-materi.list-umk'); // ajax
+    });
+
+    Route::controller(TrainingGadaHargaController::class)->group(function() {
+        Route::get('/master/training-gada-harga', 'index')->name('training-gada-harga');
+        Route::get('/master/training-gada-harga/add', 'add')->name('training-gada-harga.add');
+        Route::get('/master/training-gada-harga/view/{id}', 'view')->name('training-gada-harga.view');
+        Route::get('/master/training-gada-harga/history', 'historyTrainingByMateri')->name('training-gada-harga.history');
+
+        Route::get('/master/training-gada-harga/list', 'list')->name('training-gada-harga.list'); // ajax
+        Route::post('/master/training-gada-harga/delete', 'delete')->name('training-gada-harga.delete');
+        Route::post('/master/training-gada-harga/save', 'save')->name('training-gada-harga.save');
+    });
+
+    Route::controller(TrainingGadaJadwalController::class)->group(function() {
+        Route::get('/master/training-gada-jadwal', 'index')->name('training-gada-jadwal');
+        Route::get('/master/training-gada-jadwal/add', 'add')->name('training-gada-jadwal.add');
+        Route::get('/master/training-gada-jadwal/view/{id}', 'view')->name('training-gada-jadwal.view');
+
+        Route::get('/master/training-gada-jadwal/list', 'list')->name('training-gada-jadwal.list'); // ajax
+        Route::post('/master/training-gada-jadwal/delete', 'delete')->name('training-gada-jadwal.delete');
+        Route::post('/master/training-gada-jadwal/save', 'save')->name('training-gada-jadwal.save');
     });
 
     Route::controller(TrainingDivisiController::class)->group(function () {
@@ -821,13 +921,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sdt/sdt-training', 'index')->name('sdt-training');
         Route::get('/sdt/sdt-training/add', 'add')->name('sdt-training.add');
         Route::get('/sdt/sdt-training/view/{id}', 'view')->name('sdt-training.view');
-        //
-        // Route::get('/sales/leads/view/{id}', 'view')->name('leads.view');
-        // Route::get('/sales/leads/import', 'import')->name('leads.import');
-        // Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
+        Route::get('/sdt/sdt-training/data-notification', 'dataNotification')->name('sdt-training.dataNotification');
+        Route::get('/sdt/sdt-training/data-notification-table', 'dataNotificationTable')->name('sdt-training.dataNotificationTable');
+        Route::post('/sdt/sdt-training/data-notification', 'saveNotification')->name('sdt-training.saveNotification');
+        Route::post('/sdt/sdt-training/delete-notification', 'deleteNotification')->name('sdt-training.deleteNotification');
+        Route::post('/sdt/sdt-training/penerima-notification', 'saveNotificationPenerima')->name('sdt-training.saveNotificationPenerima');
 
-        // Route::post('/sales/leads/inquiry-import', 'inquiryImport')->name('leads.inquiry-import');
-        // Route::post('/sales/leads/save-import', 'saveImport')->name('leads.save-import');
         Route::post('/sdt/sdt-training/save', 'save')->name('sdt-training.save');
         Route::post('/sdt/sdt-training/delete', 'delete')->name('sdt-training.delete');
         Route::post('/sdt/sdt-training/delete-trainer', 'deleteTrainer')->name('sdt-training.delete-trainer');
@@ -851,6 +950,50 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
+    Route::controller(TrainingGadaController::class)->group(function() {
+        Route::get('/gada/training', 'index')->name('training-gada');
+        Route::get('/gada/training/list', 'list')->name('training-gada.list');
+        Route::get('/gada/training/list-log', 'listLog')->name('training-gada.listLog');
+        Route::get('/gada/training/data-registrasi', 'dataRegistrasi')->name('training-gada.dataRegistrasi');
+        Route::get('/gada/training/data-invoice', 'dataInvoice')->name('training-gada.dataInvoice');
+        Route::get('/gada/training/generate-invoice/{id}', 'generateInvoice')->name('training-gada.generateInvoice');
+        // Route::get('/gada/training/terbilang', 'terbilang')->name('training-gada.terbilang');
+
+        Route::post('/gada/training/upload-bukti-bayar', 'uploadBuktiBayar')->name('training-gada.upload-bukti-bayar');
+        Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');
+    });
+
+    Route::controller(TrainingGadaPembayaranController::class)->group(function() {
+        Route::get('/gada/training-pembayaran', 'index')->name('training-gada-pembayaran');
+        Route::get('/gada/training-pembayaran/list', 'list')->name('training-gada-pembayaran.list');
+        // Route::get('/gada/training/list-log', 'listLog')->name('training-gada.listLog');
+        // Route::get('/gada/training/data-registrasi', 'dataRegistrasi')->name('training-gada.dataRegistrasi');
+        // Route::get('/gada/training/data-invoice', 'dataInvoice')->name('training-gada.dataInvoice');
+        // Route::get('/gada/training/generate-invoice/{id}', 'generateInvoice')->name('training-gada.generateInvoice');
+        // Route::get('/gada/training/terbilang', 'terbilang')->name('training-gada.terbilang');
+
+        // Route::post('/gada/training/upload-bukti-bayar', 'uploadBuktiBayar')->name('training-gada.upload-bukti-bayar');
+        // Route::post('/gada/training/status', 'updateStatus')->name('training-gada.updateStatus');
+    });
+
+    Route::controller(PurchaseController::class)->group(function() {
+        Route::get('/purchase/purchase-request', 'purchaseRequestIndex')->name('purchase-request');
+        Route::get('/purchase/purchase-request/add', 'purchaseRequestAdd')->name('purchase-request.add');
+         Route::get('/purchase/purchase-request/list', 'purchaseRequestList')->name('purchase-request.list');
+         Route::get('/purchase/purchase-request/list-barang', 'getListBarang')->name('purchase-request.list-barang');
+         Route::get('/purchase/purchase-request/listPKS', 'cariNomorPKS')->name('purchase-request.list-PKS');
+         Route::get('/purchase-request/print/{id}', 'printRequestPdf')->name('purchase-request.print');
+         Route::get('/purchase/purchase-request/view/{id}', 'purchaseRequestView')->name('purchase-request.view');
+         Route::post('/purchase/purchase-request/save', 'purchaseRequestSave')->name('purchase-request.save');
+         Route::get('/purchase/purchase-order', 'purchaseOrderIndex')->name('purchase-order');
+         Route::get('/purchase/purchase-order/add', 'purchaseOrderAdd')->name('purchase-order.add');
+         Route::post('/purchase/purchase-order/save', 'purchaseOrderSave')->name('purchase-order.save');
+         Route::get('/purchase/purchase-order/list', 'purchaseOrderList')->name('purchase-order.list');
+         Route::get('/purchase/purchase-order/no-company', 'cariNomorRequest')->name('purchase-order.no-company');
+         Route::get('/purchase/purchase-order/list-request', 'getRequestList')->name('purchase-order.listRequest');
+         Route::get('/purchase-order/print/{id}', 'cetakOrderPdf')->name('purchase-order.print');
+         Route::get('/purchase/purchase-order/view/{id}', 'purchaseOrderView')->name('purchase-order.view');
+    });
     Route::controller(TrainingSiteController::class)->group(function () {
         Route::get('/sdt/training-site', 'index')->name('training-site');
         // Route::get('/master/training-client/add', 'add')->name('training-client.add');
@@ -903,6 +1046,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/setting/entitas/list', 'list')->name('entitas.list'); // ajax
 
     });
+     Route::controller(ProfileController::class)->group(function() {
+        Route::get('/profile', 'index')->name('profile');
+        Route::get('/profile/list-activity', 'listActivity')->name('profile.activities');
+     });
 
     // LOG
     //NOTIFIKASI
@@ -911,6 +1058,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/log/notifikasi/list', 'list')->name('notifikasi.list'); // ajax
         Route::post('/log/notifikasi/read', 'read')->name('notifikasi.read');
     });
+
     Route::controller(WhatsappController::class)->group(function () {
         Route::get('/whatsapp/login', 'login')->name('whatsapp.login');
         Route::get('/whatsapp', 'index')->name('whatsapp');
@@ -918,5 +1066,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/whatsapp/connectQr', 'connectQr')->name('whatsapp.connectQr');
         Route::post('/whatsapp/connectStatus', 'connectStatus')->name('whatsapp.connectStatus');
         Route::post('/whatsapp/message', 'message')->name('whatsapp.message');
+        Route::post('/whatsapp/sendMessage', 'sendMessage')->name('whatsapp.sendMessage');
     });
+
+    Route::get('/search', [DashboardController::class, 'search'])->name('dashboard.search');
 });

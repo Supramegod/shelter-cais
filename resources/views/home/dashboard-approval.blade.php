@@ -241,7 +241,7 @@
 @endsection
 
 @section('pageScript')
-    <script src="{{ asset('assets/js/dashboards-crm.js') }}"></script>
+    <script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
 
     @if(in_array(Auth::user()->role_id, [56]))
         <script>

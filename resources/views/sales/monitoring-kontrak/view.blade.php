@@ -1,29 +1,47 @@
 @extends('layouts.master')
 @section('title', 'View Monitoring Kontrak')
 @section('content')
-    <style>
-        .tab {
-            display: inline-block;
-            margin-left: 3em;
-        }
-    </style>
-    <div class="container-fluid flex-grow-1 container-p-y" style="margin-top: 4rem !important;">
-        <div class="row gy-4 mb-5">
-            <!-- Congratulations card -->
-            <div class="col-xl-12">
-                <div class="card h-100 mt-3">
-                    <div class="card-header d-flex w-100" style="justify-content: space-between;">
-                        <div class="d-flex justify-content-between align-items-center w-100">
-                            <div>
-                                <h4 class="card-title mb-1">Detail Kontrak</h4>
-                                @if($pks->quotation_id == null)
-                                    <span class="text-danger">
-                                        <strong>Belum ada Quotation.</strong>
-                                    </span>
-                                @elseif($quotation->step < 100)
-                                    <span class="text-warning">
-                                        <strong>Quotation belum Lengkap.</strong>
-                                    </span>
+<style>
+    .tab {
+        display: inline-block;
+        margin-left: 3em;
+    }
+</style>
+<div class="container-fluid flex-grow-1 container-p-y" style="margin-top: 4rem !important;">
+    <div class="row gy-4 mb-5">
+        <!-- Congratulations card -->
+        <div class="col-xl-12">
+            <div class="card h-100 mt-3">
+                <div class="card-header d-flex w-100" style="justify-content: space-between;">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div>
+                            <h4 class="card-title mb-1">Detail Kontrak</h4>
+                            @if($pks->quotation_id == null)
+                            <span class="text-danger">
+                                <strong>Belum ada Quotation.</strong>
+                            </span>
+                            @elseif($quotation->step < 100)
+                            <span class="text-warning">
+                                <strong>Quotation belum Lengkap.</strong>
+                            </span>
+                            @endif
+                        </div>
+                        <div>
+                            @if($pks->quotation_id == null)
+                            <a href="{{ route('lengkapi-quotation.add', $pks->id) }}" class="btn btn-primary">
+                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lengkapi Quotation
+                            </a>
+                            <a href="{{ route('quotation-sandbox.add', $pks->id) }}" class="btn btn-danger">
+                                <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Quotation Sandbox
+                            </a>
+                            @elseif($quotation->step < 100)
+                                @if($quotation->is_sandbox==0)
+                                <a href="{{ route('lengkapi-quotation.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-primary">
+                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation
+                                </a>
+                                @else
+                                <a href="{{ route('quotation-sandbox.step',['id'=>$quotation->id,'step'=>$quotation->step]) }}" class="btn btn-danger">
+                                    <i class="mdi mdi-file-document-edit-outline"></i> &nbsp; Lanjutkan Quotation Sandbox
                                 @endif
                             </div>
                             <div>
@@ -343,7 +361,7 @@
 @endsection
 
 @section('pageScript')
-    <script src="{{ asset('assets/js/dashboards-crm.js') }}"></script>
+    <script src="{{ asset('public/assets/js/dashboards-crm.js') }}"></script>
     <script>
         window.addEventListener('pageshow', function (event) {
             if (sessionStorage.getItem('forceRefresh') === 'true') {

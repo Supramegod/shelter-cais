@@ -1,177 +1,189 @@
-<!doctype html>
-
-<html lang="en" class="light-style layout-wide customizer-hide" dir="ltr" data-theme="theme-default"
-  data-assets-path="{{ asset('') }}" data-template="horizontal-menu-template-no-customizer">
-
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - CAIS Shelter</title>
+<link rel="icon" type="image/x-icon" href="{{ asset('public/assets/img/icons/favicon-shelter.png') }}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
 
-  <title>SHELTER - Customer & Activity Information System</title>
-
-  <meta name="description" content="" />
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icons/favicon-shelter.png') }}" />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&ampdisplay=swap"
-    rel="stylesheet" />
-
-  <!-- Icons -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/materialdesignicons.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
-
-  <!-- Menu waves for no-customizer fix -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
-
-  <!-- Core CSS -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
-
-  <!-- Vendors CSS -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" />
-  <!-- Vendor -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/@form-validation/form-validation.css') }}" />
-
-  <!-- Page CSS -->
-  <!-- Page -->
-  <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/page-auth.css') }}" />
-
-  <!-- Helpers -->
-  <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
-  <script src="{{ asset('assets/js/config.js') }}"></script>
-
-  <style>
-
-  </style>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+    }
+    .container {
+        display: flex;
+        height: 100vh;
+    }
+    /* Kiri */
+    .left {
+        flex: 1;
+        background: linear-gradient(rgba(0, 54, 128, 0.75), rgba(0, 54, 128, 0.75)),
+                    url('https://images.unsplash.com/photo-1593642532973-d31b6557fa68?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 2rem;
+    }
+    .left h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+    .left p {
+        font-size: 1rem;
+        max-width: 400px;
+        line-height: 1.5;
+    }
+    /* Kanan */
+    .right {
+        flex: 0 0 500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f5f7fa;
+        text-align: center;
+    }
+    .login-card img {
+        max-width: 200px;
+        margin-bottom: 1rem;
+    }
+    .login-card h2 {
+        margin-bottom: 0.5rem;
+        color: #003680;
+    }
+    .login-card p {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 1.5rem;
+    }
+    .input-group {
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    .input-group input {
+        width: 100%;
+        padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+    }
+    .input-group input:focus {
+        border-color: #003680;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 54, 128, 0.1);
+    }
+    .input-group i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+    }
+    .remember {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+    .remember input {
+        margin-right: 0.4rem;
+    }
+    .remember a {
+        text-decoration: none;
+        color: #0056d2;
+    }
+    .remember a:hover {
+        text-decoration: underline;
+    }
+    .login-card button {
+        width: 100%;
+        padding: 0.75rem;
+        background: #0056d2;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .login-card button:hover {
+        background: #003ea8;
+    }
+    .footer {
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 1.5rem;
+    }
+    @media (max-width: 768px) {
+        .left {
+            display: none;
+        }
+        .right {
+            flex: 1;
+        }
+    }
+    .invalid-feedback {
+        color: #e53935;
+        font-size: 0.85rem;
+        margin-top: -1rem;
+        text-align: left;
+        padding-left: 2.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+</style>
 </head>
-
 <body>
-  <!-- Content -->
-
-  <div class="position-relative">
-    <div class="authentication-wrapper authentication-basic container-p-y">
-      <div class="authentication-inner py-4">
-        <!-- Login -->
-        <div class="card p-2">
-          <!-- Logo -->
-          <div class="app-brand justify-content-center mt-5">
-            <a href="{{route('home')}}" class="app-brand-link gap-2">
-              <span style="display:flex;justify-content:center">
-                <img alt="logo" class="img-fluid img" src="{{asset('assets/img/icons/icon-shelter.png')}}"
-                  style="width:50%">
-              </span>
-            </a>
-          </div>
-
-          <div class="card-body mt-2">
-            <h4 class="mb-2 text-center fst-italic mb-3">Customer & Activity Information System</h4>
-            <p class="mb-4">Silahkan login untuk melanjutkan</p>
-
-            <form id="form-auth" class="mb-3 need-validation" action="{{route('authenticate')}}" method="POST"
-              novalidate>
-              @csrf
-              <div class="form-floating form-floating-outline mb-3">
-                <input type="text"
-                  class="form-control @if ($errors->any()) @if($errors->has('username')) is-invalid @else @endif @endif"
-                  id="username" name="username" placeholder="Masukkan Username" autofocus />
-                <label for="username">Username</label>
-                @if($errors->has('username'))
-          <div class="invalid-feedback">{{ $errors->first('username') }}</div>
-        @endif
-              </div>
-              <div class="mb-3">
-                <div class="form-password-toggle">
-                  <div class="input-group input-group-merge is-invalid" id="ct-password">
-                    <div class="form-floating form-floating-outline">
-                      <input type="password" id="password"
-                        class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else   @endif @endif"
-                        data-container="ct-password" name="password" placeholder="············">
-                      <label for="password">Password</label>
-                    </div>
-                    <span class="input-group-text cursor-pointer"><i class="mdi mdi-eye-off-outline"></i></span>
-                  </div>
-                  @if($errors->has('password'))
-            <div class="invalid-feedback">{{ $errors->first('password') }}</div>
-          @endif
-                </div>
-              </div>
-              <div class="mb-3 d-flex justify-content-between">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="remember-me" />
-                  <label class="form-check-label" for="remember-me"> ingat saya </label>
-                </div>
-              </div>
-              <div class="mb-3">
-                <button class="btn btn-primary d-grid w-100" type="submit">Log in</button>
-              </div>
-            </form>
-            <div class="my-5">
-            </div>
-
-            <div class="d-flex justify-content-center gap-2">
-              &nbsp;
-            </div>
-          </div>
-        </div>
-        <!-- /Login -->
-      </div>
+<div class="container">
+    <!-- Kiri -->
+    <div class="left">
+        <h1>Selamat Datang di CAIS</h1>
+        <h1><i>Customer Activity And Information System</i></h1>
+        <p>Kelola data pelanggan dan aktivitas Anda dengan lebih mudah, cepat, dan efisien.</p>
     </div>
-  </div>
 
-  <!-- / Content -->
-
-  <!-- Core JS -->
-  <!-- build:js assets/vendor/js/core.js -->
-  <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
-  <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/node-waves/node-waves.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/hammer/hammer.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-  <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
-
-  <!-- endbuild -->
-
-  <!-- Vendors JS -->
-  <script src="{{ asset('assets/vendor/libs/@form-validation/popular.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/@form-validation/bootstrap5.js') }}"></script>
-  <script src="{{ asset('assets/vendor/libs/@form-validation/auto-focus.js') }}"></script>
-
-  <!-- Main JS -->
-  <script src="{{ asset('assets/js/main.js') }}"></script>
-
-  <!-- Page JS -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
-  <script>
-    VANTA.NET({
-      el: ".position-relative",
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      scale: 1.00,
-      scaleMobile: 1.00,
-      backgroundColor: 0x000056,
-      color: 0xffffff
-    })
-
-    @if(session('message'))
-    alert({{ session('message') }});
-  @endif
-  </script>
-
+    <!-- Kanan -->
+    <div class="right">
+        <div class="login-card">
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 1rem;">
+                <img src="{{ asset('public/assets/img/icons/icon-shelter.png')}}" alt="Shelter Logo">
+            </div>
+            <p>Silakan login untuk melanjutkan ke sistem.</p>
+            <form action="{{route('authenticate')}}" method="POST">
+                @csrf
+                <div class="input-group">
+                    <i class="mdi mdi-account"></i>
+                    <input type="text" name="username" class="form-control @if ($errors->any()) @if($errors->has('username')) is-invalid @else @endif @endif" placeholder="Username" required>
+                </div>
+                @if($errors->has('username'))
+                    <div class="invalid-feedback">{{ $errors->first('username') }}</div>
+                @endif
+                <div class="input-group">
+                    <i class="mdi mdi-lock"></i>
+                    <input type="password" name="password" class="form-control @if ($errors->any()) @if($errors->has('password')) is-invalid @else @endif @endif" placeholder="Password" required>
+                </div>
+                @if($errors->has('password'))
+                    <div class="invalid-feedback">{{ $errors->first('password') }}</div>
+                @endif
+                <div class="remember">
+                    <label><input type="checkbox"> Ingat saya</label>
+                    <a href="#">Lupa password?</a>
+                </div>
+                <button type="submit">Log in</button>
+            </form>
+            <div class="footer">
+                © 2025 Shelter All rights reserved.
+            </div>
+        </div>
+    </div>
+</div>
 </body>
-
-</html
+</html>

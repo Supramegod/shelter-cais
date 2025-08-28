@@ -1,0 +1,19 @@
+services:
+ cais-prod:
+   build:
+     context: .
+     dockerfile: Dockerfile
+   #image: hris-dev:latest
+   container_name: cais-prod
+   ports:
+     - "8082:80"
+   volumes:
+     - .:/var/www/html
+     - /home/data/project/cais/public:/var/www/html/public
+     - ./.env:/var/www/html/.env
+   networks:
+      - shelter-network
+
+networks:
+  shelter-network:
+    external: true

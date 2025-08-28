@@ -251,6 +251,14 @@
             $('#d-crosscheck-data').addClass('d-none');
         }
     });
+    $('#check-all-sites').on('change', function() {
+        $('.site-checkbox').prop('checked', this.checked);
+        if (this.checked && $('.site-checkbox').length > 0) {
+            $('#d-crosscheck-data').removeClass('d-none');
+        } else {
+            $('#d-crosscheck-data').addClass('d-none');
+        }
+    });
 
     $('#tbody-spk').on('change', '.site-checkbox', function() {
         let checkedSites = $('.site-checkbox:checked');

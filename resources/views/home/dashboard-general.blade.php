@@ -11,17 +11,17 @@
     * {
       box-sizing: border-box;
     }
-    
+
     .dashboard-container {
       padding: 1rem;
       background: #f8fafc;
       min-height: 100vh;
     }
-    
+
     .dashboard-row {
       margin-bottom: 1.5rem;
     }
-    
+
     /* Enhanced Card Styles */
     .dashboard-card {
       background: white;
@@ -32,12 +32,12 @@
       transition: all 0.3s ease;
       overflow: hidden;
     }
-    
+
     .dashboard-card:hover {
       box-shadow: 0 8px 25px rgba(0,0,0,0.12);
       transform: translateY(-2px);
     }
-    
+
     /* Stats Cards with Improved Gradients */
     .stats-card-new {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -45,28 +45,28 @@
       position: relative;
       overflow: hidden;
     }
-    
+
     .stats-card-existing {
       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       color: white;
       position: relative;
       overflow: hidden;
     }
-    
+
     .stats-card-target {
       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
       color: white;
       position: relative;
       overflow: hidden;
     }
-    
+
     .stats-card-leads {
       background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
       color: white;
       position: relative;
       overflow: hidden;
     }
-    
+
     .stats-card-new::before,
     .stats-card-existing::before,
     .stats-card-target::before,
@@ -81,26 +81,26 @@
       border-radius: 50%;
       z-index: 0;
     }
-    
+
     .stats-card-body {
       position: relative;
       z-index: 1;
       padding: 1.5rem;
     }
-    
+
     .stats-icon {
       font-size: 2.5rem;
       margin-bottom: 1rem;
       opacity: 0.9;
     }
-    
+
     .stats-value {
       font-size: 2.2rem;
       font-weight: 700;
       margin: 0.5rem 0;
       line-height: 1;
     }
-    
+
     .stats-label {
       font-size: 0.9rem;
       opacity: 0.9;
@@ -108,13 +108,13 @@
       letter-spacing: 0.5px;
       font-weight: 500;
     }
-    
+
     .stats-change {
       font-size: 0.85rem;
       margin-top: 0.5rem;
       opacity: 0.8;
     }
-    
+
     /* Section Headers */
     .section-header {
       font-size: 1.75rem;
@@ -126,7 +126,7 @@
       display: flex;
       align-items: center;
     }
-    
+
     .section-header::before {
       content: '';
       position: absolute;
@@ -138,7 +138,7 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-radius: 2px;
     }
-    
+
     /* Chart Container */
     .chart-wrapper {
       background: white;
@@ -149,7 +149,7 @@
       height: 100%;
       min-height: 350px;
     }
-    
+
     .chart-header {
       display: flex;
       justify-content: space-between;
@@ -158,14 +158,14 @@
       padding-bottom: 1rem;
       border-bottom: 2px solid #f1f5f9;
     }
-    
+
     .chart-title {
       font-size: 1.2rem;
       font-weight: 600;
       color: #1e293b;
       margin: 0;
     }
-    
+
     .chart-badge {
       padding: 0.25rem 0.75rem;
       border-radius: 20px;
@@ -174,17 +174,17 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    
+
     .badge-primary {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
     }
-    
+
     .badge-success {
       background: linear-gradient(135deg, #28dac6, #20c997);
       color: white;
     }
-    
+
     /* Enhanced Progress Bar */
     .custom-progress {
       height: 8px;
@@ -194,7 +194,7 @@
       margin-top: 0.75rem;
       position: relative;
     }
-    
+
     .custom-progress-bar {
       height: 100%;
       background: linear-gradient(90deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,1) 100%);
@@ -203,7 +203,7 @@
       position: relative;
       overflow: hidden;
     }
-    
+
     .custom-progress-bar::after {
       content: '';
       position: absolute;
@@ -215,21 +215,21 @@
       background-size: 30px 30px;
       animation: progress-stripe 2s linear infinite;
     }
-    
+
     @keyframes progress-stripe {
       0% { background-position: 0 0; }
       100% { background-position: 30px 0; }
     }
-    
+
     /* Branch Cards */
     .branch-card {
       transition: all 0.3s ease;
     }
-    
+
     .branch-card:hover {
       transform: translateY(-3px);
     }
-    
+
     .branch-avatar {
       width: 50px;
       height: 50px;
@@ -240,79 +240,79 @@
       margin-right: 1rem;
       background: linear-gradient(135deg, #667eea, #764ba2);
     }
-    
+
     .branch-avatar.success {
       background: linear-gradient(135deg, #28dac6, #20c997);
     }
-    
+
     .branch-avatar.warning {
       background: linear-gradient(135deg, #ffd93d, #ffb74d);
     }
-    
+
     .branch-avatar.info {
       background: linear-gradient(135deg, #4facfe, #299AFF);
     }
-    
+
     .branch-value {
       font-size: 1.75rem;
       font-weight: 700;
       color: #1e293b;
       margin-bottom: 0.25rem;
     }
-    
+
     .branch-name {
       font-size: 1rem;
       color: #64748b;
       margin-bottom: 0.25rem;
     }
-    
+
     .branch-target {
       font-size: 0.85rem;
       padding: 0.15rem 0.5rem;
       border-radius: 12px;
       display: inline-block;
     }
-    
+
     .target-success {
       background: #dcfce7;
       color: #166534;
     }
-    
+
     .target-warning {
       background: #fef3c7;
       color: #92400e;
     }
-    
+
     .target-danger {
       background: #fecaca;
       color: #991b1b;
     }
-    
+
     /* Ranking List */
     .ranking-list {
       height: 320px;
       overflow-y: auto;
       padding-right: 0.5rem;
     }
-    
+
     .ranking-list::-webkit-scrollbar {
       width: 6px;
     }
-    
+
     .ranking-list::-webkit-scrollbar-track {
       background: #f1f5f9;
       border-radius: 3px;
     }
-    
+
     .ranking-list::-webkit-scrollbar-thumb {
       background: #cbd5e1;
       border-radius: 3px;
     }
-    
+
     .ranking-list::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
-    
+
     .ranking-item {
       display: flex;
       align-items: center;
@@ -323,13 +323,13 @@
       transition: all 0.3s ease;
       border: 1px solid #e2e8f0;
     }
-    
+
     .ranking-item:hover {
       background: #e2e8f0;
       transform: translateX(5px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    
+
     .rank-number {
       width: 36px;
       height: 36px;
@@ -343,168 +343,168 @@
       font-size: 0.9rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
-    
-    .rank-1 { 
+
+    .rank-1 {
       background: linear-gradient(135deg, #FFD700, #FFA500);
     }
-    
-    .rank-2 { 
+
+    .rank-2 {
       background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
     }
-    
-    .rank-3 { 
+
+    .rank-3 {
       background: linear-gradient(135deg, #CD7F32, #A0522D);
     }
-    
-    .rank-other { 
+
+    .rank-other {
       background: linear-gradient(135deg, #6c757d, #495057);
     }
-    
+
     .ranking-info {
       flex-grow: 1;
     }
-    
+
     .ranking-name {
       font-weight: 600;
       color: #1e293b;
       font-size: 0.95rem;
       margin-bottom: 0.25rem;
     }
-    
+
     .ranking-branch {
       color: #64748b;
       font-size: 0.8rem;
     }
-    
+
     .ranking-stats {
       text-align: right;
     }
-    
+
     .ranking-sales {
       font-weight: 700;
       color: #059669;
       font-size: 1rem;
       margin-bottom: 0.25rem;
     }
-    
+
     .ranking-achievement {
       color: #64748b;
       font-size: 0.8rem;
     }
-    
+
     /* Chart Container Inner */
     .chart-container-inner {
       position: relative;
       height: 250px;
       width: 100%;
     }
-    
+
     .chart-container-inner canvas {
       max-height: 250px !important;
     }
-    
+
     /* Pivot Table Styles */
     #output {
       border-radius: 8px;
       overflow: hidden;
     }
-    
+
     .pvtTable {
       font-size: 0.85rem;
     }
-    
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .dashboard-container {
         padding: 0.5rem;
       }
-      
+
       .section-header {
         font-size: 1.5rem;
         padding-left: 15px;
       }
-      
+
       .section-header::before {
         height: 20px;
       }
-      
+
       .stats-value {
         font-size: 1.8rem;
       }
-      
+
       .chart-wrapper {
         padding: 1rem;
         min-height: 300px;
       }
-      
+
       .chart-container-inner {
         height: 200px;
       }
-      
+
       .chart-container-inner canvas {
         max-height: 200px !important;
       }
-      
+
       .ranking-list {
         height: 250px;
       }
-      
+
       .branch-value {
         font-size: 1.5rem;
       }
     }
-    
+
     @media (max-width: 576px) {
       .chart-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
       }
-      
+
       .stats-card-body {
         padding: 1rem;
       }
-      
+
       .stats-value {
         font-size: 1.6rem;
       }
     }
-    
+
     /* Loading Animation */
     .loading-shimmer {
       background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
       background-size: 200% 100%;
       animation: shimmer 2s infinite;
     }
-    
+
     @keyframes shimmer {
       0% { background-position: -200% 0; }
       100% { background-position: 200% 0; }
     }
-    
+
     /* Improved Focus States */
     .dashboard-card:focus-within {
       outline: 2px solid #667eea;
       outline-offset: 2px;
     }
-    
+
     /* Better Typography */
     .fw-semibold {
       font-weight: 600;
     }
-    
+
     .text-success {
       color: #059669 !important;
     }
-    
+
     .text-warning {
       color: #d97706 !important;
     }
-    
+
     .text-danger {
       color: #dc2626 !important;
     }
-    
+
     .text-muted {
       color: #64748b !important;
     }
@@ -513,7 +513,7 @@
 
 @section('content')
   <div class="container-fluid dashboard-container">
-    
+
     <!-- Summary Stats Row -->
     <div class="row dashboard-row">
       <div class="col-12 mb-4">
@@ -524,7 +524,7 @@
           </small>
         </h2>
       </div>
-      
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card stats-card-new">
           <div class="stats-card-body text-center">
@@ -537,7 +537,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card stats-card-existing">
           <div class="stats-card-body text-center">
@@ -550,7 +550,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card stats-card-target">
           <div class="stats-card-body text-center">
@@ -565,7 +565,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card stats-card-leads">
           <div class="stats-card-body text-center">
@@ -585,7 +585,7 @@
       <div class="col-12 mb-4">
         <h2 class="section-header">Performance Per Branch</h2>
       </div>
-      
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card branch-card">
           <div class="card-body p-4">
@@ -602,7 +602,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card branch-card">
           <div class="card-body p-4">
@@ -619,7 +619,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card branch-card">
           <div class="card-body p-4">
@@ -700,8 +700,8 @@
           </div>
         </div>
       </div>
-      
-      
+
+
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="dashboard-card branch-card">
           <div class="card-body p-4">
@@ -725,7 +725,7 @@
       <div class="col-12 mb-4">
         <h2 class="section-header">Analisa Performance</h2>
       </div>
-      
+
       <div class="col-xl-6 col-12 mb-4">
         <div class="chart-wrapper">
           <div class="chart-header">
@@ -737,7 +737,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-xl-6 col-12 mb-4">
         <div class="chart-wrapper">
           <div class="chart-header">
@@ -764,7 +764,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-xl-4 col-12 mb-4">
         <div class="chart-wrapper">
           <div class="chart-header">
@@ -782,7 +782,7 @@
       <div class="col-12 mb-4">
         <h2 class="section-header">Overall Achievement Analysis</h2>
       </div>
-      
+
       <div class="col-lg-6 col-12 mb-4">
         <div class="chart-wrapper">
           <div class="chart-header">
@@ -794,7 +794,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-lg-6 col-12 mb-4">
         <div class="chart-wrapper">
           <div class="chart-header">
@@ -825,7 +825,7 @@
       <div class="col-12 mb-4">
         <h2 class="section-header">Interactive Data Analytics</h2>
       </div>
-      
+
       <div class="col-12">
         <div class="chart-wrapper">
           <div class="chart-header">
@@ -836,13 +836,13 @@
         </div>
       </div>
     </div>
-    
+
   </div> -->
 @endsection
 
 @section('pageScript')
-  <script src="{{ asset('assets/vendor/libs/chartjs/chartjs.js') }}"></script>
-  
+  <script src="{{ asset('public/assets/vendor/libs/chartjs/chartjs.js') }}"></script>
+
   <!-- Enhanced Data Variables -->
   <script>
     // Enhanced Color Palette
@@ -865,7 +865,7 @@
         danger: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)'
       }
     };
-    
+
     // Enhanced Data with more realistic values
     const branchData = [
       { branch: 'Jakarta Pusat', target: 350, actual: 325, leads: 325 },
@@ -876,21 +876,21 @@
       { branch: 'Bandung', target: 250, actual: 195, leads: 195 },
       { branch: 'Medan', target: 200, actual: 160, leads: 160 }
     ];
-    
+
     const kebutuhanData = [
       { nama: 'KPR', color: colors.primary },
       { nama: 'KTA', color: colors.success },
       { nama: 'Investasi', color: colors.warning },
       { nama: 'Asuransi', color: colors.danger }
     ];
-    
+
     const leadsByKebutuhan = [
       { branch: 'Jakarta Pusat', KPR: 120, KTA: 85, Investasi: 95, Asuransi: 20 },
       { branch: 'Surabaya', KPR: 95, KTA: 75, Investasi: 80, Asuransi: 30 },
       { branch: 'Bandung', KPR: 70, KTA: 45, Investasi: 60, Asuransi: 20 },
       { branch: 'Medan', KPR: 55, KTA: 40, Investasi: 45, Asuransi: 20 }
     ];
-    
+
     const salesRanking = [
       { name: 'Ahmad Budi Santoso', branch: 'Jakarta Pusat', sales: 150, achievement: 95 },
       { name: 'Siti Nurhaliza', branch: 'Surabaya', sales: 142, achievement: 88 },
@@ -899,20 +899,20 @@
       { name: 'Indra Wijaya', branch: 'Jakarta Pusat', sales: 118, achievement: 74 },
       { name: 'Putri Maharani', branch: 'Surabaya', sales: 112, achievement: 70 }
     ];
-    
+
     // Update summary values
     const totalTarget = branchData.reduce((sum, d) => sum + d.target, 0);
     const totalActual = branchData.reduce((sum, d) => sum + d.actual, 0);
     const totalGap = totalTarget - totalActual;
     const achievementPercentage = ((totalActual / totalTarget) * 100).toFixed(1);
-    
+
     // Update DOM elements
     document.addEventListener('DOMContentLoaded', function() {
       const totalTargetEl = document.getElementById('totalTarget');
       const totalActualEl = document.getElementById('totalActual');
       const totalGapEl = document.getElementById('totalGap');
       const achievementPercentageEl = document.getElementById('achievementPercentage');
-      
+
       if (totalTargetEl) totalTargetEl.textContent = totalTarget.toLocaleString();
       if (totalActualEl) totalActualEl.textContent = totalActual.toLocaleString();
       if (totalGapEl) totalGapEl.textContent = totalGap.toLocaleString();
@@ -976,7 +976,7 @@
               callbacks: {
                 label: function(context) {
                   const percentage = ((context.raw / branchData[context.dataIndex].target) * 100).toFixed(1);
-                  return context.dataset.label + ': ' + context.raw.toLocaleString() + 
+                  return context.dataset.label + ': ' + context.raw.toLocaleString() +
                          (context.dataset.label === 'Actual' ? ` (${percentage}%)` : '');
                 }
               }
@@ -1106,7 +1106,7 @@
     const performanceChart = document.getElementById('performanceChart');
     if (performanceChart) {
       const achievements = branchData.map(d => ((d.actual / d.target) * 100).toFixed(1));
-      
+
       new Chart(performanceChart, {
         type: 'line',
         data: {
@@ -1195,7 +1195,7 @@
       const totalTarget = branchData.reduce((sum, d) => sum + d.target, 0);
       const totalActual = branchData.reduce((sum, d) => sum + d.actual, 0);
       const achievement = ((totalActual / totalTarget) * 100).toFixed(1);
-      
+
       new Chart(overallChart, {
         type: 'doughnut',
         data: {
@@ -1257,17 +1257,17 @@
             const width = chart.width;
             const height = chart.height;
             const ctx = chart.ctx;
-            
+
             ctx.restore();
             const fontSize = (height / 100).toFixed(2);
             ctx.font = fontSize + "em sans-serif";
             ctx.textBaseline = "middle";
             ctx.fillStyle = colors.success;
-            
+
             const text = achievement + "%";
             const textX = Math.round((width - ctx.measureText(text).width) / 2);
             const textY = height / 2;
-            
+
             ctx.fillText(text, textX, textY);
             ctx.save();
           }
@@ -1298,7 +1298,7 @@
         `;
       });
       rankingContainer.innerHTML = html;
-      
+
       // Add animation delay
       const items = rankingContainer.querySelectorAll('.ranking-item');
       items.forEach((item, index) => {
@@ -1348,7 +1348,7 @@
     //   });
     // });
   </script>
-  
+
   <!-- Loading Animation Script -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -1360,7 +1360,7 @@
           container.classList.remove('loading-shimmer');
         }, 1500);
       });
-      
+
       // Add fade-in animation to cards
       const cards = document.querySelectorAll('.dashboard-card');
       cards.forEach((card, index) => {

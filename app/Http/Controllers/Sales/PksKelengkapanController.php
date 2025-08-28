@@ -221,6 +221,9 @@ class PksKelengkapanController extends Controller
                     $data->totalHc += $value->jumlah_hc;
                 }
                 $leads = DB::table('sl_leads')->where('id',$quotation->leads_id)->first();
+
+                // Urutkan $quotation->quotation_detail berdasarkan quotation_site_id
+                $quotation->quotation_detail = $quotation->quotation_detail->sortBy('quotation_site_id')->values();
             }
             $isEdit = false;
 

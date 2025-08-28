@@ -13,7 +13,6 @@
         </h5>
         <form class="card-body overflow-hidden" action="{{route('sdt-training.save')}}" method="POST" id="training-form">
           @csrf
-          
           <div class="row mb-4">
             <div class="col-12">
               <div class="progress" style="height: 6px;">
@@ -57,14 +56,14 @@
 
           <div class="form-step" data-step="2">
             <h6 class="mb-3">Langkah 2: Pilih Client</h6>
-            
+
             <div class="alert alert-info" id="debug-info">
               <small>
                 Business Unit: <span id="debug-bu">-</span><br>
                 Area: <span id="debug-area">-</span>
               </small>
             </div>
-            
+
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
               <div class="col-sm-6">
@@ -228,12 +227,12 @@
 <script>
 $(document).ready(function() {
     initializeSelect2();
-    
+
     let currentStep = 1;
     const totalSteps = 7;
-    
+
     updateFormDisplay();
-    
+
     $('#next-btn').on('click', function() {
         if (validateCurrentStep()) {
             if (currentStep < totalSteps) {
@@ -243,14 +242,14 @@ $(document).ready(function() {
             }
         }
     });
-    
+
     $('#prev-btn').on('click', function() {
         if (currentStep > 1) {
             currentStep--;
             updateFormDisplay();
         }
     });
-    
+
     $('#laman_id').on('change', function() {
         const selectedValue = this.value;
         if (selectedValue) {
@@ -260,7 +259,7 @@ $(document).ready(function() {
             resetSelect('#client_id', '- Pilih Area dulu -');
         }
     });
-    
+
     $('#area_id').on('change', function() {
         if (this.value) {
             resetSelect('#client_id', '- Pilih client... -');
@@ -268,11 +267,11 @@ $(document).ready(function() {
             resetSelect('#client_id', '- Pilih Area dulu -');
         }
     });
-    
+
     $('#start_date').on('change', function() {
         const startDate = new Date(this.value);
         const endDateInput = document.getElementById('end_date');
-        
+
         if (endDateInput.value) {
             const endDate = new Date(endDateInput.value);
             if (startDate >= endDate) {
@@ -280,20 +279,20 @@ $(document).ready(function() {
                 showAlert('Waktu selesai harus lebih besar dari waktu mulai', 'warning');
             }
         }
-        
+
         endDateInput.min = this.value;
     });
-    
+
     $('#end_date').on('change', function() {
         const endDate = new Date(this.value);
         const startDate = new Date(document.getElementById('start_date').value);
-        
+
         if (endDate <= startDate) {
             this.value = '';
             showAlert('Waktu selesai harus lebih besar dari waktu mulai', 'warning');
         }
     });
-    
+
     function initializeSelect2() {
         $('.select2').each(function() {
             const $this = $(this);
@@ -303,30 +302,30 @@ $(document).ready(function() {
                 placeholder: $this.find('option:first').text() || 'Pilih...',
                 minimumResultsForSearch: $this.find('option').length > 10 ? 0 : -1
             };
-            
+
             if ($this.prop('multiple')) {
                 config.closeOnSelect = false;
             }
-            
+
             $this.select2(config);
         });
     }
-    
+
     function updateFormDisplay() {
         $('.form-step').removeClass('active').hide();
         $(`.form-step[data-step="${currentStep}"]`).addClass('active').show();
-        
+
         const progress = (currentStep / totalSteps) * 100;
         $('#form-progress').css('width', progress + '%');
         $('#current-step').text(currentStep);
-        
+
         // Logika perbaikan untuk tombol navigasi
         if (currentStep === 1) {
             $('#prev-btn').hide();
         } else {
             $('#prev-btn').show();
         }
-        
+
         if (currentStep === totalSteps) {
             $('#next-btn').addClass('hidden-button');
             $('#submit-btn').removeClass('hidden-button');
@@ -336,31 +335,31 @@ $(document).ready(function() {
             $('#submit-btn').addClass('hidden-button');
         }
     }
-    
+
     function validateCurrentStep() {
         let isValid = true;
         const currentStepElement = $(`.form-step[data-step="${currentStep}"]`);
-        
+
         currentStepElement.find('.is-invalid').removeClass('is-invalid');
-        
+
         currentStepElement.find('[required]').each(function() {
             const $field = $(this);
             const value = $field.val();
-            
+
             // Perbaikan validasi untuk field yang kosong
             if (!value || (Array.isArray(value) && value.length === 0)) {
                 $field.addClass('is-invalid');
                 isValid = false;
             }
         });
-        
+
         if (!isValid) {
             showAlert('Mohon lengkapi semua field yang wajib diisi', 'error');
         }
-        
+
         return isValid;
     }
-    
+
     function loadStepData() {
         switch(currentStep) {
             case 2:
@@ -368,7 +367,7 @@ $(document).ready(function() {
                 const areaText = $('#area_id option:selected').text();
                 $('#debug-bu').text(buText || 'Belum dipilih');
                 $('#debug-area').text(areaText || 'Belum dipilih');
-                
+
                 const areaId = $('#area_id').val();
                 if (areaId) {
                     loadClients(areaId);
@@ -380,12 +379,12 @@ $(document).ready(function() {
                 break;
         }
     }
-    
+
     function loadAreas(lamanId) {
         const $area = $('#area_id');
         $area.empty().append('<option value="">- Loading areas... -</option>');
         refreshSelect2($area);
-        
+
         $.ajax({
             type: 'GET',
             url: "{{route('sdt-training.list-area')}}",
@@ -393,7 +392,7 @@ $(document).ready(function() {
             success: function (response) {
                 $area.empty();
                 $area.append('<option value="">- Pilih Area -</option>');
-                
+
                 if (response.data && response.data.length > 0) {
                     response.data.forEach(function(item) {
                         $area.append(`<option value="${item.id}">${item.area}</option>`);
@@ -408,17 +407,17 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     function loadClients(areaId) {
         const lamanId = $('#laman_id').val();
         const $client = $('#client_id');
         $client.empty().append('<option value="">- Loading clients... -</option>');
         refreshSelect2($client);
-        
+
         $.ajax({
             type: 'GET',
             url: "{{route('sdt-training.list-client')}}",
-            data: { 
+            data: {
                 'area_id': areaId,
                 'laman_id': lamanId
             },
@@ -440,13 +439,13 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     function resetSelect(selector, message) {
         const $select = $(selector);
         $select.empty().append(`<option value="">${message}</option>`);
         refreshSelect2($select);
     }
-    
+
     function refreshSelect2($select) {
         if ($select.hasClass('select2-hidden-accessible')) {
             $select.select2('destroy');
@@ -462,46 +461,46 @@ $(document).ready(function() {
         }
         $select.select2(config);
     }
-    
+
     function showFormSummary() {
         const summary = [];
-        
+
         const buText = $('#laman_id option:selected').text();
         const areaText = $('#area_id option:selected').text();
         if (buText && areaText && buText !== '- Pilih Business Unit -' && areaText !== '- Pilih Area -') {
             summary.push(`<strong>Business Unit:</strong> ${buText}`);
             summary.push(`<strong>Area:</strong> ${areaText}`);
         }
-        
+
         const clientTexts = $('#client_id option:selected').map(function() { return $(this).text(); }).get();
         if (clientTexts.length > 0) {
             summary.push(`<strong>Client:</strong> ${clientTexts.join(', ')}`);
         }
-        
+
         const trainerTexts = $('#trainer_id option:selected').map(function() { return $(this).text(); }).get();
         if (trainerTexts.length > 0) {
             summary.push(`<strong>Trainer:</strong> ${trainerTexts.join(', ')}`);
         }
-        
+
         const materiText = $('#materi_id option:selected').text();
         if (materiText && materiText !== '- Pilih Materi -') {
             summary.push(`<strong>Materi:</strong> ${materiText}`);
         }
-        
+
         const tempatText = $('#tempat_id option:selected').text();
         if (tempatText && tempatText !== '- Pilih Tempat -') {
             summary.push(`<strong>Tempat:</strong> ${tempatText}`);
         }
-        
+
         const startDate = $('#start_date').val();
         const endDate = $('#end_date').val();
         if (startDate && endDate) {
             summary.push(`<strong>Jadwal:</strong> ${formatDateTime(startDate)} s/d ${formatDateTime(endDate)}`);
         }
-        
+
         $('#summary-content').html(summary.join('<br>'));
     }
-    
+
     function formatDateTime(dateTimeString) {
         const date = new Date(dateTimeString);
         return date.toLocaleDateString('id-ID', {
@@ -513,25 +512,25 @@ $(document).ready(function() {
             minute: '2-digit'
         });
     }
-    
+
     function showAlert(message, type = 'info') {
-        const alertClass = type === 'error' ? 'alert-danger' : 
-                          type === 'warning' ? 'alert-warning' : 
+        const alertClass = type === 'error' ? 'alert-danger' :
+                          type === 'warning' ? 'alert-warning' :
                           type === 'success' ? 'alert-success' : 'alert-info';
-        
+
         const alertHtml = `<div class="alert ${alertClass} alert-dismissible fade show" role="alert">
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>`;
-        
+
         $('.alert:not(#debug-info):not(#form-summary .alert)').remove();
         $('.container-fluid').prepend(alertHtml);
-        
+
         setTimeout(() => {
             $('.alert:not(#debug-info):not(#form-summary .alert)').fadeOut();
         }, 5000);
     }
-    
+
     $('#training-form').on('submit', function(e) {
         if (!validateCurrentStep()) {
             e.preventDefault();
@@ -541,7 +540,7 @@ $(document).ready(function() {
 </script>
 
 <script>
-  @if(session()->has('success'))  
+  @if(session()->has('success'))
     Swal.fire({
       title: 'Pemberitahuan',
       html: '{{session()->get('success')}}',
@@ -554,8 +553,8 @@ $(document).ready(function() {
         window.location.href = '{{route("sdt-training")}}';
     });
   @endif
-  
-  @if(session()->has('error'))  
+
+  @if(session()->has('error'))
     Swal.fire({
       title: 'Error',
       html: '{{session()->get('error')}}',

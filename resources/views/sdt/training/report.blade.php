@@ -8,30 +8,20 @@
 
     <!-- <style> -->
 
-    <!-- Core CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" />
-    <link rel="stylesheet" href="{{ public_path('assets/vendor/css/rtl/core.css') }}" />
-    <!-- @import url('{{ public_path('assets/vendor/css/rtl/core.css') }}'); -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
-    <link rel="stylesheet" href="{{ public_path('assets/vendor/css/rtl/theme-default.css') }}" />
-    <!-- @import url('{{ public_path('assets/vendor/css/rtl/theme-default.css') }}'); -->
-    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
-    <link rel="stylesheet" href="{{ public_path('assets/css/demo.css') }}" />
-    <!-- @import url('{{ public_path('assets/css/demo.css') }}'); -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/front-page.css') }}" />
-    <link rel="stylesheet" href="{{ public_path('assets/vendor/css/pages/front-page.css') }}" />
-    <!-- @import url('{{ public_path('assets/vendor/css/pages/front-page.css') }}'); -->
+        <!-- Core CSS -->
+        <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/core.css') }}" />
+        <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/rtl/theme-default.css') }}" />
+        <link rel="stylesheet" href="{{ asset('public/assets/css/demo.css') }}" />
+        <link rel="stylesheet" href="{{ asset('public/assets/vendor/css/pages/front-page.css') }}" />
 
-    <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{{ public_path('assets/vendor/libs/nouislider/nouislider.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/nouislider/nouislider.css') }}" />
-    <!-- @import url('{{ public_path('assets/vendor/libs/nouislider/nouislider.css') }}'); -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" />
+        <!-- Vendors CSS -->
+        <link rel="stylesheet" href="{{ asset('public/assets/vendor/libs/nouislider/nouislider.css') }}" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" />
 
-    <!-- @import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js'); -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <!-- Additional embedded styles  -->
+        <!-- @import url('https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js'); -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+         <!-- Additional embedded styles  -->
     <!-- </style> -->
 
 </head>
@@ -40,83 +30,82 @@
     <div class="container-fluid flex-grow-1 container-p-y">
         <!-- Row -->
         <div class="row row-sm mt-12">
-            <h1 style="text-align: center; color:#121240">LAPORAN TRAINING</h1>
-            <br><br><br>
+        <h1 style="text-align: center; color:#121240">LAPORAN TRAINING</h1>
+         <br><br><br>
 
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-body pt-4">
-                        <table class="table table-borderless">
-                            <tbody>
-                                <tr>
-                                    <td style="width: 40%; padding:0%;">
-                                        <div class="table-responsive">
-                                            <table class="table table-borderless table-sm">
-                                                <tbody>
-                                                    <tr>
-                                                        <th scope="row" style="width: 40%"><strong>B. Unit :</strong>
-                                                        </th>
-                                                        <td>
-                                                            {{$data->laman}}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row" style="width: 40%"><strong>Tipe :</strong></th>
-                                                        <td>
-                                                            {{$data->tipe}}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row"><strong>Waktu Mulai:</strong></th>
-                                                        <td>
-                                                            {{$data->waktu_mulai}}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row"><strong>Tempat :</strong></th>
-                                                        <td>
-                                                            {{$data->tempat}}
-                                                        </td>
-                                                    </tr>
-                                                    <!-- <tr>
+                    <table class="table table-borderless" >
+                        <tbody>
+                            <tr>
+                                <td style="width: 40%; padding:0%;">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless table-sm" >
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row" style="width: 40%"><strong>B. Unit :</strong></th>
+                                                    <td>
+                                                        {{$data->laman}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row" style="width: 40%"><strong>Tipe :</strong></th>
+                                                    <td>
+                                                        {{$data->tipe}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><strong>Waktu Mulai:</strong></th>
+                                                    <td>
+                                                        {{$data->waktu_mulai}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><strong>Tempat :</strong></th>
+                                                    <td>
+                                                        {{$data->tempat}}
+                                                    </td>
+                                                </tr>
+                                                <!-- <tr>
                                                     <th scope="row"><strong>Number of Pages:</strong></th>
                                                     <td>
                                                         1
                                                     </td>
                                                 </tr> -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </td>
-                                    <td style="width: 60%; padding:0%;">
-                                        <div class="table-responsive">
-                                            <table class="table table-borderless table-sm">
-                                                <tbody>
-                                                    <tr>
-                                                        <th scope="row" style="width: 30%"><strong>Area:</strong></th>
-                                                        <td>
-                                                            {{$data->area}}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row" style="width: 30%"><strong>Materi:</strong></th>
-                                                        <td>
-                                                            {{$data->materi}}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row"><strong>Waktu Selesai:</strong></th>
-                                                        <td>
-                                                            {{$data->waktu_selesai}}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row"><strong>Keterangan:</strong></th>
-                                                        <td>
-                                                            {{$data->keterangan}}
-                                                        </td>
-                                                    </tr>
-                                                    <!--<tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                                <td style="width: 60%; padding:0%;">
+                                    <div class="table-responsive" >
+                                        <table class="table table-borderless table-sm">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row" style="width: 30%"><strong>Area:</strong></th>
+                                                    <td>
+                                                        {{$data->area}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row" style="width: 30%"><strong>Materi:</strong></th>
+                                                    <td>
+                                                        {{$data->materi}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><strong>Waktu Selesai:</strong></th>
+                                                    <td>
+                                                        {{$data->waktu_selesai}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><strong>Keterangan:</strong></th>
+                                                    <td>
+                                                        {{$data->keterangan}}
+                                                    </td>
+                                                </tr>
+                                                <!--<tr>
                                                     <th scope="row"><strong>Email:</strong></th>
                                                     <td>
                                                         info@example.com
@@ -163,9 +152,9 @@
                     </div>
                 </div>
             </div>
-            <!-- </div> -->
+        <!-- </div> -->
 
-            <!-- <div class="row row-sm mt-12"> -->
+        <!-- <div class="row row-sm mt-12"> -->
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body pt-4">
@@ -252,11 +241,10 @@
                             <h6>Galeri</h6>
 
                             @foreach($listImage as $value)
-                                <figure>
-                                    <img src="{{ public_path('/uploads/sdt-training/image/') . $value->file_name }}" alt=""
-                                        style="width: 200px; height: 150px;">
-                                    <figcaption>{{$value->keterangan}}</figcaption>
-                                </figure>
+                            <figure>
+                                <img src="{{ public_path('/uploads/sdt-training/image/').$value->file_name }}" alt="" style="width: 200px; height: 150px;">
+                                <figcaption>{{$value->keterangan}}</figcaption>
+                            </figure>
 
                             @endforeach
                         </div>
@@ -273,19 +261,19 @@
 </html>
 
 @section('pageScript')
-    <script>
-        $(document).ready(function () {
-            alert('sjsjsj');
-        });
-        // let table = new DataTable('#table-data-trainer');    
+<script>
+    $(document).ready(function() {
+        alert('sjsjsj');
+    });
+    // let table = new DataTable('#table-data-trainer');
 
-        // var table = $('#table-data-trainer').DataTable({
-        //   scrollX: true,
-        //   "iDisplayLength": 25,
-        //   'processing': true,
-        //   'language': {
-        //   'loadingRecords': '&nbsp;',
-        //   'processing': 'Loading...'
-        // }}); 
-        <script>
+    // var table = $('#table-data-trainer').DataTable({
+    //   scrollX: true,
+    //   "iDisplayLength": 25,
+    //   'processing': true,
+    //   'language': {
+    //   'loadingRecords': '&nbsp;',
+    //   'processing': 'Loading...'
+    // }});
+<script>
 @endsection
