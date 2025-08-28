@@ -455,10 +455,11 @@
                 return;
             }
 
+
             // Show loading
             rekomendasiBody.innerHTML = `<tr><td colspan="4" class="text-center py-4"><i class="mdi mdi-loading mdi-spin me-1"></i>Mencari perusahaan...</td></tr>`;
 
-            fetch(`{{ route('leads.rekomendasi') }}?nama_grup=${encodeURIComponent(query)}`)
+            fetch(`{{ route('leads.filter-rekomendasi') }}?nama_grup=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
                     rekomendasiBody.innerHTML = "";

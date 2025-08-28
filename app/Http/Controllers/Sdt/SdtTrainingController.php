@@ -370,7 +370,8 @@ class SdtTrainingController extends Controller
         // dd($originalName);
         Storage::disk('sdt-training-image')->put($originalName, file_get_contents($file));
 
-        $link = env('APP_URL').'/public/uploads/sdt-training/image/'.$originalName;
+        $link = asset('uploads/sdt-training/image/'.$originalName);
+        // Hasil: http://localhost:8000/uploads/sdt-training/image/file.jpg
 
         DB::table('sdt_training_file')->insert([
             'training_id' => $id,

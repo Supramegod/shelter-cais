@@ -92,7 +92,7 @@ return [
         'sdt-training-file' => [
             'driver' => 'local',
             'root' => public_path(). '/uploads/sdt-training/file',
-            'url' => env('APP_URL').'/public/uploads/sdt-training/file',
+            'url' => env('APP_URL').'/uploads/sdt-training/file',
             'visibility' => 'public',
             'throw' => false,
         ]

@@ -282,36 +282,53 @@ class LeadsController extends Controller
         }
     }
 
-    // ... kode lainnya ...
+   
 
-    public function filterRekomendasi(Request $request)
-    {
-        $namaGrup = $request->nama_grup;
+// ... kode lainnya
+// LeadsController.php
+// ...
+// LeadsController.php
 
-        if (!$namaGrup) {
-            return response()->json([]);
-        }
+// ...
 
-        // Perbaikan: Ambil ID leads dari perusahaan yang sudah tergabung di grup
-        $sudahMasukGrupIds = DB::table('sl_perusahaan_groups_d')
-            ->select('leads_id') // Asumsi kolom ini bernama 'leads_id'
-            ->pluck('leads_id')
-            ->toArray();
+public function filterRekomendasi(Request $request)
+{
+    try {
+        // Ambil kata kunci dari request
+        $keyword = $request->input('nama_grup');
 
-        $perusahaan = DB::table('sl_leads')
-            ->select('sl_leads.id', 'sl_leads.nama_perusahaan', 'sl_leads.kota', 'm_jenis_perusahaan.nama as jenis_perusahan')
-            ->leftJoin('m_jenis_perusahaan', 'sl_leads.jenis_perusahaan_id', '=', 'm_jenis_perusahaan.id')
-            ->where('sl_leads.nama_perusahaan', 'like', '%' . $namaGrup . '%')
-            ->whereNotIn('sl_leads.id', $sudahMasukGrupIds) // Perbaikan: Filter berdasarkan ID
-            ->orderBy('sl_leads.nama_perusahaan')
-            ->limit(50)
+        $companies = DB::table('sl_leads as sl')
+            // Gabungkan dengan tabel sl_perusahaan_groups_d
+            // Ini akan mencocokkan setiap leads dengan grupnya (jika ada)
+            ->leftJoin('sl_perusahaan_groups_d as sgd', 'sl.id', '=', 'sgd.leads_id')
+            ->select(
+                'sl.id',
+                'sl.nama_perusahaan',
+                'sl.kota',
+                'mjp.nama as jenis_perusahaan'
+            )
+            ->leftJoin('m_jenis_perusahaan as mjp', 'sl.jenis_perusahaan_id', '=', 'mjp.id')
+            // PENTING: Filter leads yang belum punya grup dengan mencari leads_id yang null
+            ->where('sgd.leads_id', '=', null)
+            ->whereNull('sl.deleted_at')
+            // Tambahkan filter pencarian berdasarkan kata kunci jika ada
+            ->when($keyword, function ($query, $keyword) {
+                $query->where('sl.nama_perusahaan', 'like', '%' . $keyword . '%');
+            })
+            ->orderBy('sl.nama_perusahaan')
             ->get();
 
-        return response()->json($perusahaan);
+        return response()->json($companies);
+
+    } catch (\Exception $e) {
+        // Log error untuk debugging
+        \Log::error('Terjadi kesalahan saat memuat data rekomendasi: ' . $e->getMessage());
+        // Kembalikan respons kosong agar frontend tidak stack
+        return response()->json([]);
     }
+}
 
-    // ... kode lainnya ...
-
+// ...
 
 
     public function groupkan(Request $request)
@@ -356,16 +373,23 @@ class LeadsController extends Controller
 
             // Jika ada perusahaan baru yang perlu dimasukkan
             if (!empty($leadsToInsert)) {
-                $dataToInsert = array_map(function ($perusahaanId) use ($grupId, $namaPengguna) {
+                // Ambil nama perusahaan dari tabel sl_leads
+                $leadsData = DB::table('sl_leads')
+                    ->whereIn('id', $leadsToInsert)
+                    ->pluck('nama_perusahaan', 'id');
+
+                $dataToInsert = array_map(function ($leadsId) use ($grupId, $leadsData, $namaPengguna) {
                     return [
                         'group_id' => $grupId,
-                        'leads_id' => $perusahaanId,
+                        'leads_id' => $leadsId,
+                        'nama_perusahaan' => $leadsData[$leadsId] ?? null, // <-- Tambahkan nama_perusahaan di sini
                         'created_at' => now(),
                         'created_by' => $namaPengguna,
                         'update_at' => now(),
                         'update_by' => $namaPengguna,
                     ];
                 }, $leadsToInsert);
+
                 DB::table('sl_perusahaan_groups_d')->insert($dataToInsert);
             }
 
@@ -423,6 +447,7 @@ class LeadsController extends Controller
         }
     }
 
+    // LeadsController.php
     public function save(Request $request)
     {
         try {
@@ -459,30 +484,6 @@ class LeadsController extends Controller
                 $bidangPerusahaan = DB::table('m_bidang_perusahaan')->where('id', $request->bidang_perusahaan)->first();
                 $msgSave = '';
 
-                // Ambil ID grup, atau buat grup baru jika pilih "__new__"
-                $groupId = $request->perusahaan_group_id;
-
-                if ($groupId === '__new__') {
-                    $groupId = DB::table('sl_perusahaan_groups')->insertGetId([
-                        'nama_grup' => $request->new_nama_grup,
-                        'created_at' => now(),
-                        'created_by' => Auth::user()->full_name,
-                        'update_at' => now(),
-                        'update_by' => Auth::user()->full_name
-                    ]);
-                }
-
-                // Simpan nama perusahaan ke detail grup
-                DB::table('sl_perusahaan_groups_d')->insert([
-                    'group_id' => $groupId,
-                    'nama_perusahaan' => $request->nama_perusahaan,
-                    'created_at' => now(),
-                    'created_by' => Auth::user()->full_name,
-                    'update_at' => now(),
-                    'update_by' => Auth::user()->full_name
-                ]);
-
-                // PERBAIKAN: Konversi array kebutuhan menjadi string yang dipisahkan koma
                 $kebutuhan_ids = '';
                 if ($request->has('kebutuhan') && is_array($request->kebutuhan)) {
                     $kebutuhan_ids = implode(',', $request->kebutuhan);
@@ -499,7 +500,7 @@ class LeadsController extends Controller
                         'bidang_perusahaan' => $bidangPerusahaan ? $bidangPerusahaan->nama : null,
                         'branch_id' => $request->branch,
                         'platform_id' => $request->platform,
-                        'kebutuhan_id' => $kebutuhan_ids, // PERBAIKAN: Gunakan string yang sudah dikonversi
+                        'kebutuhan_id' => $kebutuhan_ids,
                         'alamat' => $request->alamat_perusahaan,
                         'pic' => $request->pic,
                         'jabatan' => $request->jabatan_pic,
@@ -525,7 +526,9 @@ class LeadsController extends Controller
 
                     $msgSave = 'Leads ' . $request->nama_perusahaan . ' berhasil disimpan.';
                 } else {
-                    // INSERT DATA BARU
+                    // --- INI ADALAH BAGIAN DENGAN PERBAIKAN PENTING ---
+
+                    // Pengecekan kemiripan nama
                     $companies = DB::table('sl_leads')->whereNull('deleted_at')->pluck('nama_perusahaan');
                     foreach ($companies as $company) {
                         if (similar_text(strtolower($request->nama_perusahaan), strtolower($company), $percent)) {
@@ -536,6 +539,7 @@ class LeadsController extends Controller
                         }
                     }
 
+                    // LANGKAH 1: Simpan leads baru terlebih dahulu dan dapatkan ID-nya
                     $nomor = $this->generateNomor();
                     $newId = DB::table('sl_leads')->insertGetId([
                         'nomor' => $nomor,
@@ -545,7 +549,7 @@ class LeadsController extends Controller
                         'jenis_perusahaan_id' => $request->jenis_perusahaan,
                         'branch_id' => $request->branch,
                         'platform_id' => $request->platform,
-                        'kebutuhan_id' => $kebutuhan_ids, // PERBAIKAN: Gunakan string yang sudah dikonversi
+                        'kebutuhan_id' => $kebutuhan_ids,
                         'alamat' => $request->alamat_perusahaan,
                         'pic' => $request->pic,
                         'jabatan' => $request->jabatan_pic,
@@ -569,6 +573,31 @@ class LeadsController extends Controller
                         'created_at' => $current_date_time,
                         'created_by' => Auth::user()->full_name
                     ]);
+
+                    // LANGKAH 2: Ambil ID grup, atau buat grup baru jika dipilih "__new__"
+                    $groupId = $request->perusahaan_group_id;
+                    if ($groupId === '__new__') {
+                        $groupId = DB::table('sl_perusahaan_groups')->insertGetId([
+                            'nama_grup' => $request->new_nama_grup,
+                            'created_at' => now(),
+                            'created_by' => Auth::user()->full_name,
+                            'update_at' => now(),
+                            'update_by' => Auth::user()->full_name
+                        ]);
+                    }
+
+                    // LANGKAH 3: Gunakan $newId untuk menyimpan ke tabel detail grup
+                    if (!empty($groupId)) {
+                        DB::table('sl_perusahaan_groups_d')->insert([
+                            'group_id' => $groupId,
+                            'nama_perusahaan' => $request->nama_perusahaan,
+                            'leads_id' => $newId, // <-- PENTING: Menggunakan $newId yang baru dibuat
+                            'created_at' => now(),
+                            'created_by' => Auth::user()->full_name,
+                            'update_at' => now(),
+                            'update_by' => Auth::user()->full_name
+                        ]);
+                    }
 
                     //insert ke activity sebagai activity pertama
                     $customerActivityController = new CustomerActivityController();
@@ -1666,6 +1695,7 @@ class LeadsController extends Controller
                     'update_at' => Carbon::now()->toDateTimeString(),
                     'update_by' => Auth::user()->full_name
                 ]);
+
 
             DB::commit();
 

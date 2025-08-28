@@ -520,7 +520,7 @@ function removeFromGroup(groupId, companyId, companyName) {
       let removeUrl = "{{ url('sales/leads/group') }}/" + groupId + "/company/" + companyId;
 
       $.ajax({
-        type: "POST",
+        type: "DELETE",
         url: removeUrl,
         data: {
           "group_id": groupId,

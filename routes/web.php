@@ -149,7 +149,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/leads/export', 'export')->name('leads.export');
     Route::get('/sales/leads/template-import', 'templateImport')->name('leads.template-import');
     Route::get('/sales/leads/group-modal', 'showGrupModal')->name('leads.group_modal');
-    Route::get('/sales/leads/filter-rekomendasi', 'filterRekomendasi')->name('leads.filter-rekomendasi');
+    
 
     // Group Management Routes
     Route::get('/sales/leads/groups-list', 'groupsList')->name('leads.groups.list');
@@ -157,7 +157,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/leads/group-modal/{id?}', 'getGroupModal')->name('leads.group.modal');
     Route::get('/sales/leads/add-company-modal/{groupId}', 'getAddCompanyModal')->name('leads.group.add-company-modal');
     Route::get('/sales/leads/group/{groupId}/available-companies', 'getAddCompanyModal')->name('leads.group.availableCompanies');
-    Route::get('/sales/leads/rekomendasi', 'filterRekomendasi')->name('leads.rekomendasi');
+   Route::get('/sales/leads/filter-rekomendasi', 'filterRekomendasi')->name('leads.filter-rekomendasi');
     
     // POST Routes
     Route::post('/sales/leads/groupkan', 'groupkan')->name('leads.groupkan');
