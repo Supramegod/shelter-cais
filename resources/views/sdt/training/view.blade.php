@@ -4,37 +4,45 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 
 @section('content')
-<!--/ Content -->
-
 <div class="container-fluid flex-grow-1 container-p-y">
   <h4 class="py-3 mb-4"><span class="text-muted fw-light">SDT/ </span> Detail SDT Training</h4>
-  <!-- Multi Column with Form Separator -->
+
   <div class="row">
-    <!-- Form Label Alignment -->
     <div class="col-md-9">
       <div class="card mb-4">
         <h5 class="card-header">
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between align-items-center">
             <span>SDT Training Detail</span>
           </div>
         </h5>
         <div class="row">
           <div class="col-md-5">
-            <div class="container mt-4">
-                <div id="carouselExample" class="carousel slide" style="margin: 15px;">
-                <div class="carousel-indicators">
-                  @foreach($listImage as $value)
-                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ $loop->index }}" class="@if($loop->index == 0) active @endif" aria-current="true" aria-label="Slide {{ $loop->index }}"></button>
-                  @endforeach
+            <div id="carouselExample" class="carousel slide" style="margin: 15px;">
+              <div class="carousel-indicators">
+                @foreach($listImage as $value)
+                  <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ $loop->index }}"
+                          class="@if($loop->index == 0) active @endif" aria-current="true"
+                          aria-label="Slide {{ $loop->index }}"></button>
+                @endforeach
+              </div>
+
+              <div class="carousel-inner">
+                @foreach($listImage as $value)
+                <div class="carousel-item @if($loop->index == 0) active @endif" style="height: 450px; width:700px">
+                  <img style="border-radius: 1%; width: 100%;max-height: 100%" src="{{$value->path}}" class="d-block w-100" alt="...">
+                  <div class="carousel-caption d-none d-md-block">
+                    <h5>{{$value->nama}}</h5>
+                    <p>{{$value->keterangan}}</p>
+                  </div>
                 </div>
 
                 <div class="carousel-inner">
                 @foreach($listImage as $value)
                   <div class="carousel-item @if($loop->index == 0) active @endif" style="height: 450px; width:700px">
-                    <img style="border-radius: 1%; width: 100%;max-height: 100%" 
-                      src="{{$value->path}}" 
-                      class="d-block w-100 img-thumbnail preview-trigger" 
-                      data-index="{{ $loop->index }}" 
+                    <img style="border-radius: 1%; width: 100%;max-height: 100%"
+                      src="{{$value->path}}"
+                      class="d-block w-100 img-thumbnail preview-trigger"
+                      data-index="{{ $loop->index }}"
                       alt="...">
                     <div class="carousel-caption d-none d-md-block">
                       <h5>{{$value->nama}}</h5>
@@ -42,10 +50,10 @@
                     </div>
                   </div>
                   <!-- <div class="col-md-3 mb-3">
-                      <img src="{{$value->path}}" 
-                          class="img-thumbnail" 
+                      <img src="{{$value->path}}"
+                          class="img-thumbnail"
                           style="cursor:pointer"
-                          data-bs-toggle="modal" 
+                          data-bs-toggle="modal"
                           data-bs-target="#imageModal"
                           onclick="showImage('{{$value->path}}')"
                           >
@@ -61,303 +69,205 @@
                   <span class="visually-hidden">Next</span>
                 </button>
               </div>
+
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
           </div>
-          <div class="col-md-6">
-              <form class="card-body overflow-hidden" action="{{route('sdt-training.save')}}" method="POST">
+
+          <div class="col-md-7">
+            <form class="card-body" action="{{route('sdt-training.save')}}" method="POST">
               @csrf
-              <!-- <h6>1. Informasi Perusahaan</h6> -->
               <input type="hidden" name="id" value="{{$data->id_training}}">
+
               <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Absensi Active</label>
-                <div class="col-sm-4">
-                  <div class="position-relative">  
-                    <div class="form-check form-switch" >
-                      <input style="width: 60px; height: 30px;" class="form-check-input form-control" type="checkbox" role="switch" id="enable" name="enable" @if($data->enable == '1') checked @endif>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="row mb-3">                
-              <label class="col-sm-2 col-form-label text-sm-end">Area</label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select disabled id="area_id" name="area_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                      @foreach($listArea as $value)
-                      <option disabled value="{{$value->id}}" @if($data->id_area == $value->id) selected @endif>{{$value->area}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-
-                <label class="col-sm-2 col-form-label text-sm-end">Business Unit</label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select disabled id="laman_id" name="laman_id" class="select2 form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                      @foreach($listBu as $value)
-                      <option disabled value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
-                      @endforeach
-                    </select>
+                <label class="col-sm-3 col-form-label">Absensi Active</label>
+                <div class="col-sm-9">
+                  <div class="form-check form-switch">
+                    <input style="width: 60px; height: 30px;" class="form-check-input" type="checkbox"
+                           role="switch" id="enable" name="enable" @if($data->enable == '1') checked @endif>
                   </div>
                 </div>
               </div>
 
               <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Materi <span class="text-danger">*</span></label>
+                <label class="col-sm-3 col-form-label">Area</label>
                 <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select id="materi_id" name="materi_id" class="select2 form-select @if ($errors->any()) @if($errors->has('materi_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
-                      @foreach($listMateri as $value)
-                      <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->nama}}</option>
-                      @endforeach
-                    </select>
-                  </div>
+                  <select disabled id="area_id" name="area_id" class="form-select">
+                    @foreach($listArea as $value)
+                    <option value="{{$value->id}}" @if($data->id_area == $value->id) selected @endif>{{$value->area}}</option>
+                    @endforeach
+                  </select>
                 </div>
 
-                <label class="col-sm-2 col-form-label text-sm-end">Tempat <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select id="tempat_id" name="tempat_id" class="select2 form-select @if ($errors->any()) @if($errors->has('tempat_id')) is-invalid @else   @endif @endif" data-allow-clear="true" tabindex="-1">
-                        <option value="">- Pilih Tempat -</option>
-                        <option value="1" @if($data->id_pel_tempat == '1') selected @endif>IN DOOR</option>
-                        <option value="2" @if($data->id_pel_tempat == '2') selected @endif>OUT DOOR</option>
-                    </select>
-                    @if($errors->has('tempat_id'))
-                      <div class="invalid-feedback">{{$errors->first('tempat_id')}}</div>
-                    @endif
-                  </div>
-                </div>
-                
-              </div>  
-
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Waktu Mulai <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                  <input type="datetime-local" id="start_date" name="start_date" value="{{$data->waktu_mulai}}" class="form-control @if ($errors->any())   @endif">
-                    @if($errors->has('start_date'))
-                      <div class="invalid-feedback">{{$errors->first('start_date')}}</div>
-                    @endif
-                  </div>
-                </div>
-
-                <label class="col-sm-2 col-form-label text-sm-end">Waktu Selesai <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                  <input type="datetime-local" id="end_date" name="end_date" value="{{$data->waktu_selesai}}" class="form-control @if ($errors->any())   @endif">
-                    @if($errors->has('end_date'))
-                      <div class="invalid-feedback">{{$errors->first('end_date')}}</div>
-                    @endif
-                  </div>
-                </div>
-              </div>  
-
-              <div class="row">
-                <label class="col-sm-2 col-form-label text-sm-end">Alamat <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="form-floating form-floating-outline mb-4">
-                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="alamat" id="alamat" placeholder="">{{$data->alamat}}</textarea>
-                  </div>
-                </div>
-
-                <label class="col-sm-2 col-form-label text-sm-end">Link Zoom <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <div class="form-floating form-floating-outline mb-4">
-                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="link_zoom" id="link_zoom" placeholder="">{{$data->link_zoom}}</textarea>
-                  </div>
-                </div>
-              </div>  
-
-              <div class="row">
-                <label class="col-sm-2 col-form-label text-sm-end">Link Undangan</label>
-                <div class="col-sm-7">
-                  <div class="form-floating form-floating-outline mb-4">
-                    <input readonly type="text" id="link" name="link" value="{{$linkInvite}}" class="link form-control"></input>
-                  </div>
-                </div>
+                <label class="col-sm-2 col-form-label">Business Unit</label>
                 <div class="col-sm-3">
-                  <!-- <button id="cp_btn">Copy</button> -->
-                  <div class="form-floating form-floating-outline mb-4">
-                    <button type="button" class="btn btn-warning" onclick="copyToClipboard('#link')" >
-                      <span class="me-1">Salin Link</span>
-                      <i class="mdi mdi-content-copy"></i>
-                    </button>
-                  </div>
+                  <select disabled id="laman_id" name="laman_id" class="form-select">
+                    @foreach($listBu as $value)
+                    <option value="{{$value->id}}" @if($data->id_laman == $value->id) selected @endif>{{$value->laman}}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Materi <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <select id="materi_id" name="materi_id" class="form-select @error('materi_id') is-invalid @enderror">
+                    <option value="">- Pilih data -</option>
+                    @foreach($listMateri as $value)
+                    <option value="{{$value->id}}" @if($data->id_materi == $value->id) selected @endif>{{$value->nama}}</option>
+                    @endforeach
+                  </select>
+                </div>
+
+                <label class="col-sm-2 col-form-label">Tempat <span class="text-danger">*</span></label>
+                <div class="col-sm-3">
+                  <select id="tempat_id" name="tempat_id" class="form-select @error('tempat_id') is-invalid @enderror">
+                    <option value="">- Pilih Tempat -</option>
+                    <option value="1" @if($data->id_pel_tempat == '1') selected @endif>IN DOOR</option>
+                    <option value="2" @if($data->id_pel_tempat == '2') selected @endif>OUT DOOR</option>
+                  </select>
+                  @error('tempat_id')
+                    <div class="invalid-feedback">{{$message}}</div>
+                  @enderror
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Waktu Mulai <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <input type="datetime-local" id="start_date" name="start_date" value="{{$data->waktu_mulai}}"
+                         class="form-control @error('start_date') is-invalid @enderror">
+                  @error('start_date')
+                    <div class="invalid-feedback">{{$message}}</div>
+                  @enderror
+                </div>
+
+                <label class="col-sm-2 col-form-label">Waktu Selesai <span class="text-danger">*</span></label>
+                <div class="col-sm-3">
+                  <input type="datetime-local" id="end_date" name="end_date" value="{{$data->waktu_selesai}}"
+                         class="form-control @error('end_date') is-invalid @enderror">
+                  @error('end_date')
+                    <div class="invalid-feedback">{{$message}}</div>
+                  @enderror
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Alamat <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                  <textarea class="form-control" name="alamat" id="alamat" rows="3"
+                            placeholder="Masukkan alamat">{{$data->alamat}}</textarea>
+                </div>
+
+                <label class="col-sm-2 col-form-label">Link Zoom <span class="text-danger">*</span></label>
+                <div class="col-sm-3">
+                  <textarea class="form-control" name="link_zoom" id="link_zoom" rows="3"
+                            placeholder="Masukkan link zoom">{{$data->link_zoom}}</textarea>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Link Undangan</label>
+                <div class="col-sm-7">
+                  <input readonly type="text" id="link" name="link" value="{{$linkInvite}}" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                  <button type="button" class="btn btn-warning w-100" onclick="copyToClipboard('#link')">
+                    <i class="mdi mdi-content-copy me-1"></i>Salin
+                  </button>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Keterangan</label>
+                <div class="col-sm-9">
+                  <textarea class="form-control" name="keterangan" id="keterangan" rows="3"
+                            placeholder="Masukkan keterangan">{{$data->keterangan}}</textarea>
                 </div>
               </div>
 
               <div class="row">
-                <label class="col-sm-2 col-form-label text-sm-end">Keterangan</label>
-                <div class="col-sm-10">
-                  <div class="form-floating form-floating-outline mb-4">
-                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="keterangan" id="keterangan" placeholder="">{{$data->keterangan}}</textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="pt-4">
-                <div class="row justify-content-end">
-                  <div class="col-sm-12 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Update</button>
-                  </div>
+                <div class="col-12 d-flex justify-content-end">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="mdi mdi-content-save me-1"></i>Update
+                  </button>
                 </div>
               </div>
             </form>
-          <div>
-        </div>
-        
-        <div class="card-body overflow-hidden">
-          @csrf
+          </div>
         </div>
       </div>
-    </div>
-    </div>
     </div>
 
     <div class="col-md-3">
-      <div class="row">
-        <div class="card h-100">
-          <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="card-title m-0 me-2">Action</h5>
-            <div class="dropdown">
-              <button class="btn p-0" type="button" id="upgradePlanCard" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="mdi mdi-dots-vertical mdi-24px"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="upgradePlanCard">
-              </div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="col-12 text-center mt-2">
-              <button id="btn-send-message" class="btn btn-info w-100 waves-effect waves-light">
-                <span class="me-1">Kirim Undangan</span>
-                  <i class="mdi mdi-send scaleX-n1-rtl"></i>
-              </button>
-            </div>
-            <div class="col-12 text-center mt-2">
-              <button id="btn-add-client" class="btn btn-primary w-100 waves-effect waves-light">
-                <span class="me-1">Tambah Client</span>
-                  <i class="mdi mdi-account-multiple-outline scaleX-n1-rtl"></i>
-              </button>
-            </div>
-            <div class="col-12 text-center mt-2">
-              <button id="btn-pesan-undangan" class="btn btn-success w-100 waves-effect waves-light">
-                <span class="me-1">Pesan Undangan</span>
-                  <i class="mdi mdi-account-multiple-plus scaleX-n1-rtl"></i>
-              </button>
-            </div>
-            <div class="col-12 text-center mt-2">
-              <form target="_blank" action="{{route('invite-pdf')}}" method="POST">
+      <div class="card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h5 class="card-title m-0 me-2">Action</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <button id="btn-send-message" class="btn btn-info w-100">
+              <span class="me-1">Kirim Undangan</span>
+              <i class="mdi mdi-send scaleX-n1-rtl"></i>
+            </button>
+
+            <button id="btn-pesan-undangan" class="btn btn-success w-100">
+              <span class="me-1">Pesan Undangan</span>
+              <i class="mdi mdi-account-multiple-plus scaleX-n1-rtl"></i>
+            </button>
+
+            <form target="_blank" action="{{route('invite-pdf')}}" method="POST">
               @csrf
-                <input hidden type="text" class="form-control" id="training_id" name="training_id" placeholder="Training id" value="{{$data->id_training}}"/>  
-                <button type="submit"  class="btn btn-warning w-100 waves-effect waves-light">
-                  <span class="me-1">Generate PDF</span>
-                    <i class="mdi mdi-file-pdf-box scaleX-n1-rtl"></i>
-                </button>
-              </form>
-            </div>
-
-            <div class="col-12 text-center mt-2">
-              <button id="btn-reminder-whatsapp" onclick="reminderWhatsapp()" class="btn btn-danger w-100 waves-effect waves-light">
-                <span class="me-1">Reminder Whatsapp</span>
-                  <i class="mdi mdi-information scaleX-n1-rtl"></i>
+              <input type="hidden" name="training_id" value="{{$data->id_training}}"/>
+              <button type="submit" class="btn btn-warning w-100">
+                <span class="me-1">Generate PDF</span>
+                <i class="mdi mdi-file-pdf-box scaleX-n1-rtl"></i>
               </button>
-            </div>
+            </form>
 
-            <div class="col-12 text-center mt-2">
-              <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
-                <span class="me-1">Kembali</span>
-                <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
-              </button>
-            </div>
+            <button id="btn-kembali" class="btn btn-secondary w-100">
+              <span class="me-1">Kembali</span>
+              <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
+            </button>
 
             <hr class="my-4 mx-4">
-            <!-- <div class="col-12 text-center mt-2">
-              <button id="btn-delete" class="btn btn-danger w-100 waves-effect waves-light">
-                <span class="me-1">Delete Leads</span>
-                <i class="mdi mdi-trash-can scaleX-n1-rtl"></i>
-              </button>
-            </div> -->
           </div>
         </div>
       </div>
-      </div>
     </div>
-  
-    <div class="row">
-      <!-- Form Label Alignment -->
-      <div class="col-md-9">
-        <div class="card mb-4">
-          <h5 class="card-header">
-            <div class="d-flex justify-content-between">
-              <span>Trainer</span>
-            </div>
-          </h5>
-          <div class="card-body overflow-hidden">
-            @csrf  
-              <div class="table-responsive overflow-hidden">
-                  <table id="table-data-trainer" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                    <thead>
-                        <tr>
-                            <th class="text-left">Nama</th>
-                            <th class="text-left">Divisi</th>
-                            <th class="text-left">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- data table ajax --}}
-                    </tbody>
-                </table>
-              </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3"></div>
-    </div>
+  </div>
 
-    <div class="row">
-    <!-- Form Label Alignment -->
+  <div class="row">
     <div class="col-md-9">
       <div class="card mb-4">
         <h5 class="card-header">
-          <div class="d-flex justify-content-between">
-            <span>Peserta Training</span>
+          <div class="d-flex justify-content-between align-items-center">
+            <span>Trainer</span>
           </div>
         </h5>
-        <div class="card-body overflow-hidden">
-          @csrf
-          <input type="hidden" id="training_id" value="{{$data->id_training}}">
-          <div class="position-relative">
-              <!-- <label class="col-sm-2 col-form-label text-center">Nama Perusahaan / Client</label> -->
-              <div class="col-sm-2 ">
-                  <select id="nama_perusahaan" name="nama_perusahaan" class="form-select @if ($errors->any())   @endif" data-allow-clear="true" tabindex="-1">
-                    <option value="">- Pilih Perusahaan -</option>
-                    @foreach($namaPerusahaan as $value)
-                    <option value="{{$value->id}}"> {{$value->client}}</option>
-                    @endforeach
-                  </select>
-              </div>  
-            </div>  
-            <div class="table-responsive overflow-hidden">
-              <table id="table-data-client" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                  <thead>
-                  <!-- no, nik, nama, no whatsapp, aksi -->
-                      <tr>
-                          <th class="text-left">NIK</th>
-                          <th class="text-left">Nama</th>
-                          <th class="text-left">No Whatsapp</th>
-                          <th class="text-left">Status Kirim</th>
-                          <th class="text-left">Hadir</th>
-                          <th class="text-center">Aksi</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {{-- data table ajax --}}
-                  </tbody>
-              </table>
-            </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="table-data-trainer" class="dt-column-search table table-hover" style="text-wrap: nowrap;">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Divisi</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{-- data table ajax --}}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -365,1238 +275,206 @@
   </div>
 
   <div class="row">
-    <!-- Form Label Alignment -->
     <div class="col-md-9">
       <div class="card mb-4">
         <h5 class="card-header">
-          <div class="d-flex justify-content-between">
-            <span>Galeri Kegiatan</span>
+          <div class="d-flex justify-content-between align-items-center">
+            <span>Peserta Training</span>
           </div>
         </h5>
-        <div class="card-body overflow-hidden">
+        <div class="card-body">
           @csrf
           <input type="hidden" id="training_id" value="{{$data->id_training}}">
-            
-            <div class="table-responsive overflow-hidden">
-                <table id="table-data-gallery" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
-                    <thead>
-                    <!-- no, nik, nama, no whatsapp, aksi -->
-                        <tr>
-                            <th class="text-left">Nama</th>
-                            <th class="text-left">Keterangan</th>
-                            <th class="text-left">Gambar</th>
-                            <th class="text-left">Created Date</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- data table ajax --}}
-                    </tbody>
-                </table>
-            </div>
+
+          <div class="mb-3">
+            <label class="form-label">Filter Perusahaan</label>
+            <select id="nama_perusahaan" name="nama_perusahaan" class="form-select">
+              <option value="">- Pilih Perusahaan -</option>
+              @foreach($namaPerusahaan as $value)
+              <option value="{{$value->id}}">{{$value->client}}</option>
+              @endforeach
+            </select>
+          </div>
+
+          <div class="table-responsive">
+            <table id="table-data-client" class="dt-column-search table table-hover" style="text-wrap: nowrap;">
+              <thead>
+                <tr>
+                  <th>NIK</th>
+                  <th>Nama</th>
+                  <th>No Whatsapp</th>
+                  <th>Status Kirim</th>
+                  <th>Hadir</th>
+                  <th class="text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{-- data table ajax --}}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-md-3"></div>
   </div>
-  
 
-</div>
-<!--/ Content -->
+  <div class="row">
+    <div class="col-md-9">
+      <div class="card mb-4">
+        <h5 class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>Galeri Kegiatan</span>
+          </div>
+        </h5>
+        <div class="card-body">
+          @csrf
+          <input type="hidden" id="training_id" value="{{$data->id_training}}">
 
-<script>
-    let images = @json($listImage->pluck('path'));
-    let currentIndex = 0;
-
-    // Klik gambar buat buka modal
-    document.querySelectorAll('.preview-trigger').forEach(img => {
-        img.addEventListener('click', function() {
-            currentIndex = parseInt(this.dataset.index);
-            showImage();
-            new bootstrap.Modal(document.getElementById('imageModal')).show();
-        });
-    });
-
-    function showImage() {
-        document.getElementById('previewImage').src = images[currentIndex];
-    }
-
-    function prevImage() {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        showImage();
-    }
-
-    function nextImage() {
-        currentIndex = (currentIndex + 1) % images.length;
-        showImage();
-    }
-
-    // Bersihkan backdrop kalau modal ditutup
-    const modal = document.getElementById('imageModal');
-    modal.addEventListener('hidden.bs.modal', function () {
-        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';
-    });
-</script>
-
-@endsection
-
-<!-- Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark text-white">
-            <div class="modal-body text-center position-relative">
-                <button class="btn btn-light position-absolute top-50 start-0 translate-middle-y" onclick="prevImage()">&#10094;</button>
-                <img id="previewImage" class="img-fluid rounded" alt="Preview">
-                <button class="btn btn-light position-absolute top-50 end-0 translate-middle-y" onclick="nextImage()">&#10095;</button>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">TUTUP</button>
-            </div>
+          <div class="table-responsive">
+            <table id="table-data-gallery" class="dt-column-search table table-hover" style="text-wrap: nowrap;">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Keterangan</th>
+                  <th>Gambar</th>
+                  <th>Created Date</th>
+                  <th class="text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{-- data table ajax --}}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
+    <div class="col-md-3"></div>
+  </div>
 </div>
 
-@section('pageScript')
-<script>
-  function copyToClipboard(element) {
-      // Copy the text inside the text field
-      navigator.clipboard.writeText($(element).val());
-      Swal.fire({
-        title: 'Pemberitahuan',
-        text: 'Berhasil Copy Link',
-        icon: 'success',
-        customClass: {
-          confirmButton: 'btn btn-primary waves-effect waves-light'
-        },
-        buttonsStyling: false
-      });
-    }
-
-  @if(session()->has('success'))  
-    Swal.fire({
-      title: 'Pemberitahuan',
-      html: '{{session()->get('success')}}',
-      icon: 'success',
-      customClass: {
-        confirmButton: 'btn btn-primary waves-effect waves-light'
-      },
-      buttonsStyling: false
-    });
-  @endif
-  
-  var table = $('#table-data-trainer').DataTable({
-      scrollX: true,
-      "iDisplayLength": 25,
-      'processing': true,
-      'language': {
-      'loadingRecords': '&nbsp;',
-      'processing': 'Loading...'
-  },
-      ajax: {
-          url: "{{ route('sdt-training.data-trainer') }}",
-          data: function (d) {
-              d.client_id = $('#nama_perusahaan').val();
-              d.training_id = $('#training_id').val();
-              // d.branch = $('#branch').find(":selected").val();
-              // d.platform = $('#platform').find(":selected").val();
-              // d.status = $('#status').find(":selected").val();
-          },
-      },
-      "createdRow": function( row, data, dataIndex){
-          $('td', row).css('background-color', data.warna_background);
-          $('td', row).css('color', data.warna_font);
-      },      
-      "order":[
-          [0,'desc']
-      ],
-      columns:[{
-          data : 'nama',
-          name : 'nama',
-          className:'text-left'
-      },{
-          data : 'divisi',
-          name : 'divisi',
-          className:'text-left'
-      },{
-          data : 'aksi',
-          name : 'aksi',
-          width: "10%",
-          orderable: false,
-          searchable: false,
-      }],
-      "language": datatableLang,
-      dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
-      buttons: [
-            {
-            text: '<i class="mdi mdi-account-multiple-outline me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Trainer</span>',
-            className: 'btn-add-trainer btn btn-label-primary waves-effect waves-light',
-            action: function (e, dt, node, config)
-                {
-                    $('#modal-gallery').modal('show');
-                }
-            }
-        ]
-  });
-
-  var table = $('#table-data-gallery').DataTable({
-      scrollX: true,
-      "iDisplayLength": 25,
-      'processing': true,
-      'language': {
-      'loadingRecords': '&nbsp;',
-      'processing': 'Loading...'
-  },
-      ajax: {
-          url: "{{ route('sdt-training.data-galeri') }}",
-          data: function (d) {
-              d.training_id = $('#training_id').val();
-          },
-      },      
-      "order":[
-          [0,'desc']
-      ],
-      columns:[{
-          data : 'nama',
-          name : 'nama',
-          className:'text-left'
-      },{
-          data : 'keterangan',
-          name : 'keterangan',
-          className:'text-left'
-      },{
-          data : 'path',
-          name : 'path',
-          className:'text-left'
-      },{
-          data : 'created_at',
-          name : 'created_at',
-          className:'text-left'
-      },{
-          data : 'aksi',
-          name : 'aksi',
-          width: "10%",
-          orderable: false,
-          searchable: false,
-      }],
-      "language": datatableLang,
-      dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
-      buttons: [
-            {
-            text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Gambar Kegiatan</span>',
-            className: 'create-new btn btn-label-primary waves-effect waves-light',
-            action: function (e, dt, node, config)
-                {
-                    $('#modal-gallery').modal('show');
-                }
-            }
-        ],
-  });
-
-  $('#nama_perusahaan').on('change', function() {
-    // alert( this.value );
-    $('#table-data-client').dataTable().fnDestroy();
-    var table = $('#table-data-client').DataTable({
-        scrollX: true,
-        "iDisplayLength": 25,
-        'processing': true,
-        'language': {
-        'loadingRecords': '&nbsp;',
-        'processing': 'Loading...'
-    },
-        ajax: {
-            url: "{{ route('sdt-training.client-peserta') }}",
-            data: function (d) {
-                d.client_id = $('#nama_perusahaan').val();
-                d.training_id = $('#training_id').val();
-                // d.branch = $('#branch').find(":selected").val();
-                // d.platform = $('#platform').find(":selected").val();
-                // d.status = $('#status').find(":selected").val();
-            },
-        },
-        "createdRow": function( row, data, dataIndex){
-            $('td', row).css('background-color', data.warna_background);
-            $('td', row).css('color', data.warna_font);
-        },      
-        "order":[
-            [0,'desc']
-        ],
-        columns:[{
-            data : 'nik',
-            name : 'nik',
-            className:'text-left'
-        },{
-            data : 'nama',
-            name : 'nama',
-            className:'text-left'
-        },{
-            data : 'no_whatsapp',
-            name : 'no_whatsapp',
-            className:'text-left'
-        },{
-            data : 'status_whatsapp',
-            name : 'status_kirim',
-            className:'text-left'
-        },{
-            data : 'status_hadir',
-            name : 'hadir',
-            className:'text-left'
-        },{
-            data : 'aksi',
-            name : 'aksi',
-            width: "10%",
-            orderable: false,
-            searchable: false,
-        }],
-        "language": datatableLang,
-        dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
-        buttons: [
-            {
-            text: '<i class="mdi mdi-account-multiple-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Peserta</span>',
-            className: 'btn-add-peserta btn btn-label-primary waves-effect waves-light',
-            action: function (e, dt, node, config)
-                {
-                   $('#modal-peserta').modal('show');  
-                }
-            }
-        ]
-    });
-
-  });
-
-  $('body').on('click', '.btn-delete-trainer', function() {
-      let id = $(this).data('id');
-      Swal.fire({
-          title: 'Konfirmasi',
-          text: 'Apakah anda ingin hapus trainer?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: 'primary',
-          cancelButtonColor: 'warning',
-          confirmButtonText: 'Hapus'
-      }).then(function (result) {
-          console.log(result)
-          if (result.isConfirmed) {
-              let formData = {
-                  "id":id,
-                  "_token": "{{ csrf_token() }}"
-              };
-
-              let table ='#table-data-trainer';
-              $.ajax({
-                  type: "POST",
-                  url: "{{route('sdt-training.delete-trainer')}}",
-                  data:formData,
-                  success: function(response){
-                      console.log(response)
-                      if (response.success) {
-                          Swal.fire({
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'success',
-                              timer: 1000,
-                              timerProgressBar: true,
-                              willClose: () => {
-                                  $(table).DataTable().ajax.reload();
-                              }
-                          })
-                      } else {
-                          Swal.fire({
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'error'
-                          })
-                      }
-                  },
-                  error:function(error){
-                      Swal.fire({
-                          title: 'Pemberitahuan',
-                          text: error,
-                          icon: 'error'
-                      })
-                  }
-              });
-          }
-      });
-  });
-
-  $('body').on('click', '.btn-delete-gallery', function() {
-      let id = $(this).data('id');
-      Swal.fire({
-          title: 'Konfirmasi',
-          text: 'Apakah anda ingin hapus gallery?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: 'primary',
-          cancelButtonColor: 'warning',
-          confirmButtonText: 'Hapus'
-      }).then(function (result) {
-          console.log(result)
-          if (result.isConfirmed) {
-              let formData = {
-                  "id":id,
-                  "_token": "{{ csrf_token() }}"
-              };
-
-              let table ='#table-data-gallery';
-              $.ajax({
-                  type: "POST",
-                  url: "{{route('sdt-training.delete-gallery')}}",
-                  data:formData,
-                  success: function(response){
-                      console.log(response)
-                      if (response.success) {
-                          Swal.fire({
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'success',
-                              timer: 1000,
-                              timerProgressBar: true,
-                              willClose: () => {
-                                  // $(table).DataTable().ajax.reload();
-                                  location.reload();
-                              }
-                          })
-                      } else {
-                          Swal.fire({
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'error'
-                          })
-                      }
-                  },
-                  error:function(error){
-                      Swal.fire({
-                          title: 'Pemberitahuan',
-                          text: error,
-                          icon: 'error'
-                      })
-                  }
-              });
-          }
-      });
-  });
-
-  $('body').on('click', '.btn-delete-reminder', function() {
-      let id = $(this).data('id');
-      Swal.fire({
-          target: document.getElementById('modal-reminder-whatsapp'),
-          title: 'Konfirmasi',
-          text: 'Apakah anda ingin hapus penerima reminder?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: 'primary',
-          cancelButtonColor: 'warning',
-          confirmButtonText: 'Hapus'
-      }).then(function (result) {
-          console.log(result)
-          if (result.isConfirmed) {
-              let formData = {
-                  "id":id,
-                  "_token": "{{ csrf_token() }}"
-              };
-
-              let table ='#table-data-reminder';
-              $.ajax({
-                  type: "POST",
-                  url: "{{route('sdt-training.deleteNotification')}}",
-                  data:formData,
-                  success: function(response){
-                      console.log(response)
-                      if (response.success) {
-                          Swal.fire({
-                              target: document.getElementById('modal-reminder-whatsapp'),
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'success',
-                              timer: 1000,
-                              timerProgressBar: true,
-                              willClose: () => {
-
-                                  location.reload();
-                              }
-                          })
-                      } else {
-                          Swal.fire({
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'error'
-                          })
-                      }
-                  },
-                  error:function(error){
-                      Swal.fire({
-                          title: 'Pemberitahuan',
-                          text: error,
-                          icon: 'error'
-                      })
-                  }
-              });
-          }
-      });
-  });
-
-$('body').on('click', '#btn-reminder-save', function() {
-  Swal.fire({
-          target: document.getElementById('modal-reminder-whatsapp'),
-          title: 'Konfirmasi',
-          text: 'Apakah anda ingin menyimpan pengaturan reminder?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: 'primary',
-          cancelButtonColor: 'warning',
-          confirmButtonText: 'Simpan'
-      }).then(function (result) {
-         if (result.isConfirmed) {
-          let id = $('#training_id').val();
-          let reminderMessage = $('#pesan-reminder').val();
-          let reminderDays = $('#reminder-days').val();
-          
-          let formData = {
-              "id":id,
-              "message": reminderMessage,
-              "days": reminderDays,
-              "_token": "{{ csrf_token() }}"
-          };
-
-          $.ajax({
-                type: "POST",
-                url: "{{route('sdt-training.saveNotification')}}",
-                data:formData,
-                success: function(response){
-                    $('#modal-reminder-whatsapp').modal('hide');  
-                    if (response.success) {
-                        Swal.fire({
-                            // target: document.getElementById('modal-reminder-whatsapp'),
-                            title: 'Pemberitahuan',
-                            text: response.message,
-                            icon: 'success',
-                            timer: 1000,
-                            timerProgressBar: true,
-                            willClose: () => {
-                              // location.reload();
-                            }
-                        })
-                    } else {
-                        Swal.fire({
-                          // target: document.getElementById('modal-reminder-whatsapp'),
-                            title: 'Pemberitahuan',
-                            text: response.message,
-                            icon: 'error'
-                        })
-                    }
-                },
-                error:function(error){
-                    Swal.fire({
-                        target: document.getElementById('modal-reminder-whatsapp'),
-                        title: 'Pemberitahuan',
-                        text: error,
-                        icon: 'error'
-                    })
-                }
-            });
-         }
-      });
-  });
-
-  $('body').on('click', '#btn-add-reminder-penerima', function() {
-  Swal.fire({
-          target: document.getElementById('modal-add-reminder'),
-          title: 'Konfirmasi',
-          text: 'Apakah anda ingin menyimpan penerima reminder?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: 'primary',
-          cancelButtonColor: 'warning',
-          confirmButtonText: 'Simpan'
-      }).then(function (result) {
-         if (result.isConfirmed) {
-          let id = $('#training_id').val();
-          let nama = $('#reminder-add-nama').val();
-          let wa = $('#reminder-add-wa').val();
-          
-          let formData = {
-              "id":id,
-              "nama": nama,
-              "wa": wa,
-              "_token": "{{ csrf_token() }}"
-          };
-
-          $.ajax({
-                type: "POST",
-                url: "{{route('sdt-training.saveNotificationPenerima')}}",
-                data:formData,
-                success: function(response){
-                    if (response.success) {
-                        Swal.fire({
-                            target: document.getElementById('modal-add-reminder'),
-                            title: 'Pemberitahuan',
-                            text: response.message,
-                            icon: 'success',
-                            timer: 1000,
-                            timerProgressBar: true,
-                            willClose: () => {
-                             $('#modal-add-reminder').modal('hide');  
-                            }
-                        })
-                    } else {
-                        Swal.fire({
-                          target: document.getElementById('modal-add-reminder'),
-                            title: 'Pemberitahuan',
-                            text: response.message,
-                            icon: 'error'
-                        })
-                    }
-                },
-                error:function(error){
-                    Swal.fire({
-                        target: document.getElementById('modal-add-reminder'),
-                        title: 'Pemberitahuan',
-                        text: error,
-                        icon: 'error'
-                    })
-                }
-            });
-         }
-      });
-  });
-
-  $('body').on('click', '.btn-delete-peserta', function() {
-      let id = $(this).data('id');
-      Swal.fire({
-          title: 'Konfirmasi',
-          text: 'Apakah anda ingin hapus peserta?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: 'primary',
-          cancelButtonColor: 'warning',
-          confirmButtonText: 'Hapus'
-      }).then(function (result) {
-          console.log(result)
-          if (result.isConfirmed) {
-              let formData = {
-                  "id":id,
-                  "_token": "{{ csrf_token() }}"
-              };
-
-              let table ='#table-data-client';
-              $.ajax({
-                  type: "POST",
-                  url: "{{route('sdt-training.delete-peserta')}}",
-                  data:formData,
-                  success: function(response){
-                      console.log(response)
-                      if (response.success) {
-                          Swal.fire({
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'success',
-                              timer: 1000,
-                              timerProgressBar: true,
-                              willClose: () => {
-                                  $(table).DataTable().ajax.reload();
-                              }
-                          })
-                      } else {
-                          Swal.fire({
-                              title: 'Pemberitahuan',
-                              text: response.message,
-                              icon: 'error'
-                          })
-                      }
-                  },
-                  error:function(error){
-                      Swal.fire({
-                          title: 'Pemberitahuan',
-                          text: error,
-                          icon: 'error'
-                      })
-                  }
-              });
-          }
-      });
-  });
-
-  // $('#btn-update').on('click',function () {
-  //   $('form').submit();
-  // });
-  
-  // $('#btn-delete').on('click',function () {
-  //   $('form').attr('action', '{{route("leads.delete")}}');
-  //   $('form').submit();
-  // });
-  
-  // $('#btn-quotation').on('click',function () {
-  //   Swal.fire({
-  //     title: 'Pemberitahuan',
-  //     html: 'Fitur belum siap',
-  //     icon: 'warning',
-  //     customClass: {
-  //       confirmButton: 'btn btn-warning waves-effect waves-light'
-  //     },
-  //     buttonsStyling: false
-  //   });
-  // });
-
-  // $('#btn-activity').on('click',function () {
-  
-  // });
-
-
-  // $('#btn-quotation').on('click',function () {
-  
-  // });
-
-
-  $('#btn-kembali').on('click',function () {
-    // alert('jljljjj');
-    window.location.href = '{{route("sdt-training")}}';
-  });
-
-  $('#btn-add-client').on('click',function(){
-    $('#modal-client').modal('show');  
-  });
-
-  $('#btn-pesan-undangan').on('click',function(){
-    $('#modal-pesan-undangan').modal('show');  
-  });
-
-  $('body').on('click', '#btn-reminder-penerima ', function() {
-    $('#modal-reminder-whatsapp').modal('hide');  
-    $('#reminder-add-nama').val('');
-    $('#reminder-add-wa').val('');
-    $('#modal-add-reminder').modal('show');  
-  });
-
-
-  // $('#btn-reminder-whatsapp').on('click',function(){
-  //   $('#modal-reminder-whatsapp').modal('show');  
-  // });
-  function reminderWhatsapp() {
-      let formData = {
-          "training_id":$('#training_id').val(),
-          "_token": "{{ csrf_token() }}"
-      };
-        
-      $.ajax({
-          type: "GET",
-          url: "{{route('sdt-training.dataNotification')}}",
-          data:formData,
-          success: function(response){
-              console.log(response);
-              $("#pesan-reminder").val(response.data_training.notification_message);
-              $("#reminder-days").val(response.data_training.notification_reminder_before_day);
-              $("#reminder-status").val(response.data_training.notification_reminder_status);
-              $("#table-data-reminder").dataTable().fnDestroy();
-              var table = $('#table-data-reminder').DataTable({
-                scrollX: true,
-                'searching' : false,
-                "iDisplayLength": 25,
-                'processing': true,
-                'language': {
-                'loadingRecords': '&nbsp;',
-                'processing': 'Loading...',
-                "bDestroy": true
-            },
-                ajax: {
-                    url: "{{ route('sdt-training.dataNotificationTable') }}",
-                    data: function (d) {
-                        d.training_id = $('#training_id').val();
-                    },
-                },      
-                "order":[
-                    [0,'desc']
-                ],
-                columns:[{
-                    data : 'nama',
-                    name : 'nama',
-                    className:'text-left'
-                },{
-                    data : 'no_wa',
-                    name : 'no_wa',
-                    className:'text-left'
-                },{
-                    data : 'aksi',
-                    name : 'aksi',
-                    width: "10%",
-                    orderable: false,
-                    searchable: false,
-                }],
-                "language": datatableLang
-            });
-            $('#modal-reminder-whatsapp').modal('show');    
-          },
-          error:function(error){
-              Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: error,
-                  icon: 'error'
-              })
-          }
-      }); 
-  }
-
-  // $('#btn-add-gallery').on('click',function(){
-  //   $('#modal-gallery').modal('show');  
-  // });
-
-  // $('#btn-add-peserta').on('click',function(){
-  //   $('#modal-peserta').modal('show');  
-  // });
-
-  $('#btn-add-trainer').on('click',function(){
-    $('#modal-trainer').modal('show');  
-  });
-
-  $('#btn-send-message').on('click',function(){
-    $('#modal-link').modal('show');  
-  });
-
-  $(document).ready(function() {
-
-  
-    $('#btn-kirim-wa').on('click',function(){
-        let id = $('#training_id').val();
-        let noWa = $('#link-wa').val();
-      
-        Swal.fire({
-            target: document.getElementById('modal-link'),
-            title: 'Konfirmasi',
-            text: 'Apakah anda ingin kirim undangan whatsapp ?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: 'info',
-            cancelButtonColor: 'warning',
-            confirmButtonText: 'Kirim Whatsapp'
-        }).then(function (result) {
-            console.log(result)
-            if (result.isConfirmed) {
-                let formData = {
-                    "id":id,
-                    "no_wa" :noWa,
-                    "_token": "{{ csrf_token() }}"
-                };
-
-                let table ='#table-data';
-                $.ajax({
-                    type: "POST",
-                    url: "{{route('sdt-training.send-message')}}",
-                    data:formData,
-                    success: function(response){
-                        console.log(response)
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'Pemberitahuan',
-                                text: response.message,
-                                icon: 'success',
-                                timer: 1000,
-                                timerProgressBar: true,
-                                willClose: () => {
-                                    // $(table).DataTable().ajax.reload();
-                                    $('#modal-link').modal('hide');  
-                                }
-                            })
-                        } else {
-                            Swal.fire({
-                                title: 'Pemberitahuan',
-                                text: response.message,
-                                icon: 'error'
-                            })
-                        }
-                    },
-                    error:function(error){
-                        Swal.fire({
-                            title: 'Pemberitahuan',
-                            text: error,
-                            icon: 'error'
-                        })
-                    }
-                });
-            }
-        });
-    });
-
-    $('#btn-add-client-save').on('click',function(){
-      $('#modal-client').modal('hide');
-      let id = $('#training_id').val();
-      let client_id = $('#client_id').val();
-    
-      if(client_id == ''){
-        Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: "Mohon untuk memilih data client yang akan di tambahkan",
-                  icon: 'error'
-              })
-      }else{
-        let formData = {
-            "id":id,
-            "client_id":client_id,
-            "_token": "{{ csrf_token() }}"
-        };
-
-        let table ='#table-data-client';
-        $.ajax({
-            type: "POST",
-            url: "{{route('sdt-training.add-client')}}",
-            data:formData,
-            success: function(response){
-                // console.log(response);
-                // alert(response)
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'success',
-                        timer: 1000,
-                        timerProgressBar: true,
-                        willClose: () => {
-                          location.reload();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'error'
-                    })
-                }
-            },
-            error:function(error){
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: error,
-                    icon: 'error'
-                })
-            }
-        });
-      }
-    });
-
-    $('#btn-add-client-save').on('click',function(){
-      $('#modal-client').modal('hide');
-      let id = $('#training_id').val();
-      let client_id = $('#client_id').val();
-    
-      if(client_id == ''){
-        Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: "Mohon untuk memilih data client yang akan di tambahkan",
-                  icon: 'error'
-              })
-      }else{
-        let formData = {
-            "id":id,
-            "client_id":client_id,
-            "_token": "{{ csrf_token() }}"
-        };
-
-        let table ='#table-data-client';
-        $.ajax({
-            type: "POST",
-            url: "{{route('sdt-training.add-client')}}",
-            data:formData,
-            success: function(response){
-                // console.log(response);
-                // alert(response)
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'success',
-                        timer: 1000,
-                        timerProgressBar: true,
-                        willClose: () => {
-                          location.reload();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'error'
-                    })
-                }
-            },
-            error:function(error){
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: error,
-                    icon: 'error'
-                })
-            }
-        });
-      }
-    });
-
-    function downloadFile(response) {
-      alert(response);
-      var blob = new Blob([response], {type: 'application/pdf'})
-      var url = URL.createObjectURL(blob);
-      location.assign(url);
-    } 
-
-    $('#btn-generate-pdf').on('click',function(){
-      let id = $('#training_id').val();
-      let formData = {
-            "training_id": id,
-            "_token": "{{ csrf_token() }}"
-        };
-
-        $.ajax({
-            type: "GET",
-            url: "{{route('invite-pdf')}}",
-            data:formData,
-            success: function(response){
-              downloadFile(response);
-              // Create a link element to download the file
-                // var blob = new Blob([response], { type: 'application/pdf' });
-                // var link = document.createElement('a');
-                // link.href = URL.createObjectURL(blob);
-                // link.download = 'your-pdf-file.pdf';
-                // link.click();
-            },
-            error:function(error){
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: error,
-                    icon: 'error'
-                })
-            }
-        });
-    });
-    
-    $('#btn-add-peserta-save').on('click',function(){
-      $('#modal-peserta').modal('hide');
-      let id = $('#training_id').val();
-      let trainer_id = $('#peserta_id').val();
-      let client_id = $('#nama_perusahaan').val()
-    
-      if(client_id == ''){
-        Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: "Mohon untuk memilih nama perusahaan terlebih dahulu",
-                  icon: 'error'
-              })
-      }else{
-        let formData = {
-            "id":id,
-            "client_id":client_id,
-            "employee_id": trainer_id,
-            "_token": "{{ csrf_token() }}"
-        };
-
-        let table ='#table-data-client';
-        $.ajax({
-            type: "POST",
-            url: "{{route('sdt-training.add-peserta')}}",
-            data:formData,
-            success: function(response){
-                // console.log(response);
-                // alert(response)
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'success',
-                        timer: 1000,
-                        timerProgressBar: true,
-                        willClose: () => {
-                            $(table).DataTable().ajax.reload();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'error'
-                    })
-                }
-            },
-            error:function(error){
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: error,
-                    icon: 'error'
-                })
-            }
-        });
-      }
-    });
-
-    $('#btn-add-trainer-save').on('click',function(){
-      $('#modal-trainer').modal('hide');
-      let id = $('#training_id').val();
-      let trainer_id = $('#trainer_id').val();
-      // alert(id + ' ' + trainer_id);
-      let formData = {
-          "id":id,
-          "trainer_id": trainer_id,
-          "_token": "{{ csrf_token() }}"
-      };
-
-      let table ='#table-data-trainer';
-      $.ajax({
-          type: "POST",
-          url: "{{route('sdt-training.add-trainer')}}",
-          data:formData,
-          success: function(response){
-              // console.log(response);
-              // alert(response)
-              if (response.success) {
-                  Swal.fire({
-                      title: 'Pemberitahuan',
-                      text: response.message,
-                      icon: 'success',
-                      timer: 1000,
-                      timerProgressBar: true,
-                      willClose: () => {
-                          $(table).DataTable().ajax.reload();
-                      }
-                  })
-              } else {
-                  Swal.fire({
-                      title: 'Pemberitahuan',
-                      text: response.message,
-                      icon: 'error'
-                  })
-              }
-          },
-          error:function(error){
-              Swal.fire({
-                  title: 'Pemberitahuan',
-                  text: error,
-                  icon: 'error'
-              })
-          }
-      });
-    });
-
-    $('#btn-add-pesan-undangan-save').on('click',function(){
-      $('#modal-pesan-undangan').modal('hide');
-      
-      let id = $('#training_id').val();
-      let pesan = $('#pesan-undangan').val();
-      // alert(id + ' ' + pesan);
-      let formData = {
-          "id":id,
-          "pesan_undangan": pesan,
-          "_token": "{{ csrf_token() }}"
-      };
-
-      $.ajax({
-            type: "POST",
-            url: "{{route('sdt-training.save-message')}}",
-            data:formData,
-            success: function(response){
-                // console.log(response);
-                // alert(response)
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'success',
-                        timer: 1000,
-                        timerProgressBar: true,
-                        willClose: () => {
-                          location.reload();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        title: 'Pemberitahuan',
-                        text: response.message,
-                        icon: 'error'
-                    })
-                }
-            },
-            error:function(error){
-                Swal.fire({
-                    title: 'Pemberitahuan',
-                    text: error,
-                    icon: 'error'
-                })
-            }
-        });
-    });
-
-    // $('#select2insidemodal').select2();
-    // $("#trainer_id").select2({
-    //   dropdownParent: $("#modal-trainer")
-    // });
-  });
-
-
-  
-  
-  
-  // $("#select2Input").select2({ dropdownParent: "#modal-container" });
-
-
-  // $('.select2insidemodal').each(function() { 
-  //   $(this).select2({ dropdownParent: $(this).parent()});
-  // })
-</script>
-
-<div class="modal fade" id="modal-link" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
+<div class="modal fade" id="modal-gallery" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Gallery</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h4 class="mb-2">Kirim Link Training : <p id="nama"></p></h4>
-        </div>
-        <br>
-        <div class="row mb-3">    
-            <label class="col-sm-3 col-form-label text-sm-end">No Whatsapp <span class="text-danger">delimiter comma</span></label>
+      </div>
+
+      <form action="{{route('sdt-training.upload-image')}}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="modal-body">
+          <input type="hidden" name="id" value="{{$data->id_training}}">
+
+          <div class="row mb-4">
+            <label class="col-sm-3 col-form-label">Nama</label>
             <div class="col-sm-9">
-              <div class="position-relative">
-                <input type="text" id="link-wa" value="" class="form-control @if ($errors->any())   @endif">
+              <input type="text" name="nama" class="form-control" placeholder="Masukkan nama gambar">
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <label class="col-sm-3 col-form-label">File</label>
+            <div class="col-sm-9">
+              <div class="file-upload-container">
+                <div id="drop-zone" class="drop-zone">
+                  <div class="drop-zone-content">
+                    <i class="mdi mdi-cloud-upload-outline drop-zone-icon"></i>
+                    <h6 class="drop-zone-title">Drag & Drop file di sini</h6>
+                    <p class="drop-zone-subtitle">atau</p>
+                    <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('file-input').click()">
+                      <i class="mdi mdi-file-plus-outline me-1"></i>Choose Files
+                    </button>
+                    <input type="file" id="file-input" name="image" accept="image/*" style="display: none;">
+                    <p class="drop-zone-info mt-2">
+                      <small class="text-muted">Maksimal ukuran file: 5MB. Format: JPG, PNG, GIF</small>
+                    </p>
+                  </div>
+
+                  <div id="file-preview" class="file-preview" style="display: none;">
+                    <div class="preview-item">
+                      <img id="preview-image" src="" alt="Preview" class="preview-img">
+                      <div class="preview-info">
+                        <p id="preview-filename" class="preview-filename"></p>
+                        <p id="preview-filesize" class="preview-filesize"></p>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile()">
+                          <i class="mdi mdi-delete-outline"></i> Hapus
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-        </div>  
-        <!-- </div> -->
+          </div>
+
+          <div class="row mb-4">
+            <label class="col-sm-3 col-form-label">Keterangan</label>
+            <div class="col-sm-9">
+              <textarea class="form-control" name="keterangan" rows="4"
+                        placeholder="Masukkan keterangan gambar"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="mdi mdi-upload me-1"></i>Upload Gallery
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-link" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Kirim Link Training</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <label class="col-sm-3 col-form-label">No Whatsapp <span class="text-danger">delimiter comma</span></label>
+          <div class="col-sm-9">
+            <input type="text" id="link-wa" class="form-control" placeholder="Masukkan nomor whatsapp">
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button id="btn-kirim-wa" class="btn btn-primary">Kirim</button>
-        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
       </div>
     </div>
   </div>
 </div>
 
 <div class="modal fade" id="modal-client" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Client</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h4 class="mb-2">Tambah Client : <p id="nama"></p></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <label class="col-sm-3 col-form-label">Client <span class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <select id="client_id" name="client_id" class="form-select">
+              <option value="">- Pilih data -</option>
+              @foreach($listClient as $value)
+              <option value="{{$value->id}}">{{$value->client}}</option>
+              @endforeach
+            </select>
+          </div>
         </div>
-        <br>
-        <div class="row mb-3">    
-            <label class="col-sm-3 col-form-label text-sm-end">Client <span class="text-danger">*</span></label>
-            <div class="col-sm-9">
-              <div class="position-relative">
-                <select id="client_id" name="client_id" class="select2 form-select">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listClient as $value)
-                  <option value="{{$value->id}}"> {{$value->client}}</option>
-                  @endforeach
-                </select>
-                @if($errors->has('client_id'))
-                  <div class="invalid-feedback">{{$errors->first('client_id')}}</div>
-                @endif
-              </div>
-            </div>
-        </div>  
-        <!-- </div> -->
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button id="btn-add-client-save" class="btn btn-primary">Add Peserta</button>
-        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="btn-add-client-save" class="btn btn-primary">Add Client</button>
       </div>
     </div>
   </div>
@@ -1610,24 +488,24 @@ $('body').on('click', '#btn-reminder-save', function() {
         <div class="text-center mb-4">
           <h4 class="mb-2">Tambah Penerima Penerima</p></h4>
         </div>
-        
-        <div class="row mb-3">    
+
+        <div class="row mb-3">
             <label class="col-sm-4 col-form-label text-sm-end">Nama</label>
             <div class="col-sm-8">
               <div class="position-relative">
                 <input type="text" id="reminder-add-nama" name="reminder-add-nama" class="form-control"></input>
               </div>
             </div>
-        </div>  
+        </div>
 
-        <div class="row mb-3">    
+        <div class="row mb-3">
             <label class="col-sm-4 col-form-label text-sm-end">Whatsapp</label>
             <div class="col-sm-8">
               <div class="position-relative" >
                 <input type="text" id="reminder-add-wa" name="reminder-add-wa" class="form-control"></input>
               </div>
             </div>
-        </div>  
+        </div>
 
         <!-- </div> -->
       </div>
@@ -1640,28 +518,23 @@ $('body').on('click', '#btn-reminder-save', function() {
 </div>
 
 <div class="modal fade" id="modal-pesan-undangan" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pesan Undangan</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h4 class="mb-2">Isi Pesan Undangan : <p id="nama"></p></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <textarea class="form-control" name="pesan-undangan" id="pesan-undangan" rows="12"
+                      placeholder="Masukkan pesan undangan">{{$message}}</textarea>
+          </div>
         </div>
-        
-        <div class="row">    
-            <!-- <label class="col-sm-3 col-form-label text-sm-end">Client <span class="text-danger">*</span></label> -->
-            <div class="col-sm-12">
-              <div class="position-relative">
-                <textarea style="height: 100% !important;" rows="12" cols="50" class="form-control h-px-100 @if ($errors->any())   @endif" name="pesan-undangan" id="pesan-undangan" placeholder="">{{$message}}</textarea>
-              </div>
-            </div>
-        </div>  
-        <!-- </div> -->
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button id="btn-add-pesan-undangan-save" class="btn btn-primary">Save</button>
-        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
       </div>
     </div>
   </div>
@@ -1676,33 +549,33 @@ $('body').on('click', '#btn-reminder-save', function() {
           <h4 class="mb-2">Reminder Whatsapp : <p id="nama"></p></h4>
         </div>
         <br>
-        
-        <div class="row mb-3">    
+
+        <div class="row mb-3">
             <label class="col-sm-4 col-form-label text-sm-end">Dikirim Sebelum (Hari)</label>
             <div class="col-sm-8">
               <div class="position-relative">
                 <input type="number" id="reminder-days" name="reminder-days" class="form-control"></input>
               </div>
             </div>
-        </div>  
+        </div>
 
-        <div class="row mb-3">    
+        <div class="row mb-3">
             <label class="col-sm-4 col-form-label text-sm-end">Status</label>
             <div class="col-sm-8">
               <div class="position-relative" >
                 <input readonly type="text" id="reminder-status" name="reminder-status" class="reminder-status form-control"></input>
               </div>
             </div>
-        </div>  
+        </div>
 
-        <div class="row mb-3">    
+        <div class="row mb-3">
             <label class="col-sm-4 col-form-label text-sm-end">Reminder</label>
             <div class="col-sm-8">
               <div class="position-relative">
                 <textarea style="height: 100% !important;" rows="12" cols="50" class="form-control h-px-100 @if ($errors->any())   @endif" name="pesan-reminder" id="pesan-reminder" placeholder=""></textarea>
               </div>
             </div>
-        </div>  
+        </div>
 
         <div class="table-responsive overflow-hidden">
           <table id="table-data-reminder" class="dt-column-search table w-100 table-hover" style="text-wrap: nowrap;">
@@ -1731,132 +604,745 @@ $('body').on('click', '#btn-reminder-save', function() {
 </div>
 
 <div class="modal fade" id="modal-peserta" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Peserta</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h4 class="mb-2">Tambah Peserta : <p id="nama"></p></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <label class="col-sm-3 col-form-label">Peserta <span class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <select id="peserta_id" name="peserta_id" class="form-select">
+              <option value="">- Pilih data -</option>
+              @foreach($listPeserta as $value)
+              <option value="{{$value->id}}">{{$value->full_name . ' - ' .$value->position}}</option>
+              @endforeach
+            </select>
+          </div>
         </div>
-        <br>
-        <div class="row mb-3">    
-            <label class="col-sm-3 col-form-label text-sm-end">Peserta <span class="text-danger">*</span></label>
-            <div class="col-sm-9">
-              <div class="position-relative">
-                <select id="peserta_id" name="peserta_id" class="select2 form-select">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listPeserta as $value)
-                  <option value="{{$value->id}}"> {{$value->full_name . ' - ' .$value->position }}</option>
-                  @endforeach
-                </select>
-                @if($errors->has('peserta_id'))
-                  <div class="invalid-feedback">{{$errors->first('peserta_id')}}</div>
-                @endif
-              </div>
-            </div>
-        </div>  
-        <!-- </div> -->
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button id="btn-add-peserta-save" class="btn btn-primary">Add Peserta</button>
-        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="modal-gallery" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h4 class="mb-2">Tambah Gallery <p id="nama"></p></h4>
-        </div>
-        <br>
-        <div class="row mb-3">    
-          <form action="{{route('sdt-training.upload-image')}}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <!-- <h6>1. Informasi Perusahaan</h6> -->
-            <input type="hidden" name="id" value="{{$data->id_training}}">
-            <div class="row mb-3">
-              <label class="col-sm-3 col-form-label text-sm-end">Nama</label>
-              <div class="col-sm-9">
-                <div class="position-relative">
-                  <input type="text" name="nama" value="" class="form-control @if ($errors->any())   @endif">
-                </div>
-              </div>
-            </div> 
-            
-            <div class="row mb-3">
-              <label class="col-sm-3 col-form-label text-sm-end">File</label>
-              <div class="col-sm-9">
-                <div class="position-relative">
-                  <input type="file" name="image" class="form-control @if ($errors->any())   @endif">
-                </div>
-              </div>
-            </div> 
-
-            <div class="row mb-3">
-              <label class="col-sm-3 col-form-label text-sm-end">Keterangan</label>
-              <div class="col-sm-9">
-                <div class="form-floating form-floating-outline mb-4">
-                  <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="keterangan" placeholder=""></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="pt-4">
-              <div class="row justify-content-end">
-                <div class="col-sm-12 d-flex justify-content-end">
-                  <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary me-sm-2 me-1 waves-effect waves-light">Add Gallery</button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>  
-        <!-- </div> -->
       </div>
     </div>
   </div>
 </div>
 
 <div class="modal fade" id="modal-trainer" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-md modal-simple modal-enable-otp modal-dialog-centered">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Trainer</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h4 class="mb-2">Tambah Trainer : <p id="nama"></p></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <label class="col-sm-3 col-form-label">Trainer <span class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <select id="trainer_id" name="trainer_id" class="form-select">
+              <option value="">- Pilih data -</option>
+              @foreach($listTrainer as $value)
+              @if($value->id==99) @continue @endif
+              <option value="{{$value->id}}">{{$value->trainer}}</option>
+              @endforeach
+            </select>
+          </div>
         </div>
-        <br>
-        <div class="row mb-3">    
-            <label class="col-sm-3 col-form-label text-sm-end">Trainer <span class="text-danger">*</span></label>
-            <div class="col-sm-8">
-              <div class="position-relative">
-                <select id="trainer_id" name="trainer_id" class="select2 form-select">
-                  <option value="">- Pilih data -</option>
-                  @foreach($listTrainer as $value)
-                  @if($value->id==99) @continue @endif
-                  <option value="{{$value->id}}" @if(old('trainer_id') == $value->id) selected @endif>{{$value->trainer}}</option>
-                  @endforeach
-                </select>
-                @if($errors->has('trainer_id'))
-                  <div class="invalid-feedback">{{$errors->first('trainer_id')}}</div>
-                @endif
-              </div>
-            </div>
-        </div>  
-        <!-- </div> -->
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button id="btn-add-trainer-save" class="btn btn-primary">Add Trainer</button>
-        <!-- <button id="btn-add-trainer" class="btn btn-warning w-100 waves-effect waves-light"> -->
       </div>
     </div>
   </div>
 </div>
 
+<style>
+.drop-zone {
+  border: 2px dashed #d4d4d8;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+}
+
+.drop-zone:hover {
+  border-color: #3b82f6;
+  background-color: #f8faff;
+}
+
+.drop-zone.dragover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+  transform: scale(1.02);
+}
+
+.drop-zone-icon {
+  font-size: 3rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.drop-zone-title {
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.drop-zone-subtitle {
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.drop-zone-info {
+  color: #6b7280;
+}
+
+.file-preview {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.preview-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+}
+
+.preview-info {
+  flex: 1;
+}
+
+.preview-filename {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 5px;
+}
+
+.preview-filesize {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 10px;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.btn {
+  border-radius: 6px;
+}
+
+.form-control, .form-select {
+  border-radius: 6px;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  border-top: 1px solid #dee2e6;
+}
+</style>
+
+@endsection
+
+@section('pageScript')
+<script>
+// Copy to clipboard function
+function copyToClipboard(element) {
+  navigator.clipboard.writeText($(element).val());
+  Swal.fire({
+    title: 'Pemberitahuan',
+    text: 'Berhasil Copy Link',
+    icon: 'success',
+    customClass: {
+      confirmButton: 'btn btn-primary waves-effect waves-light'
+    },
+    buttonsStyling: false
+  });
+}
+
+// Drag & Drop functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const filePreview = document.getElementById('file-preview');
+  const previewImage = document.getElementById('preview-image');
+  const previewFilename = document.getElementById('preview-filename');
+  const previewFilesize = document.getElementById('preview-filesize');
+
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+  });
+
+  // Highlight drop zone when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, highlight, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, unhighlight, false);
+  });
+
+  // Handle dropped files
+  dropZone.addEventListener('drop', handleDrop, false);
+  fileInput.addEventListener('change', handleFiles, false);
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function highlight(e) {
+    dropZone.classList.add('dragover');
+  }
+
+  function unhighlight(e) {
+    dropZone.classList.remove('dragover');
+    }
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    fileInput.files = files; // Assign files to the input element
+    handleFiles();
+  }
+
+  function handleFiles() {
+    const files = fileInput.files;
+    if (files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        previewFilename.textContent = file.name;
+        previewFilesize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+        filePreview.style.display = 'flex';
+        dropZone.querySelector('.drop-zone-content').style.display = 'none';
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+  window.removeFile = function() {
+    fileInput.value = ''; // Clear the input
+    filePreview.style.display = 'none';
+    dropZone.querySelector('.drop-zone-content').style.display = 'block';
+  }
+});
+
+// DataTables for Trainer, Client, and Gallery
+$(document).ready(function() {
+  const trainingId = $('#training_id').val();
+  const csrfToken = $('input[name="_token"]').val();
+
+  // Initialize Trainer table
+  const trainerTable = $('#table-data-trainer').DataTable({
+    processing: true,
+    serverSide: true,
+    scrollX: true,
+    ajax: {
+      url: "{{ route('sdt-training.data-trainer') }}",
+      data: function(d) {
+        d.training_id = trainingId;
+      }
+    },
+    columns: [{
+      data: 'nama',
+      name: 'nama'
+    }, {
+      data: 'divisi',
+      name: 'divisi'
+    }, {
+      data: 'aksi',
+      name: 'aksi',
+      orderable: false,
+      searchable: false,
+      className: 'text-center'
+    }],
+    dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+    buttons: [{
+      text: '<i class="mdi mdi-account-multiple-outline me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Trainer</span>',
+      className: 'btn btn-primary waves-effect waves-light',
+      action: function() {
+        $('#modal-trainer').modal('show');
+      }
+    }]
+  });
+
+  // Initialize Client table
+  const clientTable = $('#table-data-client').DataTable({
+    processing: true,
+    serverSide: true,
+    scrollX: true,
+    ajax: {
+      url: "{{ route('sdt-training.client-peserta') }}",
+      data: function(d) {
+        d.training_id = trainingId;
+        d.client_id = $('#nama_perusahaan').val();
+      }
+    },
+    columns: [{
+      data: 'nik',
+      name: 'nik'
+    }, {
+      data: 'nama',
+      name: 'nama'
+    }, {
+      data: 'no_whatsapp',
+      name: 'no_whatsapp'
+    }, {
+      data: 'status_whatsapp',
+      name: 'status_whatsapp'
+    }, {
+      data: 'status_hadir',
+      name: 'status_hadir'
+    }, {
+      data: 'aksi',
+      name: 'aksi',
+      orderable: false,
+      searchable: false,
+      className: 'text-center'
+    }],
+    dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+    buttons: [{
+      text: '<i class="mdi mdi-account-multiple-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Peserta</span>',
+      className: 'btn btn-primary waves-effect waves-light',
+      action: function() {
+        $('#modal-peserta').modal('show');
+      }
+    }]
+  });
+
+  $('#nama_perusahaan').on('change', function() {
+    clientTable.draw();
+  });
+
+  // Initialize Gallery table
+  const galleryTable = $('#table-data-gallery').DataTable({
+    processing: true,
+    serverSide: true,
+    scrollX: true,
+    ajax: {
+      url: "{{ route('sdt-training.data-galeri') }}",
+      data: function(d) {
+        d.training_id = trainingId;
+      }
+    },
+    columns: [{
+      data: 'nama',
+      name: 'nama'
+    }, {
+      data: 'keterangan',
+      name: 'keterangan'
+    }, {
+      data: 'path',
+      name: 'path'
+    }, {
+      data: 'created_at',
+      name: 'created_at'
+    }, {
+      data: 'aksi',
+      name: 'aksi',
+      orderable: false,
+      searchable: false,
+      className: 'text-center'
+    }],
+    dom: '<"card-header flex-column flex-md-row px-0"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>>frtip',
+    buttons: [{
+      text: '<i class="mdi mdi-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Tambah Gambar Kegiatan</span>',
+      className: 'btn btn-primary waves-effect waves-light',
+      action: function() {
+        $('#modal-gallery').modal('show');
+      }
+    }]
+  });
+
+  // Action Buttons
+  $('#btn-pesan-undangan').on('click', function() {
+    $('#modal-pesan-undangan').modal('show');
+  });
+
+  $('#btn-kembali').on('click', function() {
+    window.location.href = "{{ route('sdt-training') }}";
+  });
+
+  $('#btn-add-client').on('click', function() {
+    $('#modal-client').modal('show');
+  });
+
+  $('#btn-send-message').on('click', function() {
+    $('#modal-link').modal('show');
+  });
+
+  // Modal Save actions
+  $('#btn-add-pesan-undangan-save').on('click', function() {
+    const pesan = $('#pesan-undangan').val();
+    $.ajax({
+      url: "{{ route('sdt-training.save-message') }}",
+      method: 'POST',
+      data: {
+        _token: csrfToken,
+        id: trainingId,
+        pesan_undangan: pesan
+      },
+      success: function(response) {
+        Swal.fire({
+          title: 'Berhasil',
+          text: response.message,
+          icon: 'success',
+          customClass: {
+            confirmButton: 'btn btn-primary waves-effect waves-light'
+          },
+          buttonsStyling: false
+        }).then(() => {
+          $('#modal-pesan-undangan').modal('hide');
+        });
+      },
+      error: function() {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Terjadi kesalahan saat menyimpan pesan.',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'btn btn-primary waves-effect waves-light'
+          },
+          buttonsStyling: false
+        });
+      }
+    });
+  });
+
+  $('#btn-kirim-wa').on('click', function() {
+    const noWa = $('#link-wa').val();
+
+    // Tutup modal terlebih dahulu
+    $('#modal-link').modal('hide');
+
+    // Tunda SweetAlert sebentar untuk memastikan modal sudah tertutup
+    setTimeout(() => {
+        Swal.fire({
+          title: 'Konfirmasi',
+          text: 'Apakah anda ingin kirim undangan whatsapp ?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: 'info',
+          cancelButtonColor: 'warning',
+          confirmButtonText: 'Kirim Whatsapp'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              type: "POST",
+              url: "{{ route('sdt-training.send-message') }}",
+              data: {
+                id: trainingId,
+                no_wa: noWa,
+                _token: csrfToken
+              },
+              success: function(response) {
+                Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: response.message,
+                  icon: 'success',
+                  timer: 1000,
+                  timerProgressBar: true
+                });
+              },
+              error: function() {
+                Swal.fire({
+                  title: 'Pemberitahuan',
+                  text: 'Terjadi kesalahan saat mengirim pesan.',
+                  icon: 'error'
+                });
+              }
+            });
+          }
+        });
+    }, 300); // Penundaan 300ms untuk memastikan modal benar-benar hilang
+  });
+
+  $('#btn-add-client-save').on('click', function() {
+    const clientId = $('#client_id').val();
+    if (clientId === '') {
+      Swal.fire({
+        title: 'Pemberitahuan',
+        text: "Mohon untuk memilih data client yang akan di tambahkan",
+        icon: 'error'
+      });
+      return;
+    }
+    $.ajax({
+      type: "POST",
+      url: "{{ route('sdt-training.add-client') }}",
+      data: {
+        id: trainingId,
+        client_id: clientId,
+        _token: csrfToken
+      },
+      success: function(response) {
+        if (response.success) {
+          Swal.fire({
+            title: 'Pemberitahuan',
+            text: response.message,
+            icon: 'success',
+            timer: 1000,
+            timerProgressBar: true,
+            willClose: () => {
+              location.reload();
+            }
+          });
+        } else {
+          Swal.fire({
+            title: 'Pemberitahuan',
+            text: response.message,
+            icon: 'error'
+          });
+        }
+      },
+      error: function() {
+        Swal.fire({
+          title: 'Pemberitahuan',
+          text: 'Terjadi kesalahan saat menambahkan client.',
+          icon: 'error'
+        });
+      }
+    });
+  });
+
+  $('#btn-add-peserta-save').on('click', function() {
+    const pesertaId = $('#peserta_id').val();
+    const clientId = $('#nama_perusahaan').val();
+    if (clientId === '') {
+      Swal.fire({
+        title: 'Pemberitahuan',
+        text: "Mohon untuk memilih nama perusahaan terlebih dahulu",
+        icon: 'error'
+      });
+      return;
+    }
+    $.ajax({
+      type: "POST",
+      url: "{{ route('sdt-training.add-peserta') }}",
+      data: {
+        id: trainingId,
+        client_id: clientId,
+        employee_id: pesertaId,
+        _token: csrfToken
+      },
+      success: function(response) {
+        if (response.success) {
+          Swal.fire({
+            title: 'Pemberitahuan',
+            text: response.message,
+            icon: 'success',
+            timer: 1000,
+            timerProgressBar: true,
+            willClose: () => {
+              clientTable.ajax.reload();
+              $('#modal-peserta').modal('hide');
+            }
+          });
+        } else {
+          Swal.fire({
+            title: 'Pemberitahuan',
+            text: response.message,
+            icon: 'error'
+          });
+        }
+      },
+      error: function() {
+        Swal.fire({
+          title: 'Pemberitahuan',
+          text: 'Terjadi kesalahan saat menambahkan peserta.',
+          icon: 'error'
+        });
+      }
+    });
+  });
+
+  $('#btn-add-trainer-save').on('click', function() {
+    const trainerId = $('#trainer_id').val();
+    $.ajax({
+      type: "POST",
+      url: "{{ route('sdt-training.add-trainer') }}",
+      data: {
+        id: trainingId,
+        trainer_id: trainerId,
+        _token: csrfToken
+      },
+      success: function(response) {
+        if (response.success) {
+          Swal.fire({
+            title: 'Pemberitahuan',
+            text: response.message,
+            icon: 'success',
+            timer: 1000,
+            timerProgressBar: true,
+            willClose: () => {
+              trainerTable.ajax.reload();
+              $('#modal-trainer').modal('hide');
+            }
+          });
+        } else {
+          Swal.fire({
+            title: 'Pemberitahuan',
+            text: response.message,
+            icon: 'error'
+          });
+        }
+      },
+      error: function() {
+        Swal.fire({
+          title: 'Pemberitahuan',
+          text: 'Terjadi kesalahan saat menambahkan trainer.',
+          icon: 'error'
+        });
+      }
+    });
+  });
+
+  // Delete actions
+  $('body').on('click', '.btn-delete-trainer', function() {
+    const id = $(this).data('id');
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: 'Apakah anda ingin hapus trainer?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Hapus'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "POST",
+          url: "{{ route('sdt-training.delete-trainer') }}",
+          data: {
+            id: id,
+            _token: csrfToken
+          },
+          success: function(response) {
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: response.message,
+              icon: 'success',
+              timer: 1000,
+              timerProgressBar: true,
+              willClose: () => {
+                trainerTable.ajax.reload();
+              }
+            });
+          },
+          error: function() {
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: 'Terjadi kesalahan saat menghapus trainer.',
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
+  });
+
+  $('body').on('click', '.btn-delete-gallery', function() {
+    const id = $(this).data('id');
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: 'Apakah anda ingin hapus gallery?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Hapus'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "POST",
+          url: "{{ route('sdt-training.delete-gallery') }}",
+          data: {
+            id: id,
+            _token: csrfToken
+          },
+          success: function(response) {
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: response.message,
+              icon: 'success',
+              timer: 1000,
+              timerProgressBar: true,
+              willClose: () => {
+                location.reload();
+              }
+            });
+          },
+          error: function() {
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: 'Terjadi kesalahan saat menghapus galeri.',
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
+  });
+
+  $('body').on('click', '.btn-delete-peserta', function() {
+    const id = $(this).data('id');
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: 'Apakah anda ingin hapus peserta?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Hapus'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "POST",
+          url: "{{ route('sdt-training.delete-peserta') }}",
+          data: {
+            id: id,
+            _token: csrfToken
+          },
+          success: function(response) {
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: response.message,
+              icon: 'success',
+              timer: 1000,
+              timerProgressBar: true,
+              willClose: () => {
+                clientTable.ajax.reload();
+              }
+            });
+          },
+          error: function() {
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: 'Terjadi kesalahan saat menghapus peserta.',
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
+  });
+});
+</script>
 @endsection

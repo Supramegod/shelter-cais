@@ -451,18 +451,18 @@
 
             if (item.tgl_realisasi) {
                 html += `
-                                                    <div class="feed-detail-item">
-                                                        <div class="feed-detail-label">Tanggal Realisasi</div>
-                                                        <div class="feed-detail-value">${formatDate(item.tgl_realisasi)}</div>
-                                                    </div>`;
+                                                        <div class="feed-detail-item">
+                                                            <div class="feed-detail-label">Tanggal Realisasi</div>
+                                                            <div class="feed-detail-value">${formatDate(item.tgl_realisasi)}</div>
+                                                        </div>`;
             }
 
             if (item.jam_realisasi) {
                 html += `
-                                                    <div class="feed-detail-item">
-                                                        <div class="feed-detail-label">Jam Realisasi</div>
-                                                        <div class="feed-detail-value">${item.jam_realisasi}</div>
-                                                    </div>`;
+                                                        <div class="feed-detail-item">
+                                                            <div class="feed-detail-label">Jam Realisasi</div>
+                                                            <div class="feed-detail-value">${item.jam_realisasi}</div>
+                                                        </div>`;
             }
 
             // Durasi
@@ -471,20 +471,20 @@
 
                 if (item.start) {
                     html += `
-                                                        <div class="feed-detail-label">Start</div>
-                                                        <div class="feed-detail-value">${item.start}</div>`;
+                                                            <div class="feed-detail-label">Start</div>
+                                                            <div class="feed-detail-value">${item.start}</div>`;
                 }
 
                 if (item.end) {
                     html += `
-                                                        <div class="feed-detail-label">End</div>
-                                                        <div class="feed-detail-value">${item.end}</div>`;
+                                                            <div class="feed-detail-label">End</div>
+                                                            <div class="feed-detail-value">${item.end}</div>`;
                 }
 
                 if (item.durasi) {
                     html += `
-                                                        <div class="feed-detail-label">Durasi</div>
-                                                        <div class="feed-detail-value">${item.durasi}</div>`;
+                                                            <div class="feed-detail-label">Durasi</div>
+                                                            <div class="feed-detail-value">${item.durasi}</div>`;
                 }
 
                 html += `</div>`;
@@ -496,14 +496,14 @@
 
                 if (item.penerima) {
                     html += `
-                                                        <div class="feed-detail-label">Penerima</div>
-                                                        <div class="feed-detail-value">${item.penerima}</div>`;
+                                                            <div class="feed-detail-label">Penerima</div>
+                                                            <div class="feed-detail-value">${item.penerima}</div>`;
                 }
 
                 if (item.email) {
                     html += `
-                                                        <div class="feed-detail-label">Email</div>
-                                                        <div class="feed-detail-value">${item.email}</div>`;
+                                                            <div class="feed-detail-label">Email</div>
+                                                            <div class="feed-detail-value">${item.email}</div>`;
                 }
 
                 html += `</div>`;
@@ -515,8 +515,8 @@
 
                 if (item.jenis_visit) {
                     html += `
-                                                        <div class="feed-detail-label">Jenis Visit</div>
-                                                        <div class="feed-detail-value">${item.jenis_visit}</div>`;
+                                                            <div class="feed-detail-label">Jenis Visit</div>
+                                                            <div class="feed-detail-value">${item.jenis_visit}</div>`;
                 }
 
                 // if (item.notulen) {
@@ -531,15 +531,15 @@
             // Bukti Foto
             if (item.link_bukti_foto) {
                 html += `
-                                                    <div class="feed-detail-item">
-                                                        <div class="feed-detail-label">Bukti Foto</div>
-                                                        <div class="feed-detail-value">
-                                                            <a href="${item.link_bukti_foto}" target="_blank" 
-                                                               class="btn btn-sm btn-info waves-effect">
-                                                                <i class="mdi mdi-magnify me-1"></i> Lihat Bukti
-                                                            </a>
-                                                        </div>
-                                                    </div>`;
+                                                        <div class="feed-detail-item">
+                                                            <div class="feed-detail-label">Bukti Foto</div>
+                                                            <div class="feed-detail-value">
+                                                                <a href="${item.link_bukti_foto}" target="_blank" 
+                                                                   class="btn btn-sm btn-info waves-effect">
+                                                                    <i class="mdi mdi-magnify me-1"></i> Lihat Bukti
+                                                                </a>
+                                                            </div>
+                                                        </div>`;
             }
 
             // Notes Tipe
@@ -607,62 +607,67 @@
 
                             const statusBadge = item.status_leads ?
                                 `<span class="badge badge-custom" style="background-color: ${item.warna_background}; color: ${item.warna_font}">
-                                                                        ${item.status_leads}
-                                                                    </span>` :
+                                                                            ${item.status_leads}
+                                                                        </span>` :
                                 '-';
 
-                           // Di dalam function yang membuat feed item
-const feedItem = `
-<li class="feed-item">
-    <div class="feed-content">
-        <div class="feed-header">
-            <h4 class="feed-title">
-                <strong>${item.nomor}</strong> - ${item.sales || 'Tidak ada sales'}
-            </h4>
-            <span class="feed-time">${timeAgoText}</span>
+                            // Di dalam function yang membuat feed item
+                            const feedItem = `
+    <li class="feed-item">
+        <div class="feed-content">
+            <div class="feed-header">
+                <h4 class="feed-title">
+                    <strong>${item.nomor}</strong> - ${item.sales || 'Tidak ada sales'}
+                </h4>
+                <span class="feed-time">${timeAgoText}</span>
+            </div>
+
+            <div class="feed-body">
+                <div class="feed-info-grid">
+                    <div class="feed-info-item">
+                        <span class="feed-info-label">Nama Perusahaan</span>
+                        <span class="feed-info-value">${item.nama}</span>
+                    </div>
+                    <div class="feed-info-item">
+                        <span class="feed-info-label">Tanggal Aktivitas</span>
+                        <span class="feed-info-value">${tgl}</span>
+                    </div>
+                    <div class="feed-info-item">
+                        <span class="feed-info-label">Status Leads</span>
+                        <span class="feed-info-value">${statusBadge}</span>
+                    </div>
+
+                    <div class="feed-info-item">
+                        <span class="feed-info-label">Tipe Aktivitas</span>
+                        <span class="feed-info-value">${tipeBadge}</span>
+                    </div>
+                    <div class="feed-info-item">
+                        <span class="feed-info-label">Kebutuhan</span>
+                        <span class="feed-info-value">${item.kebutuhan || '-'}</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="feed-info-label">Keterangan</span>
+                    <p class="feed-info-value">${item.keterangan || '-'}</p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn-toggle-detail">
+                        <i class="mdi mdi-chevron-down"></i> Detail
+                    </button>
+                    <a href="/sales/customer-activity/view/${item.id}" 
+                       class="btn-view-full">
+                        <i class="mdi mdi-eye-outline me-1"></i> Lihat Lengkap
+                    </a>
+                </div>
+
+                <div class="feed-detail">
+                    ${formatDetail(item)}
+                </div>
+            </div>
         </div>
-        
-        <div class="feed-body">
-            <div class="feed-info-grid">
-                <div class="feed-info-item">
-                    <span class="feed-info-label">Tanggal Aktivitas</span>
-                    <span class="feed-info-value">${tgl}</span>
-                </div>
-                <div class="feed-info-item">
-                    <span class="feed-info-label">Status Leads</span>
-                    <span class="feed-info-value">${statusBadge}</span>
-                </div>
-                <div class="feed-info-item">
-                    <span class="feed-info-label">Tipe Aktivitas</span>
-                    <span class="feed-info-value">${tipeBadge}</span>
-                </div>
-                <div class="feed-info-item">
-                    <span class="feed-info-label">Kebutuhan</span>
-                    <span class="feed-info-value">${item.kebutuhan || '-'}</span>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <span class="feed-info-label">Keterangan</span>
-                <p class="feed-info-value">${item.keterangan || '-'}</p>
-            </div>
-            
-            <div class="d-flex flex-wrap gap-2">
-                <button class="btn-toggle-detail">
-                    <i class="mdi mdi-chevron-down"></i> Detail
-                </button>
-                <a href="/sales/customer-activity/view/${item.id}" 
-                   class="btn-view-full">
-                    <i class="mdi mdi-eye-outline me-1"></i> Lihat Lengkap
-                </a>
-            </div>
-            
-            <div class="feed-detail">
-                ${formatDetail(item)}
-            </div>
-        </div>
-    </div>
-</li>`;
+    </li>`;
 
                             $('#activity-feed').append(feedItem);
                         });

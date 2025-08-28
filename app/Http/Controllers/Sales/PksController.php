@@ -382,7 +382,7 @@ class PksController extends Controller
                 'kota_id' => $leads->kota_id,
                 'kota' => $leads->kota,
                 'pma' => $leads->pma,
-                'sales_id' => $timsalesD->user_id,
+                'sales_id' => Auth::user()->id,
                 'crm_id_1' => $leads->crm_id,
                 'crm_id_2' => $leads->crm_id_1,
                 'crm_id_3' => $leads->crm_id_2,
