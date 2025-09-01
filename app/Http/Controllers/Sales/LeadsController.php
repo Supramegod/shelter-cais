@@ -99,47 +99,69 @@ class LeadsController extends Controller
         }
     }
 
-    public function view(Request $request, $id)
-    {
-        try {
-            $data = DB::table('sl_leads')->whereNull('customer_id')->where('id', $id)->first();
+    // LeadsController.php
+// ...
+public function view(Request $request, $id)
+{
+    try {
+        $data = DB::table('sl_leads')->whereNull('customer_id')->where('id', $id)->first();
 
-            $data->stgl_leads = Carbon::createFromFormat('Y-m-d', $data->tgl_leads)->isoFormat('D MMMM Y');
-            $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->isoFormat('D MMMM Y');
+        $data->stgl_leads = Carbon::createFromFormat('Y-m-d', $data->tgl_leads)->isoFormat('D MMMM Y');
+        $data->screated_at = Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->isoFormat('D MMMM Y');
 
-            $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active', 1)->get();
-            $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
-            $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
-            $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
-            $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
-            $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
+        $branch = DB::connection('mysqlhris')->table('m_branch')->where('is_active', 1)->get();
+        $jabatanPic = DB::table('m_jabatan_pic')->whereNull('deleted_at')->get();
+        $jenisPerusahaan = DB::table('m_jenis_perusahaan')->whereNull('deleted_at')->get();
+        $bidangPerusahaan = DB::table('m_bidang_perusahaan')->whereNull('deleted_at')->get();
+        $kebutuhan = DB::table('m_kebutuhan')->whereNull('deleted_at')->get();
+        $platform = DB::table('m_platform')->whereNull('deleted_at')->get();
 
-            // PERBAIKAN: Konversi kebutuhan_id menjadi array untuk memudahkan pengecekan
-            $data->kebutuhan_array = [];
-            if (!empty($data->kebutuhan_id)) {
-                $data->kebutuhan_array = array_map('trim', explode(',', $data->kebutuhan_id));
-            }
-
-            $activity = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id', $id)->orderBy('created_at', 'desc')->limit(5)->get();
-            foreach ($activity as $key => $value) {
-                $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s', $value->created_at)->isoFormat('D MMMM Y HH:mm');
-                $value->stgl_activity = Carbon::createFromFormat('Y-m-d', $value->tgl_activity)->isoFormat('D MMMM Y');
-            }
-
-            $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
-            $kota = DB::connection('mysqlhris')->table('m_city')->where('id', $data->kota_id)->get();
-            $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('id', $data->kecamatan_id)->get();
-            $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('id', $data->kelurahan_id)->get();
-            $benua = DB::table('m_benua')->get();
-            $negaraDefault = DB::table('m_negara')->where('id_benua', $data->benua_id != null ? $data->benua_id : 2)->get();
-
-            return view('sales.leads.view', compact('benua', 'negaraDefault', 'activity', 'data', 'branch', 'jabatanPic', 'jenisPerusahaan', 'kebutuhan', 'platform', 'provinsi', 'kota', 'kecamatan', 'kelurahan', 'bidangPerusahaan'));
-        } catch (\Exception $e) {
-            dd($e);
-            SystemController::saveError($e, Auth::user(), $request);
-            abort(500);
+        $data->kebutuhan_array = [];
+        if (!empty($data->kebutuhan_id)) {
+            $data->kebutuhan_array = array_map('trim', explode(',', $data->kebutuhan_id));
         }
+
+        $activity = DB::table('sl_customer_activity')->whereNull('deleted_at')->where('leads_id', $id)->orderBy('created_at', 'desc')->limit(5)->get();
+        foreach ($activity as $key => $value) {
+            $value->screated_at = Carbon::createFromFormat('Y-m-d H:i:s', $value->created_at)->isoFormat('D MMMM Y HH:mm');
+            $value->stgl_activity = Carbon::createFromFormat('Y-m-d', $value->tgl_activity)->isoFormat('D MMMM Y');
+        }
+
+        // --- PERBAIKAN LOGIKA PENGAMBILAN DATA WILAYAH ---
+
+        $provinsi = DB::connection('mysqlhris')->table('m_province')->get();
+
+        // Ambil semua kota berdasarkan provinsi yang terpilih
+        $kota = [];
+        if (!empty($data->provinsi_id)) {
+            $kota = DB::connection('mysqlhris')->table('m_city')->where('province_id', $data->provinsi_id)->get();
+        }
+
+        // Ambil semua kecamatan berdasarkan kota yang terpilih
+        $kecamatan = [];
+        if (!empty($data->kota_id)) {
+            $kecamatan = DB::connection('mysqlhris')->table('m_district')->where('city_id', $data->kota_id)->get();
+        }
+
+        // Ambil semua kelurahan berdasarkan kecamatan yang terpilih
+        $kelurahan = [];
+        if (!empty($data->kecamatan_id)) {
+            $kelurahan = DB::connection('mysqlhris')->table('m_village')->where('district_id', $data->kecamatan_id)->get();
+        }
+
+        // --- AKHIR PERBAIKAN ---
+
+        $benua = DB::table('m_benua')->get();
+        $negaraDefault = DB::table('m_negara')->where('id_benua', $data->benua_id != null ? $data->benua_id : 2)->get();
+
+        return view('sales.leads.view', compact('benua', 'negaraDefault', 'activity', 'data', 'branch', 'jabatanPic', 'jenisPerusahaan', 'kebutuhan', 'platform', 'provinsi', 'kota', 'kecamatan', 'kelurahan', 'bidangPerusahaan'));
+    } catch (\Exception $e) {
+        dd($e);
+        SystemController::saveError($e, Auth::user(), $request);
+        abort(500);
     }
+}
+// ...
 
     public function list(Request $request)
     {
@@ -282,67 +304,74 @@ class LeadsController extends Controller
         }
     }
 
-   
 
-// ... kode lainnya
-// LeadsController.php
-// ...
-// LeadsController.php
 
-// ...
 
-public function filterRekomendasi(Request $request)
-{
-    try {
-        // Ambil kata kunci dari request
-        $keyword = $request->input('nama_grup');
+    // ...
 
-        $companies = DB::table('sl_leads as sl')
-            // Gabungkan dengan tabel sl_perusahaan_groups_d
-            // Ini akan mencocokkan setiap leads dengan grupnya (jika ada)
-            ->leftJoin('sl_perusahaan_groups_d as sgd', 'sl.id', '=', 'sgd.leads_id')
-            ->select(
-                'sl.id',
-                'sl.nama_perusahaan',
-                'sl.kota',
-                'mjp.nama as jenis_perusahaan'
-            )
-            ->leftJoin('m_jenis_perusahaan as mjp', 'sl.jenis_perusahaan_id', '=', 'mjp.id')
-            // PENTING: Filter leads yang belum punya grup dengan mencari leads_id yang null
-            ->where('sgd.leads_id', '=', null)
-            ->whereNull('sl.deleted_at')
-            // Tambahkan filter pencarian berdasarkan kata kunci jika ada
-            ->when($keyword, function ($query, $keyword) {
-                $query->where('sl.nama_perusahaan', 'like', '%' . $keyword . '%');
-            })
-            ->orderBy('sl.nama_perusahaan')
-            ->get();
+    public function filterRekomendasi(Request $request)
+    {
+        try {
+            $keyword = $request->input('nama_grup');
+            $groupId = $request->input('group_id');
 
-        return response()->json($companies);
+            $companies = DB::table('sl_leads as sl')
+                // Gabungkan dengan tabel sl_perusahaan_groups_d
+                ->leftJoin('sl_perusahaan_groups_d as sgd', 'sl.id', '=', 'sgd.leads_id')
+                ->select(
+                    'sl.id',
+                    'sl.nama_perusahaan',
+                    'sl.kota',
+                    'mjp.nama as jenis_perusahaan'
+                )
+                ->leftJoin('m_jenis_perusahaan as mjp', 'sl.jenis_perusahaan_id', '=', 'mjp.id')
+                ->where('sgd.leads_id', '=', null) // <--- PENTING: Filter leads yang belum punya grup
+                ->whereNull('sl.deleted_at')
+                // Tambahkan filter pencarian
+                ->when($keyword, function ($query, $keyword) {
+                    $query->where('sl.nama_perusahaan', 'like', '%' . $keyword . '%');
+                })
+                ->orderBy('sl.nama_perusahaan')
+                ->get();
 
-    } catch (\Exception $e) {
-        // Log error untuk debugging
-        \Log::error('Terjadi kesalahan saat memuat data rekomendasi: ' . $e->getMessage());
-        // Kembalikan respons kosong agar frontend tidak stack
-        return response()->json([]);
+            return response()->json($companies);
+
+        } catch (\Exception $e) {
+            // Log error untuk debug
+            \Log::error('Terjadi kesalahan saat memuat data rekomendasi: ' . $e->getMessage());
+            // Kembalikan respons kosong agar frontend tidak stack
+            return response()->json([]);
+        }
     }
-}
 
-// ...
+    // ...
+
+
+    // ...
 
 
     public function groupkan(Request $request)
-    {
-        try {
-            $namaGrup = $request->input('nama_grup_manual');
-            $perusahaanTerpilih = $request->input('perusahaan_terpilih');
+{
+    try {
+        DB::beginTransaction();
+        
+        $namaGrup = $request->input('nama_grup_manual');
+        $perusahaanTerpilih = $request->input('perusahaan_terpilih');
+        $grupId = $request->input('group_id'); // Parameter baru untuk grup yang sudah ada
 
-            if (empty($namaGrup) || empty($perusahaanTerpilih)) {
-                return redirect()->back()->with('error', 'Nama grup dan setidaknya satu perusahaan harus dipilih.');
+        if (empty($namaGrup) || empty($perusahaanTerpilih)) {
+            return redirect()->back()->with('error', 'Nama grup dan setidaknya satu perusahaan harus dipilih.');
+        }
+
+        $namaPengguna = auth()->user()->full_name ?? 'system';
+
+        // Jika ada grupId, gunakan grup yang sudah ada
+        if (!empty($grupId)) {
+            $grup = DB::table('sl_perusahaan_groups')->where('id', $grupId)->first();
+            if (!$grup) {
+                return redirect()->back()->with('error', 'Grup tidak ditemukan.');
             }
-
-            $namaPengguna = auth()->user()->full_name ?? 'system';
-
+        } else {
             // Cari grup berdasarkan nama, jika tidak ada, buat baru
             $grup = DB::table('sl_perusahaan_groups')
                 ->where('nama_grup', $namaGrup)
@@ -351,7 +380,7 @@ public function filterRekomendasi(Request $request)
             if (!$grup) {
                 $grupId = DB::table('sl_perusahaan_groups')->insertGetId([
                     'nama_grup' => $namaGrup,
-                    'jumlah_perusahaan' => 0, // Inisialisasi dengan 0
+                    'jumlah_perusahaan' => 0,
                     'created_at' => now(),
                     'created_by' => $namaPengguna,
                     'update_at' => now(),
@@ -360,59 +389,75 @@ public function filterRekomendasi(Request $request)
             } else {
                 $grupId = $grup->id;
             }
+        }
 
-            // Ambil ID perusahaan yang sudah ada di grup
-            $existingLeads = DB::table('sl_perusahaan_groups_d')
-                ->where('group_id', $grupId)
-                ->whereIn('leads_id', $perusahaanTerpilih)
-                ->pluck('leads_id')
-                ->toArray();
+        // Ambil ID perusahaan yang sudah ada di grup
+        $existingLeads = DB::table('sl_perusahaan_groups_d')
+            ->where('group_id', $grupId)
+            ->whereIn('leads_id', $perusahaanTerpilih)
+            ->pluck('leads_id')
+            ->toArray();
 
-            // Filter perusahaan terpilih yang belum ada di grup
-            $leadsToInsert = array_diff($perusahaanTerpilih, $existingLeads);
+        // Filter perusahaan terpilih yang belum ada di grup
+        $leadsToInsert = array_diff($perusahaanTerpilih, $existingLeads);
 
-            // Jika ada perusahaan baru yang perlu dimasukkan
-            if (!empty($leadsToInsert)) {
-                // Ambil nama perusahaan dari tabel sl_leads
-                $leadsData = DB::table('sl_leads')
-                    ->whereIn('id', $leadsToInsert)
-                    ->pluck('nama_perusahaan', 'id');
+        // Jika ada perusahaan baru yang perlu dimasukkan
+        if (!empty($leadsToInsert)) {
+            // Ambil data perusahaan dari tabel sl_leads
+            $leadsData = DB::table('sl_leads')
+                ->whereIn('id', $leadsToInsert)
+                ->select('id', 'nama_perusahaan', 'kota')
+                ->get()
+                ->keyBy('id');
 
-                $dataToInsert = array_map(function ($leadsId) use ($grupId, $leadsData, $namaPengguna) {
-                    return [
-                        'group_id' => $grupId,
-                        'leads_id' => $leadsId,
-                        'nama_perusahaan' => $leadsData[$leadsId] ?? null, // <-- Tambahkan nama_perusahaan di sini
-                        'created_at' => now(),
-                        'created_by' => $namaPengguna,
-                        'update_at' => now(),
-                        'update_by' => $namaPengguna,
-                    ];
-                }, $leadsToInsert);
-
-                DB::table('sl_perusahaan_groups_d')->insert($dataToInsert);
-            }
-
-            // HITUNG dan UPDATE jumlah perusahaan di tabel `sl_perusahaan_groups`
-            $totalPerusahaan = DB::table('sl_perusahaan_groups_d')
-                ->where('group_id', $grupId)
-                ->count();
-
-            DB::table('sl_perusahaan_groups')
-                ->where('id', $grupId)
-                ->update([
-                    'jumlah_perusahaan' => $totalPerusahaan,
+            $dataToInsert = [];
+            foreach ($leadsToInsert as $leadsId) {
+                $leadData = $leadsData[$leadsId] ?? null;
+                $dataToInsert[] = [
+                    'group_id' => $grupId,
+                    'leads_id' => $leadsId,
+                    'nama_perusahaan' => $leadData->nama_perusahaan ?? null,
+                    'created_at' => now(),
+                    'created_by' => $namaPengguna,
                     'update_at' => now(),
                     'update_by' => $namaPengguna,
-                ]);
+                ];
+            }
 
-            return redirect()->back()->with('success', 'Perusahaan berhasil digrupkan.');
-
-        } catch (\Exception $e) {
-            \Log::error('Terjadi kesalahan saat menyimpan grup: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            DB::table('sl_perusahaan_groups_d')->insert($dataToInsert);
         }
+
+        // HITUNG dan UPDATE jumlah perusahaan di tabel `sl_perusahaan_groups`
+        $totalPerusahaan = DB::table('sl_perusahaan_groups_d')
+            ->where('group_id', $grupId)
+            ->count();
+
+        DB::table('sl_perusahaan_groups')
+            ->where('id', $grupId)
+            ->update([
+                'jumlah_perusahaan' => $totalPerusahaan,
+                'update_at' => now(),
+                'update_by' => $namaPengguna,
+            ]);
+
+        $jumlahBerhasil = count($leadsToInsert);
+        $jumlahSudahAda = count($existingLeads);
+
+        DB::commit();
+
+        $message = "Berhasil menambahkan {$jumlahBerhasil} perusahaan ke grup.";
+        if ($jumlahSudahAda > 0) {
+            $message .= " {$jumlahSudahAda} perusahaan sudah ada di grup.";
+        }
+
+        return redirect()->back()->with('success', $message);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        \Log::error('Terjadi kesalahan saat menyimpan grup: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
+}
 
 
 
@@ -457,7 +502,8 @@ public function filterRekomendasi(Request $request)
                 'nama_perusahaan' => 'required|max:100|min:3',
                 'pic' => 'required',
                 'branch' => 'required',
-                'kebutuhan' => 'required|array|min:1', // Pastikan ini array dan minimal 1 item
+                'perusahaan_group_id' => 'nullable|integer', // Aturan baru untuk membuat field ini opsional
+                'kebutuhan' => 'required|array|min:1',
                 'provinsi' => 'required',
                 'kota' => 'required'
             ], [
@@ -1402,7 +1448,6 @@ public function filterRekomendasi(Request $request)
         }
     }
 
-    // Tambahkan method-method berikut ke LeadsController.php
 
     /**
      * View detail grup perusahaan
@@ -1410,49 +1455,42 @@ public function filterRekomendasi(Request $request)
     public function viewGroup(Request $request, $id)
     {
         try {
-            // Ambil data grup
+            // Ambil data grup berdasarkan ID
             $data = DB::table('sl_perusahaan_groups')->where('id', $id)->first();
 
+            // Jika grup tidak ditemukan, kembalikan ke halaman daftar grup
             if (!$data) {
-                return redirect()->route('leads')->with('error', 'Grup tidak ditemukan.');
+                return redirect()->route('leads.group')->with('error', 'Grup tidak ditemukan.');
             }
 
-            // Hitung total perusahaan dalam grup
-            $totalPerusahaan = DB::table('sl_perusahaan_groups_d')
-                ->where('group_id', $id)
-                ->count();
-
-            // Ambil daftar perusahaan dalam grup dengan detail leads
+            // Ambil daftar perusahaan yang termasuk dalam grup ini
+            // Menggunakan join untuk mendapatkan detail dari tabel sl_leads
             $perusahaan = DB::table('sl_perusahaan_groups_d as sgd')
                 ->join('sl_leads as sl', function ($join) {
-                    $join->on('sgd.leads_id', '=', 'sl.id')
-                        ->orOn('sgd.nama_perusahaan', '=', 'sl.nama_perusahaan');
+                    $join->on('sgd.leads_id', '=', 'sl.id');
                 })
-                ->leftJoin('m_status_leads as msl', 'sl.status_leads_id', '=', 'msl.id')
                 ->leftJoin('m_jenis_perusahaan as mjp', 'sl.jenis_perusahaan_id', '=', 'mjp.id')
                 ->select(
                     'sl.id',
                     'sl.nama_perusahaan',
-                    'sl.telp_perusahaan',
-                    'mjp.nama as jenis_perusahaan',
                     'sl.kota',
-                    'sl.pic',
-                    'sl.no_telp',
-                    'msl.nama as status_leads',
-                    'msl.warna_background',
-                    'msl.warna_font',
-                    'sl.tgl_leads'
+                    'mjp.nama as jenis_perusahaan'
                 )
                 ->where('sgd.group_id', $id)
                 ->whereNull('sl.deleted_at')
                 ->orderBy('sl.nama_perusahaan')
                 ->get();
 
+            // Hitung total perusahaan dalam grup (opsional, bisa digunakan di view)
+            $totalPerusahaan = $perusahaan->count();
+
+            // Mengirimkan data grup, total perusahaan, dan daftar perusahaan ke view
             return view('sales.leads.group-view', compact('data', 'totalPerusahaan', 'perusahaan'));
 
         } catch (\Exception $e) {
+            // Log error dan kembalikan pesan kesalahan
             SystemController::saveError($e, Auth::user(), $request);
-            return redirect()->route('leads')->with('error', 'Terjadi kesalahan saat memuat data grup.');
+            return redirect()->route('leads.group')->with('error', 'Terjadi kesalahan saat memuat data grup.');
         }
     }
 
@@ -1511,6 +1549,39 @@ public function filterRekomendasi(Request $request)
         }
     }
 
+    public function getAvailableCompanies(Request $request, $groupId)
+    {
+        try {
+            // Ambil perusahaan yang belum masuk ke grup ini
+            $companies = DB::table('sl_leads as sl')
+                ->leftJoin('sl_perusahaan_groups_d as sgd', function ($join) use ($groupId) {
+                    $join->on('sl.id', '=', 'sgd.leads_id')
+                        ->where('sgd.group_id', '=', $groupId);
+                })
+                ->leftJoin('m_status_leads as msl', 'sl.status_leads_id', '=', 'msl.id')
+                ->leftJoin('m_jenis_perusahaan as mjp', 'sl.jenis_perusahaan_id', '=', 'mjp.id')
+                ->select(
+                    'sl.id',
+                    'sl.nama_perusahaan',
+                    'sl.kota',
+                    'msl.nama as status_leads',
+                    'mjp.nama as jenis_perusahaan'
+                )
+                ->whereNull('sl.deleted_at')
+                ->whereNull('sgd.leads_id') // Hanya ambil yang belum masuk grup ini
+                ->orderBy('sl.nama_perusahaan')
+                ->get();
+
+            return response()->json($companies);
+
+        } catch (\Exception $e) {
+            SystemController::saveError($e, Auth::user(), $request);
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat mengambil data perusahaan'
+            ], 500);
+        }
+    }
+
     /**
      * Delete grup perusahaan
      */
@@ -1564,155 +1635,291 @@ public function filterRekomendasi(Request $request)
     /**
      * Tambah perusahaan ke grup
      */
-    public function addCompanyToGroup(Request $request)
-    {
-        try {
-            DB::beginTransaction();
 
-            $validator = Validator::make($request->all(), [
-                'group_id' => 'required|exists:sl_perusahaan_groups,id',
-                'leads_id' => 'required|array|min:1',
-                'leads_id.*' => 'exists:sl_leads,id'
-            ], [
-                'required' => ':attribute harus diisi',
-                'exists' => ':attribute tidak valid',
-                'array' => ':attribute harus berupa array',
-                'min' => 'Pilih minimal :min perusahaan'
-            ]);
+    
+   // 2. METHOD CONTROLLER YANG SUDAH DIPERBAIKI
+public function addCompany(Request $request, $groupId)
+{
+    // Set response headers untuk debugging
+    $headers = [
+        'Content-Type' => 'application/json',
+        'X-Debug-Method' => $request->method(),
+        'X-Debug-GroupId' => $groupId
+    ];
 
-            if ($validator->fails()) {
+    try {
+        \Log::info('=== ADD COMPANY START ===', [
+            'method' => $request->method(),
+            'groupId' => $groupId,
+            'url' => $request->url(),
+            'input' => $request->all(),
+            'user' => Auth::id()
+        ]);
+
+        if ($request->isMethod('GET')) {
+            // Handle GET request untuk search
+            $keyword = trim($request->input('keyword', ''));
+            
+            \Log::info('GET request - searching companies', ['keyword' => $keyword]);
+
+            // Periksa apakah grup ada
+            $group = DB::table('sl_perusahaan_groups')->where('id', $groupId)->first();
+            if (!$group) {
                 return response()->json([
                     'success' => false,
-                    'message' => $validator->errors()->first()
-                ]);
+                    'message' => 'Grup tidak ditemukan.',
+                    'debug' => ['groupId' => $groupId]
+                ], 404, $headers);
             }
 
-            $current_date_time = Carbon::now()->toDateTimeString();
-            $insertData = [];
-            $skipCount = 0;
+            // Ambil perusahaan yang sudah ada di grup ini
+            $companiesInGroup = DB::table('sl_perusahaan_groups_d')
+                // ->where('group_id', $groupId)
+                ->pluck('leads_id')
+                ->toArray();
 
-            foreach ($request->leads_id as $leadsId) {
-                // Check if company already in group
-                $exists = DB::table('sl_perusahaan_groups_d')
-                    ->where('group_id', $request->group_id)
-                    ->where('leads_id', $leadsId)
-                    ->exists();
+            // Query untuk perusahaan yang tersedia
+            $query = DB::table('sl_leads as sl')
+                ->leftJoin('m_status_leads as msl', 'sl.status_leads_id', '=', 'msl.id')
+                ->leftJoin('m_jenis_perusahaan as mjp', 'sl.jenis_perusahaan_id', '=', 'mjp.id')
+                ->select(
+                    'sl.id',
+                    'sl.nama_perusahaan',
+                    'sl.kota',
+                    'mjp.nama as jenis_perusahaan',
+                    'msl.nama as status_leads',
+                    'msl.warna_background',
+                    'msl.warna_font'
+                )
+                ->whereNull('sl.deleted_at');
 
-                if (!$exists) {
-                    // Get company data
-                    $lead = DB::table('sl_leads')->where('id', $leadsId)->first();
-
-                    $insertData[] = [
-                        'group_id' => $request->group_id,
-                        'leads_id' => $leadsId,
-                        'nama_perusahaan' => $lead->nama_perusahaan,
-                        'created_at' => $current_date_time,
-                        'created_by' => Auth::user()->full_name
-                    ];
-                } else {
-                    $skipCount++;
-                }
+            // Filter berdasarkan keyword
+            if (!empty($keyword) && strlen($keyword) >= 2) {
+                $query->where(function($q) use ($keyword) {
+                    $q->where('sl.nama_perusahaan', 'like', "%{$keyword}%")
+                      ->orWhere('sl.kota', 'like', "%{$keyword}%");
+                });
             }
 
-            // Insert new companies
-            if (!empty($insertData)) {
-                DB::table('sl_perusahaan_groups_d')->insert($insertData);
-
-                // Update jumlah perusahaan in group
-                $totalPerusahaan = DB::table('sl_perusahaan_groups_d')
-                    ->where('group_id', $request->group_id)
-                    ->count();
-
-                DB::table('sl_perusahaan_groups')
-                    ->where('id', $request->group_id)
-                    ->update([
-                        'jumlah_perusahaan' => $totalPerusahaan,
-                        'update_at' => $current_date_time,
-                        'update_by' => Auth::user()->full_name
-                    ]);
+            // Exclude yang sudah ada di grup
+            if (!empty($companiesInGroup)) {
+                $query->whereNotIn('sl.id', $companiesInGroup);
             }
 
-            DB::commit();
-
-            $addedCount = count($insertData);
-            $message = "{$addedCount} perusahaan berhasil ditambahkan ke grup.";
-
-            if ($skipCount > 0) {
-                $message .= " {$skipCount} perusahaan sudah ada dalam grup.";
-            }
+            $companies = $query->orderBy('sl.nama_perusahaan')->limit(50)->get();
 
             return response()->json([
                 'success' => true,
-                'message' => $message
-            ]);
+                'data' => $companies,
+                'debug' => [
+                    'keyword' => $keyword,
+                    'companiesInGroup' => count($companiesInGroup),
+                    'found' => $companies->count()
+                ]
+            ], 200, $headers);
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            SystemController::saveError($e, Auth::user(), $request);
+        } elseif ($request->isMethod('POST')) {
+            // Handle POST request untuk save
+            \Log::info('POST request - saving companies');
+
+            // Validasi CSRF token
+            if (!$request->hasValidSignature(false) && !$request->header('X-CSRF-TOKEN') && !$request->input('_token')) {
+                \Log::error('CSRF token missing');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token CSRF tidak valid.'
+                ], 419, $headers);
+            }
+
+            // Validasi input
+            $companies = $request->input('companies', []);
+            
+            if (empty($companies) || !is_array($companies)) {
+                \Log::error('Invalid companies input', ['companies' => $companies]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data perusahaan tidak valid atau kosong.'
+                ], 400, $headers);
+            }
+
+            // Convert to integers and validate
+            $companies = array_map('intval', array_filter($companies, 'is_numeric'));
+            
+            if (empty($companies)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada ID perusahaan yang valid.'
+                ], 400, $headers);
+            }
+
+            // Periksa grup exists
+            $group = DB::table('sl_perusahaan_groups')->where('id', $groupId)->first();
+            if (!$group) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Grup tidak ditemukan.'
+                ], 404, $headers);
+            }
+
+            DB::beginTransaction();
+
+            try {
+                $currentUser = Auth::user()->full_name ?? 'System';
+                $now = Carbon::now();
+
+                // Cek yang sudah ada
+                $existingIds = DB::table('sl_perusahaan_groups_d')
+                    // ->where('group_id', $groupId)
+                    ->whereIn('leads_id', $companies)
+                    ->pluck('leads_id')
+                    ->toArray();
+
+                $newCompanies = array_diff($companies, $existingIds);
+
+                if (empty($newCompanies)) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Semua perusahaan sudah ada di grup.'
+                    ], 400, $headers);
+                }
+
+                // Validasi perusahaan exists
+                $validCompanies = DB::table('sl_leads')
+                    ->whereIn('id', $newCompanies)
+                    ->whereNull('deleted_at')
+                    ->select('id', 'nama_perusahaan')
+                    ->get();
+
+                if ($validCompanies->isEmpty()) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Perusahaan yang dipilih tidak valid.'
+                    ], 400, $headers);
+                }
+
+                // Insert data
+                $insertData = [];
+                foreach ($validCompanies as $company) {
+                    $insertData[] = [
+                        'group_id' => (int)$groupId,
+                        'leads_id' => (int)$company->id,
+                        'nama_perusahaan' => $company->nama_perusahaan,
+                        'created_at' => $now,
+                        'created_by' => $currentUser,
+                        'update_at' => $now,
+                        'update_by' => $currentUser
+                    ];
+                }
+
+                \Log::info('Inserting data', ['data' => $insertData]);
+
+                // Lakukan insert
+                DB::table('sl_perusahaan_groups_d')->insert($insertData);
+
+                // Update jumlah di grup utama
+                $total = DB::table('sl_perusahaan_groups_d')->where('group_id', $groupId)->count();
+                DB::table('sl_perusahaan_groups')
+                    ->where('id', $groupId)
+                    ->update([
+                        'jumlah_perusahaan' => $total,
+                        'update_at' => $now,
+                        'update_by' => $currentUser
+                    ]);
+
+                DB::commit();
+
+                \Log::info('Success - data inserted', ['count' => count($insertData)]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => count($insertData) . ' perusahaan berhasil ditambahkan!',
+                    'data' => ['total' => $total]
+                ], 200, $headers);
+
+            } catch (\Throwable $dbError) {
+                DB::rollBack();
+                \Log::error('Database operation failed', [
+                    'error' => $dbError->getMessage(),
+                    'code' => $dbError->getCode(),
+                    'file' => $dbError->getFile(),
+                    'line' => $dbError->getLine()
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan data: ' . $dbError->getMessage()
+                ], 500, $headers);
+            }
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menambah perusahaan ke grup.'
-            ]);
+                'message' => 'Method tidak didukung.'
+            ], 405, $headers);
         }
+
+    } catch (\Throwable $e) {
+        \Log::error('Unexpected error', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'request' => $request->all()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan tidak terduga: ' . $e->getMessage()
+        ], 500, $headers);
     }
+}
 
     /**
      * Hapus perusahaan dari grup
      */
-    public function removeCompanyFromGroup(Request $request, $groupId, $leadsId)
-    {
-        try {
-            DB::beginTransaction();
+   // app/Http/Controllers/LeadsController.php
 
-            // Check if company exists in group
-            $exists = DB::table('sl_perusahaan_groups_d')
-                ->where('group_id', $groupId)
-                ->where('leads_id', $leadsId)
-                ->first();
+public function removeCompanyFromGroup(Request $request, $groupId, $leadsId)
+{
+    // Hapus blok try dan catch untuk sementara waktu
+    // agar error yang lebih spesifik muncul
+    DB::beginTransaction();
 
-            if (!$exists) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Perusahaan tidak ditemukan dalam grup.'
-                ]);
-            }
+    $exists = DB::table('sl_perusahaan_groups_d')
+        ->where('group_id', $groupId)
+        ->where('leads_id', $leadsId)
+        ->first();
 
-            // Remove company from group
-            DB::table('sl_perusahaan_groups_d')
-                ->where('group_id', $groupId)
-                ->where('leads_id', $leadsId)
-                ->delete();
-
-            // Update jumlah perusahaan in group
-            $totalPerusahaan = DB::table('sl_perusahaan_groups_d')
-                ->where('group_id', $groupId)
-                ->count();
-
-            DB::table('sl_perusahaan_groups')
-                ->where('id', $groupId)
-                ->update([
-                    'jumlah_perusahaan' => $totalPerusahaan,
-                    'update_at' => Carbon::now()->toDateTimeString(),
-                    'update_by' => Auth::user()->full_name
-                ]);
-
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Perusahaan berhasil dihapus dari grup.'
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            SystemController::saveError($e, Auth::user(), $request);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus perusahaan dari grup.'
-            ]);
-        }
+    if (!$exists) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Perusahaan tidak ditemukan dalam grup.'
+        ]);
     }
+
+    DB::table('sl_perusahaan_groups_d')
+        ->where('group_id', $groupId)
+        ->where('leads_id', $leadsId)
+        ->delete();
+
+    $totalPerusahaan = DB::table('sl_perusahaan_groups_d')
+        ->where('group_id', $groupId)
+        ->count();
+
+    DB::table('sl_perusahaan_groups')
+        ->where('id', $groupId)
+        ->update([
+            'jumlah_perusahaan' => $totalPerusahaan,
+            'update_at' => Carbon::now()->toDateTimeString(),
+            'update_by' => Auth::user()->full_name
+        ]);
+
+    DB::commit();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Perusahaan berhasil dihapus dari grup.'
+    ]);
+}
 
     /**
      * Get modal form untuk tambah/edit grup
@@ -1797,5 +2004,34 @@ public function filterRekomendasi(Request $request)
             ]);
         }
     }
+    public function getCompaniesInGroup(Request $request, $groupId)
+{
+    try {
+        $perusahaan = DB::table('sl_perusahaan_groups_d as sgd')
+            ->join('sl_leads as sl', 'sgd.leads_id', '=', 'sl.id')
+            ->leftJoin('m_jenis_perusahaan as mjp', 'sl.jenis_perusahaan_id', '=', 'mjp.id')
+            ->select(
+                'sl.id',
+                'sl.nama_perusahaan',
+                'sl.kota',
+                'mjp.nama as jenis_perusahaan'
+            )
+            ->where('sgd.group_id', $groupId)
+            ->whereNull('sl.deleted_at')
+            ->orderBy('sl.nama_perusahaan')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $perusahaan
+        ]);
+    } catch (\Exception $e) {
+        SystemController::saveError($e, Auth::user(), $request);
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat memuat data perusahaan.'
+        ]);
+    }
+}
 
 }

@@ -68,8 +68,9 @@
                     data-allow-clear="true" tabindex="-1">
                     <option value="">- Pilih data -</option>
                     @foreach($provinsi as $value)
-                      <option value="{{$value->id}}" @if(old('provinsi') == $value->id) selected @endif
-                        @if($data->provinsi_id == $value->id) selected @endif>{{$value->name}}</option>
+                      <option value="{{$value->id}}" @if(old('provinsi', $data->provinsi_id) == $value->id) selected @endif>
+                        {{$value->name}}</option>
+
                     @endforeach
                   </select>
                   @if($errors->has('provinsi'))
@@ -85,8 +86,8 @@
                     data-allow-clear="true" tabindex="-1">
                     <option value="">- Pilih data -</option>
                     @foreach($kota as $value)
-                      <option value="{{$value->id}}" @if(old('kota') == $value->id) selected @endif
-                        @if($data->kota_id == $value->id) selected @endif>{{$value->name}}</option>
+                      <<option value="{{$value->id}}" @if(old('kota', $data->kota_id) == $value->id) selected @endif>
+                        {{$value->name}}</option>
                     @endforeach
                   </select>
                   @if($errors->has('kota'))
@@ -240,59 +241,59 @@
                 </div>
               </div>
             </div>
-              <hr class="my-4 mx-4">
-              <h6>3. Informasi PIC</h6>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
-                <div class="col-sm-4">
-                  <input type="text" id="pic" name="pic" value="{{$data->pic}}"
-                    class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
-                  @if($errors->has('pic'))
-                    <div class="invalid-feedback">{{$errors->first('pic')}}</div>
-                  @endif
-                </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
-                <div class="col-sm-4">
-                  <div class="position-relative">
-                    <select id="jabatan_pic" name="jabatan_pic" class="form-select @if ($errors->any())   @endif"
-                      data-allow-clear="true" tabindex="-1">
-                      <option value="">- Pilih data -</option>
-                      @foreach($jabatanPic as $value)
-                        <option value="{{$value->id}}" @if($data->jabatan == $value->id) selected @endif>{{$value->nama}}
-                        </option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
+            <hr class="my-4 mx-4">
+            <h6>3. Informasi PIC</h6>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Nama <span class="text-danger">*</span></label>
+              <div class="col-sm-4">
+                <input type="text" id="pic" name="pic" value="{{$data->pic}}"
+                  class="form-control @if ($errors->any()) @if($errors->has('pic')) is-invalid @else   @endif @endif">
+                @if($errors->has('pic'))
+                  <div class="invalid-feedback">{{$errors->first('pic')}}</div>
+                @endif
               </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Nomor Telepon</label>
-                <div class="col-sm-4">
-                  <input type="number" id="no_telp" name="no_telp" value="{{$data->no_telp}}"
-                    class="form-control @if ($errors->any())   @endif">
-                </div>
-                <label class="col-sm-2 col-form-label text-sm-end">Email</label>
-                <div class="col-sm-4">
-                  <input type="text" id="email" name="email" value="{{$data->email}}"
-                    class="form-control @if ($errors->any())   @endif">
+              <label class="col-sm-2 col-form-label text-sm-end">Jabatan</label>
+              <div class="col-sm-4">
+                <div class="position-relative">
+                  <select id="jabatan_pic" name="jabatan_pic" class="form-select @if ($errors->any())   @endif"
+                    data-allow-clear="true" tabindex="-1">
+                    <option value="">- Pilih data -</option>
+                    @foreach($jabatanPic as $value)
+                      <option value="{{$value->id}}" @if($data->jabatan == $value->id) selected @endif>{{$value->nama}}
+                      </option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
-              <hr class="my-4 mx-4">
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label text-sm-end">Detail Leads</label>
-                <div class="col-sm-10">
-                  <div class="form-floating form-floating-outline mb-4">
-                    <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="detail_leads"
-                      id="detail_leads" placeholder="">{{$data->notes}}</textarea>
-                  </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Nomor Telepon</label>
+              <div class="col-sm-4">
+                <input type="number" id="no_telp" name="no_telp" value="{{$data->no_telp}}"
+                  class="form-control @if ($errors->any())   @endif">
+              </div>
+              <label class="col-sm-2 col-form-label text-sm-end">Email</label>
+              <div class="col-sm-4">
+                <input type="text" id="email" name="email" value="{{$data->email}}"
+                  class="form-control @if ($errors->any())   @endif">
+              </div>
+            </div>
+            <hr class="my-4 mx-4">
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label text-sm-end">Detail Leads</label>
+              <div class="col-sm-10">
+                <div class="form-floating form-floating-outline mb-4">
+                  <textarea class="form-control h-px-100 @if ($errors->any())   @endif" name="detail_leads"
+                    id="detail_leads" placeholder="">{{$data->notes}}</textarea>
                 </div>
               </div>
-              <hr class="my-4 mx-4">
-              <div class="row mb-3">
-                <label class="col-sm-12 col-form-label">Note : <span class="text-danger">*)</span> Wajib Diisi</label>
-              </div>
-              <div class="pt-4">
-              </div>
+            </div>
+            <hr class="my-4 mx-4">
+            <div class="row mb-3">
+              <label class="col-sm-12 col-form-label">Note : <span class="text-danger">*)</span> Wajib Diisi</label>
+            </div>
+            <div class="pt-4">
+            </div>
           </form>
         </div>
       </div>
@@ -343,10 +344,10 @@
               </button>
             </div>
             <div class="col-12 text-center mb-2">
-              <button id="btn-kembali" class="btn btn-secondary w-100 waves-effect waves-light">
-                <span class="me-1">Kembali</span>
-                <i class="mdi mdi-arrow-left scaleX-n1-rtl"></i>
-              </button>
+              <a href="{{ route('leads') }}" class="btn btn-secondary w-100 waves-effect waves-light">
+                  <span class="me-1">Kembali</span>
+                  <i class="mdi mdi-arrow-left"></i>
+                </a>
             </div>
             <hr class="my-4 mx-4">
             <div class="col-12 text-center">
@@ -357,7 +358,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Activity Timeline Card -->
         <div class="card" style="max-height: 500px;">
           <div class="card-header d-flex align-items-center justify-content-between">
@@ -414,121 +415,126 @@
 @endsection
 
 @section('pageScript')
-  <script>
-    $(document).ready(function () {
-      $('#provinsi').on('change', function () {
-        let provinsiId = $(this).val();
-        $('#kota').empty().append('<option value="">- Pilih data -</option>');
-        $('#kecamatan').empty().append('<option value="">- Pilih data -</option>');
-        $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
-        if (provinsiId) {
-          let getKotaUrl = "{{ route('leads.get-kota', ':provinsiId') }}";
-          getKotaUrl = getKotaUrl.replace(':provinsiId', provinsiId);
-          $.ajax({
-            url: getKotaUrl,
-            type: 'GET',
-            success: function (data) {
-              $.each(data, function (key, value) {
-                $('#kota').append('<option value="' + value.id + '">' + value.name + '</option>');
-              });
-            }
-          });
-        }
-      });
-
-      $('#kota').on('change', function () {
-        let kotaId = $(this).val();
-        $('#kecamatan').empty().append('<option value="">- Pilih data -</option>');
-        $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
-        if (kotaId) {
-          let getKecamatanUrl = "{{ route('leads.get-kecamatan', ':kotaId') }}";
-          getKecamatanUrl = getKecamatanUrl.replace(':kotaId', kotaId);
-          $.ajax({
-            url: getKecamatanUrl,
-            type: 'GET',
-            success: function (data) {
-              $.each(data, function (key, value) {
-                $('#kecamatan').append('<option value="' + value.id + '">' + value.name + '</option>');
-              });
-            }
-          });
-        }
-      });
-
-      $('#kecamatan').on('change', function () {
-        let kecamatanId = $(this).val();
-        $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
-
-        if (kecamatanId) {
-          let getKelurahanUrl = "{{ route('leads.get-kelurahan', ':kecamatanId') }}";
-          getKelurahanUrl = getKelurahanUrl.replace(':kecamatanId', kecamatanId);
-          $.ajax({
-            url: getKelurahanUrl,
-            type: 'GET',
-            success: function (data) {
-              $.each(data, function (key, value) {
-                $('#kelurahan').append('<option value="' + value.id + '">' + value.name + '</option>');
-              });
-            }
-          });
-        }
-      });
-      
-      $('#benua').on('change', function () {
-        let benuaId = $(this).val();
-        $('#negara').empty().append('<option value="">- Pilih data -</option>');
-        if (benuaId) {
-          let getNegaraUrl = "{{ route('leads.get-negara', ':benuaId') }}";
-          getNegaraUrl = getNegaraUrl.replace(':benuaId', benuaId);
-          $.ajax({
-            url: getNegaraUrl,
-            type: 'GET',
-            success: function (data) {
-              $.each(data, function (key, value) {
-                $('#negara').append('<option value="' + value.id_negara + '">' + value.nama_negara + '</option>');
-              });
-            }
-          });
-        }
-      });
+<script>
+  $(document).ready(function () {
+    $('#provinsi').on('change', function () {
+      let provinsiId = $(this).val();
+      $('#kota').empty().append('<option value="">- Pilih data -</option>');
+      $('#kecamatan').empty().append('<option value="">- Pilih data -</option>');
+      $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
+      if (provinsiId) {
+        let getKotaUrl = "{{ route('leads.get-kota', ':provinsiId') }}";
+        getKotaUrl = getKotaUrl.replace(':provinsiId', provinsiId);
+        $.ajax({
+          url: getKotaUrl,
+          type: 'GET',
+          success: function (data) {
+            $.each(data, function (key, value) {
+              $('#kota').append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+          }
+        });
+      }
     });
-  </script>
-  <script>
-        @if(session()->has('success'))
-          Swal.fire({
-            title: 'Pemberitahuan',
-            html: '{{session()->get('success')}}',
-            icon: 'success',
-            customClass: {
-              confirmButton: 'btn btn-primary waves-effect waves-light'
-            },
-            buttonsStyling: false
-          });
-        @endif
 
-        $('#btn-update').on('click', function () {
-          $('form').submit();
+    $('#kota').on('change', function () {
+      let kotaId = $(this).val();
+      $('#kecamatan').empty().append('<option value="">- Pilih data -</option>');
+      $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
+      if (kotaId) {
+        let getKecamatanUrl = "{{ route('leads.get-kecamatan', ':kotaId') }}";
+        getKecamatanUrl = getKecamatanUrl.replace(':kotaId', kotaId);
+        $.ajax({
+          url: getKecamatanUrl,
+          type: 'GET',
+          success: function (data) {
+            $.each(data, function (key, value) {
+              $('#kecamatan').append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+          }
         });
+      }
+    });
 
-        $('#btn-delete').on('click', function () {
-          $('form').attr('action', '{{route("leads.delete")}}');
-          $('form').submit();
+    $('#kecamatan').on('change', function () {
+      let kecamatanId = $(this).val();
+      $('#kelurahan').empty().append('<option value="">- Pilih data -</option>');
+      if (kecamatanId) {
+        let getKelurahanUrl = "{{ route('leads.get-kelurahan', ':kecamatanId') }}";
+        getKelurahanUrl = getKelurahanUrl.replace(':kecamatanId', kecamatanId);
+        $.ajax({
+          url: getKelurahanUrl,
+          type: 'GET',
+          success: function (data) {
+            $.each(data, function (key, value) {
+              $('#kelurahan').append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+          }
         });
+      }
+    });
 
-        $('#btn-activity').on('click', function () {
-          window.location.replace("{{route('customer-activity.add', ['leads_id' => $data->id])}}");
+    $('#benua').on('change', function () {
+      let benuaId = $(this).val();
+      $('#negara').empty().append('<option value="">- Pilih data -</option>');
+      if (benuaId) {
+        let getNegaraUrl = "{{ route('leads.get-negara', ':benuaId') }}";
+        getNegaraUrl = getNegaraUrl.replace(':benuaId', benuaId);
+        $.ajax({
+          url: getNegaraUrl,
+          type: 'GET',
+          success: function (data) {
+            $.each(data, function (key, value) {
+              $('#negara').append('<option value="' + value.id_negara + '">' + value.nama_negara + '</option>');
+            });
+          }
         });
+      }
+    });
 
-        $('#btn-track-activity').on('click', function () {
-          window.location.replace("{{route('customer-activity.track', $data->id)}}");
-        });
+   // ... (kode skrip yang sudah ada)
 
-        $('#btn-quotation').on('click', function () {
-          window.location.replace("{!! route('quotation.add', ['leads_id' => $data->id, 'tipe' => 'Quotation Baru']) !!}");
-        });
+$('#provinsi').trigger('change');
+$('#kota').trigger('change');
+$('#kecamatan').trigger('change');
+});
+</script>
+<script>
+  @if(session()->has('success'))
+    Swal.fire({
+      title: 'Pemberitahuan',
+      html: '{{session()->get('success')}}',
+      icon: 'success',
+      customClass: {
+        confirmButton: 'btn btn-primary waves-effect waves-light'
+      },
+      buttonsStyling: false
+    });
+  @endif
 
-        $('#btn-kembali').on('click', function () {
-          window.history.go(-1); return false;
-        });
-  </script>
+  $('#btn-update').on('click', function () {
+    $('form').submit();
+  });
+
+  $('#btn-delete').on('click', function () {
+    $('form').attr('action', '{{route("leads.delete")}}');
+    $('form').submit();
+  });
+
+  $('#btn-activity').on('click', function () {
+    window.location.replace("{{route('customer-activity.add', ['leads_id' => $data->id])}}");
+  });
+
+  $('#btn-track-activity').on('click', function () {
+    window.location.replace("{{route('customer-activity.track', $data->id)}}");
+  });
+
+  $('#btn-quotation').on('click', function () {
+    window.location.replace("{!! route('quotation.add', ['leads_id' => $data->id, 'tipe' => 'Quotation Baru']) !!}");
+  });
+
+//  $('#btn-kembali').on('click', function () {
+//   window.location.replace("");
+// });
+</script>
 @endsectionF

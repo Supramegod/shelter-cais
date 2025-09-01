@@ -190,7 +190,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/leads/group-modal/{id?}', 'getGroupModal')->name('leads.group.modal');
     Route::get('/sales/leads/add-company-modal/{groupId}', 'getAddCompanyModal')->name('leads.group.add-company-modal');
     Route::get('/sales/leads/group/{groupId}/available-companies', 'getAddCompanyModal')->name('leads.group.availableCompanies');
-   Route::get('/sales/leads/filter-rekomendasi', 'filterRekomendasi')->name('leads.filter-rekomendasi');
+    Route::get('/sales/leads/filter-rekomendasi', 'filterRekomendasi')->name('leads.filter-rekomendasi');
+    
+    // PERBAIKAN: Gunakan method yang sama untuk GET dan POST
+    Route::get('/sales/leads/group/{groupId}/add-company', 'addCompany')->name('leads.group.addCompany');
+    Route::post('/sales/leads/group/{groupId}/add-company', 'addCompany')->name('leads.group.addCompany.post');
+
     
     // POST Routes
     Route::post('/sales/leads/groupkan', 'groupkan')->name('leads.groupkan');
@@ -199,7 +204,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/sales/leads/save', 'save')->name('leads.save');
     Route::post('/sales/leads/group', 'group')->name('leads.group');
     Route::post('/sales/leads/group/save', 'saveGroup')->name('leads.group.save');
-    Route::post('/sales/leads/group/add-company', 'addCompanyToGroup')->name('leads.group.addCompany');
     Route::post('/sales/leads/generate-null-kode', 'generateNullKode')->name('leads.generateNullKode');
     Route::post('/sales/leads/restore', 'restore')->name('leads.restore');
 
@@ -207,7 +211,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/sales/leads/update/{id}', 'update')->name('leads.update');
     Route::delete('/sales/leads/delete', 'delete')->name('leads.delete');
     Route::delete('/sales/leads/group/{id}', 'deleteGroup')->name('leads.group.delete');
-    Route::delete('/sales/leads/group/{groupId}/company/{leadsId}', 'removeCompanyFromGroup')->name('leads.group.remove-company');
+    Route::delete('/sales/leads/group/{groupId}/remove-company/{leadsId}', 'removeCompanyFromGroup')->name('leads.group.remove-company');
 
     // Export Routes
     Route::get('/sales/leads/export-excel', 'exportExcel')->name('leads.export-excel');
@@ -218,6 +222,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/leads/leads-available-leads', 'availableLeads')->name('leads.available-leads');
     Route::get('/sales/leads/leads-available-quotation', 'availableQuotation')->name('leads.available-quotation');
     Route::get('/sales/leads/child-leads', 'childLeads')->name('leads.child-leads');
+    Route::get('/leads/group/{groupId}/companies', 'getCompaniesInGroup')->name('leads.group.companies');
     Route::post('/sales/leads/save-leads', 'saveChildLeads')->name('leads.save-leads');
 
     // Location Routes
@@ -230,7 +235,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/leads/aktifkan', 'aktifkanLeads')->name('leads.aktifkan');
     Route::get('/sales/leads/leads-belum-aktif', 'leadsBelumAktif')->name('sales.leads.leads-belum-aktif');
 });
-
     Route::controller(SubmissionController::class)->group(function () {
         Route::get('/sales/submission', 'index')->name('submission');
 
