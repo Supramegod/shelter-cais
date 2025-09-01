@@ -1638,9 +1638,11 @@ public function view(Request $request, $id)
 
     
    // 2. METHOD CONTROLLER YANG SUDAH DIPERBAIKI
+// Method addCompany yang diperbaiki untuk mendukung pagination
+// PERBAIKAN: Method addCompany yang sudah diperbaiki
+// PERBAIKAN: Method addCompany yang sudah diperbaiki
 public function addCompany(Request $request, $groupId)
 {
-    // Set response headers untuk debugging
     $headers = [
         'Content-Type' => 'application/json',
         'X-Debug-Method' => $request->method(),
@@ -1657,10 +1659,18 @@ public function addCompany(Request $request, $groupId)
         ]);
 
         if ($request->isMethod('GET')) {
-            // Handle GET request untuk search
+            // Handle GET request untuk search dengan pagination
             $keyword = trim($request->input('keyword', ''));
+            $page = (int) $request->input('page', 1);
+            $getAll = $request->input('get_all', false); // PERBAIKAN: Parameter baru untuk get all
+            $perPage = 10; // Items per page
             
-            \Log::info('GET request - searching companies', ['keyword' => $keyword]);
+            \Log::info('GET request - searching companies', [
+                'keyword' => $keyword,
+                'page' => $page,
+                'perPage' => $perPage,
+                'getAll' => $getAll
+            ]);
 
             // Periksa apakah grup ada
             $group = DB::table('sl_perusahaan_groups')->where('id', $groupId)->first();
@@ -1672,9 +1682,8 @@ public function addCompany(Request $request, $groupId)
                 ], 404, $headers);
             }
 
-            // Ambil perusahaan yang sudah ada di grup ini
-            $companiesInGroup = DB::table('sl_perusahaan_groups_d')
-                // ->where('group_id', $groupId)
+            // Ambil perusahaan yang sudah ada di grup manapun (untuk exclude)
+            $companiesInAnyGroup = DB::table('sl_perusahaan_groups_d')
                 ->pluck('leads_id')
                 ->toArray();
 
@@ -1693,7 +1702,7 @@ public function addCompany(Request $request, $groupId)
                 )
                 ->whereNull('sl.deleted_at');
 
-            // Filter berdasarkan keyword
+            // Filter berdasarkan keyword jika ada
             if (!empty($keyword) && strlen($keyword) >= 2) {
                 $query->where(function($q) use ($keyword) {
                     $q->where('sl.nama_perusahaan', 'like', "%{$keyword}%")
@@ -1701,19 +1710,66 @@ public function addCompany(Request $request, $groupId)
                 });
             }
 
-            // Exclude yang sudah ada di grup
-            if (!empty($companiesInGroup)) {
-                $query->whereNotIn('sl.id', $companiesInGroup);
+            // Exclude yang sudah ada di grup manapun
+            if (!empty($companiesInAnyGroup)) {
+                $query->whereNotIn('sl.id', $companiesInAnyGroup);
             }
 
-            $companies = $query->orderBy('sl.nama_perusahaan')->limit(50)->get();
+            // PERBAIKAN: Jika diminta get_all, ambil semua data tanpa pagination
+            if ($getAll) {
+                \Log::info('Getting all companies without pagination');
+                
+                $companies = $query->orderBy('sl.nama_perusahaan')
+                    ->get();
+
+                return response()->json([
+                    'success' => true,
+                    'data' => $companies,
+                    'total' => $companies->count(),
+                    'debug' => [
+                        'keyword' => $keyword,
+                        'getAll' => true,
+                        'total' => $companies->count()
+                    ]
+                ], 200, $headers);
+            }
+
+            // Hitung total untuk pagination (mode normal)
+            $total = $query->count();
+
+            // Apply pagination untuk mode normal
+            $offset = ($page - 1) * $perPage;
+            $companies = $query->orderBy('sl.nama_perusahaan')
+                ->skip($offset)
+                ->take($perPage)
+                ->get();
+
+            // Buat data pagination
+            $lastPage = ceil($total / $perPage);
+            $pagination = [
+                'current_page' => $page,
+                'last_page' => $lastPage,
+                'per_page' => $perPage,
+                'total' => $total,
+                'from' => $total > 0 ? $offset + 1 : 0,
+                'to' => min($offset + $perPage, $total)
+            ];
+
+            \Log::info('Search results', [
+                'total' => $total,
+                'current_page' => $page,
+                'last_page' => $lastPage,
+                'companies_count' => $companies->count()
+            ]);
 
             return response()->json([
                 'success' => true,
                 'data' => $companies,
+                'pagination' => $pagination,
                 'debug' => [
                     'keyword' => $keyword,
-                    'companiesInGroup' => count($companiesInGroup),
+                    'page' => $page,
+                    'total' => $total,
                     'found' => $companies->count()
                 ]
             ], 200, $headers);
@@ -1767,9 +1823,8 @@ public function addCompany(Request $request, $groupId)
                 $currentUser = Auth::user()->full_name ?? 'System';
                 $now = Carbon::now();
 
-                // Cek yang sudah ada
+                // Cek yang sudah ada di grup manapun
                 $existingIds = DB::table('sl_perusahaan_groups_d')
-                    // ->where('group_id', $groupId)
                     ->whereIn('leads_id', $companies)
                     ->pluck('leads_id')
                     ->toArray();
@@ -1780,7 +1835,7 @@ public function addCompany(Request $request, $groupId)
                     DB::rollBack();
                     return response()->json([
                         'success' => false,
-                        'message' => 'Semua perusahaan sudah ada di grup.'
+                        'message' => 'Semua perusahaan sudah ada di grup lain.'
                     ], 400, $headers);
                 }
 
@@ -1813,7 +1868,12 @@ public function addCompany(Request $request, $groupId)
                     ];
                 }
 
-                \Log::info('Inserting data', ['data' => $insertData]);
+                \Log::info('Inserting data', [
+                    'data_count' => count($insertData),
+                    'requested_count' => count($companies),
+                    'new_companies' => count($newCompanies),
+                    'existing_companies' => count($existingIds)
+                ]);
 
                 // Lakukan insert
                 DB::table('sl_perusahaan_groups_d')->insert($insertData);
@@ -1832,10 +1892,19 @@ public function addCompany(Request $request, $groupId)
 
                 \Log::info('Success - data inserted', ['count' => count($insertData)]);
 
+                $message = count($insertData) . ' perusahaan berhasil ditambahkan!';
+                if (count($existingIds) > 0) {
+                    $message .= ' (' . count($existingIds) . ' sudah ada di grup lain)';
+                }
+
                 return response()->json([
                     'success' => true,
-                    'message' => count($insertData) . ' perusahaan berhasil ditambahkan!',
-                    'data' => ['total' => $total]
+                    'message' => $message,
+                    'data' => [
+                        'total' => $total,
+                        'added' => count($insertData),
+                        'existing' => count($existingIds)
+                    ]
                 ], 200, $headers);
 
             } catch (\Throwable $dbError) {
@@ -1852,6 +1921,7 @@ public function addCompany(Request $request, $groupId)
                     'message' => 'Gagal menyimpan data: ' . $dbError->getMessage()
                 ], 500, $headers);
             }
+
         } else {
             return response()->json([
                 'success' => false,
@@ -1870,6 +1940,8 @@ public function addCompany(Request $request, $groupId)
             'success' => false,
             'message' => 'Terjadi kesalahan tidak terduga: ' . $e->getMessage()
         ], 500, $headers);
+    } finally {
+        \Log::info('=== ADD COMPANY END ===');
     }
 }
 
