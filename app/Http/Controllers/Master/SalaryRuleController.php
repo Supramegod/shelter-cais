@@ -41,6 +41,7 @@ class SalaryRuleController extends Controller
 
         return view('master.salary-rule.add',compact('now'));
     }
+    
 
     public function view(Request $request,$id){
         try {
